@@ -15,10 +15,67 @@
 
 		<link rel="stylesheet" href="dist/reset.css" />
 		<link rel="stylesheet" href="dist/reveal.css" />
-		<link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+		<link rel="stylesheet" href="dist/theme/white.css" id="theme" />
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="dist/plugin/highlight/monokai.css" />
+
+		<style>
+			:root {
+				--r-background-color: #f8f7f4;
+				--r-main-color: #1f1f1d;
+				--r-heading-color: #1f1f1d;
+
+				--r-main-font: 'Helvetica Neue', Helvetica, Arial, 'Liberation Sans', sans-serif;
+				--r-heading-font: var(--r-main-font);
+				--r-heading-font-weight: 600;
+				--r-heading-text-transform: none;
+				--r-heading-letter-spacing: -0.02em;
+				--r-heading-line-height: 1.15;
+
+				--r-link-color: #195e59;
+				--r-link-color-hover: #1f6f6a;
+				--r-selection-background-color: #195e59;
+				--r-selection-color: #f8f7f4;
+
+				--muted-color: #57554e;
+			}
+
+			.reveal h2,
+			.reveal h3,
+			.reveal h4 {
+				max-width: 88%;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.reveal h4,
+			.reveal small {
+				color: var(--muted-color);
+				font-weight: 500;
+				letter-spacing: 0;
+			}
+
+			.reveal blockquote {
+				width: 80%;
+				padding: 0.1em 0 0.1em 1.2em;
+				border-left: 3px solid var(--r-link-color);
+				background: none;
+				box-shadow: none;
+				font-style: normal;
+				text-align: left;
+			}
+
+			.reveal ul {
+				width: fit-content;
+				margin-inline: auto;
+				text-align: left;
+			}
+
+			.reveal video {
+				border-radius: 4px;
+			}
+		</style>
 	</head>
 
 	<body>
