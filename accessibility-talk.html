@@ -5,10 +5,7 @@
 
 		<title>Your UI is not my UI</title>
 
-		<meta
-			name="description"
-			content="Your UI is not my UI"
-		/>
+		<meta name="description" content="Your UI is not my UI" />
 		<meta name="author" content="Simon Lenz, Matthew Seccafien" />
 
 		<meta name="mobile-web-app-capable" content="yes" />
@@ -27,38 +24,48 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<!-- Title -->
+				<!-- ===================== SECTION 1: HYPOTHESIS (~3 min) ===================== -->
+
 				<section>
 					<h2>Your UI is not my UI</h2>
 					<p><small>Simon Lenz, Matthew Seccafien</small></p>
 					<aside class="notes">
-						Hi I'm Matt, I work on the design system at DeepL and have a long standing interest in
-						building online user interfaces.
-
-						Hi, I'm Simon. I currently learning how to play the flute. And at DeepL I'm part of
-						the Accessibility Chapter. And today we want to explore where AI &amp; Accessibility
-						intersect.
+						Every person who uses software arrives with a different combination of needs,
+						abilities, devices, and context. The current model of accessibility &mdash; adapting a
+						single interface through layered tools and settings &mdash; has been valuable, but it
+						puts the burden on the user to configure and maintain a setup that works. We believe
+						AI opens a fundamentally different path: generating interfaces that are personal from
+						the start. This talk brings real user research, a working prototype, and a
+						provocation about what the future of UI could look like.
 					</aside>
 				</section>
 
-				<!-- AI & Accessibility today -->
 				<section>
 					<h2>AI &amp; Accessibility today</h2>
 				</section>
 
-				<!-- Hypothesis -->
 				<section>
 					<h2>Hypothesis</h2>
 					<p>Chatbots and agents are a total revolution for accessibility</p>
+					<aside class="notes">
+						What if one simple, universal interface sidesteps the problem of incompatible apps
+						entirely? We explain why this seemed compelling and what it would mean if true.
+						(~3 min for this section.)
+					</aside>
 				</section>
 
-				<!-- User Interviews -->
+				<!-- ===================== SECTION 2: USER RESEARCH (~6 min) ===================== -->
+
 				<section>
 					<h2>User Interviews</h2>
 					<p>We interviewed six people with disabilities</p>
+					<aside class="notes">
+						Section 2 (~6 min). We cover their daily setups, what works, what breaks, and how
+						they already use AI tools. We surface a key finding that chatbots, while useful, are
+						not a replacement for purpose-built interfaces, for a number of reasons.
+					</aside>
 				</section>
 
-				<!-- Melody -->
 				<section>
 					<h2>Melody</h2>
 					<h4>AI as an Accessibility &ldquo;Assistant,&rdquo; not a Replacement</h4>
@@ -68,7 +75,6 @@
 					</blockquote>
 				</section>
 
-				<!-- Matthew -->
 				<section>
 					<h2>Matthew</h2>
 					<h4>Accessibility AI should be like training wheels, not autopilot</h4>
@@ -79,19 +85,6 @@
 					</blockquote>
 				</section>
 
-				<!-- No Revolution -->
-				<section>
-					<h2>No Revolution</h2>
-					<h4>On agents &amp; chatbots</h4>
-					<ul>
-						<li>They are very helpful tools</li>
-						<li>Simple interface is very accessible</li>
-						<li>Trust &amp; Reliability is a large problem</li>
-						<li>We want assistants and not replacements</li>
-					</ul>
-				</section>
-
-				<!-- Allana -->
 				<section>
 					<h2>Allana</h2>
 					<h4>AI should only remove the tax that a disability imposes on everyday tasks</h4>
@@ -101,7 +94,22 @@
 					</blockquote>
 				</section>
 
-				<!-- Rose Lorraine -->
+				<section>
+					<h2>Sinead</h2>
+					<h4>AI can explain the cause, not just adapt the interface</h4>
+					<blockquote>
+						&ldquo;I was really struggling one day &hellip; but then interestingly, it came up
+						with a really insightful reason. It was the drop in the barometric pressure &hellip;
+						it was that the change had been so fast. And it said that's really common with people
+						with brain injuries.&rdquo;
+					</blockquote>
+					<aside class="notes">
+						AI providing information in an interface that is highly compatible and tailored for
+						the user &mdash; not just adapting a layout, but making sense of what's happening to
+						them.
+					</aside>
+				</section>
+
 				<section>
 					<h2>Rose Lorraine</h2>
 					<h4>Everyone's settings are different and incompatible</h4>
@@ -113,7 +121,6 @@
 					</blockquote>
 				</section>
 
-				<!-- Myron -->
 				<section>
 					<h2>Myron</h2>
 					<h4>AI can provide an interface where you are already a power user</h4>
@@ -124,7 +131,41 @@
 					</blockquote>
 				</section>
 
-				<!-- Opportunities -->
+				<section>
+					<h2>No Revolution</h2>
+					<h4>On agents &amp; chatbots</h4>
+					<ul>
+						<li>They are very helpful tools</li>
+						<li>Simple interface is very accessible</li>
+						<li>Trust &amp; Reliability is a large problem</li>
+						<li>We want assistants and not replacements</li>
+					</ul>
+					<aside class="notes">
+						This is the punchline of section 2: chatbots and agents are useful, but they are not
+						a replacement for purpose-built interfaces. That takes us into the limits of the
+						current adaptive model.
+					</aside>
+				</section>
+
+				<!-- ===================== SECTION 3: LIMITS OF ADAPTABILITY (~3 min) ===================== -->
+
+				<section>
+					<h2>Today's model: one interface, layered settings</h2>
+					<ul>
+						<li>Screen readers</li>
+						<li>Reduced motion</li>
+						<li>Dark mode</li>
+						<li>Zoom</li>
+						<li>Larger text</li>
+					</ul>
+					<aside class="notes">
+						Section 3 (~3 min). This is today's accessibility model: a single interface, adapted
+						through layered tools and settings. It works &mdash; up to a point. Our interviews
+						revealed where it breaks down: conflicting adaptations, exhausting configuration, and
+						the gap between what standards provide and what individuals actually need.
+					</aside>
+				</section>
+
 				<section>
 					<h2>Opportunities</h2>
 					<ul>
@@ -135,18 +176,21 @@
 					</ul>
 				</section>
 
-				<!-- Section header -->
+				<!-- ===================== SECTION 4: PERSONALIZATION OVER ADAPTABILITY (~3 min) ===================== -->
+
 				<section>
 					<h2>Your UI is not my UI</h2>
+					<aside class="notes">
+						Section 4 (~3 min). Our core proposal: AI-generated bespoke interfaces. Instead of
+						adapting one UI for everyone, generate a unique UI for each person.
+					</aside>
 				</section>
 
-				<!-- Personalization over adaptability -->
 				<section>
 					<h2>Your UI is not my UI</h2>
 					<h4>Personalization over adaptability</h4>
 				</section>
 
-				<!-- Create specific UIs on the fly -->
 				<section>
 					<h2>Your UI is not my UI</h2>
 					<h4>Create specific UIs on the fly for your needs</h4>
@@ -160,61 +204,155 @@
 					</ul>
 				</section>
 
-				<!-- Demo prompt/result -->
 				<section>
-					<h2>Demo</h2>
-					<h4>Prompt</h4>
-					<blockquote>
-						&ldquo;Can you create a very simple app with which I can make translations using the
-						DeepL API? It can be very simple, but should be graphical.&rdquo;
-					</blockquote>
+					<h2>Demo: same task, two people</h2>
+					<div style="display: flex; gap: 1.5rem; text-align: left; font-size: 0.65em">
+						<div style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
+							<h4 style="margin-top: 0">Person A</h4>
+							<p>
+								Stressed by long paragraphs, prefers dark backgrounds, standing on a subway with
+								headphones on, one hand free, headache from a barometric pressure change.
+							</p>
+							<p><em>[ placeholder &mdash; calm, minimal, dark-mode UI ]</em></p>
+						</div>
+						<div style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
+							<h4 style="margin-top: 0">Person B</h4>
+							<p>
+								Has a tremor, avoids precise pointer input, prefers keyboard interactions, at home
+								in a relaxed setting writing an email to friends.
+							</p>
+							<p><em>[ placeholder &mdash; large keyboard-first targets ]</em></p>
+						</div>
+					</div>
+					<aside class="notes">
+						PLACEHOLDER SLIDE: swap these two panels for the real split-screen animation once it's
+						ready. Same underlying task (using the DeepL translation UI), generated as two
+						completely different interfaces &mdash; tailored to two humans with vastly different
+						requirements, preferences, and situational needs.
+					</aside>
 				</section>
 
-				<!-- Demo prompt/result -->
+				<!-- ===================== SECTION 5: LAUNCHING AN APP = CREATING AN APP (~5 min) ===================== -->
+
 				<section>
-					<h2>Demo</h2>
-					<h4>Prompt</h4>
-					<blockquote>
-						&ldquo;Now please create a second UI: I get stress from reading long paragraphs, and
-						I prefer dark backgrounds and am currently on a subway ride standing with my
-						headphones on and only one hand free and have currently a headache because the
-						atmospheric pressure changed drastically over the last 3 days.&rdquo;
-					</blockquote>
+					<h2>What if launching an app means creating an app?</h2>
+					<aside class="notes">
+						Section 5 (~5 min). We broaden the scope beyond disability. Everyone arrives with
+						different needs, situations, and abilities. What would it mean for browsers, apps,
+						and platforms if interfaces were generated rather than served?
+					</aside>
 				</section>
 
-				<!-- Demo prompt/result -->
 				<section>
-					<h2>Demo</h2>
-					<h4>Prompt</h4>
-					<blockquote>
-						&ldquo;I'm struggling with a tremor, so I hate using precise input devices like a
-						mouse. I prefer keyboard interactions. I'm currently at home in a relaxed setting
-						writing an email to my buddies.&rdquo;
-					</blockquote>
+					<h2>Focus shifts from UI to API</h2>
+					<ul>
+						<li>Launching an app is programming an app</li>
+						<li>Focus on content and functionality (APIs), not UI</li>
+						<li>The interface becomes disposable &mdash; generated fresh, every time</li>
+					</ul>
 				</section>
 
-				<!-- Demo prompt/result -->
 				<section>
-					<h2>Demo</h2>
-					<h4>Prompt</h4>
-					<blockquote>
-						&ldquo;I can't look at a screen at all, and would like to have a voice
-						interface&rdquo;
-					</blockquote>
+					<h2>Applications become art, not commodity</h2>
+					<ul>
+						<li>A hand-crafted UI stops being the default way software is distributed</li>
+						<li>Disabled users are just the ones suffering most from this today</li>
+						<li>Personalized UIs would help everyone, not only accessibility use cases</li>
+					</ul>
 				</section>
 
-				<!-- Demo -->
+				<!-- ===================== SECTION 6: REVISITING / COUNTER-ARGUMENTS (~3 min) ===================== -->
+
 				<section>
-					<h2>Demo</h2>
-					<p>How might this look like in a real product?</p>
+					<h2>Revisiting: 8 months later</h2>
+					<p>Rose Lorraine tried to build a bespoke Steam library manager</p>
+					<aside class="notes">
+						Section 6 (~3 min). Our initial research for this started internally, and 8 months
+						later we revisited it in preparation for this talk. Rose Lorraine attempted to build
+						a bespoke manager application for her Steam library.
+					</aside>
 				</section>
 
-				<!-- The Future -->
+				<section>
+					<h2>It didn't really work out</h2>
+					<ul>
+						<li>Lack of support</li>
+						<li>Lack of knowledge</li>
+						<li>Still too time consuming</li>
+						<li>Too much tinkering required</li>
+					</ul>
+					<p><small>We replaced configuration toil with developer toil.</small></p>
+				</section>
+
+				<section>
+					<h2>Will this get better over time?</h2>
+					<p>Probably &mdash; today's tinkering reflects immature tooling.</p>
+					<aside class="notes">
+						Tentative lean: this friction looks like a snapshot of where AI dev tooling is today,
+						not a permanent property of personalized/generated interfaces. Expect it to shrink as
+						the tools mature. Still an open question worth sitting with before section 7.
+					</aside>
+				</section>
+
+				<!-- ===================== SECTION 7: FUTURE & OPEN QUESTIONS (~3 min) ===================== -->
+
 				<section>
 					<h2>The Future.</h2>
+					<aside class="notes">
+						Section 7 (~3 min). We explain how the industry is showing key indicators that prove
+						the potential in our new thesis, and segway into Q&amp;A.
+					</aside>
 				</section>
 
-				<!-- Thank you -->
+				<section>
+					<h2>Omarchy</h2>
+					<p>
+						DHH's agentic Linux distro reduces the desktop to a terminal-first, AI-agent-driven
+						workflow &mdash; the OS itself becomes conversational.
+					</p>
+				</section>
+
+				<section>
+					<h2>Google Search</h2>
+					<p>
+						AI Mode assembles custom layouts on the fly &mdash; interactive visuals, tables,
+						graphs, simulations &mdash; generated per query, not served from a template.
+					</p>
+				</section>
+
+				<section>
+					<h2>Artifacts</h2>
+					<p>
+						Every major AI harness now treats &ldquo;produce a working interface, inline, on
+						demand&rdquo; as a core, indispensable feature &mdash; not a novelty.
+					</p>
+				</section>
+
+				<section>
+					<h2>Personalized interfaces are inevitable</h2>
+					<p>
+						It's in the best interest of these products to be empathetic to the person in front
+						of them &mdash; and that makes personalization a leap the industry is already taking.
+					</p>
+					<aside class="notes">
+						This leads to discussions for the community to think about beyond this talk: what
+						does this mean for how we build and distribute software?
+					</aside>
+				</section>
+
+				<!-- ===================== CLOSING ===================== -->
+
+				<section>
+					<h2>Key takeaways</h2>
+					<ul>
+						<li>Why the &ldquo;single adaptive interface&rdquo; has fundamental limits</li>
+						<li>What real users with disabilities say about AI, agents, and control</li>
+						<li>A concrete demonstration of AI-generated personalized interfaces</li>
+						<li>A framework for thinking about the shift from adaptability to personalization</li>
+						<li>Open questions about what this means for how we build and distribute software</li>
+					</ul>
+				</section>
+
 				<section>
 					<h2>Thank you!</h2>
 				</section>
