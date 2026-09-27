@@ -20,50 +20,125 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="dist/plugin/highlight/monokai.css" />
 
-		<!-- Theme was just a one-shot claude thingy. feel free to change _completely_ as you please -->
+		<!-- Theme: blueprint/technical-manual look, styled after makingsoftware.com -->
 		<style>
-			:root {
-				--r-background-color: #f8f7f4;
-				--r-main-color: #1f1f1d;
-				--r-heading-color: #1f1f1d;
-
-				--r-main-font: 'Helvetica Neue', Helvetica, Arial, 'Liberation Sans', sans-serif;
-				--r-heading-font: var(--r-main-font);
-				--r-heading-font-weight: 600;
-				--r-heading-text-transform: none;
-				--r-heading-letter-spacing: -0.02em;
-				--r-heading-line-height: 1.15;
-
-				--r-link-color: #195e59;
-				--r-link-color-hover: #1f6f6a;
-				--r-selection-background-color: #195e59;
-				--r-selection-color: #f8f7f4;
-
-				--muted-color: #57554e;
+			@font-face {
+				font-family: 'Departure Mono';
+				src:
+					url('fonts/departure-mono/DepartureMono-Regular.woff2') format('woff2'),
+					url('fonts/departure-mono/DepartureMono-Regular.woff') format('woff');
+				font-weight: 500;
+				font-style: normal;
+				font-display: swap;
 			}
 
+			:root {
+				/* cobalt scale, sampled from makingsoftware.com */
+				--ink-700: #0026c9;
+				--ink-600: #002ef4;
+				--ink-500: #155cf0;
+				--ink-400: #5f8bf5;
+				--ink-300: #9bb6f7;
+				--ink-200: #cbdafb;
+				--ink-100: #e6ecfd;
+
+				--stone-950: #241f1b;
+				--stone-600: #6b6459;
+				--stone-300: #d8d3cb;
+
+				--r-background-color: #fbfbfb;
+				--r-main-color: var(--stone-950);
+				--r-heading-color: var(--ink-600);
+
+				--r-main-font: ui-serif, Georgia, 'Times New Roman', serif;
+				--r-mono-font: 'Departure Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+				--r-heading-font: var(--r-main-font);
+				--r-heading-font-weight: 400;
+				--r-heading-text-transform: none;
+				--r-heading-letter-spacing: -0.01em;
+				--r-heading-line-height: 1.1;
+
+				--r-link-color: var(--ink-600);
+				--r-link-color-hover: var(--ink-500);
+				--r-selection-background-color: var(--ink-200);
+				--r-selection-color: var(--stone-950);
+
+				--muted-color: var(--stone-600);
+			}
+
+			.reveal {
+				background-color: var(--r-background-color);
+				background-image: radial-gradient(var(--ink-300) 1.4px, transparent 1.5px);
+				background-size: 22px 22px;
+			}
+
+			.reveal .slides {
+				font-family: var(--r-main-font);
+			}
+
+			/* corner tick marks, echoing the plate frames on makingsoftware.com */
+			.reveal::before,
+			.reveal::after {
+				content: '';
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				border: 1px solid var(--ink-500);
+				opacity: 0.45;
+				pointer-events: none;
+				z-index: 20;
+			}
+
+			.reveal::before {
+				top: 24px;
+				left: 24px;
+				border-right: none;
+				border-bottom: none;
+			}
+
+			.reveal::after {
+				bottom: 24px;
+				right: 24px;
+				border-left: none;
+				border-top: none;
+			}
+
+			.reveal h1,
 			.reveal h2,
-			.reveal h3,
-			.reveal h4 {
+			.reveal h3 {
 				max-width: 88%;
 				margin-left: auto;
 				margin-right: auto;
 			}
 
-			.reveal h4,
-			.reveal small {
-				color: var(--muted-color);
+			.reveal h4 {
+				max-width: 88%;
+				margin-left: auto;
+				margin-right: auto;
+				font-family: var(--r-mono-font);
+				font-size: 0.42em;
 				font-weight: 500;
-				letter-spacing: 0;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: var(--muted-color);
+			}
+
+			.reveal small,
+			.reveal .fig-label {
+				font-family: var(--r-mono-font);
+				font-size: 0.5em;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: var(--muted-color);
 			}
 
 			.reveal blockquote {
 				width: 80%;
 				padding: 0.1em 0 0.1em 1.2em;
-				border-left: 3px solid var(--r-link-color);
+				border-left: 2px solid var(--ink-500);
 				background: none;
 				box-shadow: none;
-				font-style: normal;
+				font-style: italic;
 				text-align: left;
 			}
 
@@ -73,8 +148,37 @@
 				text-align: left;
 			}
 
+			.reveal ul li::marker {
+				font-family: var(--r-mono-font);
+				color: var(--ink-500);
+			}
+
 			.reveal video {
-				border-radius: 4px;
+				border-radius: 2px;
+				border: 1px solid var(--ink-300);
+			}
+
+			.reveal img {
+				border: 1px solid var(--ink-300);
+			}
+
+			.reveal .controls {
+				color: var(--ink-500);
+			}
+
+			.reveal .progress {
+				color: var(--ink-600);
+				height: 3px;
+			}
+
+			.reveal .progress span {
+				background: var(--ink-600);
+			}
+
+			.reveal .slide-number {
+				font-family: var(--r-mono-font);
+				color: var(--muted-color);
+				background: transparent;
 			}
 		</style>
 	</head>
