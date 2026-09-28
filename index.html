@@ -14,11 +14,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<link rel="stylesheet" href="dist/reset.css" />
-		<link rel="stylesheet" href="dist/reveal.css" />
-		<link rel="stylesheet" href="dist/theme/white.css" id="theme" />
-
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="dist/plugin/highlight/monokai.css" />
 
 		<!-- Theme: blueprint/technical-manual look, styled after makingsoftware.com -->
 		<style>
@@ -180,18 +175,82 @@
 				color: var(--muted-color);
 				background: transparent;
 			}
+
+			main {
+				max-width: 700px;
+				margin: 0 auto;
+				padding: 4rem 1.5rem;
+			}
+
+			main section[data-act] {
+				display: flex;
+				flex-direction: column;
+				gap: 6rem;
+				padding-block: 4rem;
+			}
+
+			main section[data-scene] {
+				opacity: 0;
+				transform: translateY(24px);
+			}
+
+			main section[data-scene].is-wide {
+				max-width: none;
+				margin-inline: calc(50% - 50vw);
+				padding-inline: 1.5rem;
+			}
+
+			#notes-toggle {
+				position: fixed;
+				bottom: 1.5rem;
+				right: 1.5rem;
+				z-index: 30;
+				font-family: var(--r-mono-font);
+				font-size: 0.75rem;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+				background: var(--r-background-color);
+				color: var(--ink-600);
+				border: 1px solid var(--ink-500);
+				padding: 0.5em 0.9em;
+				cursor: pointer;
+			}
+
+			#notes-drawer {
+				position: fixed;
+				top: 0;
+				right: 0;
+				height: 100%;
+				width: min(360px, 90vw);
+				background: var(--r-background-color);
+				border-left: 1px solid var(--ink-300);
+				padding: 5rem 1.5rem 1.5rem;
+				overflow-y: auto;
+				transform: translateX(100%);
+				transition: transform 0.25s ease;
+				z-index: 25;
+				font-family: var(--r-mono-font);
+				font-size: 0.8rem;
+				line-height: 1.5;
+			}
+
+			#notes-drawer.is-open {
+				transform: translateX(0);
+			}
+
+			#notes-drawer[hidden] {
+				display: block; /* override default display:none so the transition can animate out; visibility handled by is-open + off-screen transform instead */
+			}
 		</style>
 	</head>
 
 	<body>
-		<div class="reveal">
-			<div class="slides">
-				<!-- ===================== SECTION 1: HYPOTHESIS (~3 min) ===================== -->
-
-				<section>
+		<main>
+			<section data-act="hypothesis">
+				<section data-scene="your-ui-is-not-my-ui-title">
 					<h2>Your UI is not my UI</h2>
 					<p><small>Simon Lenz, Matthew Seccafien</small></p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Everyone arrives at software with a different mix of needs, abilities, and context.
 							Today's accessibility adapts one interface through layered tools &mdash; and puts the
@@ -202,15 +261,15 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="ai-accessibility-today">
 					<h2>AI &amp; Accessibility today</h2>
 					<video
-						class="r-stretch"
 						src="media/Kazam_screencast_00147.mp4"
 						controls
 						preload="auto"
+						style="max-width: 100%; height: auto;"
 					></video>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Accessibility is an early adopter of AI &mdash; speech-to-text, text-to-speech,
 							object and character recognition, real-time description of a camera feed.
@@ -223,10 +282,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="hypothesis">
 					<h2>Hypothesis</h2>
 					<p>Chatbots and agents are a total revolution for accessibility</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>We think there must be something else though.</p>
 						<p>
 							Our <em>hypothesis</em>: one very simple <em>and accessible</em> interface (natural language chat)
@@ -235,13 +294,13 @@
 						</p>
 					</aside>
 				</section>
+			</section>
 
-				<!-- ===================== SECTION 2: USER RESEARCH (~6 min) ===================== -->
-
-				<section>
+			<section data-act="user-research">
+				<section data-scene="user-interviews">
 					<h2>User Interviews</h2>
 					<p>We interviewed six people with disabilities</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							In order to prove this hypothesis we conducted 6 user interviews, with real users
 							who struggle daily with a physical or cognitive disability. We talked about their
@@ -254,10 +313,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="melody">
 					<h2>Melody</h2>
 					<h4>AI as an Accessibility &ldquo;Assistant,&rdquo; not a Replacement</h4>
-					<div class="r-stretch" style="display: flex; align-items: center; gap: 2rem">
+					<div style="display: flex; align-items: center; gap: 2rem">
 						<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
 							&ldquo;I do use AI, but only as an assistant for what I'm looking for. Not to do the searching from scratch.&rdquo;
 						</blockquote>
@@ -266,7 +325,7 @@
 							style="flex: 1 1 55%; max-width: 55%; height: 100%; width: auto; object-fit: contain; border-radius: 4px"
 						/>
 					</div>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Melody struggled to see and uses a collection of tools to navigate her life relatively independently.
 						</p>
@@ -282,7 +341,7 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="matthew">
 					<h2>Matthew</h2>
 					<h4>Accessibility AI should be like training wheels, not autopilot</h4>
 					<blockquote>
@@ -290,7 +349,7 @@
 						tasks, emailed people, and I couldn't really take it back &mdash; that feels &hellip;
 						uncomfortable, giving it that much autonomy.&rdquo;
 					</blockquote>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Matthew is autistic, has ADHD, and struggles with active listening due to tinnitus.
 						</p>
@@ -305,10 +364,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="sinead">
 					<h2>Sinead</h2>
 					<h4>AI can explain the cause, not just adapt the interface</h4>
-					<div class="r-stretch" style="display: flex; align-items: center; gap: 2rem">
+					<div style="display: flex; align-items: center; gap: 2rem">
 						<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
 							&ldquo;I was really struggling one day &hellip; but then, interestingly, it came up
 							with a really insightful reason: it was the drop in barometric pressure. The change had been so fast. And it said that's really common with people with brain injuries.&rdquo;
@@ -318,7 +377,7 @@
 							style="flex: 1 1 55%; max-width: 55%; height: 100%; width: auto; object-fit: contain; border-radius: 4px"
 						/>
 					</div>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Sinead had a brain injury five years ago &mdash; came to disability later in life.
 							Screen time is hard; reading a lot in one day is hard.
@@ -341,7 +400,7 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="no-revolution">
 					<h2>No Revolution</h2>
 					<ul>
 						<li>Agents &amp; chatbots are very helpful tools</li>
@@ -349,7 +408,7 @@
 						<li>Trust &amp; Reliability is a large problem</li>
 						<li>We want assistants and not replacements</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							At this point in the interviews we put our heads together for an intermediate
 							result: agents and bots are very helpful tools, but no revolution yet.
@@ -372,10 +431,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="allana">
 					<h2>Allana</h2>
 					<h4>AI should only remove the tax that a disability imposes on everyday tasks</h4>
-					<div class="r-stretch" style="display: flex; align-items: center; gap: 2rem">
+					<div style="display: flex; align-items: center; gap: 2rem">
 						<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
 							&ldquo;Part of the enjoyable thing in life is struggling through things. Having
 							everything taken care of for you takes away a bit of the fun.&rdquo;
@@ -385,7 +444,7 @@
 							style="flex: 1 1 55%; max-width: 55%; height: 100%; width: auto; object-fit: contain; border-radius: 4px"
 						/>
 					</div>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Allana studies law in the UK. Her issues are reading and writing; she struggles with
 							high contrast and bright interfaces &mdash; her setup is large font and forced dark mode.
@@ -401,10 +460,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="rose">
 					<h2>Rose</h2>
 					<h4>Everyone's settings are different and incompatible</h4>
-					<div class="r-stretch" style="display: flex; align-items: center; gap: 2rem">
+					<div style="display: flex; align-items: center; gap: 2rem">
 						<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
 							&ldquo;I live in a disabled house [&hellip;] all our settings are different, even across our iPads. It's actually an in-house joke: I can't look at my
 							husband's iPad, he can't look at mine, and the kids hate using either.&rdquo;
@@ -416,7 +475,7 @@
 							style="flex: 1 1 55%; max-width: 55%; height: 100%; width: auto; border-radius: 4px"
 						></video>
 					</div>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Rose studies cyber security. She has hyperphotosensitivity &mdash; she
 							lives with closed curtains and wears very dark sunglasses outside. Light drains her
@@ -434,10 +493,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="myron">
 					<h2>Myron</h2>
 					<h4>AI can provide an interface where you are already a power user</h4>
-					<div class="r-stretch" style="display: flex; align-items: center; gap: 2rem">
+					<div style="display: flex; align-items: center; gap: 2rem">
 						<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
 							&ldquo;If I had an AI box, I could tell it to line up all my headers from cell A1
 							to A20 and just send it. That would save so much time. That would be a life
@@ -448,7 +507,7 @@
 							style="flex: 1 1 55%; max-width: 55%; height: 100%; width: auto; object-fit: contain; border-radius: 4px"
 						/>
 					</div>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Myron is a college professor in Louisiana who has written a book. No perception
 							problems &mdash; it's purely about movement, from a spine injury 23 years ago.
@@ -464,12 +523,12 @@
 						</p>
 					</aside>
 				</section>
+			</section>
 
-				<!-- ===================== SECTION 3: LIMITS OF ADAPTABILITY (~3 min) ===================== -->
-
-				<section>
+			<section data-act="limits-of-adaptability">
+				<section data-scene="todays-model">
 					<h2>Today's model</h2>
-					<svg class="r-stretch" viewBox="0 0 640 460" style="max-height: 480px">
+					<svg viewBox="0 0 640 460" style="max-height: 480px; max-width: 100%; height: auto;">
 						<!-- Left stack: screen reader -->
 						<text x="188" y="210" text-anchor="middle" font-size="26" fill="var(--muted-color)">
 							&#8942;
@@ -570,7 +629,7 @@
 						</text>
 					</svg>
 
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Today's model: the vendor ships one interface, and you either live with it or stack
 							adaptation layers on top &mdash; screen reader, dark mode, zoom, larger fonts. And those
@@ -584,7 +643,7 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="opportunities">
 					<h2>Opportunities</h2>
 					<ul>
 						<li>Setups are very personalized</li>
@@ -592,7 +651,7 @@
 						<li>Configuration costs energy</li>
 						<li>Standardization has limits</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Let's brush aside all the &ldquo;normal&rdquo; AI problems, like reliability &mdash;
 							others will solve that, and it's the same problem for disabled and non-disabled
@@ -607,21 +666,21 @@
 						<p>So for the next half of our talk, we want to propose a new concept&hellip;</p>
 					</aside>
 				</section>
+			</section>
 
-				<!-- ===================== SECTION 4: PERSONALIZATION OVER ADAPTABILITY (~3 min) ===================== -->
-
-				<section>
+			<section data-act="personalization-over-adaptability">
+				<section data-scene="your-ui-is-not-my-ui-divider">
 					<h2>Your UI is not my UI</h2>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						Section 4 (~3 min). Our core proposal: AI-generated bespoke interfaces. Instead of
 						adapting one UI for everyone, generate a unique UI for each person.
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="your-ui-is-not-my-ui-personalization">
 					<h2>Your UI is not my UI</h2>
 					<h4>Personalization over adaptability</h4>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							We're proposing this because of what the research forced on us. Everyone we spoke to
 							had done real work to adapt a standard interface &mdash; and for every one of them it
@@ -640,7 +699,7 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="your-ui-is-not-my-ui-create-specific">
 					<h2>Your UI is not my UI</h2>
 					<h4>Create specific UIs on the fly for your needs</h4>
 					<ul>
@@ -651,7 +710,7 @@
 						<li>Adapt to your state of mind</li>
 						<li>Adapt to your external environment</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Where this goes: launching an app is creating an app, just for you, in that moment
 							&mdash; generated on the fly instead of adapted with layered tools, and disposed of
@@ -670,7 +729,7 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="demo-two-people">
 					<h2>Demo: same task, two people</h2>
 					<div style="display: flex; gap: 1.5rem; text-align: left; font-size: 0.65em">
 						<div style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
@@ -690,27 +749,27 @@
 							<p><em>[ placeholder &mdash; large keyboard-first targets ]</em></p>
 						</div>
 					</div>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						PLACEHOLDER SLIDE: swap these two panels for the real split-screen animation once it's
 						ready. Same underlying task (using the DeepL translation UI), generated as two
 						completely different interfaces &mdash; tailored to two humans with vastly different
 						requirements, preferences, and situational needs.
 					</aside>
 				</section>
+			</section>
 
-				<!-- ===================== SECTION 5: EMPATHY IS OUR POINT (~5 min) ===================== -->
-				
-				<section>
+			<section data-act="empathy-is-our-point">
+				<section data-scene="ui-equals-f-intent-empathy">
 					<h2>[UI] = f([Intent], [Empathy])</h2>
 				</section>
 
-				<section>
+				<section data-scene="observations-of-existing-state">
 					<h2>Observations of existing state. The industry is already doing this</h2>
 					<ul>
 						<li><strong>Google Search AI Mode</strong> &mdash; custom layouts assembled per query, not served from a template</li>
 						<li><strong>Artifacts</strong> &mdash; every major AI tool now generates working interfaces inline, on demand</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>This empathy is the missing piece.</p>
 						<p>
 							<em>what</em> they take into account: your <em>intent</em> &mdash; the query,
@@ -721,21 +780,21 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="what-is-gained">
 					<h2>What is gained?</h2>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>Rose doesn't need a dark mode plugin, myron doesn't need to rely on the OS's voice control grid, and any other frustrations that come with the plugin toil.</p>
 						<p>Our users are not at the mercy of the developers following the standards and hoping it all works out on their end.</p>
 						<p>The drawbacks of the existing single UI bending to the needs of the user are no longer present.</p>
 						<p>(There is no spoon moment) Its not that we are trying to bend the UI, its that you have to remember truth, there is no UI. </p>
 					</aside>
 				</section>
+			</section>
 
-				<!-- ===================== SECTION 6: WHAT IF LAUNCHING AN APP MEANS CREATING AN APP (good and bad) (~5 min) ===================== -->
-
-				<section>
+			<section data-act="launching-is-creating">
+				<section data-scene="what-if-launching-an-app-means-creating-an-app">
 					<h2>What if launching an app means creating an app?</h2>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>Operating systems such as Omarchy have reduced the interface to an ongoing terminal chat.</p>
 						<p>It's in the best interest of these products to be empathetic and we conclude by making the case that personalized interfaces are therefore an inevitable leap.</p>
 						<p>We broaden the scope beyond disability. Everyone arrives with
@@ -745,14 +804,14 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="focus-shifts-from-ui-to-api">
 					<h2>Focus shifts from UI to API</h2>
 					<ul>
 						<li>Launching an app is programming an app</li>
 						<li>Focus on content and functionality (APIs), not UI</li>
 						<li>The interface becomes disposable &mdash; generated fresh, every time</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							We stop designing <em>screens</em> and start designing <em>outcomes</em>. The question
 							flips from &ldquo;what should this screen look like?&rdquo; to &ldquo;what is this
@@ -760,19 +819,19 @@
 						</p>
 						<p>
 							A second version: instead of generating a UI <em>for</em> you, the app just exposes its
-							functionality &mdash; an API &mdash; and you bring your own interaction layer. 
+							functionality &mdash; an API &mdash; and you bring your own interaction layer.
 						</p>
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="applications-are-no-longer-a-commodity">
 					<h2>Applications are no longer a commodity</h2>
 					<ul>
 						<li>A hand-crafted UI stops being the default way software is distributed</li>
 						<li>Disabled users are just the ones suffering most from this today</li>
 						<li>Personalized UIs would help everyone, not only accessibility use cases</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Why have we always had one-size-fits-all interfaces? It's not a design failure &mdash;
 							it's economics. Building a custom app for every individual need was never affordable,
@@ -807,17 +866,17 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="revisiting-8-months-later">
 					<h2>Revisiting: 8 months later</h2>
 					<p>Rose tried to build a bespoke Steam library manager</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						Section 6 (~3 min). Our initial research for this started internally, and 8 months
 						later we revisited it in preparation for this talk. Rose attempted to build
 						a bespoke manager application for her Steam library.
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="it-didnt-really-work-out">
 					<h2>It didn't really work out</h2>
 					<ul>
 						<li>Lack of support</li>
@@ -826,7 +885,7 @@
 						<li>Too much tinkering required</li>
 					</ul>
 					<p><small>We replaced configuration toil with developer toil.</small></p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Don't rush past this &mdash; it's the most honest moment in the talk. The bespoke,
 							personal interface we just proposed <em>failed</em> for the exact person we proposed it
@@ -842,10 +901,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="is-roses-failure-the-idea-or-the-moment">
 					<h2>Is Rose's failure the idea, or the moment?</h2>
 					<p>We think it's the moment.</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Is that failure telling us the <em>idea</em> is wrong, or that we're just early? We
 							think it's the moment &mdash; and we have evidence, not just hope. Google Research found
@@ -861,7 +920,7 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="whose-context-is-it">
 					<h2>Whose context is it?</h2>
 					<ul>
 						<li>A UI generated <em>for you</em> needs to know a lot <em>about</em> you</li>
@@ -869,7 +928,7 @@
 						<li>Generated interfaces only work if that context can stay private</li>
 						<li>On-device / local AI is the path that keeps it that way</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							A tension we have to name: everything we've proposed depends on the interface knowing
 							your context &mdash; your task, your energy budget, that you steer a wheelchair with
@@ -884,7 +943,7 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="but-a-ui-that-keeps-changing-breaks-screen-readers">
 					<h2>&ldquo;But a UI that keeps changing breaks screen readers.&rdquo;</h2>
 					<h4>Personal is not the same as volatile</h4>
 					<ul>
@@ -893,7 +952,7 @@
 						<li>Generated <em>once for you</em> &mdash; then remembered and reused</li>
 						<li>Stability <em>is</em> empathy for anyone who navigates by memory</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							The sharpest objection, met head-on: if interfaces are generated fresh every time,
 							don't you destroy the thing a screen-reader user relies on &mdash; consistency, muscle
@@ -914,17 +973,17 @@
 						</p>
 					</aside>
 				</section>
+			</section>
 
-				<!-- ===================== CLOSING ===================== -->
-
-				<section>
+			<section data-act="closing">
+				<section data-scene="key-takeaways">
 					<h2>Key takeaways</h2>
 					<ul>
 						<li>Today we adapt <em>one majority interface</em> &mdash; it can't serve the variety of humans</li>
 						<li>An interface should account for both the <em>task</em> and the <em>human</em> doing it</li>
 						<li>With generated UIs, that's economically viable for the first time in history</li>
 					</ul>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							If you take one thing: the generated-interface future is coming either way &mdash; it's
 							already shipping, and Google Research measured people preferring generated interfaces
@@ -939,13 +998,13 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="back-to-sinead">
 					<h2>Back to Sinead</h2>
 					<p>
 						No fighting plugins. No dark grid she can't see. No setup that collapses when she
 						opens a lecture. Just an interface that already understands her &mdash; and already fits.
 					</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Let's end where we started &mdash; with a person, not a paradigm. Remember Sinead:
 							the bolding plugin fighting the voice-control grid, the grid lines invisible under
@@ -965,25 +1024,25 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="thank-you">
 					<h2>Thank you!</h2>
 				</section>
+			</section>
 
-				<!-- ===================== BACKUP: Q&A ANTICIPATED OBJECTIONS ===================== -->
-
-				<section>
+			<section data-act="backup-qa">
+				<section data-scene="backup-qa-intro">
 					<h2><small>Backup &mdash; Q&amp;A</small></h2>
 					<p>Anticipated objections</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						Backup slides for likely questions &mdash; not part of the main flow. Jump here if asked
 						about ownership/agency, fragmentation, or adoption.
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="doesnt-this-just-hand-more-power">
 					<h4>&ldquo;Doesn't this just hand more power to whoever owns the AI?&rdquo;</h4>
 					<p>A generated UI can be empathetic to <em>you</em> &mdash; or to whoever <em>owns</em> it.</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							There's a plausible future where your agent generates the interface and you never see
 							the underlying app &mdash; the &ldquo;buy&rdquo; button drawn for you by the platform,
@@ -995,10 +1054,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="if-everyones-ui-is-different">
 					<h4>&ldquo;If everyone's UI is different, don't we lose common ground?&rdquo;</h4>
 					<p>Real cost. Keep the periphery visible &mdash; personal shouldn't mean sealed.</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							Yes &mdash; you and I could buy the same thing and never know, because our interfaces
 							showed it differently. And a UI that only shows what it thinks you need is a filter
@@ -1010,10 +1069,10 @@
 					</aside>
 				</section>
 
-				<section>
+				<section data-scene="will-people-actually-use-this">
 					<h4>&ldquo;Will people actually use this, or just accept the default?&rdquo;</h4>
 					<p>The empathy framing sidesteps it &mdash; the default already fits.</p>
-					<aside class="notes">
+					<aside class="notes" hidden>
 						<p>
 							People still use untitled.txt over more powerful tools because customizing has an
 							upfront cost &mdash; &ldquo;I'm busy, I just need to finish.&rdquo; So will users shape
@@ -1025,21 +1084,16 @@
 						</p>
 					</aside>
 				</section>
-			</div>
-		</div>
+			</section>
+		</main>
 
-		<script src="dist/reveal.js"></script>
-		<script src="dist/plugin/notes.js"></script>
-		<script src="dist/plugin/highlight.js"></script>
-		<script>
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				center: true,
-				hash: true,
+		<button id="notes-toggle" type="button" aria-expanded="false" aria-controls="notes-drawer">
+			[ NOTES &#9656; ]
+		</button>
+		<aside id="notes-drawer">
+			<div id="notes-drawer-content"></div>
+		</aside>
 
-				plugins: [RevealNotes, RevealHighlight],
-			});
-		</script>
+		<script type="module" src="/js/site.js"></script>
 	</body>
 </html>
