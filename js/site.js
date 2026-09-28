@@ -76,3 +76,32 @@ if (diagramSection) {
 		},
 	});
 }
+
+ScrollTrigger.matchMedia({
+	'(min-width: 700px)': function () {
+		const demoSection = document.querySelector('[data-scene="demo-two-people"]');
+		if (!demoSection) return;
+		const panelA = demoSection.querySelector('.demo-panel-a');
+		const panelB = demoSection.querySelector('.demo-panel-b');
+
+		gsap.set(panelA, { xPercent: -110 });
+		gsap.set(panelB, { xPercent: 110 });
+
+		ScrollTrigger.create({
+			trigger: demoSection,
+			start: 'top top',
+			end: '+=500',
+			pin: true,
+			scrub: true,
+			animation: gsap.to([panelA, panelB], {
+				xPercent: 0,
+				ease: 'none',
+			}),
+		});
+	},
+	'(max-width: 699px)': function () {
+		// Below the breakpoint: no pin, no split entrance — the baseline
+		// scene reveal from Task 4 already handles this scene like any
+		// other, panels stack vertically via existing responsive CSS.
+	},
+});

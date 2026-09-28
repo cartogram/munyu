@@ -200,6 +200,17 @@
 				padding-inline: 1.5rem;
 			}
 
+			.demo-panels {
+				display: flex;
+				gap: 1.5rem;
+			}
+
+			@media (max-width: 699px) {
+				.demo-panels {
+					flex-direction: column;
+				}
+			}
+
 			#notes-toggle {
 				position: fixed;
 				bottom: 1.5rem;
@@ -741,8 +752,8 @@
 
 				<section data-scene="demo-two-people">
 					<h2>Demo: same task, two people</h2>
-					<div style="display: flex; gap: 1.5rem; text-align: left; font-size: 0.65em">
-						<div style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
+					<div class="demo-panels" style="text-align: left; font-size: 0.65em">
+						<div class="demo-panel demo-panel-a" style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
 							<h4 style="margin-top: 0">Person A</h4>
 							<p>
 								Stressed by long paragraphs, prefers dark backgrounds, standing on a subway with
@@ -750,7 +761,7 @@
 							</p>
 							<p><em>[ placeholder &mdash; calm, minimal, dark-mode UI ]</em></p>
 						</div>
-						<div style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
+						<div class="demo-panel demo-panel-b" style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
 							<h4 style="margin-top: 0">Person B</h4>
 							<p>
 								Has a tremor, avoids precise pointer input, prefers keyboard interactions, at home
