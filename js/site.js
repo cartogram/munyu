@@ -51,3 +51,28 @@ notesToggle.addEventListener('click', () => {
 	notesToggle.setAttribute('aria-expanded', String(isOpen));
 	if (isOpen) renderDrawer();
 });
+
+const diagramSection = document.querySelector('[data-scene="todays-model"]');
+if (diagramSection) {
+	const pieces = diagramSection.querySelectorAll('.diagram-piece');
+	gsap.set(pieces, { opacity: 0, y: 12 });
+
+	ScrollTrigger.create({
+		trigger: diagramSection,
+		start: 'top top',
+		end: '+=600',
+		pin: true,
+		onEnter: () => {
+			gsap.to(pieces, {
+				opacity: 1,
+				y: 0,
+				duration: 0.4,
+				stagger: 0.2,
+				ease: 'power1.out',
+			});
+		},
+		onLeaveBack: () => {
+			gsap.set(pieces, { opacity: 0, y: 12 });
+		},
+	});
+}
