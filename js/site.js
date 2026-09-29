@@ -2,21 +2,123 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
-const scenes = gsap.utils.toArray('main section[data-scene]');
+// Scenes that hold while their pieces appear one per beat, in DOM order.
+const STEPPED_SCENES = {
+	'todays-model': (scene) => scene.querySelectorAll('.diagram-piece'),
+	'demo-two-people': (scene) => scene.querySelectorAll('.demo-panel'),
+};
+const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
+const STEP_FADE = 0.1; // share of a step spent fading its piece in
 
-scenes.forEach((scene) => {
-	gsap.to(scene, {
-		opacity: 1,
-		y: 0,
-		duration: 0.6,
-		ease: 'power2.out',
-		scrollTrigger: {
-			trigger: scene,
-			start: 'top 75%',
-			toggleActions: 'play none none reverse',
-		},
+const acts = gsap.utils.toArray('main .act-panel');
+
+// Rebuilt with every setup(). A beat's scroll position is its trigger's start
+// plus its timeline time: durations are in scroll pixels, so 1s = 1px.
+let beats = []; // { id, scene, trigger, time }
+let freeRanges = []; // { trigger, from, to } — tall scenes, scrolled through freely
+
+// One timeline per act: fake-scroll the inner content up to each scene, hold
+// for stepped reveals, then (except for the last act) hold one card height
+// while the next card slides over. The act is pinned for the whole timeline;
+// no scene inside it is pinned on its own, so nothing ever sits inside a
+// transformed ancestor.
+function buildAct(panel, isLast) {
+	const inner = panel.querySelector('.act-panel-inner');
+	const act = panel.dataset.act;
+	const cardHeight = panel.clientHeight;
+	const maxOffset = Math.max(0, inner.offsetHeight - cardHeight);
+	const tl = gsap.timeline();
+	const actBeats = [{ id: act, scene: null, time: 0 }];
+	const actRanges = [];
+	let offset = 0;
+
+	const scrollInnerTo = (target) => {
+		if (target <= offset) return;
+		tl.to(inner, { y: -target, duration: target - offset, ease: 'none' });
+		offset = target;
+	};
+
+	panel.querySelectorAll('section[data-scene]').forEach((scene) => {
+		const id = `${act}/${scene.dataset.scene}`;
+		scrollInnerTo(Math.min(scene.offsetTop, maxOffset));
+		actBeats.push({ id, scene, time: tl.duration() });
+
+		const pieces = STEPPED_SCENES[scene.dataset.scene]?.(scene) ?? [];
+		pieces.forEach((piece, i) => {
+			const hold = cardHeight * STEP_HOLD;
+			tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
+			tl.to({}, { duration: hold * (1 - STEP_FADE) });
+			actBeats.push({ id: `${id}/${i + 1}`, scene, time: tl.duration() });
+		});
+
+		const bottom = Math.min(scene.offsetTop + scene.offsetHeight - cardHeight, maxOffset);
+		if (bottom > offset + 1) {
+			const from = tl.duration();
+			scrollInnerTo(bottom);
+			actRanges.push({ from, to: tl.duration() });
+		}
 	});
+	scrollInnerTo(maxOffset);
+
+	const travel = tl.duration();
+	if (!isLast) {
+		// pinSpacing is off so the next card overlaps; this margin delays its
+		// arrival until the inner content has finished fake-scrolling.
+		gsap.set(panel, { marginBottom: travel });
+		tl.to({}, { duration: cardHeight });
+	}
+
+	const trigger = ScrollTrigger.create({
+		trigger: panel,
+		start: 'top top',
+		end: `+=${tl.duration()}`,
+		pin: true,
+		pinSpacing: isLast,
+		scrub: true,
+		animation: tl,
+	});
+
+	actBeats.forEach((beat) => beats.push({ ...beat, trigger }));
+	actRanges.forEach((range) => freeRanges.push({ ...range, trigger }));
+}
+
+let mm = null;
+
+function setup() {
+	beats = [];
+	freeRanges = [];
+	mm = gsap.matchMedia();
+	mm.add({ always: '(min-width: 0px)', reduceMotion: '(prefers-reduced-motion: reduce)' }, () => {
+		acts.forEach((panel, i) => buildAct(panel, i === acts.length - 1));
+		ScrollTrigger.refresh();
+	});
+}
+
+function rebuild() {
+	mm?.revert();
+	setup();
+}
+
+setup();
+
+// Images and video metadata change scene heights after first layout.
+window.addEventListener('load', rebuild);
+
+let lastWidth = window.innerWidth;
+let lastHeight = window.innerHeight;
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+	clearTimeout(resizeTimer);
+	resizeTimer = setTimeout(() => {
+		const widthChanged = window.innerWidth !== lastWidth;
+		const heightChanged = Math.abs(window.innerHeight - lastHeight) > 120;
+		if (!widthChanged && !heightChanged) return;
+		lastWidth = window.innerWidth;
+		lastHeight = window.innerHeight;
+		rebuild();
+	}, 200);
 });
 
 const notesToggle = document.getElementById('notes-toggle');
@@ -29,117 +131,40 @@ function renderDrawer() {
 	notesDrawerContent.textContent = currentSceneNotes || 'No notes for this section.';
 }
 
-scenes.forEach((scene) => {
-	const notesEl = scene.querySelector('aside.notes');
-	ScrollTrigger.create({
-		trigger: scene,
-		start: 'top center',
-		end: 'bottom center',
-		onEnter: () => {
-			currentSceneNotes = notesEl ? notesEl.textContent.trim() : null;
-			if (notesDrawer.classList.contains('is-open')) renderDrawer();
-		},
-		onEnterBack: () => {
-			currentSceneNotes = notesEl ? notesEl.textContent.trim() : null;
-			if (notesDrawer.classList.contains('is-open')) renderDrawer();
-		},
-	});
-});
+const beatPosition = (beat) => beat.trigger.start + beat.time;
+
+// Beats are pushed act by act in timeline order, so they're sorted by position.
+function currentBeat() {
+	let current = beats[0];
+	for (const beat of beats) {
+		if (beatPosition(beat) > window.scrollY + 2) break;
+		current = beat;
+	}
+	return current;
+}
+
+let currentScene;
+
+function updateCurrentScene() {
+	const scene = currentBeat()?.scene ?? null;
+	if (scene === currentScene) return;
+	currentScene = scene;
+	const notesEl = scene?.querySelector('aside.notes');
+	currentSceneNotes = notesEl ? notesEl.textContent.trim() : null;
+	if (notesDrawer.classList.contains('is-open')) renderDrawer();
+}
+
+window.addEventListener('scroll', updateCurrentScene, { passive: true });
 
 notesToggle.addEventListener('click', () => {
 	const isOpen = notesDrawer.classList.toggle('is-open');
 	notesToggle.setAttribute('aria-expanded', String(isOpen));
-	if (isOpen) renderDrawer();
-});
-
-const INTERACTIVE_TAGS = ['VIDEO', 'AUDIO', 'INPUT', 'TEXTAREA', 'BUTTON'];
-
-function isInteractiveFocus() {
-	const active = document.activeElement;
-	if (!active) return false;
-	if (INTERACTIVE_TAGS.includes(active.tagName)) return true;
-	if (active.closest('#notes-drawer')) return true;
-	return false;
-}
-
-// Scene's scroll position with its reveal offset (gsap `y`) removed, so a
-// not-yet-revealed scene isn't targeted 24px low.
-function sceneScrollTop(scene) {
-	return scene.getBoundingClientRect().top + window.scrollY - gsap.getProperty(scene, 'y');
-}
-
-// Next/previous scene is derived from positions at keypress time rather than
-// from the center-line notes triggers: those can mark a scene "current" that
-// sits below the viewport top, which made navigation skip scenes going down
-// and get stuck going up.
-window.addEventListener('keydown', (event) => {
-	if (isInteractiveFocus()) return;
-
-	const y = window.scrollY;
-	const tops = scenes.map(sceneScrollTop);
-	let targetIndex = -1;
-	if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
-		targetIndex = tops.findIndex((top) => top > y + 2);
-	} else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
-		targetIndex = tops.findLastIndex((top) => top < y - 2);
-	}
-
-	if (targetIndex !== -1) {
-		event.preventDefault();
-		window.scrollTo({ top: tops[targetIndex], behavior: 'smooth' });
+	if (isOpen) {
+		updateCurrentScene();
+		renderDrawer();
 	}
 });
 
-const diagramSection = document.querySelector('[data-scene="todays-model"]');
-if (diagramSection) {
-	const pieces = diagramSection.querySelectorAll('.diagram-piece');
-	gsap.set(pieces, { opacity: 0, y: 12 });
-
-	ScrollTrigger.create({
-		trigger: diagramSection,
-		start: 'top top',
-		end: '+=600',
-		pin: true,
-		onEnter: () => {
-			gsap.to(pieces, {
-				opacity: 1,
-				y: 0,
-				duration: 0.4,
-				stagger: 0.2,
-				ease: 'power1.out',
-			});
-		},
-		onLeaveBack: () => {
-			gsap.set(pieces, { opacity: 0, y: 12 });
-		},
-	});
+if (import.meta.env?.DEV) {
+	window.__deck = { beats: () => beats, freeRanges: () => freeRanges, ScrollTrigger };
 }
-
-ScrollTrigger.matchMedia({
-	'(min-width: 700px)': function () {
-		const demoSection = document.querySelector('[data-scene="demo-two-people"]');
-		if (!demoSection) return;
-		const panelA = demoSection.querySelector('.demo-panel-a');
-		const panelB = demoSection.querySelector('.demo-panel-b');
-
-		gsap.set(panelA, { xPercent: -110 });
-		gsap.set(panelB, { xPercent: 110 });
-
-		ScrollTrigger.create({
-			trigger: demoSection,
-			start: 'top top',
-			end: '+=500',
-			pin: true,
-			scrub: true,
-			animation: gsap.to([panelA, panelB], {
-				xPercent: 0,
-				ease: 'none',
-			}),
-		});
-	},
-	'(max-width: 699px)': function () {
-		// Below the breakpoint: no pin, no split entrance — the baseline
-		// scene reveal from Task 4 already handles this scene like any
-		// other, panels stack vertically via existing responsive CSS.
-	},
-});

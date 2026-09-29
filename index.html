@@ -15,206 +15,207 @@
 
 		<link rel="stylesheet" href="dist/reset.css" />
 
-		<!-- Theme: blueprint/technical-manual look, styled after makingsoftware.com -->
+		<!-- Theme: GreenSock "Slides Pinning" pen structure — white 100vh act cards,
+		     one AAA named colour per act. See docs/plans/2026-09-29-pen-cards-design.md -->
 		<style>
-			@font-face {
-				font-family: 'Departure Mono';
-				src:
-					url('fonts/departure-mono/DepartureMono-Regular.woff2') format('woff2'),
-					url('fonts/departure-mono/DepartureMono-Regular.woff') format('woff');
-				font-weight: 500;
-				font-style: normal;
-				font-display: swap;
-			}
-
 			:root {
-				/* cobalt scale, sampled from makingsoftware.com */
-				--ink-700: #0026c9;
-				--ink-600: #002ef4;
-				--ink-500: #155cf0;
-				--ink-400: #5f8bf5;
-				--ink-300: #9bb6f7;
-				--ink-200: #cbdafb;
-				--ink-100: #e6ecfd;
-
-				/* one bold, high-contrast accent per act */
-				--accent-hypothesis: #002ef4;
-				--accent-user-research: #c30063;
-				--accent-limits-of-adaptability: #a30000;
-				--accent-personalization-over-adaptability: #0a7d3c;
-				--accent-empathy-is-our-point: #6b21d8;
-				--accent-launching-is-creating: #a84400;
-				--accent-closing: #1a1a1a;
-				--accent-backup-qa: #007a72;
-
-				--stone-950: #241f1b;
-				--stone-600: #6b6459;
-				--stone-300: #d8d3cb;
-
-				--r-background-color: #fbfbfb;
-				--r-main-color: var(--stone-950);
-				--r-heading-color: var(--ink-600);
-
-				--r-main-font: 'Helvetica Neue', Helvetica, Arial, 'Liberation Sans', sans-serif;
-				--r-mono-font: 'Departure Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-				--r-heading-font: var(--r-main-font);
-				--r-heading-font-weight: 700;
-				--r-heading-text-transform: none;
-				--r-heading-letter-spacing: -0.02em;
-				--r-heading-line-height: 1.1;
-
-				--r-link-color: var(--ink-600);
-				--r-link-color-hover: var(--ink-500);
-				--r-selection-background-color: var(--ink-200);
-				--r-selection-color: var(--stone-950);
-
-				--muted-color: var(--stone-600);
+				--font-sans: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				--hairline: rgba(0, 0, 0, 0.14);
 			}
 
 			body {
+				background: #fff;
+				color: #000;
+				font-family: var(--font-sans);
+				overflow-x: hidden;
+			}
+
+			/* one named colour per act, each ≥ 7:1 (WCAG AAA) on white */
+			.act-panel[data-act='hypothesis'] { --act-color: mediumblue; }
+			.act-panel[data-act='user-research'] { --act-color: darkmagenta; }
+			.act-panel[data-act='limits-of-adaptability'] { --act-color: darkred; }
+			.act-panel[data-act='personalization-over-adaptability'] { --act-color: darkgreen; }
+			.act-panel[data-act='empathy-is-our-point'] { --act-color: rebeccapurple; }
+			.act-panel[data-act='launching-is-creating'] { --act-color: saddlebrown; }
+			.act-panel[data-act='closing'] { --act-color: black; }
+			.act-panel[data-act='backup-qa'] { --act-color: darkslategray; }
+
+			.act-panel {
+				/* read by the inline "Today's model" SVG */
+				--r-background-color: #fff;
+				--r-main-color: var(--act-color);
+				--r-link-color: var(--act-color);
+				--muted-color: var(--act-color);
+
 				position: relative;
+				width: 100%;
+				height: 100vh;
+				box-sizing: border-box;
+				/* clip, not hidden: focusing a control inside must not scroll the card */
+				overflow: clip;
+				background: #fff;
+				color: var(--act-color);
+				border-radius: 10px;
+				font-weight: 600;
+				font-size: 1.5em;
+				/* every card is white, so the incoming card needs a visible edge */
+				box-shadow:
+					0 0 0 1px var(--hairline),
+					0 -6px 18px rgba(0, 0, 0, 0.06);
+			}
+
+			.act-panel-inner {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			/* frames: the act opener and every scene fill at least one viewport */
+			.act-opener,
+			main section[data-scene] {
+				box-sizing: border-box;
+				width: 100%;
 				min-height: 100vh;
-				background-color: var(--r-background-color);
-				background-image: radial-gradient(var(--ink-300) 1.4px, transparent 1.5px);
-				background-size: 22px 22px;
-				font-family: var(--r-main-font);
+				padding: 3rem 1.5rem;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				text-align: center;
 			}
 
-			/* corner tick marks, echoing the plate frames on makingsoftware.com */
-			body::before,
-			body::after {
-				content: '';
-				position: absolute;
-				width: 16px;
-				height: 16px;
-				border: 1px solid var(--ink-500);
-				opacity: 0.45;
-				pointer-events: none;
-				z-index: 20;
+			.act-title {
+				font-size: max(4rem, min(12vw + 1rem, 16rem));
+				font-weight: 600;
+				line-height: 0.95;
+				letter-spacing: -0.03em;
+				margin: 0 auto;
+				max-width: 12ch;
+				hyphens: auto;
+				overflow-wrap: break-word;
 			}
 
-			body::before {
-				top: 24px;
-				left: 24px;
-				border-right: none;
-				border-bottom: none;
+			main h2 {
+				font-size: 1.8em;
+				line-height: 1.1;
+				letter-spacing: -0.02em;
+				max-width: 20ch;
+				margin: 0 auto 0.6em;
 			}
 
-			body::after {
-				bottom: 24px;
-				right: 24px;
-				border-left: none;
-				border-top: none;
-			}
-
-			h1,
-			h2,
-			h3 {
-				max-width: 88%;
-				margin-left: auto;
-				margin-right: auto;
-			}
-
-			main h1,
-			main h2,
 			main h3 {
-				color: var(--act-accent, var(--ink-600));
+				font-size: 1.25em;
+				margin: 0 auto 0.5em;
 			}
 
-			h4 {
-				max-width: 88%;
-				margin-left: auto;
-				margin-right: auto;
-				font-family: var(--r-mono-font);
-				font-size: 0.42em;
-				font-weight: 500;
+			main h4 {
+				font-size: 0.7em;
 				text-transform: uppercase;
 				letter-spacing: 0.06em;
-				color: var(--muted-color);
+				max-width: 40ch;
+				margin: 0 auto 1em;
 			}
 
-			main small,
-			main .fig-label {
-				font-family: var(--r-mono-font);
-				font-size: 0.5em;
-				text-transform: uppercase;
-				letter-spacing: 0.06em;
-				color: var(--muted-color);
-			}
-
+			/* a fit-content block centred in the 40ch column: one line reads as
+			   centred, several lines read as left-aligned */
+			main p,
+			main ul,
 			main blockquote {
-				width: 80%;
-				padding: 0.1em 0 0.1em 1.2em;
-				border-left: 2px solid var(--act-accent, var(--ink-500));
-				background: none;
-				box-shadow: none;
-				font-style: italic;
+				width: fit-content;
+				max-width: 40ch;
+				margin: 0 auto 0.8em;
 				text-align: left;
+				line-height: 1.35;
 			}
 
 			main ul {
-				width: fit-content;
-				margin-inline: auto;
-				text-align: left;
+				padding-left: 1.2em;
+				list-style: disc;
 			}
 
-			main ul li::marker {
-				font-family: var(--r-mono-font);
-				color: var(--act-accent, var(--ink-500));
+			main li + li {
+				margin-top: 0.3em;
 			}
 
+			main blockquote {
+				padding-left: 1em;
+				border-left: 3px solid currentColor;
+				font-style: italic;
+				font-weight: 500;
+			}
+
+			main small {
+				font-size: 0.65em;
+				font-weight: 500;
+			}
+
+			main a {
+				color: inherit;
+				text-decoration: underline;
+				text-underline-offset: 0.15em;
+			}
+
+			main img,
 			main video {
-				border-radius: 2px;
-				border: 1px solid var(--ink-300);
+				max-width: 100%;
+				max-height: 70vh;
+				border-radius: 8px;
 			}
 
-			main img {
-				border: 1px solid var(--ink-300);
-			}
-
-			main {
-				max-width: 700px;
-				margin: 0 auto;
-				padding: 4rem 1.5rem;
-			}
-
-			main section[data-act] {
-				padding-block: 4rem;
-			}
-
-			.act-panel[data-act="hypothesis"] { --act-accent: var(--accent-hypothesis); }
-			.act-panel[data-act="user-research"] { --act-accent: var(--accent-user-research); }
-			.act-panel[data-act="limits-of-adaptability"] { --act-accent: var(--accent-limits-of-adaptability); }
-			.act-panel[data-act="personalization-over-adaptability"] { --act-accent: var(--accent-personalization-over-adaptability); }
-			.act-panel[data-act="empathy-is-our-point"] { --act-accent: var(--accent-empathy-is-our-point); }
-			.act-panel[data-act="launching-is-creating"] { --act-accent: var(--accent-launching-is-creating); }
-			.act-panel[data-act="closing"] { --act-accent: var(--accent-closing); }
-			.act-panel[data-act="backup-qa"] { --act-accent: var(--accent-backup-qa); }
-
-			/* margin-based spacing instead of flex `gap`: GSAP ScrollTrigger's
-			   pin-spacer sizing is unreliable inside a flex parent, which was
-			   causing the two pinned scenes to overlap the following content. */
-			main .act-panel-inner > section[data-scene]:not(:last-child) {
-				margin-bottom: 6rem;
-			}
-
-			main section[data-scene] {
-				opacity: 0;
-				transform: translateY(24px);
+			main svg {
+				max-width: 100%;
+				height: auto;
 			}
 
 			main section[data-scene].is-wide {
-				max-width: none;
-				margin-inline: calc(50% - 50vw);
 				padding-inline: 1.5rem;
+			}
+
+			main section[data-scene].is-wide > svg {
+				width: min(900px, 100%);
+			}
+
+			/* persona scenes: interview quote beside a screenshot or clip */
+			.persona {
+				display: flex;
+				align-items: center;
+				gap: 2.5rem;
+				width: min(1100px, 100%);
+			}
+
+			.persona > blockquote {
+				flex: 1 1 40%;
+				margin: 0;
+				font-size: 0.8em;
+			}
+
+			@media (max-width: 699px) {
+				.persona {
+					flex-direction: column;
+				}
+
+				.persona > img,
+				.persona > video {
+					max-width: 100% !important;
+				}
 			}
 
 			.demo-panels {
 				display: flex;
 				gap: 1.5rem;
+				width: min(1000px, 100%);
+			}
+
+			.demo-panel > * {
+				max-width: none;
+				margin-inline: 0;
 			}
 
 			@media (max-width: 699px) {
+				.act-title {
+					font-size: clamp(2.25rem, 9vw, 16rem);
+				}
+
 				.demo-panels {
 					flex-direction: column;
 				}
@@ -231,13 +232,13 @@
 				bottom: 1.5rem;
 				right: 1.5rem;
 				z-index: 30;
-				font-family: var(--r-mono-font);
-				font-size: 0.75rem;
-				letter-spacing: 0.06em;
-				text-transform: uppercase;
-				background: var(--r-background-color);
-				color: var(--ink-600);
-				border: 1px solid var(--ink-500);
+				font-family: var(--font-sans);
+				font-size: 0.8rem;
+				font-weight: 600;
+				background: #fff;
+				color: #000;
+				border: 1px solid #000;
+				border-radius: 6px;
 				padding: 0.5em 0.9em;
 				cursor: pointer;
 			}
@@ -248,24 +249,22 @@
 				right: 0;
 				height: 100%;
 				width: min(360px, 90vw);
-				background: var(--r-background-color);
-				border-left: 1px solid var(--ink-300);
+				box-sizing: border-box;
+				background: #fff;
+				color: #000;
+				border-left: 1px solid #000;
 				padding: 5rem 1.5rem 1.5rem;
 				overflow-y: auto;
 				transform: translateX(100%);
 				transition: transform 0.25s ease;
 				z-index: 25;
-				font-family: var(--r-mono-font);
-				font-size: 0.8rem;
+				font-family: var(--font-sans);
+				font-size: 0.95rem;
 				line-height: 1.5;
 			}
 
 			#notes-drawer.is-open {
 				transform: translateX(0);
-			}
-
-			#notes-drawer[hidden] {
-				display: block; /* override default display:none so the transition can animate out; visibility handled by is-open + off-screen transform instead */
 			}
 		</style>
 	</head>
@@ -274,6 +273,10 @@
 		<main>
 			<section data-act="hypothesis" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">Hypothesis</h1>
+					</header>
+
 					<section data-scene="your-ui-is-not-my-ui-title">
 						<h2>Your UI is not my UI</h2>
 						<p><small>Simon Lenz, Matthew Seccafien</small></p>
@@ -326,6 +329,10 @@
 
 			<section data-act="user-research" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">User research</h1>
+					</header>
+
 					<section data-scene="user-interviews">
 						<h2>User Interviews</h2>
 						<p>We interviewed six people with disabilities</p>
@@ -345,8 +352,8 @@
 					<section data-scene="melody">
 						<h2>Melody</h2>
 						<h4>AI as an Accessibility &ldquo;Assistant,&rdquo; not a Replacement</h4>
-						<div style="display: flex; align-items: center; gap: 2rem">
-							<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
+						<div class="persona">
+							<blockquote>
 								&ldquo;I do use AI, but only as an assistant for what I'm looking for. Not to do the searching from scratch.&rdquo;
 							</blockquote>
 							<img
@@ -396,8 +403,8 @@
 					<section data-scene="sinead">
 						<h2>Sinead</h2>
 						<h4>AI can explain the cause, not just adapt the interface</h4>
-						<div style="display: flex; align-items: center; gap: 2rem">
-							<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
+						<div class="persona">
+							<blockquote>
 								&ldquo;I was really struggling one day &hellip; but then, interestingly, it came up
 								with a really insightful reason: it was the drop in barometric pressure. The change had been so fast. And it said that's really common with people with brain injuries.&rdquo;
 							</blockquote>
@@ -463,8 +470,8 @@
 					<section data-scene="allana">
 						<h2>Allana</h2>
 						<h4>AI should only remove the tax that a disability imposes on everyday tasks</h4>
-						<div style="display: flex; align-items: center; gap: 2rem">
-							<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
+						<div class="persona">
+							<blockquote>
 								&ldquo;Part of the enjoyable thing in life is struggling through things. Having
 								everything taken care of for you takes away a bit of the fun.&rdquo;
 							</blockquote>
@@ -492,8 +499,8 @@
 					<section data-scene="rose">
 						<h2>Rose</h2>
 						<h4>Everyone's settings are different and incompatible</h4>
-						<div style="display: flex; align-items: center; gap: 2rem">
-							<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
+						<div class="persona">
+							<blockquote>
 								&ldquo;I live in a disabled house [&hellip;] all our settings are different, even across our iPads. It's actually an in-house joke: I can't look at my
 								husband's iPad, he can't look at mine, and the kids hate using either.&rdquo;
 							</blockquote>
@@ -525,8 +532,8 @@
 					<section data-scene="myron">
 						<h2>Myron</h2>
 						<h4>AI can provide an interface where you are already a power user</h4>
-						<div style="display: flex; align-items: center; gap: 2rem">
-							<blockquote style="width: auto; flex: 1 1 45%; margin: 0; font-size: 0.6em">
+						<div class="persona">
+							<blockquote>
 								&ldquo;If I had an AI box, I could tell it to line up all my headers from cell A1
 								to A20 and just send it. That would save so much time. That would be a life
 								changer for me.&rdquo;
@@ -557,6 +564,10 @@
 
 			<section data-act="limits-of-adaptability" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">The limits of adaptability</h1>
+					</header>
+
 					<section data-scene="todays-model">
 						<h2>Today's model</h2>
 						<svg viewBox="0 0 640 460" style="max-height: 480px; max-width: 100%; height: auto;">
@@ -712,6 +723,10 @@
 
 			<section data-act="personalization-over-adaptability" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">Personalization over adaptability</h1>
+					</header>
+
 					<section data-scene="your-ui-is-not-my-ui-divider">
 						<h2>Your UI is not my UI</h2>
 						<aside class="notes" hidden>
@@ -775,7 +790,7 @@
 					<section data-scene="demo-two-people">
 						<h2>Demo: same task, two people</h2>
 						<div class="demo-panels" style="text-align: left; font-size: 0.65em">
-							<div class="demo-panel demo-panel-a" style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
+							<div class="demo-panel demo-panel-a" style="flex: 1; border: 1px solid currentColor; padding: 0.75rem 1rem; border-radius: 6px">
 								<h4 style="margin-top: 0">Person A</h4>
 								<p>
 									Stressed by long paragraphs, prefers dark backgrounds, standing on a subway with
@@ -783,7 +798,7 @@
 								</p>
 								<p><em>[ placeholder &mdash; calm, minimal, dark-mode UI ]</em></p>
 							</div>
-							<div class="demo-panel demo-panel-b" style="flex: 1; border: 1px solid #444; padding: 0.75rem 1rem; border-radius: 6px">
+							<div class="demo-panel demo-panel-b" style="flex: 1; border: 1px solid currentColor; padding: 0.75rem 1rem; border-radius: 6px">
 								<h4 style="margin-top: 0">Person B</h4>
 								<p>
 									Has a tremor, avoids precise pointer input, prefers keyboard interactions, at home
@@ -804,6 +819,10 @@
 
 			<section data-act="empathy-is-our-point" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">Empathy is our point</h1>
+					</header>
+
 					<section data-scene="ui-equals-f-intent-empathy">
 						<h2>[UI] = f([Intent], [Empathy])</h2>
 					</section>
@@ -839,6 +858,10 @@
 
 			<section data-act="launching-is-creating" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">Launching is creating</h1>
+					</header>
+
 					<section data-scene="what-if-launching-an-app-means-creating-an-app">
 						<h2>What if launching an app means creating an app?</h2>
 						<aside class="notes" hidden>
@@ -1025,6 +1048,10 @@
 
 			<section data-act="closing" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">Closing</h1>
+					</header>
+
 					<section data-scene="key-takeaways">
 						<h2>Key takeaways</h2>
 						<ul>
@@ -1081,6 +1108,10 @@
 
 			<section data-act="backup-qa" class="act-panel">
 				<div class="act-panel-inner">
+					<header class="act-opener">
+						<h1 class="act-title">Q&amp;A</h1>
+					</header>
+
 					<section data-scene="backup-qa-intro">
 						<h2><small>Backup &mdash; Q&amp;A</small></h2>
 						<p>Anticipated objections</p>
@@ -1140,7 +1171,7 @@
 		</main>
 
 		<button id="notes-toggle" type="button" aria-expanded="false" aria-controls="notes-drawer">
-			[ NOTES &#9656; ]
+			Notes
 		</button>
 		<aside id="notes-drawer">
 			<div id="notes-drawer-content"></div>
