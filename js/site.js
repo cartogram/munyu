@@ -19,30 +19,37 @@ const acts = gsap.utils.toArray('main .act-panel');
 let beats = []; // { id, scene, trigger, time }
 let freeRanges = []; // { trigger, from, to } — tall scenes, scrolled through freely
 
-// One timeline per act: fake-scroll the inner content up to each scene, hold
-// for stepped reveals, then (except for the last act) hold one card height
-// while the next card slides over. The act is pinned for the whole timeline;
-// no scene inside it is pinned on its own, so nothing ever sits inside a
-// transformed ancestor.
+// One timeline per act: slide the inner row of scenes left to each scene,
+// hold for stepped reveals, scroll tall scenes up through their overflow,
+// then (except for the last act) hold one card height while the next card
+// slides over. The act is pinned for the whole timeline; no scene inside it
+// is pinned on its own, so nothing ever sits inside a transformed ancestor.
 function buildAct(panel, isLast) {
 	const inner = panel.querySelector('.act-panel-inner');
 	const act = panel.dataset.act;
 	const cardHeight = panel.clientHeight;
-	const maxOffset = Math.max(0, inner.offsetHeight - cardHeight);
 	const tl = gsap.timeline();
 	const actBeats = [{ id: act, scene: null, time: 0 }];
 	const actRanges = [];
-	let offset = 0;
 
-	const scrollInnerTo = (target) => {
-		if (target <= offset) return;
-		tl.to(inner, { y: -target, duration: target - offset, ease: 'none' });
-		offset = target;
+	gsap.set(panel, { '--card-width': `${panel.clientWidth}px` });
+
+	// Each move takes one card height of scroll per scene crossed, plus the
+	// vertical distance, so a slide feels the same at any viewport width.
+	let x = 0;
+	let y = 0;
+	const moveInnerTo = (targetX, targetY) => {
+		const scenesCrossed = Math.abs(targetX - x) / panel.clientWidth;
+		const duration = scenesCrossed * cardHeight + Math.abs(targetY - y);
+		if (duration < 1) return;
+		tl.to(inner, { x: -targetX, y: -targetY, duration, ease: 'none' });
+		x = targetX;
+		y = targetY;
 	};
 
 	panel.querySelectorAll('section[data-scene]').forEach((scene) => {
 		const id = `${act}/${scene.dataset.scene}`;
-		scrollInnerTo(Math.min(scene.offsetTop, maxOffset));
+		moveInnerTo(scene.offsetLeft, 0);
 		actBeats.push({ id, scene, time: tl.duration() });
 
 		const pieces = STEPPED_SCENES[scene.dataset.scene]?.(scene) ?? [];
@@ -53,19 +60,18 @@ function buildAct(panel, isLast) {
 			actBeats.push({ id: `${id}/${i + 1}`, scene, time: tl.duration() });
 		});
 
-		const bottom = Math.min(scene.offsetTop + scene.offsetHeight - cardHeight, maxOffset);
-		if (bottom > offset + 1) {
+		const overflow = scene.offsetHeight - cardHeight;
+		if (overflow > 1) {
 			const from = tl.duration();
-			scrollInnerTo(bottom);
+			moveInnerTo(x, overflow);
 			actRanges.push({ from, to: tl.duration() });
 		}
 	});
-	scrollInnerTo(maxOffset);
 
 	const travel = tl.duration();
 	if (!isLast) {
 		// pinSpacing is off so the next card overlaps; this margin delays its
-		// arrival until the inner content has finished fake-scrolling.
+		// arrival until the scenes have finished sliding.
 		gsap.set(panel, { marginBottom: travel });
 		tl.to({}, { duration: cardHeight });
 	}

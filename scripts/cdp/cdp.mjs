@@ -26,7 +26,7 @@ export async function launch({ width = 1280, height = 800, port = 9333 } = {}) {
 	});
 
 	let targets;
-	for (let i = 0; i < 50; i++) {
+	for (let i = 0; i < 200; i++) {
 		try {
 			targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
 			if (targets.find((t) => t.type === 'page')) break;

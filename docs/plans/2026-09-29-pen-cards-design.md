@@ -23,8 +23,12 @@ mode is secondary.
 
 ## Structure
 
-- Each `section[data-act].act-panel` is a **`100vh` card** (`overflow: clip`),
-  its `.act-panel-inner` fake-scrolled inside it by a scrubbed timeline.
+- Each `section[data-act].act-panel` is a **`100vh` card** (`overflow: clip`).
+  Its `.act-panel-inner` is a **horizontal row of frames** that a scrubbed
+  timeline slides left, one card height of scroll per frame. Acts still
+  stack vertically: the next card slides *up* over the pinned one. A scene
+  taller than the card scrolls up through its overflow before the row
+  slides on (its vertical offset resets during that slide).
 - Each act opens with a pen-style giant heading:
   `<header class="act-opener"><h1 class="act-title">…</h1></header>`, placed
   inside `.act-panel-inner` but **outside** any `data-scene` (content parity is
@@ -71,7 +75,7 @@ mode is secondary.
   opacity while the next card scrolls up over it. No recede, no scale, no
   fade.
 - **One scrubbed timeline per act** (durations in scroll pixels, `ease:
-  "none"`): fake-scroll the inner content to each scene, **hold** for stepped
+  "none"`): slide the row of scenes left to each scene, **hold** for stepped
   reveals, then a trailing one-viewport hold while the next card slides over.
   The act's ScrollTrigger pins it (`start: "top top"`, `pinSpacing: false`,
   `marginBottom` = fake-scroll + hold distance so the next card arrives on

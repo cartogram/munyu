@@ -18,13 +18,17 @@ const expect = []; for (let y = r.from + H; y < r.to; y += H) expect.push(y); ex
 check('↓ pages through range by one viewport', JSON.stringify(seq) === JSON.stringify(expect), `got ${seq} want ${expect}`);
 await key('ArrowUp'); const up = Math.round(await settle(b));
 check('↑ pages back by one viewport', up === Math.max(r.to - H, r.from), `y=${up}`);
-// Snap leaves a resting position inside the range alone.
+// Snap leaves a resting position inside the range alone — both after a
+// programmatic jump and after wheel input that starts inside the range.
 const mid = Math.round((r.from + r.to) / 2);
-await b.eval(`window.scrollTo(0, ${mid - 120})`); await sleep(400);
-for (let i = 0; i < 2; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 300, y: 200, deltaX: 0, deltaY: 60 }); await sleep(16); }
+await b.eval(`window.scrollTo(0, ${mid})`); await sleep(1500);
+let rest = await b.eval('Math.round(scrollY)');
+check('snap leaves a jump into the range alone', Math.abs(rest - mid) <= 2, `y=${rest} want ${mid}`);
+await b.eval(`window.scrollTo(0, ${r.from + 20})`); await sleep(1500);
+await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 300, y: 200, deltaX: 0, deltaY: 60 });
 await sleep(1500);
-const rest = await b.eval('Math.round(scrollY)');
-check('snap does not move a rest inside the range', rest > r.from && rest < r.to && Math.abs(rest - mid) < 40, `y=${rest}`);
+rest = await b.eval('Math.round(scrollY)');
+check('snap leaves a wheel rest inside the range alone', rest > r.from + 2 && rest < r.to - 2, `y=${rest} range ${r.from}-${r.to}`);
 await b.shot('ranges-mid');
 console.log('errors', JSON.stringify(b.errors), fails ? 'SOME FAILED' : 'ALL PASS');
 process.exit(0);
