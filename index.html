@@ -18,8 +18,19 @@
 		<!-- Theme: GreenSock "Slides Pinning" pen structure — white 100vh act cards,
 		     one AAA named colour per act. See docs/plans/2026-09-29-pen-cards-design.md -->
 		<style>
+			/* Marjoree is a Show Me Fonts *trial* font: local evaluation only, never
+			   committed or deployed (see fonts/marjoree-trial/.gitignore). Without
+			   the file, the system sans below takes over. */
+			@font-face {
+				font-family: 'Marjoree Trial';
+				src: url('fonts/marjoree-trial/Marjoree-VAR-Desktop.ttf') format('truetype');
+				font-weight: 300 700;
+				font-style: normal;
+				font-display: swap;
+			}
+
 			:root {
-				--font-sans: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				--font-sans: 'Marjoree Trial', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				--hairline: rgba(0, 0, 0, 0.14);
 			}
 
@@ -27,6 +38,9 @@
 				background: #fff;
 				color: #000;
 				font-family: var(--font-sans);
+				/* Marjoree's variable file defaults to its Mono design (MONO 100);
+				   0 is the proportional face. Other fonts ignore the axis. */
+				font-variation-settings: 'MONO' 0;
 				overflow-x: hidden;
 			}
 
@@ -245,6 +259,7 @@
 				right: 1.5rem;
 				z-index: 30;
 				font-family: var(--font-sans);
+				font-variation-settings: inherit;
 				font-size: 0.8rem;
 				font-weight: 600;
 				background: #fff;
