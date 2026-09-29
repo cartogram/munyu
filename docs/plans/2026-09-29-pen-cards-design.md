@@ -1,0 +1,134 @@
+# Pen-style act cards — design
+
+Date: 2026-09-29
+Branch: `theme/making-software-accessibility-talk`
+Supersedes: the act-panel recede in `2026-09-29-act-panel-recede-and-keyboard-nav.md`
+(Task 5 reverted, Task 6 dropped) and the blueprint theme / baseline fade-up /
+standalone pins in `2026-09-28-gsap-scrollytelling-design.md`.
+
+## Why
+
+The first port of GreenSock's "Slides Pinning – Overscroll Solution" pen
+(https://codepen.io/GreenSock/pen/bGRdvMy) copied its JS but not its CSS. The
+pen's `.section` is a fixed `100vh` card and only its long section fake-scrolls
+content *inside* the card. Our acts were natural-height (up to ~3,000px), so
+the fake-scroll pushed already-scrolled content into empty space (≈3,700px of
+blank screen), and the always-on transform on `.act-panel` broke both nested
+pins. This design rebuilds the page on the pen's actual structure.
+
+## Primary use
+
+The page is **presented from**, live, with a keyboard or clicker. Reading
+mode is secondary.
+
+## Structure
+
+- Each `section[data-act].act-panel` is a **`100vh` card** (`overflow: clip`),
+  its `.act-panel-inner` fake-scrolled inside it by a scrubbed timeline.
+- Each act opens with a pen-style giant heading:
+  `<header class="act-opener"><h1 class="act-title">…</h1></header>`, placed
+  inside `.act-panel-inner` but **outside** any `data-scene` (content parity is
+  scoped to `section[data-scene]`, so it is unaffected). Titles, no numerals:
+  Hypothesis · User research · The limits of adaptability · Personalization
+  over adaptability · Empathy is our point · Launching is creating · Closing ·
+  Q&A. Act 4's existing divider scene stays.
+- The opener and every scene are **frames**: `min-height: 100vh`, content
+  centred vertically.
+- Content column: centred, `40ch`. Headings centred. Paragraphs, lists and
+  quotes are `width: fit-content` blocks centred in the column with
+  left-aligned text — a single line therefore reads as centred, a multi-line
+  block as left-aligned.
+
+## Look
+
+- Pen-verbatim type: system sans, weight 600, body `1.5em`, act title
+  `max(4rem, min(12vw + 1rem, 16rem))`. No blueprint chrome (dot grid, corner
+  ticks, Departure Mono all removed).
+- **White cards**; all of an act's text, borders and diagram strokes use one
+  named colour, every one WCAG **AAA (≥7:1)** on white:
+
+  | act | colour | contrast |
+  |---|---|---|
+  | hypothesis | `mediumblue` | 11.16 |
+  | user-research | `darkmagenta` | 8.50 |
+  | limits-of-adaptability | `darkred` | 10.01 |
+  | personalization-over-adaptability | `darkgreen` | 7.44 |
+  | empathy-is-our-point | `rebeccapurple` | 8.41 |
+  | launching-is-creating | `saddlebrown` | 7.10 |
+  | closing | `black` | 21.00 |
+  | backup-qa | `darkslategray` | 8.93 |
+
+- Because every card is white, cards carry a hairline top edge and soft
+  shadow so the incoming card's edge is visible while it slides over (the
+  pen relied on differing backgrounds for this).
+- Notes toggle + drawer kept, restyled: white, black hairline, same sans.
+  `aside.notes` is `display: none` (the reset stylesheet's `aside
+  {display: block}` was overriding `[hidden]`, rendering notes inline).
+
+## Motion
+
+- **Slide-over only.** The outgoing card stays pinned at full size and
+  opacity while the next card scrolls up over it. No recede, no scale, no
+  fade.
+- **One scrubbed timeline per act** (durations in scroll pixels, `ease:
+  "none"`): fake-scroll the inner content to each scene, **hold** for stepped
+  reveals, then a trailing one-viewport hold while the next card slides over.
+  The act's ScrollTrigger pins it (`start: "top top"`, `pinSpacing: false`,
+  `marginBottom` = fake-scroll + hold distance so the next card arrives on
+  time). The last act uses `pinSpacing: true` and no trailing hold.
+- **No nested pins** anywhere. Today's model and the Demo are holds inside
+  their act's timeline.
+- **Stepped reveals** (opacity only, short scrubbed segment at the start of
+  each step): Today's model shows its five layers one per beat (DOM order:
+  screen reader, voice control, zoom, dark mode, base); the Demo shows Person
+  A, then Person B.
+- **No per-scene fade-ups.**
+
+## Navigation
+
+- **Beats**: each act opener, each scene, each reveal step. Positions are
+  `trigger.start + labelTime` (1 timeline second = 1px of scroll).
+- **Tall scenes** (taller than one frame) have a free-scroll range from their
+  top to their bottom.
+- **Keys**: ↓ → PageDown Space forward; ↑ ← PageUp Shift+Space back; Home/End
+  first/last beat. Inside a tall scene's range, forward/back page by one
+  viewport, clamped to the range. Movement is a GSAP tween of a scroll proxy
+  (~0.9s, `power2.inOut`; core GSAP only). A press mid-tween retargets from the
+  tween's *destination*, so quick presses advance several beats in one
+  continuous motion.
+- **Key guard**: keys are ignored only while focus is in a text input,
+  select, contenteditable, media element, or inside the open notes drawer.
+  The notes toggle blurs itself after a click so arrows keep working.
+- **Snap**: one global ScrollTrigger snaps to the nearest stop in the
+  direction of travel (`duration: {min: 0.2, max: 0.6}`, `delay: 0.1`,
+  `power2.inOut`) except when the scroll comes to rest inside a tall scene's
+  free range. Disabled while a key tween is running.
+- **Notes drawer** shows the notes of the scene of the current beat.
+- **URL hash** tracks the current beat (`#act`, `#act/scene`,
+  `#act/scene/step`) via `history.replaceState`; on load the page jumps
+  instantly to the hashed beat (`history.scrollRestoration = "manual"`).
+
+## Reduced motion (`gsap.matchMedia()`)
+
+Under `prefers-reduced-motion: reduce`, key moves jump instantly and snap is
+off. Cards, pinning and slide-over stay — they only move 1:1 with the user's
+own scroll. Stepped reveals are effectively instant because keys jump.
+
+## Mobile (< 700px)
+
+Same structure. Act title uses `clamp(2.25rem, 9vw, 16rem)` with
+`hyphens: auto` so the longest word fits a 375px viewport; Demo panels stack.
+
+## Rebuild
+
+All timeline/pin/snap setup lives in one `gsap.matchMedia()` context that is
+reverted and rebuilt on `load` (images/video change heights) and on debounced
+resize (width change, or height change > 120px), restoring the current beat.
+
+## Verification
+
+- Content parity diff (scoped inventory) must be empty.
+- Headless-Chrome CDP runs (`scripts/cdp/`): blank-screen scan over the whole
+  page, slide-over screenshot at every act boundary, stepped-reveal
+  screenshots, keyboard beat walk (every beat reached forward and back, no
+  skips), hash reload, 375px title fit, reduced-motion key jump.
