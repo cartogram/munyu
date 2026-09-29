@@ -212,8 +212,15 @@
 			}
 
 			@media (max-width: 699px) {
+				/* "Personalization" is the longest word; 11vw keeps it inside a
+				   375px viewport while staying larger than scene headings */
 				.act-title {
-					font-size: clamp(2.25rem, 9vw, 16rem);
+					font-size: clamp(2.25rem, 11vw, 16rem);
+					max-width: none;
+				}
+
+				main h2 {
+					font-size: 1.35em;
 				}
 
 				.demo-panels {

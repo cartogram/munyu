@@ -116,8 +116,10 @@ own scroll. Stepped reveals are effectively instant because keys jump.
 
 ## Mobile (< 700px)
 
-Same structure. Act title uses `clamp(2.25rem, 9vw, 16rem)` with
-`hyphens: auto` so the longest word fits a 375px viewport; Demo panels stack.
+Same structure. Act title uses `clamp(2.25rem, 11vw, 16rem)` with
+`hyphens: auto` — "Personalization" fits 320–414px viewports while staying
+larger than scene `h2`s, which drop to `1.35em`. Demo panels and persona
+rows (quote beside screenshot) stack.
 
 ## Rebuild
 
