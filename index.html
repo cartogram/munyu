@@ -61,19 +61,18 @@
 				--muted-color: var(--stone-600);
 			}
 
-			.reveal {
+			body {
+				position: relative;
+				min-height: 100vh;
 				background-color: var(--r-background-color);
 				background-image: radial-gradient(var(--ink-300) 1.4px, transparent 1.5px);
 				background-size: 22px 22px;
-			}
-
-			.reveal .slides {
 				font-family: var(--r-main-font);
 			}
 
 			/* corner tick marks, echoing the plate frames on makingsoftware.com */
-			.reveal::before,
-			.reveal::after {
+			body::before,
+			body::after {
 				content: '';
 				position: absolute;
 				width: 16px;
@@ -84,29 +83,29 @@
 				z-index: 20;
 			}
 
-			.reveal::before {
+			body::before {
 				top: 24px;
 				left: 24px;
 				border-right: none;
 				border-bottom: none;
 			}
 
-			.reveal::after {
+			body::after {
 				bottom: 24px;
 				right: 24px;
 				border-left: none;
 				border-top: none;
 			}
 
-			.reveal h1,
-			.reveal h2,
-			.reveal h3 {
+			h1,
+			h2,
+			h3 {
 				max-width: 88%;
 				margin-left: auto;
 				margin-right: auto;
 			}
 
-			.reveal h4 {
+			h4 {
 				max-width: 88%;
 				margin-left: auto;
 				margin-right: auto;
@@ -118,8 +117,8 @@
 				color: var(--muted-color);
 			}
 
-			.reveal small,
-			.reveal .fig-label {
+			main small,
+			main .fig-label {
 				font-family: var(--r-mono-font);
 				font-size: 0.5em;
 				text-transform: uppercase;
@@ -127,7 +126,7 @@
 				color: var(--muted-color);
 			}
 
-			.reveal blockquote {
+			main blockquote {
 				width: 80%;
 				padding: 0.1em 0 0.1em 1.2em;
 				border-left: 2px solid var(--ink-500);
@@ -137,43 +136,24 @@
 				text-align: left;
 			}
 
-			.reveal ul {
+			main ul {
 				width: fit-content;
 				margin-inline: auto;
 				text-align: left;
 			}
 
-			.reveal ul li::marker {
+			main ul li::marker {
 				font-family: var(--r-mono-font);
 				color: var(--ink-500);
 			}
 
-			.reveal video {
+			main video {
 				border-radius: 2px;
 				border: 1px solid var(--ink-300);
 			}
 
-			.reveal img {
+			main img {
 				border: 1px solid var(--ink-300);
-			}
-
-			.reveal .controls {
-				color: var(--ink-500);
-			}
-
-			.reveal .progress {
-				color: var(--ink-600);
-				height: 3px;
-			}
-
-			.reveal .progress span {
-				background: var(--ink-600);
-			}
-
-			.reveal .slide-number {
-				font-family: var(--r-mono-font);
-				color: var(--muted-color);
-				background: transparent;
 			}
 
 			main {
@@ -183,10 +163,14 @@
 			}
 
 			main section[data-act] {
-				display: flex;
-				flex-direction: column;
-				gap: 6rem;
 				padding-block: 4rem;
+			}
+
+			/* margin-based spacing instead of flex `gap`: GSAP ScrollTrigger's
+			   pin-spacer sizing is unreliable inside a flex parent, which was
+			   causing the two pinned scenes to overlap the following content. */
+			main section[data-act] > section[data-scene]:not(:last-child) {
+				margin-bottom: 6rem;
 			}
 
 			main section[data-scene] {
