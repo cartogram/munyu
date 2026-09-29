@@ -37,6 +37,16 @@
 				--ink-200: #cbdafb;
 				--ink-100: #e6ecfd;
 
+				/* one bold, high-contrast accent per act */
+				--accent-hypothesis: #002ef4;
+				--accent-user-research: #c30063;
+				--accent-limits-of-adaptability: #a30000;
+				--accent-personalization-over-adaptability: #0a7d3c;
+				--accent-empathy-is-our-point: #6b21d8;
+				--accent-launching-is-creating: #a84400;
+				--accent-closing: #1a1a1a;
+				--accent-backup-qa: #007a72;
+
 				--stone-950: #241f1b;
 				--stone-600: #6b6459;
 				--stone-300: #d8d3cb;
@@ -105,6 +115,12 @@
 				margin-right: auto;
 			}
 
+			main h1,
+			main h2,
+			main h3 {
+				color: var(--act-accent, var(--ink-600));
+			}
+
 			h4 {
 				max-width: 88%;
 				margin-left: auto;
@@ -129,7 +145,7 @@
 			main blockquote {
 				width: 80%;
 				padding: 0.1em 0 0.1em 1.2em;
-				border-left: 2px solid var(--ink-500);
+				border-left: 2px solid var(--act-accent, var(--ink-500));
 				background: none;
 				box-shadow: none;
 				font-style: italic;
@@ -144,7 +160,7 @@
 
 			main ul li::marker {
 				font-family: var(--r-mono-font);
-				color: var(--ink-500);
+				color: var(--act-accent, var(--ink-500));
 			}
 
 			main video {
@@ -165,6 +181,15 @@
 			main section[data-act] {
 				padding-block: 4rem;
 			}
+
+			.act-panel[data-act="hypothesis"] { --act-accent: var(--accent-hypothesis); }
+			.act-panel[data-act="user-research"] { --act-accent: var(--accent-user-research); }
+			.act-panel[data-act="limits-of-adaptability"] { --act-accent: var(--accent-limits-of-adaptability); }
+			.act-panel[data-act="personalization-over-adaptability"] { --act-accent: var(--accent-personalization-over-adaptability); }
+			.act-panel[data-act="empathy-is-our-point"] { --act-accent: var(--accent-empathy-is-our-point); }
+			.act-panel[data-act="launching-is-creating"] { --act-accent: var(--accent-launching-is-creating); }
+			.act-panel[data-act="closing"] { --act-accent: var(--accent-closing); }
+			.act-panel[data-act="backup-qa"] { --act-accent: var(--accent-backup-qa); }
 
 			/* margin-based spacing instead of flex `gap`: GSAP ScrollTrigger's
 			   pin-spacer sizing is unreliable inside a flex parent, which was
