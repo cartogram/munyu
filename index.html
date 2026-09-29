@@ -220,6 +220,12 @@
 				}
 			}
 
+			/* reset.css sets aside {display: block}, which beats the UA [hidden]
+			   rule — notes are only ever shown via the drawer. */
+			aside.notes {
+				display: none;
+			}
+
 			#notes-toggle {
 				position: fixed;
 				bottom: 1.5rem;
