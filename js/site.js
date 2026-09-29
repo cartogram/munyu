@@ -52,6 +52,44 @@ notesToggle.addEventListener('click', () => {
 	if (isOpen) renderDrawer();
 });
 
+const INTERACTIVE_TAGS = ['VIDEO', 'AUDIO', 'INPUT', 'TEXTAREA', 'BUTTON'];
+
+function isInteractiveFocus() {
+	const active = document.activeElement;
+	if (!active) return false;
+	if (INTERACTIVE_TAGS.includes(active.tagName)) return true;
+	if (active.closest('#notes-drawer')) return true;
+	return false;
+}
+
+// Scene's scroll position with its reveal offset (gsap `y`) removed, so a
+// not-yet-revealed scene isn't targeted 24px low.
+function sceneScrollTop(scene) {
+	return scene.getBoundingClientRect().top + window.scrollY - gsap.getProperty(scene, 'y');
+}
+
+// Next/previous scene is derived from positions at keypress time rather than
+// from the center-line notes triggers: those can mark a scene "current" that
+// sits below the viewport top, which made navigation skip scenes going down
+// and get stuck going up.
+window.addEventListener('keydown', (event) => {
+	if (isInteractiveFocus()) return;
+
+	const y = window.scrollY;
+	const tops = scenes.map(sceneScrollTop);
+	let targetIndex = -1;
+	if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+		targetIndex = tops.findIndex((top) => top > y + 2);
+	} else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+		targetIndex = tops.findLastIndex((top) => top < y - 2);
+	}
+
+	if (targetIndex !== -1) {
+		event.preventDefault();
+		window.scrollTo({ top: tops[targetIndex], behavior: 'smooth' });
+	}
+});
+
 const diagramSection = document.querySelector('[data-scene="todays-model"]');
 if (diagramSection) {
 	const pieces = diagramSection.querySelectorAll('.diagram-piece');
