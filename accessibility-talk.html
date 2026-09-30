@@ -469,16 +469,14 @@
 
 					<aside class="notes">
 						<p>
-							Today's model: the vendor ships one interface, build for the statistical average.
+							Today's model: the vendor ships one interface, built for the statistical average.
 						<p/>
 						<p>
-							User have to either live with it or stack adaptation layers on top &mdash; screen reader, dark mode, zoom, larger fonts.
-							And those layers require that the app was built in a compatible way with standards in mind.
+							User have to either live with it or stack adaptation layers on top (screen reader, dark mode, zoom, larger fonts).
+							Those adaptations require that the app was built in a compatible way with standards in mind.
 						</p>
 						<p>
-							It works, up to a point. Our interviews showed where it breaks: adaptations conflict,
-							configuration is exhausting, and there's a gap between what standards provide and what
-							individuals actually need.
+							That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed it's limitations.
 						</p>
 					</aside>
 				</section>
@@ -496,17 +494,19 @@
 					</p>
 					<aside class="notes">
 						<p>
-							Let's brush aside all the &ldquo;normal&rdquo; AI problems, like reliability &mdash;
-							others will solve that, and it's the same problem for disabled and non-disabled
-							users alike.
+							Everyone we spoke to had done real work to adapt a standard interface &mdash; and for every one of them it
+							kept <em>failing</em>: Sinead's plugins fought each other, Rose's family needs
+							incompatible settings, Allana burns her energy budget on uncooperative apps.
 						</p>
 						<p>
-							Instead, we saw a lot of friction specifically in traditional accessibility areas:
-							setups are very personalized and hard to master, independent tools and adaptations
-							conflict with each other, and standardization has limits &mdash; one interface can't
-							fit the range of needs we saw across just six people.
+							Setups are very personalized and the standardization has its limits. 
 						</p>
-						<p>So for the next half of our talk, we want to propose a new concept&hellip;</p>
+						<p>
+							One interface just can't fit the wide variety of needs of its users.
+						</p>
+						<p>
+							So we want to propose a new concept&hellip;
+						</p>
 					</aside>
 				</section>
 
@@ -515,36 +515,33 @@
 				<section>
 					<h2>Your UI is not my UI</h2>
 					<aside class="notes">
-						Section 4 (~3 min). Our core proposal: AI-generated bespoke interfaces. Instead of
-						adapting one UI for everyone, generate a unique UI for each person.
+						<p><small>Reveal:</small>Your UI is not my UI</p>
+						<p>So… what do we mean by that?</p>
+						<small>
+							Our core proposal: AI-generated bespoke interfaces. Instead of
+							adapting one UI for everyone, generate a unique UI for each person.
+						</small>
 					</aside>
 				</section>
 
 				<section>
-					<h2>Your UI is not my UI</h2>
-					<h4>Personalization over adaptability</h4>
+					<h4>Your UI is not my UI</h4>
+					<h2>Personalization over adaptability</h2>
 					<aside class="notes">
 						<p>
-							We're proposing this because of what the research forced on us. Everyone we spoke to
-							had done real work to adapt a standard interface &mdash; and for every one of them it
-							kept <em>failing</em>: Sinead's plugins fought each other, Rose's family needs
-							incompatible settings, Allana burns her energy budget on uncooperative apps.
+							Adaptation assumes one interface underneath that everyone bends toward themselves.
+							That's where it breaks.
 						</p>
 						<p>
-							Adaptation assumes one interface underneath that everyone bends toward themselves.
-							That's where it breaks. So the question isn't &ldquo;how do we adapt better?&rdquo;
-							&mdash; it's &ldquo;what if the interface were personal from the start?&rdquo; A UI that
-							is the <em>result</em> of two things: what you're trying to do, and who you are. In one
-							word, the interface becomes <em>empathetic</em> to the person in front of it &mdash; it
-							meets you where you are, so the reconciling work disappears. That empathy is what makes
-							this an accessibility argument, not just a generation demo.
+							So instead of improving how we adapt to the standard interface, we want to propose
+							that the interface is created personalized to the user right from the get go.
 						</p>
 					</aside>
 				</section>
 
 				<section>
-					<h2>Your UI is not my UI</h2>
-					<h4>Create specific UIs on the fly for your needs</h4>
+					<h4>Your UI is not my UI</h4>
+					<h2>Create specific UIs on the fly for your needs</h2>
 					<ul>
 						<li>Adapt to your current task</li>
 						<li>Adapt to your preferences</li>
@@ -555,19 +552,23 @@
 					</ul>
 					<aside class="notes">
 						<p>
-							Where this goes: launching an app is creating an app, just for you, in that moment
-							&mdash; generated on the fly instead of adapted with layered tools, and disposed of
-							when you're done.
+							A UI should be the <em>result</em> of two things:
+							<ul>
+								<li>what you're trying to do,</li>
+								<li><em>and</em> who you are.</li>
+							</ul>
 						</p>
 						<p>
-							We arrive at an interface as a slightly different person every time &mdash; the same
-							app could look different depending on your task, your state, your environment. Either
-							you tell it explicitly, or it knows.
+							An app for the exact same task needs to look different depending on the condition, state,
+							environment and preferences of the user. In one word, the interface needs to be <em>empathetic</em> to the person in front of it.
 						</p>
 						<p>
-							And &ldquo;telling it&rdquo; isn't learning the app's settings &mdash; it's plain
-							language. You <em>describe</em> what you need. Adaptation was something you configured;
-							personalization is something you can just ask for.
+							The empathetic UI meets you where you are, so the adaptation work disappears. 
+							[While we talk here about this in an accessibility context, we think this is a generally desired property that goes beyond the topic.]
+						</p>
+						<p>
+							Where this goes: launching an app is creating an app, just for you, in that moment. 
+							Generated on the fly, instead of adapted with layered tools.
 						</p>
 					</aside>
 				</section>
