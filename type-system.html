@@ -376,25 +376,25 @@
 			<h2>Typefaces</h2>
 			<div class="ts-faces">
 				<div>
-					<div class="ts-face-name" style="font-family: var(--font-sans); font-weight: 500">Ronzino</div>
+					<div class="ts-face-name" style="font-family: var(--font-sans); font-weight: 500">Aileron</div>
 					<div class="ts-face-glyphs" style="font-family: var(--font-sans)">
 						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
 					</div>
 					<div class="ts-face-meta">
-						Collletttivo · SIL OFL 1.1<br />
-						Regular 400 · Medium 500 · Bold 700, each with an oblique<br />
+						Sora Sagano · public domain (CC0)<br />
+						Regular 400 · SemiBold 600 (also used for 500) · Bold 700 · Black 900<br />
 						Act and talk titles, body, lists, meta, kickers
 					</div>
 				</div>
 				<div>
-					<div class="ts-face-name" style="font-family: var(--font-serif)">Sneaky Times</div>
+					<div class="ts-face-name" style="font-family: var(--font-serif)">Libre Baskerville</div>
 					<div class="ts-face-glyphs" style="font-family: var(--font-serif)">
 						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
 					</div>
 					<div class="ts-face-meta">
-						Collletttivo · SIL OFL 1.1<br />
-						One upright weight (400); no italics are used<br />
-						Scene headlines, standfirsts, quotes
+						Impallari Type · SIL OFL 1.1<br />
+						Variable 400–700 (Latin subset); no italics<br />
+						Scene headlines and quotes
 					</div>
 				</div>
 			</div>
@@ -632,6 +632,9 @@
 					<label for="ts-lh-${i}">Line height</label>
 					<input id="ts-lh-${i}" type="range" min="0.8" max="2" step="0.01" />
 					<span class="ts-tune-value" data-lh></span>
+					<label for="ts-wt-${i}">Weight</label>
+					<input id="ts-wt-${i}" type="range" min="100" max="900" step="100" />
+					<span class="ts-tune-value" data-wt></span>
 					<div class="ts-tune-actions">
 						<button type="button" data-reset>Reset</button>
 						<button type="button" data-copy>Copy CSS</button>
@@ -639,18 +642,21 @@
 				spec.append(tune);
 				const size = tune.querySelector(`#ts-size-${i}`);
 				const lh = tune.querySelector(`#ts-lh-${i}`);
+				const wt = tune.querySelector(`#ts-wt-${i}`);
 
 				const readDefaults = () => {
 					const cs = getComputedStyle(specTarget(), pseudo || null);
 					const px = parseFloat(cs.fontSize);
 					size.value = px;
 					lh.value = cs.lineHeight === 'normal' ? 1.2 : parseFloat(cs.lineHeight) / px;
+					wt.value = cs.fontWeight;
 					label();
 				};
-				const css = () => `font-size: ${(size.value / 16).toFixed(4).replace(/\.?0+$/, '')}rem; /* ${size.value}px */\nline-height: ${(+lh.value).toFixed(2)};`;
+				const css = () => `font-size: ${(size.value / 16).toFixed(4).replace(/\.?0+$/, '')}rem; /* ${size.value}px */\nline-height: ${(+lh.value).toFixed(2)};\nfont-weight: ${wt.value};`;
 				const label = () => {
 					tune.querySelector('[data-size]').textContent = `${size.value}px · ${(size.value / 16).toFixed(3)}rem`;
 					tune.querySelector('[data-lh]').textContent = (+lh.value).toFixed(2);
+					tune.querySelector('[data-wt]').textContent = wt.value;
 				};
 				const apply = () => {
 					const targets = editSelector
@@ -668,6 +674,7 @@
 
 				size.addEventListener('input', apply);
 				lh.addEventListener('input', apply);
+				wt.addEventListener('input', apply);
 				tune.querySelector('[data-reset]').addEventListener('click', () => {
 					rule.textContent = '';
 					row.classList.remove('is-tuned');
