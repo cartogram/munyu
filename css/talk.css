@@ -8,6 +8,16 @@
    Aileron by Sora Sagano, public domain (CC0; fonts/aileron, Latin subset).
    Aileron has no Medium, so its SemiBold also answers 500. Black comes from
    the designer's own release (dotcolon.net), as Fontsource stops at 800. */
+/* Light comes from the designer's release: Fontsource's "300" file is
+   actually Aileron UltraLight */
+@font-face {
+	font-family: 'Aileron';
+	src: url('../fonts/aileron/Aileron-Light.otf') format('opentype');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
 @font-face {
 	font-family: 'Aileron';
 	src: url('../fonts/aileron/Aileron-Black.otf') format('opentype');
@@ -45,14 +55,6 @@
 	src: url('../fonts/libre-baskerville/LibreBaskerville-latin.woff2') format('woff2');
 	font-weight: 400 700;
 	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Libre Baskerville';
-	src: url('../fonts/libre-baskerville/LibreBaskerville-Italic-latin.woff2') format('woff2');
-	font-weight: 400 700;
-	font-style: italic;
 	font-display: swap;
 }
 
@@ -113,6 +115,18 @@
 }
 
 :root {
+	/* how far the act cards sit in from each window edge (js/site.js reads
+	   the top and bottom values for the scroll maths) */
+	--inset-top: 0.75rem;
+	--inset-left: 0.75rem;
+	--inset-right: 0rem;
+	--inset-bottom: 0rem;
+	/* the chrome sits 1.5rem inside the card (Notes button); corner tabs pad
+	   their text equally on every side */
+	--chrome-pad: 1.5rem;
+	--tab-pad: 0.75rem;
+	/* frames' side padding: content runs full width between these */
+	--frame-pad-x: 6rem;
 	--font-sans: 'Aileron', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 	--font-serif: 'Libre Baskerville', Baskerville, 'Times New Roman', serif;
@@ -124,6 +138,11 @@ body {
 	color: #000;
 	font-family: var(--font-sans);
 	overflow-x: hidden;
+}
+
+/* space above the first card and below the last */
+main {
+	padding: var(--inset-top) 0 var(--inset-bottom);
 }
 
 /* one named colour per act, each ≥ 7:1 (WCAG AAA) on white */
@@ -152,20 +171,29 @@ body[data-current-act='backup-qa'] { --act-color: darkslategray; }
 	--muted-color: var(--act-color);
 
 	position: relative;
-	width: 100%;
-	height: 100vh;
+	width: calc(100% - var(--inset-left) - var(--inset-right));
+	height: calc(100vh - var(--inset-top) - var(--inset-bottom));
+	margin-left: var(--inset-left);
+	margin-right: var(--inset-right);
 	box-sizing: border-box;
 	/* clip, not hidden: focusing a control inside must not scroll the card */
 	overflow: clip;
 	background: #fff;
 	color: var(--act-color);
-	border-radius: 10px;
+	/* the leading corner of each card, as it slides up over the last */
+	border-radius: 1.5rem 0 0 0;
 	font-weight: 400;
 	font-size: 1.5em;
-	/* every card is white, so the incoming card needs a visible edge */
-	box-shadow:
-		0 0 0 1px var(--hairline),
-		0 -6px 18px rgba(0, 0, 0, 0.06);
+	/* no shadow: each act's leading edge is its opener's mark-field landscape */
+}
+
+/* each act card is outlined in its colour; as one slides up over the last,
+   its top edge and rounded leading corner mark the overlap */
+.act-panel {
+	border: 2px solid var(--act-color);
+	/* open at the bottom and right: the card runs off those window edges */
+	border-bottom: none;
+	border-right: none;
 }
 
 /* scenes sit side by side and slide left inside the pinned card */
@@ -184,9 +212,10 @@ main section[data-scene] {
 	   the next scene shows */
 	flex: 0 0 var(--card-width, 100vw);
 	width: var(--card-width, 100vw);
-	min-height: 100vh;
-	/* room for the fixed slide chrome along the edges */
-	padding: 4.5rem 1.5rem;
+	/* the card's inner height: window minus the insets and the 2px top border */
+	min-height: calc(100vh - var(--inset-top) - var(--inset-bottom) - 2px);
+	/* room for the fixed slide chrome along the edges (two lines at the top) */
+	padding: 6rem var(--frame-pad-x) 6rem;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -194,24 +223,34 @@ main section[data-scene] {
 	text-align: center;
 }
 
-/* act openers: the title sits in the white "sky", with a generated
-   mark-field landscape (js/landscape.js) filling the lower part */
+/* act openers: a generated mark-field landscape (js/landscape.js), flipped
+   so its dense bands run along the card's top edge — the edge that slides up
+   over the previous act — with the title set bottom-left below it */
 .act-opener {
-	position: relative;
-	justify-content: flex-start;
-	padding-top: 14vh;
+	justify-content: flex-end;
+	align-items: flex-start;
+	text-align: left;
+	/* 40px more than the frame's usual bottom padding lifts the title clear
+	   of the bottom chrome */
+	padding-bottom: 7rem;
 }
 
-/* fills the space below the title and bleeds to the side edges; a taller
-   title crops more of the sky, so art and title never overlap. It stops at
-   the frame's bottom padding, leaving the slide chrome on clear white. */
+.act-opener > .act-title {
+	margin: 0;
+}
+
+/* fills the space above the title and bleeds off the top and side edges; a
+   taller title crops more of the sky, so art and title never overlap */
 .landscape {
+	order: -1;
 	flex: 1 1 0;
 	min-height: 0;
-	width: calc(100% + 3rem);
+	width: calc(100% + 2 * var(--frame-pad-x));
 	max-width: none;
-	margin: 1.5rem -1.5rem 0;
-	/* marks dissolve into the sky instead of meeting a hard crop line */
+	margin: -6rem calc(-1 * var(--frame-pad-x)) 1.5rem;
+	transform: scaleY(-1);
+	/* flipped with the art: marks dissolve toward the title instead of
+	   meeting a hard crop line */
 	mask-image: linear-gradient(to bottom, transparent, #000 22%);
 	pointer-events: none;
 }
@@ -239,7 +278,7 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	/* sized so the longest word, "Personalization" (7.7em wide in Aileron
 	   Black), always fits the card's width minus its 1.5rem padding; 222px
 	   on wide screens */
-	font-size: min(calc((100vw - 3rem) / 7.9), 13.875rem); /* up to 222px */
+	font-size: min(calc((100vw - var(--inset-left) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), 13.875rem); /* up to 222px */
 	font-weight: 900;
 	line-height: 0.8;
 	margin: 0 auto;
@@ -250,19 +289,14 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	margin-bottom: 0.4em;
 }
 
-/* editorial scene layout: kicker, serif headline, serif standfirst and
-   quotes. No italics anywhere, including <em>. */
-main section[data-scene][data-kicker]::before {
-	content: attr(data-kicker);
-	margin-bottom: 2rem;
-}
+/* editorial scene layout: serif headline, sans body, serif lede and
+   quotes. The kicker lives in the slide chrome (.chrome-kicker). */
 
 main h2 {
 	font-family: var(--font-serif);
 	font-size: 9.375rem; /* 150px */
 	font-weight: 900; /* Libre Baskerville tops out at 700 */
 	line-height: 1.2;
-	max-width: 22ch;
 	text-wrap: balance;
 	margin: 0 auto 0.5em;
 }
@@ -273,31 +307,57 @@ main h3 {
 	margin: 0 auto 0.5em;
 }
 
-/* standfirst: the body style in Bold */
+/* lede (formerly the standfirst): the line under a headline and the Q&A
+   questions. Its own rule: the quote's size in Aileron Regular, without the
+   quote's indent, so it can be changed or dropped on its own. */
 main h4 {
 	font-family: var(--font-sans);
-	font-size: 2.5rem; /* 40px */
-	font-weight: 700;
+	font-size: 3.75rem; /* 60px */
+	font-weight: 400;
 	line-height: 1.2;
-	max-width: 40ch;
+	text-decoration: underline;
+	text-decoration-thickness: 0.05em;
+	text-underline-offset: 0.12em;
+	/* half the frame's width, so the lede breaks into short, balanced lines */
+	max-width: 50%;
 	text-wrap: balance;
-	margin: 0 auto 1em;
+	margin: 0 auto 0.8em;
 }
 
-/* Q&A: the question sits directly on its answer */
-main section[data-scene] > h4:has(+ p) {
+/* the lede sits directly on what follows it: a Q&A answer, or a quote */
+main section[data-scene] > h4:has(+ :is(p, blockquote, .persona)) {
 	margin-bottom: 0;
 }
 
-/* a fit-content block centred in the 40ch column: one line reads as
-   centred, several lines read as left-aligned */
+/* scenes are left-aligned, except a headline with at most one other text
+   element (a statement, or headline + one line), which stays centred */
+main section[data-scene] {
+	align-items: flex-start;
+	text-align: left;
+}
+
+main section[data-scene] > * {
+	margin-left: 0;
+}
+
+/* text and layout blocks run the full width between the frame's padding */
+main section[data-scene] > :is(h2, h4, p, ul, ol, blockquote, .persona, .demo-panels) {
+	align-self: stretch;
+}
+
+main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) {
+	align-items: center;
+	text-align: center;
+}
+
+main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) > * {
+	margin-left: auto;
+}
+
 main p,
 main ul,
 main blockquote {
-	width: fit-content;
-	max-width: 40ch;
 	margin: 0 auto 0.8em;
-	text-align: left;
 	line-height: 1.4;
 }
 
@@ -327,12 +387,25 @@ main blockquote {
 	font-size: 3.75rem; /* 60px */
 	font-weight: 400;
 	line-height: 1.2;
+	/* a big editorial first-line indent */
+	text-indent: 3em;
 }
 
-/* one meta style for kickers, authors and labels, demo panel labels, the
-   slide chrome and the Notes button. rem, so it stays meta-sized inside a
-   40px paragraph. */
-main section[data-scene][data-kicker]::before,
+/* interview scenes (those with a quote): only the person's name is centred */
+main section[data-scene]:has(blockquote) > h2 {
+	text-align: center;
+}
+
+/* the quote hangs from the lede's edge: its margin is the lede's width (50%)
+   minus the quote's own indent, so the first line starts where the lede
+   column ends */
+main section[data-scene] blockquote {
+	margin-left: max(0px, calc(50% - 3em));
+}
+
+/* one meta style for authors and labels, demo panel labels, the slide
+   chrome and the Notes button. rem, so it stays meta-sized inside a 40px
+   paragraph. */
 main small,
 .demo-panel > h4,
 .deck-chrome,
@@ -341,14 +414,26 @@ main small,
 	font-size: 1rem; /* 16px */
 	font-weight: 700;
 	line-height: 1.4;
+	/* demo panel labels are h4s; they don't take the lede's indent or underline */
+	text-indent: 0;
+	text-decoration: none;
 }
 
-/* sub-meta: a secondary line under meta, in thin italic serif — the one
-   deliberate italic in the system */
+/* the font has no longer dash, so a doubled em dash is the glyph stretched
+   2× with matching side room (an em dash is about 1em wide) */
+.em-dash {
+	display: inline-block;
+	transform: scaleX(2);
+	margin-inline: 0.5em;
+}
+
+/* sub-meta: a secondary line under meta, in thin serif caps */
 .sub-meta {
 	font-family: var(--font-serif);
-	font-style: italic;
+	font-size: 0.875rem; /* 14px */
 	font-weight: 400;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 /* inline-block so wrapped meta keeps its own leading instead of the
@@ -392,9 +477,9 @@ main section[data-scene].is-wide > svg {
 .persona {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
 	gap: 2.5rem;
-	width: min(1100px, 100%);
+	width: 100%;
 }
 
 .persona > blockquote {
@@ -412,7 +497,7 @@ main section[data-scene].is-wide > svg {
 .demo-panels {
 	display: flex;
 	gap: 1.5rem;
-	width: min(1000px, 100%);
+	width: 100%;
 }
 
 .demo-panel > * {
@@ -421,6 +506,10 @@ main section[data-scene].is-wide > svg {
 }
 
 @media (max-width: 699px) {
+	:root {
+		--frame-pad-x: 1.5rem;
+	}
+
 	main h2 {
 		font-size: 2.375rem; /* 38px */
 	}
@@ -442,27 +531,50 @@ main section[data-scene].is-wide > svg {
 
 .deck-chrome > span {
 	position: absolute;
+	box-sizing: border-box;
+	/* corner tabs: white, flush into the card's corners (inside its 2px
+	   border), padded twice as wide left/right as top/bottom, with a border and
+	   rounded corner on the sides facing the slide */
+	background: #fff;
+	padding: var(--tab-pad) calc(2 * var(--tab-pad));
+	--tab-border: 2px solid var(--act-color, #000);
+	--tab-radius: 1.5rem;
 }
 
 .chrome-title {
-	top: 1.5rem;
-	left: 1.5rem;
+	top: calc(var(--inset-top) + 2px);
+	left: calc(var(--inset-left) + 2px);
+	border-right: var(--tab-border);
+	border-bottom: var(--tab-border);
+	border-bottom-right-radius: var(--tab-radius);
+	/* sits inside the card's own rounded corner */
+	border-top-left-radius: calc(var(--tab-radius) - 2px);
 }
 
 .chrome-event {
-	top: 1.5rem;
-	right: 1.5rem;
+	top: calc(var(--inset-top) + 2px);
+	right: var(--inset-right);
+	border-left: var(--tab-border);
+	border-bottom: var(--tab-border);
+	border-bottom-left-radius: var(--tab-radius);
 	text-align: right;
 }
 
+/* the card has no bottom border, so the bottom tabs sit on the window edge */
 .chrome-authors {
-	bottom: 1.5rem;
-	left: 1.5rem;
+	bottom: var(--inset-bottom);
+	left: calc(var(--inset-left) + 2px);
+	border-right: var(--tab-border);
+	border-top: var(--tab-border);
+	border-top-right-radius: var(--tab-radius);
 }
 
 .chrome-number {
-	bottom: 1.5rem;
-	right: 1.5rem;
+	bottom: var(--inset-bottom);
+	right: var(--inset-right);
+	border-left: var(--tab-border);
+	border-top: var(--tab-border);
+	border-top-left-radius: var(--tab-radius);
 	font-variant-numeric: tabular-nums;
 }
 
@@ -481,7 +593,7 @@ aside.notes {
 /* bottom centre: the right-hand corner belongs to the slide number */
 #notes-toggle {
 	position: fixed;
-	bottom: 1.5rem;
+	bottom: calc(var(--inset-bottom) + var(--chrome-pad));
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 30;

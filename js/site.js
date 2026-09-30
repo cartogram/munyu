@@ -15,17 +15,30 @@ const STEP_FADE = 0.1; // share of a step spent fading its piece in
 
 const acts = gsap.utils.toArray('main .act-panel');
 
+// --inset-top / --inset-bottom from css/talk.css, in px.
+function cardInsets() {
+	const root = getComputedStyle(document.documentElement);
+	const rem = parseFloat(root.fontSize);
+	const px = (name) => {
+		const value = root.getPropertyValue(name).trim();
+		return parseFloat(value) * (value.endsWith('rem') ? rem : 1) || 0;
+	};
+	return { insetTop: px('--inset-top'), insetBottom: px('--inset-bottom') };
+}
+
 // Each act opener gets its own seeded mark-field landscape, in the act's tints.
 acts.forEach((panel) => panel.querySelector('.act-opener')?.append(landscape(panel.dataset.act)));
 
-// Editorial kicker above each scene: "Act name • 3 / 8". The first act has no
-// opener heading, and its title scene carries no kicker.
+// Each scene's kicker ("Act name—3/8"), shown in the slide chrome under
+// the talk title. The first act has no opener heading, and its title scene
+// carries no kicker.
 acts.forEach((panel) => {
 	const actName = panel.querySelector('.act-title')?.textContent ?? 'Hypothesis';
 	const scenes = [...panel.querySelectorAll('section[data-scene]')];
 	scenes.forEach((scene, i) => {
 		if (scene.dataset.scene === 'your-ui-is-not-my-ui-title') return;
-		scene.dataset.kicker = `${actName} • ${i + 1} / ${scenes.length}`;
+		scene.dataset.kickerAct = actName;
+		scene.dataset.kickerNumber = `${i + 1}/${scenes.length}`;
 	});
 });
 
@@ -77,25 +90,32 @@ function buildAct(panel, isLast) {
 			actBeats.push({ id: `${id}/${i + 1}`, scene, time: tl.duration() });
 		});
 
+		// Only scroll through a scene that overflows by more than its bottom
+		// padding could absorb; a few px of overflow isn't worth a stop.
 		const overflow = scene.offsetHeight - cardHeight;
-		if (overflow > 1) {
+		if (overflow > 16) {
 			const from = tl.duration();
 			moveInnerTo(x, overflow);
 			actRanges.push({ from, to: tl.duration() });
 		}
 	});
 
+	// Cards sit in from the window edges (--inset-*): they pin insetTop from
+	// the top, and the next card arrives at the same place.
+	const { insetTop, insetBottom } = cardInsets();
 	const travel = tl.duration();
 	if (!isLast) {
 		// pinSpacing is off so the next card overlaps; this margin delays its
-		// arrival until the scenes have finished sliding.
-		gsap.set(panel, { marginBottom: travel });
-		tl.to({}, { duration: cardHeight });
+		// arrival until the scenes have finished sliding. The hold is the
+		// distance for the next card to rise from the window's bottom edge to
+		// the inset line.
+		gsap.set(panel, { marginBottom: travel + insetBottom });
+		tl.to({}, { duration: panel.offsetHeight + insetBottom });
 	}
 
 	const trigger = ScrollTrigger.create({
 		trigger: panel,
-		start: 'top top',
+		start: `top ${insetTop}px`,
 		end: `+=${tl.duration()}`,
 		pin: true,
 		pinSpacing: isLast,
@@ -328,6 +348,7 @@ function updateCurrentScene() {
 }
 
 const chromeNumber = document.querySelector('.chrome-number');
+const chromeKicker = document.querySelector('.chrome-kicker');
 
 // Slide number counts frames — act openers and scenes, not reveal steps —
 // and the chrome takes the current act's colour.
@@ -339,7 +360,12 @@ function updateChrome() {
 	});
 	const frame = frames[index];
 	if (!frame) return;
-	chromeNumber.textContent = `${String(index + 1).padStart(2, '0')} / ${frames.length}`;
+	chromeNumber.innerHTML = `${String(index + 1).padStart(2, '0')}<span class="em-dash">—</span>${frames.length}`;
+	// words in the meta face, the dash and numbers in sub-meta, as "London—2026"
+	const scene = frame.scene;
+	chromeKicker.innerHTML = scene?.dataset.kickerAct
+		? `${scene.dataset.kickerAct}<span class="sub-meta"><span class="em-dash">—</span>${scene.dataset.kickerNumber}</span>`
+		: '';
 	document.body.dataset.currentAct = frame.trigger.trigger.dataset.act;
 }
 

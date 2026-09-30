@@ -294,8 +294,17 @@
 
 			/* the scale transform also makes the slide the containing block for the
 			   chrome's position: fixed, so it sits on this slide, not the page */
+			.ts-slide {
+				--inset-top: 0px;
+				--inset-left: 0px;
+				--inset-right: 0px;
+				--inset-bottom: 0px;
+			}
+
 			.ts-slide .act-panel {
 				--card-width: 1280px;
+				width: 100%;
+				margin: 0;
 				height: auto;
 				min-height: 800px;
 				overflow: visible;
@@ -318,16 +327,6 @@
 				position: absolute;
 				inset: 0 0 auto 0;
 				height: 800px;
-			}
-
-			/* examples use a real element for the kicker so its area can be measured */
-			.ts-slide section[data-scene][data-kicker]::before {
-				content: none;
-			}
-
-			.ts-slide .ts-kicker {
-				display: block;
-				margin-bottom: 2rem;
 			}
 
 			.ts-fold {
@@ -382,8 +381,8 @@
 					</div>
 					<div class="ts-face-meta">
 						Sora Sagano · public domain (CC0)<br />
-						Regular 400 · SemiBold 600 (also used for 500) · Bold 700 · Black 900<br />
-						Act and talk titles, body, lists, meta, kickers
+						Light 300 · Regular 400 · SemiBold 600 (also used for 500) · Bold 700 · Black 900<br />
+						Act and talk titles, body, lists, meta
 					</div>
 				</div>
 				<div>
@@ -435,8 +434,8 @@
 
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="h4">
-					<strong>Standfirst</strong>
-					The line under a scene headline; also the Q&amp;A questions.
+					<strong>Lede</strong>
+					The line under a scene headline; also the Q&amp;A questions. Formerly the standfirst.
 					<code>main h4</code>
 					<output></output>
 				</div>
@@ -498,14 +497,13 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="small">
 					<strong>Meta</strong>
-					Kickers, authors, section labels, asides, demo panel labels, the slide chrome and the Notes button.
-					<code>section[data-kicker]::before, main small, .demo-panel &gt; h4, .deck-chrome, #notes-toggle</code>
+					Authors, section labels, asides, demo panel labels, the slide chrome and the Notes button.
+					<code>main small, .demo-panel &gt; h4, .deck-chrome, #notes-toggle</code>
 					<output></output>
 				</div>
 				<div class="ts-sample act-panel" data-act="hypothesis">
 					<div class="act-panel-inner">
 						<section data-scene="ts-meta">
-							<p><small>User research • 2 / 8</small></p>
 							<p><small>Simon Lenz, Matthew Seccafien</small></p>
 							<p>
 								<small style="max-width: 30ch">Your UI is not my UI · React Advanced 2026 · Simon Lenz, Matthew Seccafien. Real user research, a prototype, and a provocation about where UI is heading.</small>
@@ -523,14 +521,15 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".sub-meta">
 					<strong>Sub-meta</strong>
-					A secondary line under meta, e.g. the event's city and year. The only italic.
+					A secondary line under meta: the event's city and year, the scene kicker under the talk title, and the slide number. Upright serif caps.
 					<code>.sub-meta</code>
 					<output></output>
 				</div>
 				<div class="ts-sample act-panel" data-act="user-research">
 					<div class="act-panel-inner">
 						<section data-scene="ts-sub-meta">
-							<p><small>React Advanced<br /><span class="sub-meta">London 2026</span></small></p>
+							<p><small>React Advanced<br />London<span class="sub-meta"><span class="em-dash">—</span>2026</span></small></p>
+							<p><small>Your UI is not my UI<br />User research<span class="sub-meta"><span class="em-dash">—</span>2/8</span></small></p>
 						</section>
 					</div>
 				</div>
@@ -574,7 +573,7 @@
 			<h2>Slide templates</h2>
 			<p class="ts-note">
 				Every layout in the talk, rendered from the live slides in <code>index.html</code> at 1280×800.
-				Left: the labelled areas, measured from the example. Right: the slide itself, with its kicker and
+				Left: the labelled areas, measured from the example. Right: the slide itself, with its
 				chrome. Stepped reveals are shown fully revealed; a dashed line marks the fold on slides that
 				scroll.
 			</p>
@@ -627,7 +626,7 @@
 			});
 
 			// Per-row tuner: each row gets its own injected rule, so overrides also
-			// reach generated content (the kicker's ::before) and never touch the
+			// reach generated content (e.g. ::before) and never touch the
 			// slides' stylesheet.
 			function addTuner(row, i) {
 				const spec = row.querySelector('.ts-spec');
@@ -714,25 +713,24 @@
 				{ name: 'Statement', act: 'empathy-is-our-point', scene: 'what-is-gained', note: 'A headline on its own.' },
 				{ name: 'Headline + body', act: 'hypothesis', scene: 'hypothesis' },
 				{ name: 'Headline + list', act: 'limits-of-adaptability', scene: 'opportunities' },
-				{ name: 'Headline + standfirst + list', act: 'launching-is-creating', scene: 'but-a-ui-that-keeps-changing-breaks-screen-readers' },
-				{ name: 'Headline + standfirst + quote', act: 'user-research', scene: 'matthew' },
+				{ name: 'Headline + lede + list', act: 'launching-is-creating', scene: 'but-a-ui-that-keeps-changing-breaks-screen-readers' },
+				{ name: 'Headline + lede + quote', act: 'user-research', scene: 'matthew' },
 				{ name: 'Persona', act: 'user-research', scene: 'sinead', note: 'Quote stacked above a screenshot or clip; taller than one frame.' },
 				{ name: 'Headline + media', act: 'hypothesis', scene: 'ai-accessibility-today' },
 				{ name: 'Diagram', act: 'limits-of-adaptability', scene: 'todays-model', note: 'Layers reveal one per ↓ on the slides.' },
 				{ name: 'Demo panels', act: 'personalization-over-adaptability', scene: 'demo-two-people', note: 'Panels reveal one per ↓ on the slides.' },
-				{ name: 'Q&A', act: 'backup-qa', scene: 'doesnt-this-just-hand-more-power', note: 'Question as the standfirst, answer as body.' },
+				{ name: 'Q&A', act: 'backup-qa', scene: 'doesnt-this-just-hand-more-power', note: 'Question as the lede, answer as body.' },
 			];
 
 			// Areas to label, in priority order; an element claimed by an earlier
 			// role (e.g. a demo panel) isn't labelled again by a later one.
 			const ROLES = [
 				['.deck-chrome > span', 'Chrome', '.deck-chrome'],
-				['.ts-kicker', 'Meta · kicker'],
 				['.act-title', 'Act title'],
 				["[data-scene='your-ui-is-not-my-ui-title'] h2", 'Act title'],
 				['.demo-panels', 'Demo panels · meta'],
 				['h2', 'Scene headline'],
-				['h4', 'Standfirst'],
+				['h4', 'Lede'],
 				['blockquote', 'Quote'],
 				['p:has(> small:only-child)', 'Meta'],
 				['p', 'Body'],
@@ -752,12 +750,7 @@
 				const node = original.cloneNode(true);
 				node.querySelectorAll('aside.notes').forEach((n) => n.remove());
 				node.querySelectorAll('video').forEach((v) => v.setAttribute('preload', 'metadata'));
-				if (!t.opener && t.scene !== 'your-ui-is-not-my-ui-title') {
-					const kicker = document.createElement('small');
-					kicker.className = 'ts-kicker';
-					kicker.textContent = `${actTitle} • ${scenes.indexOf(original) + 1} / ${scenes.length}`;
-					node.prepend(kicker);
-				}
+				const kicker = t.opener || t.scene === 'your-ui-is-not-my-ui-title' ? '' : `${actTitle}<span class="sub-meta"><span class="em-dash">—</span>${scenes.indexOf(original) + 1}/${scenes.length}</span>`;
 
 				const number = String(deckFrames.indexOf(original) + 1).padStart(2, '0');
 				const slide = document.createElement('div');
@@ -766,10 +759,10 @@
 					<section class="act-panel" data-act="${t.act}">
 						<div class="act-panel-inner"></div>
 						<div class="deck-chrome" aria-hidden="true">
-							<span class="chrome-title">Your UI is not my UI</span>
-							<span class="chrome-event">React Advanced<br /><span class="sub-meta">London 2026</span></span>
+							<span class="chrome-title">Your UI is not my UI<br /><span class="chrome-kicker">${kicker}</span></span>
+							<span class="chrome-event">React Advanced<br />London<span class="sub-meta"><span class="em-dash">—</span>2026</span></span>
 							<span class="chrome-authors">Simon Lenz<br />Matthew Seccafien</span>
-							<span class="chrome-number">${number} / ${deckFrames.length}</span>
+							<span class="chrome-number sub-meta">${number}<span class="em-dash">—</span>${deckFrames.length}</span>
 						</div>
 					</section>`;
 				slide.querySelector('.act-panel-inner').append(node);
