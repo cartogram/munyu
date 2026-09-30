@@ -159,6 +159,15 @@
 				overflow-wrap: break-word;
 			}
 
+			/* the talk title opens the page in place of an act opener */
+			main [data-scene='your-ui-is-not-my-ui-title'] h2 {
+				font-size: max(3.5rem, min(9vw + 1rem, 12rem));
+				line-height: 0.95;
+				letter-spacing: -0.03em;
+				max-width: 11ch;
+				margin-bottom: 0.4em;
+			}
+
 			main h2 {
 				font-size: 1.8em;
 				font-weight: 700;
@@ -291,6 +300,10 @@
 					font-size: 1.35em;
 				}
 
+				main [data-scene='your-ui-is-not-my-ui-title'] h2 {
+					font-size: clamp(2.25rem, 11vw, 12rem);
+				}
+
 				.demo-panels {
 					flex-direction: column;
 				}
@@ -348,10 +361,6 @@
 		<main>
 			<section data-act="hypothesis" class="act-panel">
 				<div class="act-panel-inner">
-					<header class="act-opener">
-						<h1 class="act-title">Hypothesis</h1>
-					</header>
-
 					<section data-scene="your-ui-is-not-my-ui-title">
 						<h2>Your UI is not my UI</h2>
 						<p><small>Simon Lenz, Matthew Seccafien</small></p>

@@ -29,7 +29,9 @@ function buildAct(panel, isLast) {
 	const act = panel.dataset.act;
 	const cardHeight = panel.clientHeight;
 	const tl = gsap.timeline();
-	const actBeats = [{ id: act, scene: null, time: 0 }];
+	// An act without an opener (the first, which opens on the talk title)
+	// starts directly on its first scene.
+	const actBeats = panel.querySelector('.act-opener') ? [{ id: act, scene: null, time: 0 }] : [];
 	const actRanges = [];
 
 	gsap.set(panel, { '--card-width': `${panel.clientWidth}px` });
