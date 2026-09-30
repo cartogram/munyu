@@ -296,6 +296,7 @@
 			   chrome's position: fixed, so it sits on this slide, not the page */
 			.ts-slide {
 				--inset-top: 0px;
+				--stack-step: 0px;
 				--inset-left: 0px;
 				--inset-right: 0px;
 				--inset-bottom: 0px;
@@ -521,15 +522,15 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".sub-meta">
 					<strong>Sub-meta</strong>
-					A secondary line under meta: the event's city and year, the scene kicker under the talk title, and the slide number. Upright serif caps.
+					A secondary line under meta: the event's city and year, the scene kicker under the talk title, and the numbers. Title-case serif italic, the only italic.
 					<code>.sub-meta</code>
 					<output></output>
 				</div>
 				<div class="ts-sample act-panel" data-act="user-research">
 					<div class="act-panel-inner">
 						<section data-scene="ts-sub-meta">
-							<p><small>React Advanced<br />London<span class="sub-meta"><span class="em-dash">—</span>2026</span></small></p>
-							<p><small>Your UI is not my UI<br />User research<span class="sub-meta"><span class="em-dash">—</span>2/8</span></small></p>
+							<p><small>React Advanced<span class="sub-meta"><span class="em-dash">—</span>London 2026</span></small></p>
+							<p><small>User research<span class="sub-meta"><span class="em-dash">—</span>2/8</span></small></p>
 						</section>
 					</div>
 				</div>
@@ -725,7 +726,7 @@
 			// Areas to label, in priority order; an element claimed by an earlier
 			// role (e.g. a demo panel) isn't labelled again by a later one.
 			const ROLES = [
-				['.deck-chrome > span', 'Chrome', '.deck-chrome'],
+				['.act-tab', 'Meta · act tab'],
 				['.act-title', 'Act title'],
 				["[data-scene='your-ui-is-not-my-ui-title'] h2", 'Act title'],
 				['.demo-panels', 'Demo panels · meta'],
@@ -750,20 +751,16 @@
 				const node = original.cloneNode(true);
 				node.querySelectorAll('aside.notes').forEach((n) => n.remove());
 				node.querySelectorAll('video').forEach((v) => v.setAttribute('preload', 'metadata'));
-				const kicker = t.opener || t.scene === 'your-ui-is-not-my-ui-title' ? '' : `${actTitle}<span class="sub-meta"><span class="em-dash">—</span>${scenes.indexOf(original) + 1}/${scenes.length}</span>`;
-
 				const number = String(deckFrames.indexOf(original) + 1).padStart(2, '0');
+				const sceneCount = t.opener || t.scene === 'your-ui-is-not-my-ui-title' ? '' : `${scenes.indexOf(original) + 1}/${scenes.length} `;
+				const kicker = `${actTitle}<span class="sub-meta"><span class="em-dash">—</span>${sceneCount}${number}/${deckFrames.length}</span>`;
+
 				const slide = document.createElement('div');
 				slide.className = 'ts-slide';
 				slide.innerHTML = `
 					<section class="act-panel" data-act="${t.act}">
 						<div class="act-panel-inner"></div>
-						<div class="deck-chrome" aria-hidden="true">
-							<span class="chrome-title">Your UI is not my UI<br /><span class="chrome-kicker">${kicker}</span></span>
-							<span class="chrome-event">React Advanced<br />London<span class="sub-meta"><span class="em-dash">—</span>2026</span></span>
-							<span class="chrome-authors">Simon Lenz<br />Matthew Seccafien</span>
-							<span class="chrome-number sub-meta">${number}<span class="em-dash">—</span>${deckFrames.length}</span>
-						</div>
+						<span class="act-tab" aria-hidden="true">${kicker}</span>
 					</section>`;
 				slide.querySelector('.act-panel-inner').append(node);
 				return slide;

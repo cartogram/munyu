@@ -59,6 +59,14 @@
 }
 
 @font-face {
+	font-family: 'Libre Baskerville';
+	src: url('../fonts/libre-baskerville/LibreBaskerville-Italic-latin.woff2') format('woff2');
+	font-weight: 400 700;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
 	font-family: 'Ronzino';
 	src: url('../fonts/ronzino/Ronzino-Regular.woff2') format('woff2');
 	font-weight: 400;
@@ -117,8 +125,13 @@
 :root {
 	/* how far the act cards sit in from each window edge (js/site.js reads
 	   the top and bottom values for the scroll maths) */
-	--inset-top: 0.75rem;
-	--inset-left: 0.75rem;
+	/* the first card sits below a band for the talk title and event, and one
+	   stack step from the left, like the gap between stacked cards; literal
+	   px because js/site.js reads them */
+	--inset-top: 42px;
+	--inset-left: 4px;
+	/* each act card sits this much further in (top and left) than the last */
+	--stack-step: 4px;
 	--inset-right: 0rem;
 	--inset-bottom: 0rem;
 	/* the chrome sits 1.5rem inside the card (Notes button); corner tabs pad
@@ -171,9 +184,13 @@ body[data-current-act='backup-qa'] { --act-color: darkslategray; }
 	--muted-color: var(--act-color);
 
 	position: relative;
-	width: calc(100% - var(--inset-left) - var(--inset-right));
-	height: calc(100vh - var(--inset-top) - var(--inset-bottom));
-	margin-left: var(--inset-left);
+	/* this card's offsets: the base inset plus its place in the stack
+	   (--stack is set per act by js/site.js) */
+	--card-top: calc(var(--inset-top) + var(--stack, 0) * var(--stack-step));
+	--card-left: calc(var(--inset-left) + var(--stack, 0) * var(--stack-step));
+	width: calc(100% - var(--card-left) - var(--inset-right));
+	height: calc(100vh - var(--card-top) - var(--inset-bottom));
+	margin-left: var(--card-left);
 	margin-right: var(--inset-right);
 	box-sizing: border-box;
 	/* clip, not hidden: focusing a control inside must not scroll the card */
@@ -181,7 +198,7 @@ body[data-current-act='backup-qa'] { --act-color: darkslategray; }
 	background: #fff;
 	color: var(--act-color);
 	/* the leading corner of each card, as it slides up over the last */
-	border-radius: 1.5rem 0 0 0;
+	border-radius: 1rem 0 0 0;
 	font-weight: 400;
 	font-size: 1.5em;
 	/* no shadow: each act's leading edge is its opener's mark-field landscape */
@@ -190,7 +207,7 @@ body[data-current-act='backup-qa'] { --act-color: darkslategray; }
 /* each act card is outlined in its colour; as one slides up over the last,
    its top edge and rounded leading corner mark the overlap */
 .act-panel {
-	border: 2px solid var(--act-color);
+	border: 1px solid var(--act-color);
 	/* open at the bottom and right: the card runs off those window edges */
 	border-bottom: none;
 	border-right: none;
@@ -212,10 +229,10 @@ main section[data-scene] {
 	   the next scene shows */
 	flex: 0 0 var(--card-width, 100vw);
 	width: var(--card-width, 100vw);
-	/* the card's inner height: window minus the insets and the 2px top border */
-	min-height: calc(100vh - var(--inset-top) - var(--inset-bottom) - 2px);
+	/* the card's inner height: window minus the insets and the 1px top border */
+	min-height: calc(100vh - var(--card-top) - var(--inset-bottom) - 1px);
 	/* room for the fixed slide chrome along the edges (two lines at the top) */
-	padding: 6rem var(--frame-pad-x) 6rem;
+	padding: 6rem var(--frame-pad-x) 4.5rem;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -278,7 +295,7 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	/* sized so the longest word, "Personalization" (7.7em wide in Aileron
 	   Black), always fits the card's width minus its 1.5rem padding; 222px
 	   on wide screens */
-	font-size: min(calc((100vw - var(--inset-left) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), 13.875rem); /* up to 222px */
+	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 1px) / 7.9), 13.875rem); /* up to 222px */
 	font-weight: 900;
 	line-height: 0.8;
 	margin: 0 auto;
@@ -290,7 +307,7 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 }
 
 /* editorial scene layout: serif headline, sans body, serif lede and
-   quotes. The kicker lives in the slide chrome (.chrome-kicker). */
+   quotes. The scene line lives in each card's tab (.act-tab). */
 
 main h2 {
 	font-family: var(--font-serif);
@@ -407,6 +424,7 @@ main section[data-scene] blockquote {
    chrome and the Notes button. rem, so it stays meta-sized inside a 40px
    paragraph. */
 main small,
+.act-tab,
 .demo-panel > h4,
 .deck-chrome,
 #notes-toggle {
@@ -427,13 +445,13 @@ main small,
 	margin-inline: 0.5em;
 }
 
-/* sub-meta: a secondary line under meta, in thin serif caps */
+/* sub-meta: the secondary part of a meta line, in title-case serif
+   italic — the one italic in the system */
 .sub-meta {
 	font-family: var(--font-serif);
 	font-size: 0.875rem; /* 14px */
+	font-style: italic;
 	font-weight: 400;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
 }
 
 /* inline-block so wrapped meta keeps its own leading instead of the
@@ -532,54 +550,49 @@ main section[data-scene].is-wide > svg {
 .deck-chrome > span {
 	position: absolute;
 	box-sizing: border-box;
-	/* corner tabs: white, flush into the card's corners (inside its 2px
-	   border), padded twice as wide left/right as top/bottom, with a border and
-	   rounded corner on the sides facing the slide */
-	background: #fff;
-	padding: var(--tab-pad) calc(2 * var(--tab-pad));
-	--tab-border: 2px solid var(--act-color, #000);
-	--tab-radius: 1.5rem;
 }
 
-.chrome-title {
-	top: calc(var(--inset-top) + 2px);
-	left: calc(var(--inset-left) + 2px);
-	border-right: var(--tab-border);
-	border-bottom: var(--tab-border);
-	border-bottom-right-radius: var(--tab-radius);
-	/* sits inside the card's own rounded corner */
-	border-top-left-radius: calc(var(--tab-radius) - 2px);
+/* the talk title and event sit on one line each in the white band above
+   the card stack, their text aligned with the tabs' text below */
+.chrome-bar {
+	top: calc((var(--inset-top) - 1lh) / 2);
+}
+
+.chrome-talk {
+	left: calc(var(--inset-left) + 1px + 2 * var(--tab-pad));
 }
 
 .chrome-event {
-	top: calc(var(--inset-top) + 2px);
-	right: var(--inset-right);
-	border-left: var(--tab-border);
-	border-bottom: var(--tab-border);
-	border-bottom-left-radius: var(--tab-radius);
+	right: calc(var(--inset-right) + 2 * var(--tab-pad));
 	text-align: right;
 }
 
-/* the card has no bottom border, so the bottom tabs sit on the window edge */
-.chrome-authors {
-	bottom: var(--inset-bottom);
-	left: calc(var(--inset-left) + 2px);
-	border-right: var(--tab-border);
-	border-top: var(--tab-border);
-	border-top-right-radius: var(--tab-radius);
-}
-
-.chrome-number {
-	bottom: var(--inset-bottom);
-	right: var(--inset-right);
-	border-left: var(--tab-border);
-	border-top: var(--tab-border);
-	border-top-left-radius: var(--tab-radius);
+/* each act card's own tab (added by js/site.js): act name, scene count and
+   page, hanging from the card's top centre so it scrolls in and away with
+   the card. White, bordered on its sides and bottom, bottom corners rounded. */
+.act-tab {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1;
+	box-sizing: border-box;
+	/* at least 40% of the card, so the tab keeps one width across scenes */
+	min-width: 40%;
+	text-align: center;
+	white-space: nowrap;
+	background: #fff;
+	padding: var(--tab-pad) calc(2 * var(--tab-pad));
+	border: 1px solid var(--act-color);
+	border-top: none;
+	border-radius: 0 0 1rem 1rem;
 	font-variant-numeric: tabular-nums;
 }
 
+/* phones: only the talk title fits in the top band */
 @media (max-width: 699px) {
-	.chrome-authors {
+	.chrome-talk .sub-meta,
+	.chrome-event {
 		display: none;
 	}
 }

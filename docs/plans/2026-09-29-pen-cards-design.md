@@ -50,7 +50,7 @@ mode is secondary.
   size / line-height / weight tuners). Two free families:
   **Aileron** (Sora Sagano, public domain; 400, 600 — also used for 500 —,
   700, 900 Black from dotcolon.net) and **Libre Baskerville** (Impallari
-  Type, OFL; variable 400–700). No italics anywhere; `<em>` is upright.
+  Type, OFL; variable 400–700). No italics except the sub-meta; `<em>` is upright.
 
   | style | face | size / line height |
   |---|---|---|
@@ -60,7 +60,7 @@ mode is secondary.
   | Body (paragraphs and lists) | Aileron 400 | 40 / 48 |
   | Quote (incl. persona quotes) | Libre Baskerville 400 | 60 / 72 |
   | Meta (kickers, authors, labels, chrome, Notes button) | Aileron 700 | 16 / 22.4 |
-  | Sub-meta ("—London 2026", scene kicker, slide number) | Libre Baskerville 400, caps | 14 |
+  | Sub-meta (the secondary part of a meta line: "—London 2026", "—Simon Lenz & Matthew Seccafien", the numbers in "User research—3/8 07/42") | Libre Baskerville 400 italic, title case — the one italic | 14 |
   | Speaker notes | Aileron 400 | 15 / 24 |
 
 - **Editorial scene layout**: a kicker above every scene heading ("Act name •

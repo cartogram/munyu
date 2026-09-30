@@ -1,6 +1,6 @@
 import { launch, sleep } from './cdp.mjs';
 const b = await launch();
-await b.goto('http://localhost:8123/index.html#launching-is-creating/whose-context-is-it');
+await b.goto(`http://localhost:${process.env.PORT || 8123}/index.html#launching-is-creating/whose-context-is-it`);
 await sleep(500);
 const before = await b.eval(`JSON.stringify({ y: Math.round(scrollY), hash: location.hash })`);
 await b.send('Emulation.setDeviceMetricsOverride', { width: 900, height: 700, deviceScaleFactor: 1, mobile: false });

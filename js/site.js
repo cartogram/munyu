@@ -3,7 +3,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { landscape } from './landscape.js';
 
 gsap.registerPlugin(ScrollTrigger);
-ScrollTrigger.config({ ignoreMobileResize: true });
+// Resizes are handled by rebuild() below, which keeps the reader on the same
+// beat; ScrollTrigger's own resize refresh would shift positions first.
+ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
 
 // Scenes that hold while their pieces appear one per beat, in DOM order.
 const STEPPED_SCENES = {
@@ -15,7 +17,11 @@ const STEP_FADE = 0.1; // share of a step spent fading its piece in
 
 const acts = gsap.utils.toArray('main .act-panel');
 
-// --inset-top / --inset-bottom from css/talk.css, in px.
+// Cards stack: act k sits k × --stack-step further in from the top and left
+// than the first, so earlier cards' corners show behind the current one.
+acts.forEach((panel, k) => panel.style.setProperty('--stack', k));
+
+// --inset-top / --inset-bottom / --stack-step from css/talk.css, in px.
 function cardInsets() {
 	const root = getComputedStyle(document.documentElement);
 	const rem = parseFloat(root.fontSize);
@@ -23,7 +29,7 @@ function cardInsets() {
 		const value = root.getPropertyValue(name).trim();
 		return parseFloat(value) * (value.endsWith('rem') ? rem : 1) || 0;
 	};
-	return { insetTop: px('--inset-top'), insetBottom: px('--inset-bottom') };
+	return { insetTop: px('--inset-top'), insetBottom: px('--inset-bottom'), stackStep: px('--stack-step') };
 }
 
 // Each act opener gets its own seeded mark-field landscape, in the act's tints.
@@ -100,28 +106,48 @@ function buildAct(panel, isLast) {
 		}
 	});
 
-	// Cards sit in from the window edges (--inset-*): they pin insetTop from
-	// the top, and the next card arrives at the same place.
-	const { insetTop, insetBottom } = cardInsets();
+	// Cards sit in from the window edges (--inset-*), one stack step further
+	// per act: each pins at its own top offset, and the next card arrives at
+	// its own (one step lower).
+	const { insetTop, insetBottom, stackStep } = cardInsets();
+	const k = acts.indexOf(panel);
+	const top = insetTop + k * stackStep;
 	const travel = tl.duration();
 	if (!isLast) {
 		// pinSpacing is off so the next card overlaps; this margin delays its
 		// arrival until the scenes have finished sliding. The hold is the
 		// distance for the next card to rise from the window's bottom edge to
-		// the inset line.
+		// its stack position.
 		gsap.set(panel, { marginBottom: travel + insetBottom });
-		tl.to({}, { duration: panel.offsetHeight + insetBottom });
+		tl.to({}, { duration: document.documentElement.clientHeight - (top + stackStep) });
 	}
 
+	// One trigger scrubs the act's timeline over its own stretch of scroll.
+	// The last act also pins (with spacing) for that stretch, which gives the
+	// page its final length.
 	const trigger = ScrollTrigger.create({
 		trigger: panel,
-		start: `top ${insetTop}px`,
+		start: `top ${top}px`,
 		end: `+=${tl.duration()}`,
-		pin: true,
-		pinSpacing: isLast,
 		scrub: true,
 		animation: tl,
+		...(isLast && { pin: true, pinSpacing: true }),
 	});
+
+	// Earlier acts stay pinned from their arrival to the end of the page, so
+	// they remain stacked beneath the later cards. Refreshed after the other
+	// triggers, once the page's full length is known.
+	if (!isLast) {
+		ScrollTrigger.create({
+			trigger: panel,
+			start: `top ${top}px`,
+			endTrigger: 'main',
+			end: 'bottom bottom',
+			pin: true,
+			pinSpacing: false,
+			refreshPriority: -1,
+		});
+	}
 
 	actBeats.forEach((beat) => beats.push({ ...beat, trigger }));
 	actRanges.forEach((range) => freeRanges.push({ ...range, trigger }));
@@ -347,26 +373,50 @@ function updateCurrentScene() {
 	if (notesDrawer.classList.contains('is-open')) renderDrawer();
 }
 
-const chromeNumber = document.querySelector('.chrome-number');
-const chromeKicker = document.querySelector('.chrome-kicker');
+const actNames = new Map(acts.map((panel) => [panel, panel.querySelector('.act-title')?.textContent ?? 'Hypothesis']));
 
-// Slide number counts frames — act openers and scenes, not reveal steps —
-// and the chrome takes the current act's colour.
+// Each act card carries its own tab, so it scrolls in and away with the card.
+const actTabs = new Map(
+	acts.map((panel) => {
+		const tab = document.createElement('span');
+		tab.className = 'act-tab';
+		tab.setAttribute('aria-hidden', 'true');
+		panel.append(tab);
+		return [panel, tab];
+	}),
+);
+
+// A tab reads "Act name—3/8 07/42": the scene within its act (not on openers
+// or the title slide), then the frame within the talk. Frames are act openers
+// and scenes, not reveal steps. The current card's tab shows the current
+// frame; cards stacked beneath keep their last frame, cards yet to arrive show
+// their first. The top-band chrome takes the current act's colour.
+function tabText(frame, index, total) {
+	const dash = '<span class="em-dash">—</span>';
+	const sceneCount = frame.scene?.dataset.kickerNumber ? `${frame.scene.dataset.kickerNumber} ` : '';
+	const page = `${String(index + 1).padStart(2, '0')}/${total}`;
+	// words in the meta face, dash and numbers in sub-meta, as "—London 2026"
+	return `${actNames.get(frame.trigger.trigger)}<span class="sub-meta">${dash}${sceneCount}${page}</span>`;
+}
+
 function updateChrome() {
 	const frames = beats.filter((beat) => beat.id.split('/').length < 3);
 	let index = 0;
 	frames.forEach((frame, i) => {
 		if (beatPosition(frame) <= window.scrollY + 2) index = i;
 	});
-	const frame = frames[index];
-	if (!frame) return;
-	chromeNumber.innerHTML = `${String(index + 1).padStart(2, '0')}<span class="em-dash">—</span>${frames.length}`;
-	// words in the meta face, the dash and numbers in sub-meta, as "London—2026"
-	const scene = frame.scene;
-	chromeKicker.innerHTML = scene?.dataset.kickerAct
-		? `${scene.dataset.kickerAct}<span class="sub-meta"><span class="em-dash">—</span>${scene.dataset.kickerNumber}</span>`
-		: '';
-	document.body.dataset.currentAct = frame.trigger.trigger.dataset.act;
+	const current = frames[index];
+	if (!current) return;
+	const currentAct = acts.indexOf(current.trigger.trigger);
+	acts.forEach((panel, k) => {
+		const own = frames.map((frame, i) => ({ frame, i })).filter(({ frame }) => frame.trigger.trigger === panel);
+		if (!own.length) return;
+		const pick = k === currentAct ? { frame: current, i: index } : k < currentAct ? own.at(-1) : own[0];
+		const html = tabText(pick.frame, pick.i, frames.length);
+		const tab = actTabs.get(panel);
+		if (tab.innerHTML !== html) tab.innerHTML = html;
+	});
+	document.body.dataset.currentAct = current.trigger.trigger.dataset.act;
 }
 
 window.addEventListener('scroll', () => {
