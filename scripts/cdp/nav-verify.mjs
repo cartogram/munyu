@@ -2,7 +2,7 @@
 import { launch, sleep } from './cdp.mjs';
 import { settle } from './kbd.mjs';
 const W = +(process.env.W || 1280), H = +(process.env.H || 800);
-const URL = 'http://localhost:8123/index.html';
+const URL = `http://localhost:${process.env.PORT || 8123}/index.html`;
 const b = await launch({ width: W, height: H });
 const KEYS = { ArrowDown: 40, ArrowUp: 38, PageDown: 34, PageUp: 33, ' ': 32, Home: 36, End: 35 };
 async function key(k, shift = false) {
@@ -69,7 +69,10 @@ await b.goto('about:blank');
 await b.goto(URL + hash);
 await sleep(600);
 const after = await y();
-check('reload with hash restores beat', Math.abs(after - now) <= 2, `after=${after} before=${now}`);
+// The hash names a beat, not an offset: inside a tall scene, reload lands on
+// that scene's start.
+const beatPos = await b.eval(`Math.round((() => { const x = window.__deck.beats().find((x) => '#' + x.id === ${JSON.stringify(hash)}); return x.trigger.start + x.time; })())`);
+check('reload with hash restores beat', Math.abs(after - beatPos) <= 2, `after=${after} beat=${beatPos} (was at ${now})`);
 
 // 6. Snap: stop 150px past a stop → settles on the next stop down.
 const s0 = stops[5];

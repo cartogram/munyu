@@ -1,0 +1,433 @@
+/* Talk theme: GreenSock "Slides Pinning" pen structure — white 100vh act
+   cards, one AAA named colour per act. Shared by index.html and
+   type-system.html. See docs/plans/2026-09-29-pen-cards-design.md */
+
+/* Ronzino, Necto Mono and Sneaky Times by Collletttivo, SIL Open Font
+   License 1.1 (licences in fonts/ronzino, fonts/necto-mono,
+   fonts/sneaky-times) */
+@font-face {
+	font-family: 'Sneaky Times';
+	src: url('../fonts/sneaky-times/Sneaky-Times.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Oblique.woff2') format('woff2');
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-MediumOblique.woff2') format('woff2');
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-BoldOblique.woff2') format('woff2');
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Necto Mono';
+	src: url('../fonts/necto-mono/NectoMono-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	--font-sans: 'Ronzino', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	/* Sneaky Times has one upright weight: no italic, no bold */
+	--font-serif: 'Sneaky Times', 'Times New Roman', serif;
+	--hairline: rgba(0, 0, 0, 0.14);
+}
+
+body {
+	background: #fff;
+	color: #000;
+	font-family: var(--font-sans);
+	overflow-x: hidden;
+}
+
+/* one named colour per act, each ≥ 7:1 (WCAG AAA) on white */
+.act-panel[data-act='hypothesis'],
+body[data-current-act='hypothesis'] { --act-color: mediumblue; }
+.act-panel[data-act='user-research'],
+body[data-current-act='user-research'] { --act-color: darkmagenta; }
+.act-panel[data-act='limits-of-adaptability'],
+body[data-current-act='limits-of-adaptability'] { --act-color: darkred; }
+.act-panel[data-act='personalization-over-adaptability'],
+body[data-current-act='personalization-over-adaptability'] { --act-color: darkgreen; }
+.act-panel[data-act='empathy-is-our-point'],
+body[data-current-act='empathy-is-our-point'] { --act-color: rebeccapurple; }
+.act-panel[data-act='launching-is-creating'],
+body[data-current-act='launching-is-creating'] { --act-color: saddlebrown; }
+.act-panel[data-act='closing'],
+body[data-current-act='closing'] { --act-color: black; }
+.act-panel[data-act='backup-qa'],
+body[data-current-act='backup-qa'] { --act-color: darkslategray; }
+
+.act-panel {
+	/* read by the inline "Today's model" SVG */
+	--r-background-color: #fff;
+	--r-main-color: var(--act-color);
+	--r-link-color: var(--act-color);
+	--muted-color: var(--act-color);
+
+	position: relative;
+	width: 100%;
+	height: 100vh;
+	box-sizing: border-box;
+	/* clip, not hidden: focusing a control inside must not scroll the card */
+	overflow: clip;
+	background: #fff;
+	color: var(--act-color);
+	border-radius: 10px;
+	font-weight: 400;
+	font-size: 1.5em;
+	/* every card is white, so the incoming card needs a visible edge */
+	box-shadow:
+		0 0 0 1px var(--hairline),
+		0 -6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* scenes sit side by side and slide left inside the pinned card */
+.act-panel-inner {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	width: max-content;
+}
+
+/* frames: the act opener and every scene fill at least one viewport */
+.act-opener,
+main section[data-scene] {
+	box-sizing: border-box;
+	/* set from the card's measured width, so no scrollbar sliver of
+	   the next scene shows */
+	flex: 0 0 var(--card-width, 100vw);
+	width: var(--card-width, 100vw);
+	min-height: 100vh;
+	/* room for the fixed slide chrome along the edges */
+	padding: 4.5rem 1.5rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+/* act titles, and the talk title that opens the page in place of an act
+   opener: one style */
+.act-title,
+main [data-scene='your-ui-is-not-my-ui-title'] h2 {
+	font-family: var(--font-sans);
+	font-size: max(4rem, min(12vw + 1rem, 16rem));
+	font-weight: 500;
+	line-height: 1;
+	margin: 0 auto;
+	max-width: 12ch;
+	hyphens: auto;
+	overflow-wrap: break-word;
+}
+
+main [data-scene='your-ui-is-not-my-ui-title'] h2 {
+	margin-bottom: 0.4em;
+}
+
+/* editorial scene layout: kicker, serif headline, serif standfirst and
+   quotes. No italics anywhere, including <em>. */
+main section[data-scene][data-kicker]::before {
+	content: attr(data-kicker);
+	margin-bottom: 2rem;
+}
+
+main h2 {
+	font-family: var(--font-serif);
+	font-size: 9.375rem; /* 150px */
+	font-weight: 400;
+	line-height: 1;
+	max-width: 22ch;
+	text-wrap: balance;
+	margin: 0 auto 0.5em;
+}
+
+main h3 {
+	font-size: 1.25em;
+	font-weight: 700;
+	margin: 0 auto 0.5em;
+}
+
+/* standfirst: the body style in Bold */
+main h4 {
+	font-family: var(--font-sans);
+	font-size: 2.5rem; /* 40px */
+	font-weight: 700;
+	line-height: 1.2;
+	max-width: 40ch;
+	text-wrap: balance;
+	margin: 0 auto 1em;
+}
+
+/* a fit-content block centred in the 40ch column: one line reads as
+   centred, several lines read as left-aligned */
+main p,
+main ul,
+main blockquote {
+	width: fit-content;
+	max-width: 40ch;
+	margin: 0 auto 0.8em;
+	text-align: left;
+	line-height: 1.4;
+}
+
+main ul {
+	padding-left: 1.2em;
+	list-style: disc;
+}
+
+/* body: paragraphs and lists share one style. rem, not em, so it doesn't
+   compound inside the card's 1.5em and still follows the reader's root size */
+main p,
+main ul {
+	font-size: 2.5rem; /* 40px */
+	line-height: 1.2;
+}
+
+.demo-panel p {
+	font-size: inherit;
+}
+
+main li + li {
+	margin-top: 0.3em;
+}
+
+main blockquote {
+	font-family: var(--font-serif);
+	font-size: 3.75rem; /* 60px */
+	font-weight: 400;
+	line-height: 1.1;
+}
+
+/* one meta style for kickers, authors and labels, demo panel labels, the
+   slide chrome and the Notes button. rem, so it stays meta-sized inside a
+   40px paragraph. */
+main section[data-scene][data-kicker]::before,
+main small,
+.demo-panel > h4,
+.deck-chrome,
+#notes-toggle {
+	font-family: var(--font-sans);
+	font-size: 1rem; /* 16px */
+	font-weight: 500;
+	line-height: 1.5;
+}
+
+/* inline-block so wrapped meta keeps its own leading instead of the
+   surrounding 40px paragraph's */
+main small {
+	display: inline-block;
+}
+
+main em {
+	font-style: normal;
+}
+
+main a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+main img,
+main video {
+	max-width: 100%;
+	max-height: 70vh;
+	border-radius: 8px;
+}
+
+main svg {
+	max-width: 100%;
+	height: auto;
+}
+
+main section[data-scene].is-wide {
+	padding-inline: 1.5rem;
+}
+
+main section[data-scene].is-wide > svg {
+	width: min(900px, 100%);
+}
+
+/* persona scenes: interview quote stacked above its screenshot or clip, so
+   the quote gets the full column at quote size */
+.persona {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2.5rem;
+	width: min(1100px, 100%);
+}
+
+.persona > blockquote {
+	margin: 0 auto;
+}
+
+/* the markup sizes media for a side-by-side row; let it span the column */
+.persona > img,
+.persona > video {
+	flex: none !important;
+	max-width: 100% !important;
+	height: auto !important;
+}
+
+.demo-panels {
+	display: flex;
+	gap: 1.5rem;
+	width: min(1000px, 100%);
+}
+
+.demo-panel > * {
+	max-width: none;
+	margin-inline: 0;
+}
+
+@media (max-width: 699px) {
+	/* "Personalization" is the longest word; 11vw keeps it inside a
+	   375px viewport while staying larger than scene headings */
+	.act-title,
+	main [data-scene='your-ui-is-not-my-ui-title'] h2 {
+		font-size: clamp(2.25rem, 11vw, 16rem);
+		max-width: none;
+	}
+
+	main h2 {
+		font-size: 2.375rem; /* 38px */
+	}
+
+	.demo-panels {
+		flex-direction: column;
+	}
+}
+
+/* slide chrome: talk, event, authors and slide number in the corners,
+   in the current act's colour */
+.deck-chrome {
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	pointer-events: none;
+	color: var(--act-color, #000);
+}
+
+.deck-chrome > span {
+	position: absolute;
+}
+
+.chrome-title {
+	top: 1.5rem;
+	left: 1.5rem;
+}
+
+.chrome-event {
+	top: 1.5rem;
+	right: 1.5rem;
+	text-align: right;
+}
+
+.chrome-authors {
+	bottom: 1.5rem;
+	left: 1.5rem;
+}
+
+.chrome-number {
+	bottom: 1.5rem;
+	right: 1.5rem;
+	font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 699px) {
+	.chrome-authors {
+		display: none;
+	}
+}
+
+/* reset.css sets aside {display: block}, which beats the UA [hidden]
+   rule — notes are only ever shown via the drawer. */
+aside.notes {
+	display: none;
+}
+
+/* bottom centre: the right-hand corner belongs to the slide number */
+#notes-toggle {
+	position: fixed;
+	bottom: 1.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 30;
+	background: #fff;
+	color: #000;
+	border: 1px solid #000;
+	border-radius: 6px;
+	padding: 0.5em 0.9em;
+	cursor: pointer;
+}
+
+#notes-drawer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: min(360px, 90vw);
+	box-sizing: border-box;
+	background: #fff;
+	color: #000;
+	border-left: 1px solid #000;
+	padding: 5rem 1.5rem 1.5rem;
+	overflow-y: auto;
+	transform: translateX(100%);
+	transition: transform 0.25s ease;
+	z-index: 25;
+	font-family: var(--font-sans);
+	font-size: 0.9375rem; /* 15px */
+	line-height: 1.6;
+}
+
+#notes-drawer.is-open {
+	transform: translateX(0);
+}

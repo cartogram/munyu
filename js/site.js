@@ -14,6 +14,17 @@ const STEP_FADE = 0.1; // share of a step spent fading its piece in
 
 const acts = gsap.utils.toArray('main .act-panel');
 
+// Editorial kicker above each scene: "Act name • 3 / 8". The first act has no
+// opener heading, and its title scene carries no kicker.
+acts.forEach((panel) => {
+	const actName = panel.querySelector('.act-title')?.textContent ?? 'Hypothesis';
+	const scenes = [...panel.querySelectorAll('section[data-scene]')];
+	scenes.forEach((scene, i) => {
+		if (scene.dataset.scene === 'your-ui-is-not-my-ui-title') return;
+		scene.dataset.kicker = `${actName} • ${i + 1} / ${scenes.length}`;
+	});
+});
+
 // Rebuilt with every setup(). A beat's scroll position is its trigger's start
 // plus its timeline time: durations are in scroll pixels, so 1s = 1px.
 let beats = []; // { id, scene, trigger, time }
@@ -171,6 +182,7 @@ function rebuild() {
 	setup();
 	const same = beat && beatById(beat.id);
 	if (same) window.scrollTo(0, beatPosition(same) + offset);
+	updateChrome();
 }
 
 function restoreHash() {
@@ -311,7 +323,27 @@ function updateCurrentScene() {
 	if (notesDrawer.classList.contains('is-open')) renderDrawer();
 }
 
-window.addEventListener('scroll', updateCurrentScene, { passive: true });
+const chromeNumber = document.querySelector('.chrome-number');
+
+// Slide number counts frames — act openers and scenes, not reveal steps —
+// and the chrome takes the current act's colour.
+function updateChrome() {
+	const frames = beats.filter((beat) => beat.id.split('/').length < 3);
+	let index = 0;
+	frames.forEach((frame, i) => {
+		if (beatPosition(frame) <= window.scrollY + 2) index = i;
+	});
+	const frame = frames[index];
+	if (!frame) return;
+	chromeNumber.textContent = `${String(index + 1).padStart(2, '0')} / ${frames.length}`;
+	document.body.dataset.currentAct = frame.trigger.trigger.dataset.act;
+}
+
+window.addEventListener('scroll', () => {
+	updateCurrentScene();
+	updateChrome();
+}, { passive: true });
+updateChrome();
 
 notesToggle.addEventListener('click', () => {
 	const isOpen = notesDrawer.classList.toggle('is-open');

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Type system — Your UI is not my UI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<link rel="stylesheet" href="dist/reset.css" />
+		<link rel="stylesheet" href="css/talk.css" />
+
+		<!-- Specimen layout only. Every sample below is styled by the real rules
+		     in css/talk.css; the specs beside them are read live from the browser. -->
+		<style>
+			body {
+				padding: 4rem clamp(1.5rem, 5vw, 5rem) 6rem;
+			}
+
+			.ts-header {
+				max-width: 60rem;
+				margin-bottom: 4rem;
+			}
+
+			.ts-header h1 {
+				font-family: var(--font-serif);
+				font-size: clamp(2.5rem, 6vw, 4.5rem);
+				font-weight: 400;
+				line-height: 1.05;
+				margin: 0 0 0.5rem;
+			}
+
+			.ts-header p,
+			.ts-note {
+				width: auto;
+				margin: 0 0 1rem;
+				text-align: left;
+				font-size: 1rem;
+				line-height: 1.5;
+				max-width: 44rem;
+				color: #333;
+			}
+
+			.ts-section {
+				margin-bottom: 5rem;
+			}
+
+			.ts-section > h2 {
+				font-family: var(--font-sans);
+				font-size: 0.8rem;
+				font-weight: 500;
+				line-height: 1.5;
+				max-width: none;
+				padding-bottom: 0.75rem;
+				border-bottom: 1px solid #000;
+				margin: 0 0 2rem;
+			}
+
+			.ts-faces {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+				gap: 2.5rem;
+			}
+
+			.ts-face-name {
+				font-size: 2.5rem;
+				line-height: 1.1;
+				margin-bottom: 0.75rem;
+			}
+
+			.ts-face-glyphs {
+				font-size: 1.25rem;
+				line-height: 1.4;
+				overflow-wrap: anywhere;
+				margin-bottom: 0.75rem;
+			}
+
+			.ts-face-meta {
+				font-size: 0.8rem;
+				line-height: 1.5;
+				color: #333;
+			}
+
+			.ts-row {
+				display: grid;
+				grid-template-columns: minmax(12rem, 16rem) 1fr;
+				gap: 2rem;
+				align-items: start;
+				padding: 2rem 0;
+				border-bottom: 1px solid var(--hairline);
+			}
+
+			@media (max-width: 699px) {
+				.ts-row {
+					grid-template-columns: 1fr;
+					gap: 1rem;
+				}
+			}
+
+			.ts-spec {
+				font-size: 0.8rem;
+				line-height: 1.5;
+			}
+
+			.ts-spec strong {
+				display: block;
+				font-size: 1rem;
+				font-weight: 500;
+				margin-bottom: 0.25rem;
+			}
+
+			.ts-spec code {
+				display: block;
+				margin-top: 0.5rem;
+				color: #333;
+				white-space: pre-wrap;
+			}
+
+			.ts-spec output {
+				display: block;
+				margin-top: 0.5rem;
+				font-variant-numeric: tabular-nums;
+			}
+
+			/* size / line-height tuner under each spec */
+			.ts-tune {
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+				gap: 0.35rem 0.6rem;
+				align-items: center;
+				margin-top: 1rem;
+				padding-top: 0.75rem;
+				border-top: 1px solid var(--hairline);
+				font-variant-numeric: tabular-nums;
+			}
+
+			.ts-tune input[type='range'] {
+				width: 100%;
+				accent-color: #000;
+			}
+
+			.ts-tune-value {
+				min-width: 7.5em;
+				text-align: right;
+			}
+
+			.ts-tune-actions {
+				grid-column: 1 / -1;
+				display: flex;
+				gap: 0.5rem;
+				margin-top: 0.25rem;
+			}
+
+			.ts-tune button {
+				font: inherit;
+				font-weight: 500;
+				background: #fff;
+				color: #000;
+				border: 1px solid #000;
+				border-radius: 6px;
+				padding: 0.2em 0.7em;
+				cursor: pointer;
+			}
+
+			.ts-row.is-tuned .ts-spec strong::after {
+				content: ' · edited';
+				font-weight: 400;
+			}
+
+			/* Neutralise the card and frame geometry so real samples can sit
+			   inline; type rules are untouched. */
+			.ts-sample.act-panel {
+				height: auto;
+				overflow: visible;
+				box-shadow: none;
+				border-radius: 0;
+				background: none;
+			}
+
+			.ts-sample .act-panel-inner {
+				display: block;
+				width: auto;
+			}
+
+			.ts-sample .act-opener,
+			.ts-sample section[data-scene] {
+				min-height: 0;
+				width: auto;
+				padding: 0;
+				align-items: flex-start;
+				text-align: left;
+			}
+
+			.ts-sample section[data-scene] > *,
+			.ts-sample .act-title {
+				margin-left: 0;
+				margin-right: 0;
+			}
+
+			.ts-sample #notes-drawer {
+				position: static;
+				transform: none;
+				width: min(360px, 100%);
+				height: auto;
+				padding: 1.5rem;
+				border: 1px solid #000;
+			}
+
+			.ts-swatches {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+				gap: 1rem;
+			}
+
+			.ts-swatch.act-panel {
+				height: auto;
+				overflow: visible;
+				font-size: 1rem;
+				box-shadow: none;
+			}
+
+			.ts-swatch {
+				border: 1px solid var(--hairline);
+				border-radius: 10px;
+				padding: 1.25rem;
+				color: var(--act-color);
+			}
+
+			.ts-swatch-chip {
+				height: 3rem;
+				border-radius: 6px;
+				background: var(--act-color);
+				margin-bottom: 0.75rem;
+			}
+
+			.ts-swatch-name {
+				font-size: 1.25rem;
+				font-weight: 500;
+			}
+
+			.ts-swatch-meta {
+				font-size: 0.8rem;
+				line-height: 1.5;
+				font-variant-numeric: tabular-nums;
+			}
+
+			/* slide templates: a wireframe of labelled areas beside the real slide,
+			   both drawn at 1280×800 and scaled to fit */
+			.ts-template {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 1.5rem 2rem;
+				padding: 2rem 0 2.5rem;
+				border-bottom: 1px solid var(--hairline);
+			}
+
+			@media (max-width: 899px) {
+				.ts-template {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			.ts-template-head {
+				grid-column: 1 / -1;
+				font-size: 0.8rem;
+				line-height: 1.5;
+			}
+
+			.ts-template-head strong {
+				display: block;
+				font-size: 1rem;
+				font-weight: 500;
+			}
+
+			.ts-template-number {
+				font-variant-numeric: tabular-nums;
+				margin-right: 0.75em;
+			}
+
+			.ts-stage {
+				position: relative;
+				overflow: hidden;
+				border-radius: 6px;
+				box-shadow: 0 0 0 1px var(--hairline);
+			}
+
+			.ts-slide,
+			.ts-schematic {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 1280px;
+				transform-origin: 0 0;
+				background: #fff;
+			}
+
+			/* the scale transform also makes the slide the containing block for the
+			   chrome's position: fixed, so it sits on this slide, not the page */
+			.ts-slide .act-panel {
+				--card-width: 1280px;
+				height: auto;
+				min-height: 800px;
+				overflow: visible;
+				box-shadow: none;
+				border-radius: 0;
+			}
+
+			.ts-slide .act-opener,
+			.ts-slide section[data-scene] {
+				min-height: 800px;
+			}
+
+			.ts-slide main img,
+			.ts-slide img,
+			.ts-slide video {
+				max-height: 560px;
+			}
+
+			.ts-slide .deck-chrome {
+				position: absolute;
+				inset: 0 0 auto 0;
+				height: 800px;
+			}
+
+			/* examples use a real element for the kicker so its area can be measured */
+			.ts-slide section[data-scene][data-kicker]::before {
+				content: none;
+			}
+
+			.ts-slide .ts-kicker {
+				display: block;
+				margin-bottom: 2rem;
+			}
+
+			.ts-fold {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 800px;
+				border-top: 3px dashed #000;
+				font-size: 26px;
+				padding: 8px 16px;
+				z-index: 5;
+			}
+
+			.ts-area {
+				position: absolute;
+				box-sizing: border-box;
+				border: 2px dashed currentColor;
+				background: color-mix(in srgb, currentColor 7%, transparent);
+				color: var(--area-color, #000);
+				font-size: 24px;
+				line-height: 1.2;
+				padding: 6px 10px;
+				overflow: hidden;
+			}
+
+			.ts-area b {
+				font-weight: 500;
+				display: block;
+			}
+		</style>
+	</head>
+
+	<body>
+		<main>
+		<header class="ts-header">
+			<h1>Type system</h1>
+			<p>
+				<em>Your UI is not my UI</em> — React Advanced 2026. Every sample on this page is styled by the
+				same rules as the slides (<code>css/talk.css</code>), inside a card at slide scale: 1em = the
+				card's 1.5em body size. The specs beside each sample are read live from the browser, so resize
+				below 700px to see the mobile values.
+			</p>
+		</header>
+
+		<section class="ts-section">
+			<h2>Typefaces</h2>
+			<div class="ts-faces">
+				<div>
+					<div class="ts-face-name" style="font-family: var(--font-sans); font-weight: 500">Ronzino</div>
+					<div class="ts-face-glyphs" style="font-family: var(--font-sans)">
+						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
+					</div>
+					<div class="ts-face-meta">
+						Collletttivo · SIL OFL 1.1<br />
+						Regular 400 · Medium 500 · Bold 700, each with an oblique<br />
+						Act and talk titles, body, lists, meta, kickers
+					</div>
+				</div>
+				<div>
+					<div class="ts-face-name" style="font-family: var(--font-serif)">Sneaky Times</div>
+					<div class="ts-face-glyphs" style="font-family: var(--font-serif)">
+						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
+					</div>
+					<div class="ts-face-meta">
+						Collletttivo · SIL OFL 1.1<br />
+						One upright weight (400); no italics are used<br />
+						Scene headlines, standfirsts, quotes
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="ts-section">
+			<h2>Styles</h2>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec=".act-title">
+					<strong>Act title</strong>
+					Opens every act; the first act opens on the talk title instead.
+					<code>.act-title, [data-scene='your-ui-is-not-my-ui-title'] h2</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="user-research">
+					<div class="act-panel-inner">
+						<header class="act-opener"><div class="act-title">User research</div></header>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec="h2">
+					<strong>Scene headline</strong>
+					One per scene; lines balanced.
+					<code>main h2</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="empathy-is-our-point">
+					<div class="act-panel-inner">
+						<section data-scene="ts-headline">
+							<h2>Observations of existing state. The industry is already doing this</h2>
+						</section>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec="h4">
+					<strong>Standfirst</strong>
+					The line under a scene headline; also the Q&amp;A questions.
+					<code>main h4</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="user-research">
+					<div class="act-panel-inner">
+						<section data-scene="ts-standfirst">
+							<h4>AI as an Accessibility &ldquo;Assistant,&rdquo; not a Replacement</h4>
+						</section>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec="p" data-edit="p, ul">
+					<strong>Body</strong>
+					Paragraphs and lists; a fit-content block in a 40ch column.
+					<code>main p, main ul</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="launching-is-creating">
+					<div class="act-panel-inner">
+						<section data-scene="ts-body">
+							<p>Rose tried to build a bespoke Steam library manager. We replaced configuration toil with developer toil.</p>
+							<ul>
+								<li>Setups are very personalized</li>
+								<li>Adaptations conflict with each other</li>
+								<li>Configuration costs energy</li>
+							</ul>
+						</section>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec="blockquote">
+					<strong>Quote</strong>
+					Interview quotes, on their own or beside a screenshot.
+					<code>main blockquote</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="user-research">
+					<div class="act-panel-inner">
+						<section data-scene="ts-quote">
+							<blockquote>
+								&ldquo;[&hellip;] you have to put your name to things. If it went ahead, did a bunch of
+								tasks, emailed people, and I couldn't really take it back &mdash; that feels &hellip;
+								uncomfortable.&rdquo;
+							</blockquote>
+						</section>
+					</div>
+				</div>
+			</div>
+
+		</section>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec="small">
+					<strong>Meta</strong>
+					Kickers, authors, section labels, asides, demo panel labels, the slide chrome and the Notes button.
+					<code>section[data-kicker]::before, main small, .demo-panel &gt; h4, .deck-chrome, #notes-toggle</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="hypothesis">
+					<div class="act-panel-inner">
+						<section data-scene="ts-meta">
+							<p><small>User research • 2 / 8</small></p>
+							<p><small>Simon Lenz, Matthew Seccafien</small></p>
+							<p>
+								<small style="max-width: 30ch">Your UI is not my UI · React Advanced 2026 · Simon Lenz, Matthew Seccafien. Real user research, a prototype, and a provocation about where UI is heading.</small>
+							</p>
+						</section>
+					</div>
+				</div>
+			</div>
+
+		</section>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec="#notes-drawer">
+					<strong>Speaker notes</strong>
+					The notes drawer, read mid-talk.
+					<code>#notes-drawer</code>
+					<output></output>
+				</div>
+				<div class="ts-sample">
+					<aside id="notes-drawer">
+						Melody struggled to see and uses a collection of tools to navigate her life relatively
+						independently. Uses a screen reader at a very fast speed.
+					</aside>
+				</div>
+			</div>
+		</section>
+
+		<section class="ts-section">
+			<h2>Act colours</h2>
+			<p class="ts-note">
+				One named colour per act, used for all of that act's text, rules and diagram strokes. Every one
+				passes WCAG AAA (≥ 7:1) on white.
+			</p>
+			<div class="ts-swatches">
+				<div class="ts-swatch act-panel" data-act="hypothesis"></div>
+				<div class="ts-swatch act-panel" data-act="user-research"></div>
+				<div class="ts-swatch act-panel" data-act="limits-of-adaptability"></div>
+				<div class="ts-swatch act-panel" data-act="personalization-over-adaptability"></div>
+				<div class="ts-swatch act-panel" data-act="empathy-is-our-point"></div>
+				<div class="ts-swatch act-panel" data-act="launching-is-creating"></div>
+				<div class="ts-swatch act-panel" data-act="closing"></div>
+				<div class="ts-swatch act-panel" data-act="backup-qa"></div>
+			</div>
+		</section>
+
+		<section class="ts-section">
+			<h2>Slide templates</h2>
+			<p class="ts-note">
+				Every layout in the talk, rendered from the live slides in <code>index.html</code> at 1280×800.
+				Left: the labelled areas, measured from the example. Right: the slide itself, with its kicker and
+				chrome. Stepped reveals are shown fully revealed; a dashed line marks the fold on slides that
+				scroll.
+			</p>
+			<div id="ts-templates"></div>
+		</section>
+		</main>
+
+		<script type="module">
+			const round = (n) => Math.round(n * 10) / 10;
+
+			function describe(el, pseudo) {
+				const cs = getComputedStyle(el, pseudo);
+				const size = parseFloat(cs.fontSize);
+				const line = cs.lineHeight === 'normal' ? 'normal' : `${round(parseFloat(cs.lineHeight))}px`;
+				const parts = [
+					cs.fontFamily.split(',')[0].replace(/["']/g, ''),
+					`${cs.fontWeight}${cs.fontStyle === 'italic' ? ' italic' : ''}`,
+					`${round(size)}px / ${line}`,
+				];
+				if (cs.letterSpacing !== 'normal' && parseFloat(cs.letterSpacing) !== 0) parts.push(`tracking ${cs.letterSpacing}`);
+				if (cs.textTransform !== 'none') parts.push(cs.textTransform);
+				return parts.join(' · ');
+			}
+
+			function renderSpecs() {
+				document.querySelectorAll('.ts-row').forEach((row) => {
+					const spec = row.querySelector('.ts-spec');
+					const sample = row.querySelector('.ts-sample');
+					const target = sample.querySelector(spec.dataset.spec) ?? sample;
+					spec.querySelector('output').textContent = describe(target, spec.dataset.specPseudo);
+				});
+			}
+
+			// WCAG relative luminance contrast against white.
+			function contrastOnWhite(rgb) {
+				const [r, g, b] = rgb.match(/\d+/g).slice(0, 3).map((v) => {
+					const c = v / 255;
+					return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+				});
+				return 1.05 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.05);
+			}
+
+			document.querySelectorAll('.ts-swatch').forEach((swatch) => {
+				const name = getComputedStyle(swatch).getPropertyValue('--act-color').trim();
+				const ratio = contrastOnWhite(getComputedStyle(swatch).color);
+				swatch.innerHTML = `
+					<div class="ts-swatch-chip"></div>
+					<div class="ts-swatch-name">${name}</div>
+					<div class="ts-swatch-meta">${swatch.dataset.act}<br />${ratio.toFixed(2)} : 1 · ${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
+			});
+
+			// Per-row tuner: each row gets its own injected rule, so overrides also
+			// reach generated content (the kicker's ::before) and never touch the
+			// slides' stylesheet.
+			function addTuner(row, i) {
+				const spec = row.querySelector('.ts-spec');
+				const sample = row.querySelector('.ts-sample');
+				const specTarget = () => sample.querySelector(spec.dataset.spec) ?? sample;
+				const pseudo = spec.dataset.specPseudo ?? '';
+				const editSelector = spec.dataset.edit ?? spec.dataset.spec;
+				const rule = document.createElement('style');
+				document.head.append(rule);
+				row.dataset.tsRow = i;
+
+				const tune = document.createElement('div');
+				tune.className = 'ts-tune';
+				tune.innerHTML = `
+					<label for="ts-size-${i}">Size</label>
+					<input id="ts-size-${i}" type="range" min="8" max="260" step="0.5" />
+					<span class="ts-tune-value" data-size></span>
+					<label for="ts-lh-${i}">Line height</label>
+					<input id="ts-lh-${i}" type="range" min="0.8" max="2" step="0.01" />
+					<span class="ts-tune-value" data-lh></span>
+					<div class="ts-tune-actions">
+						<button type="button" data-reset>Reset</button>
+						<button type="button" data-copy>Copy CSS</button>
+					</div>`;
+				spec.append(tune);
+				const size = tune.querySelector(`#ts-size-${i}`);
+				const lh = tune.querySelector(`#ts-lh-${i}`);
+
+				const readDefaults = () => {
+					const cs = getComputedStyle(specTarget(), pseudo || null);
+					const px = parseFloat(cs.fontSize);
+					size.value = px;
+					lh.value = cs.lineHeight === 'normal' ? 1.2 : parseFloat(cs.lineHeight) / px;
+					label();
+				};
+				const css = () => `font-size: ${(size.value / 16).toFixed(4).replace(/\.?0+$/, '')}rem; /* ${size.value}px */\nline-height: ${(+lh.value).toFixed(2)};`;
+				const label = () => {
+					tune.querySelector('[data-size]').textContent = `${size.value}px · ${(size.value / 16).toFixed(3)}rem`;
+					tune.querySelector('[data-lh]').textContent = (+lh.value).toFixed(2);
+				};
+				const apply = () => {
+					const targets = editSelector
+						.split(',')
+						.map((sel) => `[data-ts-row="${i}"] .ts-sample ${sel.trim()}${pseudo}`)
+						.join(',\n');
+					// !important: a preview override has to beat the slides' own,
+					// sometimes more specific, rules.
+					const declarations = css().replace(/\/\*.*?\*\//, '').replace(/;/g, ' !important;');
+					rule.textContent = `${targets} {\n${declarations}\n}`;
+					row.classList.add('is-tuned');
+					label();
+					renderSpecs();
+				};
+
+				size.addEventListener('input', apply);
+				lh.addEventListener('input', apply);
+				tune.querySelector('[data-reset]').addEventListener('click', () => {
+					rule.textContent = '';
+					row.classList.remove('is-tuned');
+					readDefaults();
+					renderSpecs();
+				});
+				tune.querySelector('[data-copy]').addEventListener('click', async (event) => {
+					await navigator.clipboard.writeText(css());
+					event.target.textContent = 'Copied';
+					setTimeout(() => (event.target.textContent = 'Copy CSS'), 1200);
+				});
+				readDefaults();
+				return readDefaults;
+			}
+
+
+			// ---- Slide templates -------------------------------------------------
+			const TEMPLATES = [
+				{ name: 'Title', act: 'hypothesis', scene: 'your-ui-is-not-my-ui-title', note: 'Opens the talk.' },
+				{ name: 'Act opener', act: 'user-research', opener: true, note: 'Opens every act after the first.' },
+				{ name: 'Statement', act: 'empathy-is-our-point', scene: 'what-is-gained', note: 'A headline on its own.' },
+				{ name: 'Headline + body', act: 'hypothesis', scene: 'hypothesis' },
+				{ name: 'Headline + list', act: 'limits-of-adaptability', scene: 'opportunities' },
+				{ name: 'Headline + standfirst + list', act: 'launching-is-creating', scene: 'but-a-ui-that-keeps-changing-breaks-screen-readers' },
+				{ name: 'Headline + standfirst + quote', act: 'user-research', scene: 'matthew' },
+				{ name: 'Persona', act: 'user-research', scene: 'sinead', note: 'Quote stacked above a screenshot or clip; taller than one frame.' },
+				{ name: 'Headline + media', act: 'hypothesis', scene: 'ai-accessibility-today' },
+				{ name: 'Diagram', act: 'limits-of-adaptability', scene: 'todays-model', note: 'Layers reveal one per ↓ on the slides.' },
+				{ name: 'Demo panels', act: 'personalization-over-adaptability', scene: 'demo-two-people', note: 'Panels reveal one per ↓ on the slides.' },
+				{ name: 'Q&A', act: 'backup-qa', scene: 'doesnt-this-just-hand-more-power', note: 'Question as the standfirst, answer as body.' },
+			];
+
+			// Areas to label, in priority order; an element claimed by an earlier
+			// role (e.g. a demo panel) isn't labelled again by a later one.
+			const ROLES = [
+				['.deck-chrome > span', 'Chrome', '.deck-chrome'],
+				['.ts-kicker', 'Meta · kicker'],
+				['.act-title', 'Act title'],
+				["[data-scene='your-ui-is-not-my-ui-title'] h2", 'Act title'],
+				['.demo-panels', 'Demo panels · meta'],
+				['h2', 'Scene headline'],
+				['h4', 'Standfirst'],
+				['blockquote', 'Quote'],
+				['p:has(> small:only-child)', 'Meta'],
+				['p', 'Body'],
+				['ul', 'Body · list'],
+				['svg', 'Diagram'],
+				['img, video', 'Media'],
+			];
+
+			const source = new DOMParser().parseFromString(await (await fetch('index.html')).text(), 'text/html');
+			const deckFrames = [...source.querySelectorAll('main .act-opener, main section[data-scene]')];
+
+			function buildSlide(t) {
+				const srcAct = source.querySelector(`section[data-act="${t.act}"]`);
+				const actTitle = srcAct.querySelector('.act-title')?.textContent ?? 'Hypothesis';
+				const scenes = [...srcAct.querySelectorAll('section[data-scene]')];
+				const original = t.opener ? srcAct.querySelector('.act-opener') : srcAct.querySelector(`section[data-scene="${t.scene}"]`);
+				const node = original.cloneNode(true);
+				node.querySelectorAll('aside.notes').forEach((n) => n.remove());
+				node.querySelectorAll('video').forEach((v) => v.setAttribute('preload', 'metadata'));
+				if (!t.opener && t.scene !== 'your-ui-is-not-my-ui-title') {
+					const kicker = document.createElement('small');
+					kicker.className = 'ts-kicker';
+					kicker.textContent = `${actTitle} • ${scenes.indexOf(original) + 1} / ${scenes.length}`;
+					node.prepend(kicker);
+				}
+
+				const number = String(deckFrames.indexOf(original) + 1).padStart(2, '0');
+				const slide = document.createElement('div');
+				slide.className = 'ts-slide';
+				slide.innerHTML = `
+					<section class="act-panel" data-act="${t.act}">
+						<div class="act-panel-inner"></div>
+						<div class="deck-chrome" aria-hidden="true">
+							<span class="chrome-title">Your UI is not my UI</span>
+							<span class="chrome-event">React Advanced<br />London 2026</span>
+							<span class="chrome-authors">Simon Lenz<br />Matthew Seccafien</span>
+							<span class="chrome-number">${number} / ${deckFrames.length}</span>
+						</div>
+					</section>`;
+				slide.querySelector('.act-panel-inner').append(node);
+				return slide;
+			}
+
+			function spec(el) {
+				const cs = getComputedStyle(el);
+				return `${Math.round(parseFloat(cs.fontSize))}/${Math.round(parseFloat(cs.lineHeight)) || cs.lineHeight}`;
+			}
+
+			function layoutTemplate(row) {
+				const { stages, slide, schematic } = row;
+				const scale = stages[0].clientWidth / 1280;
+				slide.style.transform = schematic.style.transform = `scale(${scale})`;
+				const height = Math.max(800, slide.offsetHeight);
+				schematic.style.height = `${height}px`;
+				stages.forEach((stage) => (stage.style.height = `${height * scale}px`));
+
+				const origin = slide.getBoundingClientRect();
+				const color = getComputedStyle(slide.querySelector('.act-panel')).color;
+				schematic.style.setProperty('--area-color', color);
+				schematic.querySelectorAll('.ts-area').forEach((a) => a.remove());
+				const claimed = new Set();
+				for (const [selector, label, styleFrom] of ROLES) {
+					slide.querySelectorAll(selector).forEach((el) => {
+						if ([...claimed].some((c) => c.contains(el))) return;
+						claimed.add(el);
+						const r = el.getBoundingClientRect();
+						if (!r.width || !r.height) return;
+						const area = document.createElement('div');
+						area.className = 'ts-area';
+						Object.assign(area.style, {
+							left: `${(r.left - origin.left) / scale}px`,
+							top: `${(r.top - origin.top) / scale}px`,
+							width: `${r.width / scale}px`,
+							height: `${r.height / scale}px`,
+						});
+						const typeEl = styleFrom ? slide.querySelector(styleFrom) : el.matches('ul') ? el.querySelector('li') : el;
+						const showSpec = !['Media', 'Diagram'].includes(label);
+						area.innerHTML = `<b>${label}</b>${showSpec ? spec(typeEl) : ''}`;
+						schematic.append(area);
+					});
+				}
+			}
+
+			const rows = TEMPLATES.map((t, i) => {
+				const el = document.createElement('div');
+				el.className = 'ts-template';
+				el.innerHTML = `
+					<div class="ts-template-head"><strong><span class="ts-template-number">${String(i + 1).padStart(2, '0')}</span>${t.name}</strong>${t.note ?? ''}</div>
+					<div class="ts-stage"><div class="ts-schematic" aria-hidden="true"></div></div>
+					<div class="ts-stage"></div>`;
+				const stages = [...el.querySelectorAll('.ts-stage')];
+				const slide = buildSlide(t);
+				stages[1].append(slide);
+				document.getElementById('ts-templates').append(el);
+				const row = { stages, slide, schematic: el.querySelector('.ts-schematic') };
+				if (slide.offsetHeight > 800) {
+					row.stages.forEach((stage) => {
+						const fold = document.createElement('div');
+						fold.className = 'ts-fold';
+						fold.textContent = 'fold — ↓ scrolls the rest into view';
+						(stage.querySelector('.ts-slide, .ts-schematic')).append(fold);
+					});
+				}
+				// Media changes size as it loads; re-measure when it does.
+				slide.querySelectorAll('img').forEach((img) => img.addEventListener('load', () => layoutTemplate(row)));
+				slide.querySelectorAll('video').forEach((v) => v.addEventListener('loadedmetadata', () => layoutTemplate(row)));
+				return row;
+			});
+
+			document.fonts.ready.then(() => rows.forEach(layoutTemplate));
+			window.addEventListener('resize', () => rows.forEach(layoutTemplate));
+
+			document.fonts.ready.then(() => {
+				const resets = [...document.querySelectorAll('.ts-row')].map(addTuner);
+				renderSpecs();
+				// Untouched rows follow the viewport (e.g. mobile values below 700px).
+				window.addEventListener('resize', () => {
+					document.querySelectorAll('.ts-row').forEach((row, i) => {
+						if (!row.classList.contains('is-tuned')) resets[i]();
+					});
+					renderSpecs();
+				});
+			});
+		</script>
+	</body>
+</html>
