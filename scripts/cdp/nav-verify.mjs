@@ -89,7 +89,8 @@ const drawerText = await b.eval(`document.getElementById('notes-drawer-content')
 await key('ArrowDown'); now = Math.round(await settle(b));
 check('arrows work after clicking notes toggle', Math.abs(now - stops[1]) <= 2, `y=${now} drawer="${drawerText}"`);
 const notesNow = await b.eval(`document.getElementById('notes-drawer-content').textContent.slice(0, 40)`);
-check('drawer follows beat', notesNow.startsWith('Everyone arrives'), `"${notesNow}"`);
+const notesWant = await b.eval(`(() => { const beat = window.__deck.beats().find(x => Math.abs(x.trigger.start + x.time - ${stops[1]}) <= 2); return (beat.scene?.querySelector('aside.notes')?.textContent.trim() || 'No notes for this section.').slice(0, 40); })()`);
+check('drawer follows beat', notesNow === notesWant, `"${notesNow}" want "${notesWant}"`);
 await b.click(box.x, box.y); await sleep(300);
 
 // 8. Reduced motion: key jump is instant.
