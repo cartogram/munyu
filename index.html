@@ -18,19 +18,67 @@
 		<!-- Theme: GreenSock "Slides Pinning" pen structure — white 100vh act cards,
 		     one AAA named colour per act. See docs/plans/2026-09-29-pen-cards-design.md -->
 		<style>
-			/* Marjoree is a Show Me Fonts *trial* font: local evaluation only, never
-			   committed or deployed (see fonts/marjoree-trial/.gitignore). Without
-			   the file, the system sans below takes over. */
+			/* Ronzino and Necto Mono by Collletttivo, SIL Open Font License 1.1
+			   (licences in fonts/ronzino and fonts/necto-mono) */
 			@font-face {
-				font-family: 'Marjoree Trial';
-				src: url('fonts/marjoree-trial/Marjoree-VAR-Desktop.ttf') format('truetype');
-				font-weight: 300 700;
+				font-family: 'Ronzino';
+				src: url('fonts/ronzino/Ronzino-Regular.woff2') format('woff2');
+				font-weight: 400;
+				font-style: normal;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: 'Ronzino';
+				src: url('fonts/ronzino/Ronzino-Oblique.woff2') format('woff2');
+				font-weight: 400;
+				font-style: italic;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: 'Ronzino';
+				src: url('fonts/ronzino/Ronzino-Medium.woff2') format('woff2');
+				font-weight: 500;
+				font-style: normal;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: 'Ronzino';
+				src: url('fonts/ronzino/Ronzino-MediumOblique.woff2') format('woff2');
+				font-weight: 500;
+				font-style: italic;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: 'Ronzino';
+				src: url('fonts/ronzino/Ronzino-Bold.woff2') format('woff2');
+				font-weight: 700;
+				font-style: normal;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: 'Ronzino';
+				src: url('fonts/ronzino/Ronzino-BoldOblique.woff2') format('woff2');
+				font-weight: 700;
+				font-style: italic;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: 'Necto Mono';
+				src: url('fonts/necto-mono/NectoMono-Regular.woff2') format('woff2');
+				font-weight: 400;
 				font-style: normal;
 				font-display: swap;
 			}
 
 			:root {
-				--font-sans: 'Marjoree Trial', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				--font-sans: 'Ronzino', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 				--hairline: rgba(0, 0, 0, 0.14);
 			}
 
@@ -38,9 +86,6 @@
 				background: #fff;
 				color: #000;
 				font-family: var(--font-sans);
-				/* Marjoree's variable file defaults to its Mono design (MONO 100);
-				   0 is the proportional face. Other fonts ignore the axis. */
-				font-variation-settings: 'MONO' 0;
 				overflow-x: hidden;
 			}
 
@@ -70,7 +115,7 @@
 				background: #fff;
 				color: var(--act-color);
 				border-radius: 10px;
-				font-weight: 600;
+				font-weight: 500;
 				font-size: 1.5em;
 				/* every card is white, so the incoming card needs a visible edge */
 				box-shadow:
@@ -105,7 +150,7 @@
 
 			.act-title {
 				font-size: max(4rem, min(12vw + 1rem, 16rem));
-				font-weight: 600;
+				font-weight: 700;
 				line-height: 0.95;
 				letter-spacing: -0.03em;
 				margin: 0 auto;
@@ -116,6 +161,7 @@
 
 			main h2 {
 				font-size: 1.8em;
+				font-weight: 700;
 				line-height: 1.1;
 				letter-spacing: -0.02em;
 				max-width: 20ch;
@@ -124,13 +170,16 @@
 
 			main h3 {
 				font-size: 1.25em;
+				font-weight: 700;
 				margin: 0 auto 0.5em;
 			}
 
 			main h4 {
+				font-family: var(--font-mono);
 				font-size: 0.7em;
+				font-weight: 400;
 				text-transform: uppercase;
-				letter-spacing: 0.06em;
+				letter-spacing: 0.04em;
 				max-width: 40ch;
 				margin: 0 auto 1em;
 			}
@@ -160,12 +209,12 @@
 				padding-left: 1em;
 				border-left: 3px solid currentColor;
 				font-style: italic;
-				font-weight: 500;
 			}
 
 			main small {
+				font-family: var(--font-mono);
 				font-size: 0.65em;
-				font-weight: 500;
+				font-weight: 400;
 			}
 
 			main a {
@@ -258,10 +307,9 @@
 				bottom: 1.5rem;
 				right: 1.5rem;
 				z-index: 30;
-				font-family: var(--font-sans);
-				font-variation-settings: inherit;
+				font-family: var(--font-mono);
 				font-size: 0.8rem;
-				font-weight: 600;
+				font-weight: 400;
 				background: #fff;
 				color: #000;
 				border: 1px solid #000;
