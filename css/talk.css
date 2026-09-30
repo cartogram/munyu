@@ -49,6 +49,14 @@
 }
 
 @font-face {
+	font-family: 'Libre Baskerville';
+	src: url('../fonts/libre-baskerville/LibreBaskerville-Italic-latin.woff2') format('woff2');
+	font-weight: 400 700;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
 	font-family: 'Ronzino';
 	src: url('../fonts/ronzino/Ronzino-Regular.woff2') format('woff2');
 	font-weight: 400;
@@ -186,6 +194,43 @@ main section[data-scene] {
 	text-align: center;
 }
 
+/* act openers: the title sits in the white "sky", with a generated
+   mark-field landscape (js/landscape.js) filling the lower part */
+.act-opener {
+	position: relative;
+	justify-content: flex-start;
+	padding-top: 14vh;
+}
+
+/* fills the space below the title and bleeds to the side edges; a taller
+   title crops more of the sky, so art and title never overlap. It stops at
+   the frame's bottom padding, leaving the slide chrome on clear white. */
+.landscape {
+	flex: 1 1 0;
+	min-height: 0;
+	width: calc(100% + 3rem);
+	max-width: none;
+	margin: 1.5rem -1.5rem 0;
+	/* marks dissolve into the sky instead of meeting a hard crop line */
+	mask-image: linear-gradient(to bottom, transparent, #000 22%);
+	pointer-events: none;
+}
+
+.lm-fill {
+	fill: currentColor;
+}
+
+.lm-stroke {
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: round;
+}
+
+.lm-tint-100 { color: var(--act-color); }
+.lm-tint-70 { color: color-mix(in srgb, var(--act-color) 70%, white); }
+.lm-tint-55 { color: color-mix(in srgb, var(--act-color) 55%, white); }
+.lm-tint-35 { color: color-mix(in srgb, var(--act-color) 35%, white); }
+
 /* act titles, and the talk title that opens the page in place of an act
    opener: one style */
 .act-title,
@@ -296,6 +341,14 @@ main small,
 	font-size: 1rem; /* 16px */
 	font-weight: 700;
 	line-height: 1.4;
+}
+
+/* sub-meta: a secondary line under meta, in thin italic serif — the one
+   deliberate italic in the system */
+.sub-meta {
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
 }
 
 /* inline-block so wrapped meta keeps its own leading instead of the

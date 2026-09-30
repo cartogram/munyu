@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { landscape } from './landscape.js';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -13,6 +14,9 @@ const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card heig
 const STEP_FADE = 0.1; // share of a step spent fading its piece in
 
 const acts = gsap.utils.toArray('main .act-panel');
+
+// Each act opener gets its own seeded mark-field landscape, in the act's tints.
+acts.forEach((panel) => panel.querySelector('.act-opener')?.append(landscape(panel.dataset.act)));
 
 // Editorial kicker above each scene: "Act name • 3 / 8". The first act has no
 // opener heading, and its title scene carries no kicker.

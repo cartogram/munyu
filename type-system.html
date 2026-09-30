@@ -521,6 +521,22 @@
 			</div>
 
 			<div class="ts-row">
+				<div class="ts-spec" data-spec=".sub-meta">
+					<strong>Sub-meta</strong>
+					A secondary line under meta, e.g. the event's city and year. The only italic.
+					<code>.sub-meta</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="user-research">
+					<div class="act-panel-inner">
+						<section data-scene="ts-sub-meta">
+							<p><small>React Advanced<br /><span class="sub-meta">London 2026</span></small></p>
+						</section>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
 				<div class="ts-spec" data-spec="#notes-drawer">
 					<strong>Speaker notes</strong>
 					The notes drawer, read mid-talk.
@@ -751,7 +767,7 @@
 						<div class="act-panel-inner"></div>
 						<div class="deck-chrome" aria-hidden="true">
 							<span class="chrome-title">Your UI is not my UI</span>
-							<span class="chrome-event">React Advanced<br />London 2026</span>
+							<span class="chrome-event">React Advanced<br /><span class="sub-meta">London 2026</span></span>
 							<span class="chrome-authors">Simon Lenz<br />Matthew Seccafien</span>
 							<span class="chrome-number">${number} / ${deckFrames.length}</span>
 						</div>
