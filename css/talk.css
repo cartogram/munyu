@@ -510,6 +510,32 @@ main section[data-scene].is-wide > svg {
 	flex: none !important;
 	max-width: 100% !important;
 	height: auto !important;
+	/* the act card's corner radius (the markup sets 4px inline) */
+	border-radius: 1rem !important;
+}
+
+/* generated persona portraits already carry the smeared style. They sit on
+   a ground of the act's colour and multiply into it, so the image takes on
+   the act's hue. */
+.portrait-ground {
+	width: min(100%, 720px);
+	background: var(--act-color);
+	line-height: 0;
+	border-radius: 1rem;
+	overflow: hidden;
+}
+
+/* a tool's logo in place of a screenshot */
+.persona > .persona-logo {
+	width: min(100%, 360px) !important;
+	border-radius: 0 !important;
+}
+
+.persona-portrait {
+	display: block;
+	width: 100%;
+	height: auto;
+	mix-blend-mode: multiply;
 }
 
 .demo-panels {
@@ -568,13 +594,14 @@ main section[data-scene].is-wide > svg {
 }
 
 /* each act card's own tab (added by js/site.js): act name, scene count and
-   page, hanging from the card's top centre so it scrolls in and away with
-   the card. White, bordered on its sides and bottom, bottom corners rounded. */
+   page, at the card's top centre so it scrolls in and away with the card;
+   a plain white label, no outline. */
 .act-tab {
 	position: absolute;
 	top: 0;
 	left: 50%;
-	transform: translateX(-50%);
+	/* --tab-shift (js/site.js) carries the tab in with each act's second slide */
+	transform: translateX(calc(-50% + var(--tab-shift, 0px)));
 	z-index: 1;
 	box-sizing: border-box;
 	/* at least 40% of the card, so the tab keeps one width across scenes */
@@ -583,9 +610,6 @@ main section[data-scene].is-wide > svg {
 	white-space: nowrap;
 	background: #fff;
 	padding: var(--tab-pad) calc(2 * var(--tab-pad));
-	border: 1px solid var(--act-color);
-	border-top: none;
-	border-radius: 0 0 1rem 1rem;
 	font-variant-numeric: tabular-nums;
 }
 

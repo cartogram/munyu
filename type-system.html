@@ -760,7 +760,7 @@
 				slide.innerHTML = `
 					<section class="act-panel" data-act="${t.act}">
 						<div class="act-panel-inner"></div>
-						<span class="act-tab" aria-hidden="true">${kicker}</span>
+						${t.opener || t.scene === 'your-ui-is-not-my-ui-title' ? '' : `<span class="act-tab" aria-hidden="true">${kicker}</span>`}
 					</section>`;
 				slide.querySelector('.act-panel-inner').append(node);
 				return slide;

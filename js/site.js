@@ -35,9 +35,8 @@ function cardInsets() {
 // Each act opener gets its own seeded mark-field landscape, in the act's tints.
 acts.forEach((panel) => panel.querySelector('.act-opener')?.append(landscape(panel.dataset.act)));
 
-// Each scene's kicker ("Act name—3/8"), shown in the slide chrome under
-// the talk title. The first act has no opener heading, and its title scene
-// carries no kicker.
+// Each scene's kicker ("Act name—3/8"), shown in its act card's tab. The
+// first act has no opener heading, and its title scene carries no kicker.
 acts.forEach((panel) => {
 	const actName = panel.querySelector('.act-title')?.textContent ?? 'Hypothesis';
 	const scenes = [...panel.querySelectorAll('section[data-scene]')];
@@ -410,11 +409,20 @@ function updateChrome() {
 	const currentAct = acts.indexOf(current.trigger.trigger);
 	acts.forEach((panel, k) => {
 		const own = frames.map((frame, i) => ({ frame, i })).filter(({ frame }) => frame.trigger.trigger === panel);
-		if (!own.length) return;
-		const pick = k === currentAct ? { frame: current, i: index } : k < currentAct ? own.at(-1) : own[0];
+		if (own.length < 2) return;
+		let pick = k === currentAct ? { frame: current, i: index } : k < currentAct ? own.at(-1) : own[0];
+		// the tab belongs to the act's second slide onward, so on the first it
+		// already shows the second's details as it travels in with it
+		if (pick.frame === own[0].frame) pick = own[1];
 		const html = tabText(pick.frame, pick.i, frames.length);
 		const tab = actTabs.get(panel);
 		if (tab.innerHTML !== html) tab.innerHTML = html;
+		// Not on an act's first slide (the title, or the opener): the tab rides
+		// in with the second slide as it slides in from the right, then sticks
+		// at the card's centre while the later slides pass beneath it.
+		const second = own[1].frame.scene;
+		const shift = Math.max(0, second.getBoundingClientRect().left - panel.getBoundingClientRect().left);
+		tab.style.setProperty('--tab-shift', `${Math.round(shift)}px`);
 	});
 	document.body.dataset.currentAct = current.trigger.trigger.dataset.act;
 }
