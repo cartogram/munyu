@@ -978,22 +978,23 @@
 			type="button"
 			aria-expanded="false"
 			aria-controls="notes-drawer"
-			aria-label="Notes and contents"
-			title="Notes and contents"
+			aria-label="Notes and index"
+			title="Notes and index"
 		>
 			<svg viewBox="0 0 16 16" aria-hidden="true">
 				<path d="M8 2v12M2 8h12" />
 			</svg>
 		</button>
-		<aside id="notes-drawer" aria-label="Notes and contents">
-			<section class="drawer-column drawer-notes">
-				<h2 class="drawer-heading">Notes</h2>
-				<div id="notes-drawer-content"></div>
-			</section>
-			<nav class="drawer-column drawer-toc" aria-label="Contents">
-				<h2 class="drawer-heading">Contents</h2>
+		<aside id="notes-drawer" aria-label="Notes and index">
+			<nav class="drawer-column drawer-toc" aria-label="Index">
+				<h2 class="drawer-heading">Index</h2>
 				<ol id="drawer-toc"></ol>
 			</nav>
+			<section class="drawer-column drawer-notes">
+				<!-- the current slide, as "Melody—2.2" (js/site.js) -->
+				<h2 class="drawer-heading" id="drawer-slide">Notes</h2>
+				<div id="notes-drawer-content"></div>
+			</section>
 		</aside>
 
 		<script type="module" src="/js/site.js"></script>
