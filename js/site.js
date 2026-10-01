@@ -7,13 +7,61 @@ gsap.registerPlugin(ScrollTrigger);
 // beat; ScrollTrigger's own resize refresh would shift positions first.
 ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
 
-// Scenes that hold while their pieces appear one per beat, in DOM order.
+// Scenes that hold while they play one step per beat. Each step adds its
+// tweens to the act timeline within `hold` px of scroll; the beat lands once
+// they've finished.
 const STEPPED_SCENES = {
-	'todays-model': (scene) => scene.querySelectorAll('.diagram-piece'),
-	'demo-two-people': (scene) => scene.querySelectorAll('.demo-panel'),
+	'todays-model': todaysModelSteps,
+	'demo-two-people': (scene) => [...scene.querySelectorAll('.demo-panel')].map(fadeInStep),
 };
 const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
 const STEP_FADE = 0.1; // share of a step spent fading its piece in
+
+function fadeInStep(piece) {
+	return (tl, hold) => tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
+}
+
+// Today's model: the base arrives, each adaptation drops onto the stack, then
+// they jostle until zoom shoves dark mode off the edge. Reduced motion keeps
+// the beats but fades pieces in place and skips the jostling.
+function todaysModelSteps(scene) {
+	const piece = (name) => scene.querySelector(`[data-piece="${name}"]`);
+	const layers = ['screen-reader', 'voice', 'zoom', 'dark'].map(piece);
+	const [screenReader, voice, zoom, dark] = layers;
+
+	const arrive = (target, from) => (tl, hold) => {
+		if (reduceMotion) return fadeInStep(target)(tl, hold);
+		tl.fromTo(target, { opacity: 0, ...from }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.4)' });
+	};
+
+	const conflict = (tl, hold) => {
+		tl.fromTo(piece('conflict'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
+		if (!reduceMotion) {
+			tl.to(
+				layers,
+				{
+					rotation: (i) => (i % 2 ? 2.5 : -2.5),
+					transformOrigin: '50% 100%',
+					duration: hold * 0.08,
+					ease: 'sine.inOut',
+					yoyo: true,
+					repeat: 3,
+				},
+				'<',
+			);
+		}
+		tl.to(zoom, { scale: 1.15, transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' })
+			.to(dark, { x: 150, y: 40, rotation: 14, opacity: 0.35, duration: hold * 0.35, ease: 'power2.out' }, `<+=${hold * 0.02}`)
+			.to(voice, { y: -18, rotation: -5, duration: hold * 0.3, ease: 'power2.out' }, '<')
+			.to(screenReader, { x: -10, rotation: -6, duration: hold * 0.3, ease: 'power2.out' }, '<');
+	};
+
+	return [
+		arrive(piece('base'), { y: 40 }),
+		...layers.map((layer) => arrive(layer, { y: -140 })),
+		conflict,
+	];
+}
 
 const acts = gsap.utils.toArray('main .act-panel');
 
@@ -75,11 +123,13 @@ function buildAct(panel, isLast) {
 		moveInnerTo(scene.offsetLeft, 0);
 		actBeats.push({ id, scene, time: tl.duration() });
 
-		const pieces = STEPPED_SCENES[scene.dataset.scene]?.(scene) ?? [];
-		pieces.forEach((piece, i) => {
+		const steps = STEPPED_SCENES[scene.dataset.scene]?.(scene) ?? [];
+		steps.forEach((step, i) => {
 			const hold = cardHeight * STEP_HOLD;
-			tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
-			tl.to({}, { duration: hold * (1 - STEP_FADE) });
+			const start = tl.duration();
+			step(tl, hold);
+			// Pad to a full hold so every beat is the same scroll distance.
+			tl.to({}, { duration: Math.max(0, start + hold - tl.duration()) });
 			actBeats.push({ id: `${id}/${i + 1}`, scene, time: tl.duration() });
 		});
 

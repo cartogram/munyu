@@ -323,12 +323,24 @@
 
 					<section data-scene="todays-model">
 						<h2>Today's model</h2>
-						<svg viewBox="0 0 640 460" style="max-height: 480px; max-width: 100%; height: auto;">
+						<svg viewBox="0 0 640 460" style="max-height: 480px; max-width: 100%; height: auto; overflow: visible;">
+							<!-- Revealed on the last beat, as the layers start to fight -->
+							<text
+								data-piece="conflict"
+								x="320"
+								y="70"
+								text-anchor="middle"
+								font-size="24"
+								font-weight="600"
+								fill="var(--act-color)"
+							>
+								&hellip;and they start to conflict
+							</text>
 							<!-- Left stack: screen reader -->
 							<text x="188" y="210" text-anchor="middle" font-size="26" fill="var(--muted-color)">
 								&#8942;
 							</text>
-							<g class="diagram-piece">
+							<g class="diagram-piece" data-piece="screen-reader">
 								<rect
 									x="108"
 									y="224"
@@ -360,7 +372,7 @@
 							<text x="443" y="145" text-anchor="middle" font-size="26" fill="var(--muted-color)">
 								&#8942;
 							</text>
-							<g class="diagram-piece">
+							<g class="diagram-piece" data-piece="voice">
 								<rect
 									x="348"
 									y="160"
@@ -377,7 +389,7 @@
 								</text>
 							</g>
 
-							<g class="diagram-piece">
+							<g class="diagram-piece" data-piece="zoom">
 								<rect
 									x="348"
 									y="210"
@@ -394,7 +406,7 @@
 								</text>
 							</g>
 
-							<g class="diagram-piece">
+							<g class="diagram-piece" data-piece="dark">
 								<rect
 									x="348"
 									y="256"
@@ -412,7 +424,7 @@
 							</g>
 
 							<!-- Base -->
-							<g class="diagram-piece">
+							<g class="diagram-piece" data-piece="base">
 								<rect
 									x="70"
 									y="310"
@@ -444,6 +456,9 @@
 							</p>
 							<p>
 								That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed its limitations.
+							</p>
+							<p>
+								[Next] The layers start bumping into each other &mdash; zoom shoves dark mode off the stack. That's Sinead's setup in one picture.
 							</p>
 						</aside>
 					</section>
