@@ -39,10 +39,10 @@
 					<section data-scene="ai-accessibility-today">
 						<h2>AI &amp; Accessibility today</h2>
 						<video
+							class="r-stretch"
 							src="media/Kazam_screencast_00147.mp4"
 							controls
 							preload="auto"
-							style="max-width: 100%; height: auto;"
 						></video>
 						<aside class="notes" hidden>
 							<p>
@@ -50,24 +50,30 @@
 								object and character recognition, real-time description of a camera feed.
 							</p>
 							<p>
-								As one blind user put it: &ldquo;I know people who are blind that now go through
-								decades of family albums with this technology.&rdquo;
+								<small>
+									As one blind user put it: &ldquo;I know people who are blind that now go through
+									decades of family albums with this technology.&rdquo;
+								</small>
 							</p>
+							<p>All those examples revolve around perception.</p>
+							<p>We think there must be something else though…</p>
 							<p><small>Clip ref: youtu.be/Ij-GLix2QUQ?t=675</small></p>
 						</aside>
+				
 					</section>
 
 					<section data-scene="hypothesis">
 						<h2>Hypothesis</h2>
 						<p>Chatbots and agents are a total revolution for accessibility</p>
 						<aside class="notes" hidden>
-							<p>We think there must be something else though.</p>
+							<h3>We came up with an <em>hypothesis</em></h3>
 							<p>
-								Our <em>hypothesis</em>: one very simple <em>and accessible</em> interface (natural language chat)
-								replaces all previous interactions. Users are not at the mercy of benevolent
+								One very simple <em>and accessible</em> interface (natural language chat)
+								replaces all previous interactions. So users are not at the mercy of benevolent
 								app/website developers creating UIs compatible with them anymore.
 							</p>
 						</aside>
+				
 					</section>
 				</div>
 			</section>
@@ -199,21 +205,19 @@
 								result: agents and bots are very helpful tools, but no revolution yet.
 							</p>
 							<p>
-								Reasons why not: there's a large overhead for the general population, not just an
-								accessibility-specific one. Trust and reliability are big hindrances.
+								Among the reasons, there is a large overhead with the general population. They are not
+								accessibility-specific.
 							</p>
 							<p>
-								People want tools and assistants, not to be replaced &mdash; they want to stay in
-								the driver's seat and &ldquo;do the work&rdquo; themselves. And this is the key insight
-								we carry forward: the answer isn't AI doing the whole task <em>for</em> you &mdash; that
-								strips out the autonomy and trust these users told us they need. The better move is AI
-								that produces an <em>interface</em> which lets you do the task yourself, more easily.
+								Trust and reliability are big hindrances.
 							</p>
 							<p>
-								Chatbots and agents are useful tools, but they are not a replacement for purpose-built interfaces.
+								People want tools and assistants, not to be replaced. They want to stay in
+								the driver's seat and &ldquo;do the work&rdquo; themselves.
 							</p>
 							<p>So we continued, to see what else is out there.</p>
 						</aside>
+				
 					</section>
 
 					<section data-scene="allana">
@@ -432,14 +436,14 @@
 
 						<aside class="notes" hidden>
 							<p>
-								Today's model: the vendor ships one interface, and you either live with it or stack
-								adaptation layers on top &mdash; screen reader, dark mode, zoom, larger fonts. And those
-								layers only work if the app was built to standards in the first place.
+								Today's model: the vendor ships one interface, built for the statistical average.
 							</p>
 							<p>
-								It works, up to a point. Our interviews showed where it breaks: adaptations conflict,
-								configuration is exhausting, and there's a gap between what standards provide and what
-								individuals actually need.
+								Users have to either live with it or stack adaptation layers on top (screen reader, dark mode, zoom, larger fonts).
+								Those adaptations require that the app was built in a compatible way with standards in mind.
+							</p>
+							<p>
+								That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed its limitations.
 							</p>
 						</aside>
 					</section>
@@ -452,20 +456,26 @@
 							<li>Configuration costs energy</li>
 							<li>Standardization has limits</li>
 						</ul>
+						<p>
+							→ One interface can't fit the variety of needs of its diverse users
+						</p>
 						<aside class="notes" hidden>
 							<p>
-								Let's brush aside all the &ldquo;normal&rdquo; AI problems, like reliability &mdash;
-								others will solve that, and it's the same problem for disabled and non-disabled
-								users alike.
+								Everyone we spoke to had done real work to adapt a standard interface &mdash; and for every one of them it
+								kept <em>failing</em>: Sinead's plugins fought each other, Rose's family needs
+								incompatible settings, Allana burns her energy budget on uncooperative apps.
 							</p>
 							<p>
-								Instead, we saw a lot of friction specifically in traditional accessibility areas:
-								setups are very personalized and hard to master, independent tools and adaptations
-								conflict with each other, and standardization has limits &mdash; one interface can't
-								fit the range of needs we saw across just six people.
+								Setups are very personalized and the standardization has its limits. 
 							</p>
-							<p>So for the next half of our talk, we want to propose a new concept&hellip;</p>
+							<p>
+								One interface just can't fit the wide variety of needs of its users.
+							</p>
+							<p>
+								So we want to propose a new concept&hellip;
+							</p>
 						</aside>
+				
 					</section>
 				</div>
 			</section>
@@ -479,36 +489,35 @@
 					<section data-scene="your-ui-is-not-my-ui-divider">
 						<h2>Your UI is not my UI</h2>
 						<aside class="notes" hidden>
-							Section 4 (~3 min). Our core proposal: AI-generated bespoke interfaces. Instead of
-							adapting one UI for everyone, generate a unique UI for each person.
+							<p><small>Reveal:</small>Your UI is not my UI</p>
+							<p>So… what do we mean by that?</p>
+							<small>
+								Our core proposal: AI-generated bespoke interfaces. Instead of
+								adapting one UI for everyone, generate a unique UI for each person.
+							</small>
 						</aside>
+				
 					</section>
 
 					<section data-scene="your-ui-is-not-my-ui-personalization">
-						<h2>Your UI is not my UI</h2>
-						<h4>Personalization over adaptability</h4>
+						<h4>Your UI is not my UI</h4>
+						<h2>Personalization over adaptability</h2>
 						<aside class="notes" hidden>
 							<p>
-								We're proposing this because of what the research forced on us. Everyone we spoke to
-								had done real work to adapt a standard interface &mdash; and for every one of them it
-								kept <em>failing</em>: Sinead's plugins fought each other, Rose's family needs
-								incompatible settings, Allana burns her energy budget on uncooperative apps.
+								Adaptation assumes one interface underneath that everyone bends toward themselves.
+								That's where it breaks.
 							</p>
 							<p>
-								Adaptation assumes one interface underneath that everyone bends toward themselves.
-								That's where it breaks. So the question isn't &ldquo;how do we adapt better?&rdquo;
-								&mdash; it's &ldquo;what if the interface were personal from the start?&rdquo; A UI that
-								is the <em>result</em> of two things: what you're trying to do, and who you are. In one
-								word, the interface becomes <em>empathetic</em> to the person in front of it &mdash; it
-								meets you where you are, so the reconciling work disappears. That empathy is what makes
-								this an accessibility argument, not just a generation demo.
+								So instead of improving how we adapt to the standard interface, we want to propose
+								that the interface is created personalized for you right from the get go.
 							</p>
 						</aside>
+				
 					</section>
 
 					<section data-scene="your-ui-is-not-my-ui-create-specific">
-						<h2>Your UI is not my UI</h2>
-						<h4>Create specific UIs on the fly for your needs</h4>
+						<h4>Your UI is not my UI</h4>
+						<h2>Create specific UIs on the fly for your needs</h2>
 						<ul>
 							<li>Adapt to your current task</li>
 							<li>Adapt to your preferences</li>
@@ -519,21 +528,26 @@
 						</ul>
 						<aside class="notes" hidden>
 							<p>
-								Where this goes: launching an app is creating an app, just for you, in that moment
-								&mdash; generated on the fly instead of adapted with layered tools, and disposed of
-								when you're done.
+								A UI should be the <em>result</em> of two things:
+							</p>
+							<ul>
+								<li>what you're trying to do,</li>
+								<li><em>and</em> who you are.</li>
+							</ul>
+							<p>
+								An app for the exact same task needs to look different depending on the condition, state,
+								environment and preferences of the user. In one word, the interface needs to be <em>empathetic</em> to the person in front of it.
 							</p>
 							<p>
-								We arrive at an interface as a slightly different person every time &mdash; the same
-								app could look different depending on your task, your state, your environment. Either
-								you tell it explicitly, or it knows.
+								The empathetic UI meets you where you are, so the adaptation work disappears. 
+								[While we talk here about this in an accessibility context, we think this is a generally desired property that goes beyond the topic.]
 							</p>
 							<p>
-								And &ldquo;telling it&rdquo; isn't learning the app's settings &mdash; it's plain
-								language. You <em>describe</em> what you need. Adaptation was something you configured;
-								personalization is something you can just ask for.
+								Where this goes: launching an app is creating an app, just for you, in that moment. 
+								Generated on the fly, instead of adapted with layered tools.
 							</p>
 						</aside>
+				
 					</section>
 
 					<section data-scene="demo-two-people">
@@ -574,33 +588,51 @@
 
 					<section data-scene="ui-equals-f-intent-empathy">
 						<h2>[UI] = f([Intent], [Empathy])</h2>
+						<aside class="notes" hidden>
+							[depending what we do in the demo, move content from the previous slide to here. Maybe this slide could even go. It's the same content as the one before the demo]
+						</aside>
+				
 					</section>
 
 					<section data-scene="observations-of-existing-state">
 						<h2>Observations of existing state. The industry is already doing this</h2>
+						<p>[here screenshots of those examples might fit]</p>
 						<ul>
 							<li><strong>Google Search AI Mode</strong> &mdash; custom layouts assembled per query, not served from a template</li>
 							<li><strong>Artifacts</strong> &mdash; every major AI tool now generates working interfaces inline, on demand</li>
 						</ul>
 						<aside class="notes" hidden>
-							<p>This empathy is the missing piece.</p>
 							<p>
-								<em>what</em> they take into account: your <em>intent</em> &mdash; the query,
-								the task. That half is handled. The half that isn't, yet, is the <em>human</em>: your
-								needs, abilities, context. Today's generated UI answers &ldquo;what are you trying to
-								do?&rdquo; but not &ldquo;who is doing it?&rdquo; That missing half is our whole argument.
+								Generated UIs are already emerging everywhere around us. But so far they only take into account your <em>intent</em>, the query, the task.
+							</p>
+							<p>
+								That half is handled. The half that isn't, yet, is the <em>human</em>: your
+								needs, abilities, context.
+							</p>
+							<p>
+								Today's generated UI answers &ldquo;what are you trying to do?&rdquo; 
+								but not &ldquo;who is doing it?&rdquo;
+							</p>
+							<p>
+								That missing half is our whole argument. We think there is lots of missed opportunity here.
 							</p>
 						</aside>
+				
 					</section>
 
 					<section data-scene="what-is-gained">
 						<h2>What is gained?</h2>
+						<ul>
+							<li>Burden of adaptation is shifted from the user to the application</li>
+							<li>Users not at the mercy of hopefully compatible application following standards</li>
+						</ul>
 						<aside class="notes" hidden>
 							<p>Rose doesn't need a dark mode plugin, myron doesn't need to rely on the OS's voice control grid, and any other frustrations that come with the plugin toil.</p>
 							<p>Our users are not at the mercy of the developers following the standards and hoping it all works out on their end.</p>
 							<p>The drawbacks of the existing single UI bending to the needs of the user are no longer present.</p>
 							<p>(There is no spoon moment) Its not that we are trying to bend the UI, its that you have to remember truth, there is no UI. </p>
 						</aside>
+				
 					</section>
 				</div>
 			</section>
@@ -689,10 +721,11 @@
 						<h2>Revisiting: 8 months later</h2>
 						<p>Rose tried to build a bespoke Steam library manager</p>
 						<aside class="notes" hidden>
-							Section 6 (~3 min). Our initial research for this started internally, and 8 months
+							Our initial research for this started internally, and 8 months
 							later we revisited it in preparation for this talk. Rose attempted to build
 							a bespoke manager application for her Steam library.
 						</aside>
+				
 					</section>
 
 					<section data-scene="it-didnt-really-work-out">

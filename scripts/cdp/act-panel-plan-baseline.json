@@ -23,7 +23,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "Accessibility is an early adopter of AI — speech-to-text, text-to-speech, object and character recognition, real-time description of a camera feed. As one blind user put it: “I know people who are blind that now go through decades of family albums with this technology.” Clip ref: youtu.be/Ij-GLix2QUQ?t=675"
+      "Accessibility is an early adopter of AI — speech-to-text, text-to-speech, object and character recognition, real-time description of a camera feed. As one blind user put it: “I know people who are blind that now go through decades of family albums with this technology.” All those examples revolve around perception. We think there must be something else though… Clip ref: youtu.be/Ij-GLix2QUQ?t=675"
     ],
     "media": [
       "media/Kazam_screencast_00147.mp4"
@@ -32,7 +32,8 @@
   {
     "index": 2,
     "headings": [
-      "Hypothesis"
+      "Hypothesis",
+      "We came up with an hypothesis"
     ],
     "paragraphs": [
       "Chatbots and agents are a total revolution for accessibility"
@@ -40,7 +41,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "We think there must be something else though. Our hypothesis: one very simple and accessible interface (natural language chat) replaces all previous interactions. Users are not at the mercy of benevolent app/website developers creating UIs compatible with them anymore."
+      "We came up with an hypothesis One very simple and accessible interface (natural language chat) replaces all previous interactions. So users are not at the mercy of benevolent app/website developers creating UIs compatible with them anymore."
     ],
     "media": []
   },
@@ -126,7 +127,7 @@
     ],
     "blockquotes": [],
     "notes": [
-      "At this point in the interviews we put our heads together for an intermediate result: agents and bots are very helpful tools, but no revolution yet. Reasons why not: there's a large overhead for the general population, not just an accessibility-specific one. Trust and reliability are big hindrances. People want tools and assistants, not to be replaced — they want to stay in the driver's seat and “do the work” themselves. And this is the key insight we carry forward: the answer isn't AI doing the whole task for you — that strips out the autonomy and trust these users told us they need. The better move is AI that produces an interface which lets you do the task yourself, more easily. Chatbots and agents are useful tools, but they are not a replacement for purpose-built interfaces. So we continued, to see what else is out there."
+      "At this point in the interviews we put our heads together for an intermediate result: agents and bots are very helpful tools, but no revolution yet. Among the reasons, there is a large overhead with the general population. They are not accessibility-specific. Trust and reliability are big hindrances. People want tools and assistants, not to be replaced. They want to stay in the driver's seat and “do the work” themselves. So we continued, to see what else is out there."
     ],
     "media": []
   },
@@ -193,7 +194,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "Today's model: the vendor ships one interface, and you either live with it or stack adaptation layers on top — screen reader, dark mode, zoom, larger fonts. And those layers only work if the app was built to standards in the first place. It works, up to a point. Our interviews showed where it breaks: adaptations conflict, configuration is exhausting, and there's a gap between what standards provide and what individuals actually need."
+      "Today's model: the vendor ships one interface, built for the statistical average. Users have to either live with it or stack adaptation layers on top (screen reader, dark mode, zoom, larger fonts). Those adaptations require that the app was built in a compatible way with standards in mind. That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed its limitations."
     ],
     "media": []
   },
@@ -202,7 +203,9 @@
     "headings": [
       "Opportunities"
     ],
-    "paragraphs": [],
+    "paragraphs": [
+      "→ One interface can't fit the variety of needs of its diverse users"
+    ],
     "listItems": [
       "Setups are very personalized",
       "Adaptations conflict with each other",
@@ -211,7 +214,7 @@
     ],
     "blockquotes": [],
     "notes": [
-      "Let's brush aside all the “normal” AI problems, like reliability — others will solve that, and it's the same problem for disabled and non-disabled users alike. Instead, we saw a lot of friction specifically in traditional accessibility areas: setups are very personalized and hard to master, independent tools and adaptations conflict with each other, and standardization has limits — one interface can't fit the range of needs we saw across just six people. So for the next half of our talk, we want to propose a new concept…"
+      "Everyone we spoke to had done real work to adapt a standard interface — and for every one of them it kept failing: Sinead's plugins fought each other, Rose's family needs incompatible settings, Allana burns her energy budget on uncooperative apps. Setups are very personalized and the standardization has its limits. One interface just can't fit the wide variety of needs of its users. So we want to propose a new concept…"
     ],
     "media": []
   },
@@ -224,7 +227,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "Section 4 (~3 min). Our core proposal: AI-generated bespoke interfaces. Instead of adapting one UI for everyone, generate a unique UI for each person."
+      "Reveal:Your UI is not my UI So… what do we mean by that? Our core proposal: AI-generated bespoke interfaces. Instead of adapting one UI for everyone, generate a unique UI for each person."
     ],
     "media": []
   },
@@ -238,7 +241,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "We're proposing this because of what the research forced on us. Everyone we spoke to had done real work to adapt a standard interface — and for every one of them it kept failing: Sinead's plugins fought each other, Rose's family needs incompatible settings, Allana burns her energy budget on uncooperative apps. Adaptation assumes one interface underneath that everyone bends toward themselves. That's where it breaks. So the question isn't “how do we adapt better?” — it's “what if the interface were personal from the start?” A UI that is the result of two things: what you're trying to do, and who you are. In one word, the interface becomes empathetic to the person in front of it — it meets you where you are, so the reconciling work disappears. That empathy is what makes this an accessibility argument, not just a generation demo."
+      "Adaptation assumes one interface underneath that everyone bends toward themselves. That's where it breaks. So instead of improving how we adapt to the standard interface, we want to propose that the interface is created personalized for you right from the get go."
     ],
     "media": []
   },
@@ -259,7 +262,7 @@
     ],
     "blockquotes": [],
     "notes": [
-      "Where this goes: launching an app is creating an app, just for you, in that moment — generated on the fly instead of adapted with layered tools, and disposed of when you're done. We arrive at an interface as a slightly different person every time — the same app could look different depending on your task, your state, your environment. Either you tell it explicitly, or it knows. And “telling it” isn't learning the app's settings — it's plain language. You describe what you need. Adaptation was something you configured; personalization is something you can just ask for."
+      "A UI should be the result of two things: what you're trying to do, and who you are. An app for the exact same task needs to look different depending on the condition, state, environment and preferences of the user. In one word, the interface needs to be empathetic to the person in front of it. The empathetic UI meets you where you are, so the adaptation work disappears. [While we talk here about this in an accessibility context, we think this is a generally desired property that goes beyond the topic.] Where this goes: launching an app is creating an app, just for you, in that moment. Generated on the fly, instead of adapted with layered tools."
     ],
     "media": []
   },
@@ -291,7 +294,9 @@
     "paragraphs": [],
     "listItems": [],
     "blockquotes": [],
-    "notes": [],
+    "notes": [
+      "[depending what we do in the demo, move content from the previous slide to here. Maybe this slide could even go. It's the same content as the one before the demo]"
+    ],
     "media": []
   },
   {
@@ -299,14 +304,16 @@
     "headings": [
       "Observations of existing state. The industry is already doing this"
     ],
-    "paragraphs": [],
+    "paragraphs": [
+      "[here screenshots of those examples might fit]"
+    ],
     "listItems": [
       "Google Search AI Mode — custom layouts assembled per query, not served from a template",
       "Artifacts — every major AI tool now generates working interfaces inline, on demand"
     ],
     "blockquotes": [],
     "notes": [
-      "This empathy is the missing piece. what they take into account: your intent — the query, the task. That half is handled. The half that isn't, yet, is the human: your needs, abilities, context. Today's generated UI answers “what are you trying to do?” but not “who is doing it?” That missing half is our whole argument."
+      "Generated UIs are already emerging everywhere around us. But so far they only take into account your intent, the query, the task. That half is handled. The half that isn't, yet, is the human: your needs, abilities, context. Today's generated UI answers “what are you trying to do?” but not “who is doing it?” That missing half is our whole argument. We think there is lots of missed opportunity here."
     ],
     "media": []
   },
@@ -316,7 +323,10 @@
       "What is gained?"
     ],
     "paragraphs": [],
-    "listItems": [],
+    "listItems": [
+      "Burden of adaptation is shifted from the user to the application",
+      "Users not at the mercy of hopefully compatible application following standards"
+    ],
     "blockquotes": [],
     "notes": [
       "Rose doesn't need a dark mode plugin, myron doesn't need to rely on the OS's voice control grid, and any other frustrations that come with the plugin toil. Our users are not at the mercy of the developers following the standards and hoping it all works out on their end. The drawbacks of the existing single UI bending to the needs of the user are no longer present. (There is no spoon moment) Its not that we are trying to bend the UI, its that you have to remember truth, there is no UI."
@@ -381,7 +391,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "Section 6 (~3 min). Our initial research for this started internally, and 8 months later we revisited it in preparation for this talk. Rose attempted to build a bespoke manager application for her Steam library."
+      "Our initial research for this started internally, and 8 months later we revisited it in preparation for this talk. Rose attempted to build a bespoke manager application for her Steam library."
     ],
     "media": []
   },
