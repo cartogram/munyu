@@ -973,11 +973,27 @@
 			<span class="chrome-bar chrome-event">React Advanced<span class="sub-meta"><span class="em-dash">—</span>London 2026</span></span>
 		</div>
 
-		<button id="notes-toggle" type="button" aria-expanded="false" aria-controls="notes-drawer">
-			Notes
+		<button
+			id="notes-toggle"
+			type="button"
+			aria-expanded="false"
+			aria-controls="notes-drawer"
+			aria-label="Notes and contents"
+			title="Notes and contents"
+		>
+			<svg viewBox="0 0 16 16" aria-hidden="true">
+				<path d="M8 2v12M2 8h12" />
+			</svg>
 		</button>
-		<aside id="notes-drawer">
-			<div id="notes-drawer-content"></div>
+		<aside id="notes-drawer" aria-label="Notes and contents">
+			<section class="drawer-column drawer-notes">
+				<h2 class="drawer-heading">Notes</h2>
+				<div id="notes-drawer-content"></div>
+			</section>
+			<nav class="drawer-column drawer-toc" aria-label="Contents">
+				<h2 class="drawer-heading">Contents</h2>
+				<ol id="drawer-toc"></ol>
+			</nav>
 		</aside>
 
 		<script type="module" src="/js/site.js"></script>
