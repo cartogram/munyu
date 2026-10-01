@@ -56,8 +56,8 @@ mode is secondary.
   |---|---|---|
   | Act title (also the talk title) | Aileron 900 | fits the longest word to the card width, `min((100vw − 3rem) / 7.9, 222px)`, lh 0.8 |
   | Scene headline | Libre Baskerville 900 (renders its 700) | 150 / 180 (38 / 45.6 below 700px) |
-  | Lede (formerly standfirst; also Q&A questions) | Aileron 400 | 60 / 72 |
-  | Body (paragraphs and lists) | Aileron 400 | 40 / 48 |
+  | Lede (formerly standfirst; also Q&A questions) | Aileron 400 | 55 / 66 |
+  | Body (paragraphs and lists) | Aileron 400 | 55 / 66 |
   | Quote (incl. persona quotes) | Libre Baskerville 400 | 60 / 72 |
   | Meta (kickers, authors, labels, chrome, Notes button) | Aileron 700 | 16 / 22.4 |
   | Sub-meta (the secondary part of a meta line: "—London 2026", "—Simon Lenz & Matthew Seccafien", the numbers in "User research—3/8 07/42") | Libre Baskerville 400 italic, title case — the one italic | 14 |
@@ -76,14 +76,14 @@ mode is secondary.
 
   | act | colour | contrast |
   |---|---|---|
-  | hypothesis | `mediumblue` | 11.16 |
-  | user-research | `darkmagenta` | 8.50 |
-  | limits-of-adaptability | `darkred` | 10.01 |
-  | personalization-over-adaptability | `darkgreen` | 7.44 |
-  | empathy-is-our-point | `rebeccapurple` | 8.41 |
-  | launching-is-creating | `saddlebrown` | 7.10 |
-  | closing | `black` | 21.00 |
-  | backup-qa | `darkslategray` | 8.93 |
+  | hypothesis | `#265085` | AAA |
+  | user-research | `#6e396a` | AAA |
+  | limits-of-adaptability | `#7e3633` | AAA |
+  | personalization-over-adaptability | `#265e2b` | AAA |
+  | empathy-is-our-point | `#006061` | AAA |
+  | launching-is-creating | `#764002` | AAA |
+  | closing | `#4a4f63` | AAA |
+  | backup-qa | `#3a555d` | AAA |
 
 - Because every card is white, cards carry a hairline top edge and soft
   shadow so the incoming card's edge is visible while it slides over (the

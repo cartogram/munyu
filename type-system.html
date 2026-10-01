@@ -741,19 +741,15 @@
 			];
 
 			const source = new DOMParser().parseFromString(await (await fetch('index.html')).text(), 'text/html');
-			const deckFrames = [...source.querySelectorAll('main .act-opener, main section[data-scene]')];
 
 			function buildSlide(t) {
 				const srcAct = source.querySelector(`section[data-act="${t.act}"]`);
 				const actTitle = srcAct.querySelector('.act-title')?.textContent ?? 'Hypothesis';
-				const scenes = [...srcAct.querySelectorAll('section[data-scene]')];
 				const original = t.opener ? srcAct.querySelector('.act-opener') : srcAct.querySelector(`section[data-scene="${t.scene}"]`);
 				const node = original.cloneNode(true);
 				node.querySelectorAll('aside.notes').forEach((n) => n.remove());
 				node.querySelectorAll('video').forEach((v) => v.setAttribute('preload', 'metadata'));
-				const number = String(deckFrames.indexOf(original) + 1).padStart(2, '0');
-				const sceneCount = t.opener || t.scene === 'your-ui-is-not-my-ui-title' ? '' : `${scenes.indexOf(original) + 1}/${scenes.length} `;
-				const kicker = `${actTitle}<span class="sub-meta"><span class="em-dash">—</span>${sceneCount}${number}/${deckFrames.length}</span>`;
+				const kicker = actTitle;
 
 				const slide = document.createElement('div');
 				slide.className = 'ts-slide';

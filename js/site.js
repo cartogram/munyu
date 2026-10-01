@@ -35,18 +35,6 @@ function cardInsets() {
 // Each act opener gets its own seeded mark-field landscape, in the act's tints.
 acts.forEach((panel) => panel.querySelector('.act-opener')?.append(landscape(panel.dataset.act)));
 
-// Each scene's kicker ("Act name—3/8"), shown in its act card's tab. The
-// first act has no opener heading, and its title scene carries no kicker.
-acts.forEach((panel) => {
-	const actName = panel.querySelector('.act-title')?.textContent ?? 'Hypothesis';
-	const scenes = [...panel.querySelectorAll('section[data-scene]')];
-	scenes.forEach((scene, i) => {
-		if (scene.dataset.scene === 'your-ui-is-not-my-ui-title') return;
-		scene.dataset.kickerAct = actName;
-		scene.dataset.kickerNumber = `${i + 1}/${scenes.length}`;
-	});
-});
-
 // Rebuilt with every setup(). A beat's scroll position is its trigger's start
 // plus its timeline time: durations are in scroll pixels, so 1s = 1px.
 let beats = []; // { id, scene, trigger, time }
@@ -385,17 +373,12 @@ const actTabs = new Map(
 	}),
 );
 
-// A tab reads "Act name—3/8 07/42": the scene within its act (not on openers
-// or the title slide), then the frame within the talk. Frames are act openers
-// and scenes, not reveal steps. The current card's tab shows the current
+// A tab shows the act's name. Frames are act openers and scenes, not reveal
+// steps. The current card's tab shows the current
 // frame; cards stacked beneath keep their last frame, cards yet to arrive show
 // their first. The top-band chrome takes the current act's colour.
-function tabText(frame, index, total) {
-	const dash = '<span class="em-dash">—</span>';
-	const sceneCount = frame.scene?.dataset.kickerNumber ? `${frame.scene.dataset.kickerNumber} ` : '';
-	const page = `${String(index + 1).padStart(2, '0')}/${total}`;
-	// words in the meta face, dash and numbers in sub-meta, as "—London 2026"
-	return `${actNames.get(frame.trigger.trigger)}<span class="sub-meta">${dash}${sceneCount}${page}</span>`;
+function tabText(frame) {
+	return actNames.get(frame.trigger.trigger);
 }
 
 function updateChrome() {
@@ -414,7 +397,7 @@ function updateChrome() {
 		// the tab belongs to the act's second slide onward, so on the first it
 		// already shows the second's details as it travels in with it
 		if (pick.frame === own[0].frame) pick = own[1];
-		const html = tabText(pick.frame, pick.i, frames.length);
+		const html = tabText(pick.frame);
 		const tab = actTabs.get(panel);
 		if (tab.innerHTML !== html) tab.innerHTML = html;
 		// Not on an act's first slide (the title, or the opener): the tab rides

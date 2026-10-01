@@ -158,23 +158,25 @@ main {
 	padding: var(--inset-top) 0 var(--inset-bottom);
 }
 
-/* one named colour per act, each ≥ 7:1 (WCAG AAA) on white */
+/* one colour per act: a single family at the same OKLCH lightness (0.43)
+   and chroma (0.10, 0.035 for the two neutrals), varying only in hue; each
+   ≥ 7:1 (WCAG AAA) on white */
 .act-panel[data-act='hypothesis'],
-body[data-current-act='hypothesis'] { --act-color: mediumblue; }
+body[data-current-act='hypothesis'] { --act-color: #265085; }
 .act-panel[data-act='user-research'],
-body[data-current-act='user-research'] { --act-color: darkmagenta; }
+body[data-current-act='user-research'] { --act-color: #6e396a; }
 .act-panel[data-act='limits-of-adaptability'],
-body[data-current-act='limits-of-adaptability'] { --act-color: darkred; }
+body[data-current-act='limits-of-adaptability'] { --act-color: #7e3633; }
 .act-panel[data-act='personalization-over-adaptability'],
-body[data-current-act='personalization-over-adaptability'] { --act-color: darkgreen; }
+body[data-current-act='personalization-over-adaptability'] { --act-color: #265e2b; }
 .act-panel[data-act='empathy-is-our-point'],
-body[data-current-act='empathy-is-our-point'] { --act-color: rebeccapurple; }
+body[data-current-act='empathy-is-our-point'] { --act-color: #006061; }
 .act-panel[data-act='launching-is-creating'],
-body[data-current-act='launching-is-creating'] { --act-color: saddlebrown; }
+body[data-current-act='launching-is-creating'] { --act-color: #764002; }
 .act-panel[data-act='closing'],
-body[data-current-act='closing'] { --act-color: black; }
+body[data-current-act='closing'] { --act-color: #4a4f63; }
 .act-panel[data-act='backup-qa'],
-body[data-current-act='backup-qa'] { --act-color: darkslategray; }
+body[data-current-act='backup-qa'] { --act-color: #3a555d; }
 
 .act-panel {
 	/* read by the inline "Today's model" SVG */
@@ -207,7 +209,7 @@ body[data-current-act='backup-qa'] { --act-color: darkslategray; }
 /* each act card is outlined in its colour; as one slides up over the last,
    its top edge and rounded leading corner mark the overlap */
 .act-panel {
-	border: 1px solid var(--act-color);
+	border: 2px solid var(--act-color);
 	/* open at the bottom and right: the card runs off those window edges */
 	border-bottom: none;
 	border-right: none;
@@ -229,8 +231,8 @@ main section[data-scene] {
 	   the next scene shows */
 	flex: 0 0 var(--card-width, 100vw);
 	width: var(--card-width, 100vw);
-	/* the card's inner height: window minus the insets and the 1px top border */
-	min-height: calc(100vh - var(--card-top) - var(--inset-bottom) - 1px);
+	/* the card's inner height: window minus the insets and the 2px top border */
+	min-height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	/* room for the fixed slide chrome along the edges (two lines at the top) */
 	padding: 6rem var(--frame-pad-x) 4.5rem;
 	display: flex;
@@ -295,7 +297,7 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	/* sized so the longest word, "Personalization" (7.7em wide in Aileron
 	   Black), always fits the card's width minus its 1.5rem padding; 222px
 	   on wide screens */
-	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 1px) / 7.9), 13.875rem); /* up to 222px */
+	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), 13.875rem); /* up to 222px */
 	font-weight: 900;
 	line-height: 0.8;
 	margin: 0 auto;
@@ -329,14 +331,12 @@ main h3 {
    quote's indent, so it can be changed or dropped on its own. */
 main h4 {
 	font-family: var(--font-sans);
-	font-size: 3.75rem; /* 60px */
+	font-size: 3.4375rem; /* 55px */
 	font-weight: 400;
 	line-height: 1.2;
 	text-decoration: underline;
 	text-decoration-thickness: 0.05em;
 	text-underline-offset: 0.12em;
-	/* half the frame's width, so the lede breaks into short, balanced lines */
-	max-width: 50%;
 	text-wrap: balance;
 	margin: 0 auto 0.8em;
 }
@@ -387,7 +387,7 @@ main ul {
    compound inside the card's 1.5em and still follows the reader's root size */
 main p,
 main ul {
-	font-size: 2.5rem; /* 40px */
+	font-size: 3.4375rem; /* 55px */
 	line-height: 1.2;
 }
 
@@ -413,12 +413,6 @@ main section[data-scene]:has(blockquote) > h2 {
 	text-align: center;
 }
 
-/* the quote hangs from the lede's edge: its margin is the lede's width (50%)
-   minus the quote's own indent, so the first line starts where the lede
-   column ends */
-main section[data-scene] blockquote {
-	margin-left: max(0px, calc(50% - 3em));
-}
 
 /* one meta style for authors and labels, demo panel labels, the slide
    chrome and the Notes button. rem, so it stays meta-sized inside a 40px
@@ -595,7 +589,7 @@ main section[data-scene].is-wide > svg {
 
 /* each act card's own tab (added by js/site.js): act name, scene count and
    page, at the card's top centre so it scrolls in and away with the card;
-   a plain white label, no outline. */
+   plain text, no outline or background. */
 .act-tab {
 	position: absolute;
 	top: 0;
@@ -608,7 +602,6 @@ main section[data-scene].is-wide > svg {
 	min-width: 40%;
 	text-align: center;
 	white-space: nowrap;
-	background: #fff;
 	padding: var(--tab-pad) calc(2 * var(--tab-pad));
 	font-variant-numeric: tabular-nums;
 }
