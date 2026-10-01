@@ -144,8 +144,16 @@
 	--tab-pad: 0.75rem;
 	/* the notes toggle: a + in the top band's right-hand corner */
 	--toggle-size: 28px;
-	/* frames' side padding: content runs full width between these */
-	--frame-pad-x: 6rem;
+	/* slide units: everything inside a slide is sized in --u, one px of a
+	   1920 × 1080 reference window, scaled to fit the real one (like a
+	   presentation canvas). Type, padding and media keep the same proportions
+	   and line breaks at any window size; the chrome and the notes drawer stay
+	   in rem. */
+	--u: min(100vw / 1920, 100vh / 1080);
+	/* frames' padding: content runs full width between the sides */
+	--frame-pad-x: calc(96 * var(--u));
+	--frame-pad-top: max(3.5rem, calc(96 * var(--u))); /* clears the card's tab */
+	--frame-pad-bottom: max(3rem, calc(72 * var(--u)));
 	--font-sans: 'Aileron', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 	--font-serif: 'Libre Baskerville', Baskerville, 'Times New Roman', serif;
@@ -240,7 +248,7 @@ main section[data-scene] {
 	/* the card's inner height: window minus the insets and the 2px top border */
 	min-height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	/* room for the fixed slide chrome along the edges (two lines at the top) */
-	padding: 6rem var(--frame-pad-x) 4.5rem;
+	padding: var(--frame-pad-top) var(--frame-pad-x) var(--frame-pad-bottom);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -255,9 +263,9 @@ main section[data-scene] {
 	justify-content: flex-end;
 	align-items: flex-start;
 	text-align: left;
-	/* 40px more than the frame's usual bottom padding lifts the title clear
+	/* 40 more than the frame's usual bottom padding lifts the title clear
 	   of the bottom chrome */
-	padding-bottom: 7rem;
+	padding-bottom: calc(var(--frame-pad-bottom) + 40 * var(--u));
 }
 
 .act-opener > .act-title {
@@ -272,7 +280,7 @@ main section[data-scene] {
 	min-height: 0;
 	width: calc(100% + 2 * var(--frame-pad-x));
 	max-width: none;
-	margin: -6rem calc(-1 * var(--frame-pad-x)) 1.5rem;
+	margin: calc(-1 * var(--frame-pad-top)) calc(-1 * var(--frame-pad-x)) calc(24 * var(--u));
 	transform: scaleY(-1);
 	/* flipped with the art: marks dissolve toward the title instead of
 	   meeting a hard crop line */
@@ -301,9 +309,8 @@ main section[data-scene] {
 main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	font-family: var(--font-sans);
 	/* sized so the longest word, "Personalization" (7.7em wide in Aileron
-	   Black), always fits the card's width minus its 1.5rem padding; 222px
-	   on wide screens */
-	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), 13.875rem); /* up to 222px */
+	   Black), always fits the card's width minus its padding; 222 at most */
+	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), calc(222 * var(--u)));
 	font-weight: 900;
 	line-height: 0.8;
 	margin: 0 auto;
@@ -319,7 +326,7 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 
 main h2 {
 	font-family: var(--font-serif);
-	font-size: 9.375rem; /* 150px */
+	font-size: calc(150 * var(--u));
 	font-weight: 900; /* Libre Baskerville tops out at 700 */
 	line-height: 1.2;
 	text-wrap: balance;
@@ -337,7 +344,7 @@ main h3 {
    quote's indent, so it can be changed or dropped on its own. */
 main h4 {
 	font-family: var(--font-sans);
-	font-size: 3.4375rem; /* 55px */
+	font-size: calc(55 * var(--u));
 	font-weight: 400;
 	line-height: 1.2;
 	text-decoration: underline;
@@ -389,11 +396,11 @@ main ul {
 	list-style: disc;
 }
 
-/* body: paragraphs and lists share one style. rem, not em, so it doesn't
-   compound inside the card's 1.5em and still follows the reader's root size */
+/* body: paragraphs and lists share one style. In --u, not em, so it doesn't
+   compound inside the card's 1.5em */
 main p,
 main ul {
-	font-size: 3.4375rem; /* 55px */
+	font-size: calc(55 * var(--u));
 	line-height: 1.2;
 }
 
@@ -407,7 +414,7 @@ main li + li {
 
 main blockquote {
 	font-family: var(--font-serif);
-	font-size: 3.75rem; /* 60px */
+	font-size: calc(60 * var(--u));
 	font-weight: 400;
 	line-height: 1.2;
 	/* a big editorial first-line indent */
@@ -474,7 +481,7 @@ main img,
 main video {
 	max-width: 100%;
 	max-height: 70vh;
-	border-radius: 8px;
+	border-radius: calc(8 * var(--u));
 }
 
 main svg {
@@ -483,11 +490,11 @@ main svg {
 }
 
 main section[data-scene].is-wide {
-	padding-inline: 1.5rem;
+	padding-inline: calc(24 * var(--u));
 }
 
 main section[data-scene].is-wide > svg {
-	width: min(900px, 100%);
+	width: min(calc(900 * var(--u)), 100%);
 }
 
 /* persona scenes: interview quote stacked above its screenshot or clip, so
@@ -496,7 +503,7 @@ main section[data-scene].is-wide > svg {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 2.5rem;
+	gap: calc(40 * var(--u));
 	width: 100%;
 }
 
@@ -511,23 +518,23 @@ main section[data-scene].is-wide > svg {
 	max-width: 100% !important;
 	height: auto !important;
 	/* the act card's corner radius (the markup sets 4px inline) */
-	border-radius: 1rem !important;
+	border-radius: calc(16 * var(--u)) !important;
 }
 
 /* generated persona portraits already carry the smeared style. They sit on
    a ground of the act's colour and multiply into it, so the image takes on
    the act's hue. */
 .portrait-ground {
-	width: min(100%, 720px);
+	width: min(100%, calc(720 * var(--u)));
 	background: var(--act-color);
 	line-height: 0;
-	border-radius: 1rem;
+	border-radius: calc(16 * var(--u));
 	overflow: hidden;
 }
 
 /* a tool's logo in place of a screenshot */
 .persona > .persona-logo {
-	width: min(100%, 360px) !important;
+	width: min(100%, calc(360 * var(--u))) !important;
 	border-radius: 0 !important;
 }
 
@@ -540,7 +547,7 @@ main section[data-scene].is-wide > svg {
 
 .demo-panels {
 	display: flex;
-	gap: 1.5rem;
+	gap: calc(24 * var(--u));
 	width: 100%;
 }
 
@@ -549,13 +556,12 @@ main section[data-scene].is-wide > svg {
 	margin-inline: 0;
 }
 
+/* phones read the deck as a column rather than a canvas: a fixed scale,
+   at which the scene headline is 38px */
 @media (max-width: 699px) {
 	:root {
+		--u: calc(38px / 150);
 		--frame-pad-x: 1.5rem;
-	}
-
-	main h2 {
-		font-size: 2.375rem; /* 38px */
 	}
 
 	.demo-panels {
@@ -590,7 +596,7 @@ main section[data-scene].is-wide > svg {
 
 /* leaves the band's right-hand corner to the notes toggle */
 .chrome-event {
-	right: calc(var(--inset-right) + 2 * var(--tab-pad) + var(--toggle-size) + var(--tab-pad));
+	right: calc(var(--inset-right) + 2 * var(--tab-pad) + var(--toggle-size));
 	text-align: right;
 }
 
@@ -733,20 +739,21 @@ aside.notes {
 	/* text lines up with the Contents heading, inside the 3px bar */
 	padding: 0.2rem var(--toc-pad) 0.2rem calc(var(--toc-pad) - 3px);
 	border-left: 3px solid transparent;
+	/* highlights start under the bar, not 3px in from it */
+	background-origin: border-box;
 	color: var(--act-color);
 	text-decoration: none;
 }
 
 /* highlights fade out from the left */
 .toc-link:hover {
-	background: linear-gradient(to right, color-mix(in srgb, var(--act-color) 8%, white), transparent);
+	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 8%, white), transparent);
 }
 
 /* the current scene */
 .toc-link[aria-current='true'] {
 	border-left-color: var(--act-color);
-	background: linear-gradient(to right, color-mix(in srgb, var(--act-color) 16%, white), transparent);
-	font-weight: 700;
+	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 16%, white), transparent);
 }
 
 /* phones: one column; the whole drawer scrolls */
