@@ -7,13 +7,61 @@ gsap.registerPlugin(ScrollTrigger);
 // beat; ScrollTrigger's own resize refresh would shift positions first.
 ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
 
-// Scenes that hold while their pieces appear one per beat, in DOM order.
+// Scenes that hold while they play one step per beat. Each step adds its
+// tweens to the act timeline within `hold` px of scroll; the beat lands once
+// they've finished.
 const STEPPED_SCENES = {
-	'todays-model': (scene) => scene.querySelectorAll('.diagram-piece'),
-	'demo-two-people': (scene) => scene.querySelectorAll('.demo-panel'),
+	'todays-model': todaysModelSteps,
+	'demo-two-people': (scene) => [...scene.querySelectorAll('.demo-panel')].map(fadeInStep),
 };
 const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
 const STEP_FADE = 0.1; // share of a step spent fading its piece in
+
+function fadeInStep(piece) {
+	return (tl, hold) => tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
+}
+
+// Today's model: the base arrives, each adaptation drops onto the stack, then
+// they jostle until zoom shoves dark mode off the edge. Reduced motion keeps
+// the beats but fades pieces in place and skips the jostling.
+function todaysModelSteps(scene) {
+	const piece = (name) => scene.querySelector(`[data-piece="${name}"]`);
+	const layers = ['screen-reader', 'voice', 'zoom', 'dark'].map(piece);
+	const [screenReader, voice, zoom, dark] = layers;
+
+	const arrive = (target, from) => (tl, hold) => {
+		if (reduceMotion) return fadeInStep(target)(tl, hold);
+		tl.fromTo(target, { opacity: 0, ...from }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.4)' });
+	};
+
+	const conflict = (tl, hold) => {
+		tl.fromTo(piece('conflict'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
+		if (!reduceMotion) {
+			tl.to(
+				layers,
+				{
+					rotation: (i) => (i % 2 ? 2.5 : -2.5),
+					transformOrigin: '50% 100%',
+					duration: hold * 0.08,
+					ease: 'sine.inOut',
+					yoyo: true,
+					repeat: 3,
+				},
+				'<',
+			);
+		}
+		tl.to(zoom, { scale: 1.15, transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' })
+			.to(dark, { x: 150, y: 40, rotation: 14, opacity: 0.35, duration: hold * 0.35, ease: 'power2.out' }, `<+=${hold * 0.02}`)
+			.to(voice, { y: -18, rotation: -5, duration: hold * 0.3, ease: 'power2.out' }, '<')
+			.to(screenReader, { x: -10, rotation: -6, duration: hold * 0.3, ease: 'power2.out' }, '<');
+	};
+
+	return [
+		arrive(piece('base'), { y: 40 }),
+		...layers.map((layer) => arrive(layer, { y: -140 })),
+		conflict,
+	];
+}
 
 const acts = gsap.utils.toArray('main .act-panel');
 
@@ -75,11 +123,13 @@ function buildAct(panel, isLast) {
 		moveInnerTo(scene.offsetLeft, 0);
 		actBeats.push({ id, scene, time: tl.duration() });
 
-		const pieces = STEPPED_SCENES[scene.dataset.scene]?.(scene) ?? [];
-		pieces.forEach((piece, i) => {
+		const steps = STEPPED_SCENES[scene.dataset.scene]?.(scene) ?? [];
+		steps.forEach((step, i) => {
 			const hold = cardHeight * STEP_HOLD;
-			tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
-			tl.to({}, { duration: hold * (1 - STEP_FADE) });
+			const start = tl.duration();
+			step(tl, hold);
+			// Pad to a full hold so every beat is the same scroll distance.
+			tl.to({}, { duration: Math.max(0, start + hold - tl.duration()) });
 			actBeats.push({ id: `${id}/${i + 1}`, scene, time: tl.duration() });
 		});
 
@@ -215,8 +265,13 @@ function rebuild() {
 	const offset = beat ? window.scrollY - beatPosition(beat) : 0;
 	navTween?.kill();
 	navTween = null;
+	// Pins are measured from the cards' layout, so take off the drawer's push
+	// while they're rebuilt, then put it back (the drawer may have resized).
+	drawerTl?.progress(1);
+	gsap.set(document.body, { '--drawer-push': '0px' });
 	mm?.revert();
 	setup();
+	gsap.set(document.body, { '--drawer-push': `${drawerPush()}px` });
 	const same = beat && beatById(beat.id);
 	if (same) window.scrollTo(0, beatPosition(same) + offset);
 	updateChrome();
@@ -345,8 +400,19 @@ window.addEventListener('keydown', (event) => {
 
 let currentSceneNotes = null;
 
+// One paragraph per <p> in the scene's notes (or the notes' whole text).
 function renderDrawer() {
-	notesDrawerContent.textContent = currentSceneNotes || 'No notes for this section.';
+	const paragraphs = currentSceneNotes
+		? [...(currentSceneNotes.querySelectorAll('p').length ? currentSceneNotes.querySelectorAll('p') : [currentSceneNotes])]
+		: [];
+	const texts = paragraphs.map((el) => el.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+	notesDrawerContent.replaceChildren(
+		...(texts.length ? texts : ['No notes for this section.']).map((text) => {
+			const p = document.createElement('p');
+			p.textContent = text;
+			return p;
+		}),
+	);
 }
 
 let currentScene;
@@ -355,8 +421,7 @@ function updateCurrentScene() {
 	const scene = currentBeat()?.scene ?? null;
 	if (scene === currentScene) return;
 	currentScene = scene;
-	const notesEl = scene?.querySelector('aside.notes');
-	currentSceneNotes = notesEl ? notesEl.textContent.trim() : null;
+	currentSceneNotes = scene?.querySelector('aside.notes') ?? null;
 	if (notesDrawer.classList.contains('is-open')) renderDrawer();
 }
 
@@ -410,21 +475,140 @@ function updateChrome() {
 	document.body.dataset.currentAct = current.trigger.trigger.dataset.act;
 }
 
+// The drawer's contents: every act and its scenes, in order. Entries link to
+// their frame's beat id; an act without an opener (the first, which opens on
+// the talk title) lists its scenes without an act heading.
+const tocList = document.getElementById('drawer-toc');
+const tocLinks = new Map(); // beat id → link
+
+function tocLink(id, label, className) {
+	const link = document.createElement('a');
+	link.className = className;
+	link.href = `#${id}`;
+	link.textContent = label;
+	link.addEventListener('click', (event) => {
+		event.preventDefault();
+		const beat = beatById(id);
+		if (beat) moveTo(beatPosition(beat));
+		// a mouse click hands focus back to the page so the arrow keys keep
+		// navigating; keyboard activation keeps focus in the list
+		if (event.detail > 0) link.blur();
+	});
+	tocLinks.set(id, link);
+	return link;
+}
+
+acts.forEach((panel) => {
+	const act = panel.dataset.act;
+	const item = document.createElement('li');
+	item.style.setProperty('--act-color', getComputedStyle(panel).getPropertyValue('--act-color'));
+	const name = actNames.get(panel);
+	if (panel.querySelector('.act-opener')) item.append(tocLink(act, name, 'toc-act toc-link'));
+	const scenes = document.createElement('ol');
+	panel.querySelectorAll('section[data-scene]').forEach((scene) => {
+		// the h2 is a scene's title; an h4 above it is only an eyebrow
+		const heading = scene.querySelector('h2') ?? scene.querySelector('h1, h3, h4');
+		const label = heading?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
+		const entry = document.createElement('li');
+		entry.append(tocLink(`${act}/${scene.dataset.scene}`, label, 'toc-link'));
+		scenes.append(entry);
+	});
+	item.append(scenes);
+	tocList.append(item);
+});
+
+let activeTocLink = null;
+
+// Centres a link in whichever part of the drawer scrolls. Not scrollIntoView,
+// which would also scroll the page off its beat.
+function centreInDrawer(link) {
+	const column = link.closest('.drawer-column');
+	const scroller = column.scrollHeight > column.clientHeight ? column : notesDrawer;
+	const box = scroller.getBoundingClientRect();
+	const target = link.getBoundingClientRect();
+	scroller.scrollTop += target.top - box.top - (box.height - target.height) / 2;
+}
+
+// Marks the current frame (act opener or scene, not a reveal step).
+function updateToc() {
+	const id = currentBeat()?.id.split('/').slice(0, 2).join('/');
+	const link = tocLinks.get(id) ?? null;
+	if (link === activeTocLink) return;
+	activeTocLink?.removeAttribute('aria-current');
+	link?.setAttribute('aria-current', 'true');
+	activeTocLink = link;
+	if (link && notesDrawer.classList.contains('is-open')) centreInDrawer(link);
+}
+
 window.addEventListener('scroll', () => {
 	updateCurrentScene();
 	updateChrome();
+	updateToc();
 }, { passive: true });
 updateChrome();
+updateToc();
 
-notesToggle.addEventListener('click', () => {
-	const isOpen = notesDrawer.classList.toggle('is-open');
+// On wide windows the open drawer pushes the cards left (--drawer-push, read
+// by css/talk.css) rather than covering them. Narrower windows keep it as an
+// overlay.
+const drawerPushQuery = window.matchMedia('(min-width: 900px)');
+const drawerIcon = notesToggle.querySelector('svg');
+const drawerToc = notesDrawer.querySelector('.drawer-toc');
+const drawerPush = () =>
+	notesDrawer.classList.contains('is-open') && drawerPushQuery.matches ? notesDrawer.offsetWidth : 0;
+
+drawerPushQuery.addEventListener('change', () => gsap.set(document.body, { '--drawer-push': `${drawerPush()}px` }));
+
+// A fresh timeline per toggle. The drawer, the cards' push and the icon tween
+// from wherever they are, so an interrupted toggle turns around smoothly and
+// the drawer and cards stay in step. The two columns come apart in motion:
+// on open the Contents trails the Notes and overshoots into place; on close
+// it leads, pulling away to the right before the Notes follow.
+let drawerTl = null;
+gsap.set(notesDrawer, { xPercent: 100 });
+
+function setDrawerOpen(isOpen) {
+	notesDrawer.classList.toggle('is-open', isOpen);
 	notesToggle.setAttribute('aria-expanded', String(isOpen));
 	if (isOpen) {
 		updateCurrentScene();
 		renderDrawer();
 	}
+
+	drawerTl?.kill();
+	const speed = reduceMotion ? 0 : 1;
+	drawerTl = gsap.timeline({ defaults: { duration: 0.5 * speed } });
+	if (isOpen) {
+		drawerTl
+			.set(notesDrawer, { visibility: 'visible' })
+			.to(notesDrawer, { xPercent: 0, ease: 'expo.out', duration: 0.6 * speed }, 0)
+			.to(document.body, { '--drawer-push': `${drawerPush()}px`, ease: 'expo.out', duration: 0.6 * speed }, 0)
+			.fromTo(drawerToc, { x: 160 }, { x: 0, ease: 'back.out(1.4)', duration: 0.8 * speed }, 0.12 * speed)
+			.to(drawerIcon, { rotation: 45, ease: 'back.out(2)', duration: 0.4 * speed }, 0);
+		if (activeTocLink) centreInDrawer(activeTocLink);
+	} else {
+		drawerTl
+			// eased out as well as in, so the slides settle back rather than snap
+			.to(drawerToc, { x: 160, ease: 'back.inOut(1.4)', duration: 0.5 * speed }, 0)
+			.to(notesDrawer, { xPercent: 100, ease: 'power3.inOut', duration: 0.6 * speed }, 0.1 * speed)
+			.to(document.body, { '--drawer-push': '0px', ease: 'power3.inOut', duration: 0.6 * speed }, 0.1 * speed)
+			.to(drawerIcon, { rotation: 0, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
+			.set(notesDrawer, { visibility: 'hidden' })
+			.set(drawerToc, { x: 0 });
+	}
+}
+
+notesToggle.addEventListener('click', () => {
+	setDrawerOpen(!notesDrawer.classList.contains('is-open'));
 	// Hand focus back to the page so the arrow keys keep navigating.
 	notesToggle.blur();
+});
+
+window.addEventListener('keydown', (event) => {
+	if (event.key !== 'Escape' || !notesDrawer.classList.contains('is-open')) return;
+	const hadFocus = notesDrawer.contains(document.activeElement);
+	setDrawerOpen(false);
+	if (hadFocus) notesToggle.focus();
 });
 
 if (import.meta.env?.DEV) {
