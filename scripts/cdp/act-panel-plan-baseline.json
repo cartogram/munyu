@@ -1,0 +1,573 @@
+[
+  {
+    "index": 0,
+    "headings": [
+      "Your UI is not my UI"
+    ],
+    "paragraphs": [
+      "Simon Lenz & Matthew Seccafien"
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Everyone arrives at software with a different mix of needs, abilities, and context. Today's accessibility adapts one interface through layered tools — and puts the burden on the user to make it work. We think AI opens a different path: interfaces that are personal from the start. This talk brings real user research, a prototype, and a provocation about where UI is heading."
+    ],
+    "media": []
+  },
+  {
+    "index": 1,
+    "headings": [
+      "AI & Accessibility today"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Accessibility is an early adopter of AI — speech-to-text, text-to-speech, object and character recognition, real-time description of a camera feed. As one blind user put it: “I know people who are blind that now go through decades of family albums with this technology.” All those examples revolve around perception. We think there must be something else though… Clip ref: youtu.be/Ij-GLix2QUQ?t=675"
+    ],
+    "media": [
+      "media/Kazam_screencast_00147.mp4"
+    ]
+  },
+  {
+    "index": 2,
+    "headings": [
+      "Hypothesis",
+      "We came up with an hypothesis"
+    ],
+    "paragraphs": [
+      "Chatbots and agents are a total revolution for accessibility"
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "We came up with an hypothesis One very simple and accessible interface (natural language chat) replaces all previous interactions. So users are not at the mercy of benevolent app/website developers creating UIs compatible with them anymore."
+    ],
+    "media": []
+  },
+  {
+    "index": 3,
+    "headings": [
+      "User Interviews"
+    ],
+    "paragraphs": [
+      "We interviewed six people with disabilities"
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "In order to prove this hypothesis we conducted 6 user interviews, with real users who struggle daily with a physical or cognitive disability. We talked about their daily struggles, their setups and AI usage. For accessibility there’s often a tendency to talk about rather than with people with disabilities. We wanted their perspectives front and center."
+    ],
+    "media": []
+  },
+  {
+    "index": 4,
+    "headings": [
+      "Melody",
+      "AI as an Accessibility “Assistant,” not a Replacement"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [
+      "“I do use AI, but only as an assistant for what I'm looking for. Not to do the searching from scratch.”"
+    ],
+    "notes": [
+      "Melody struggled to see and uses a collection of tools to navigate her life relatively independently. Uses a screen reader at a very fast speed, and a tool called Be My Eyes when necessary. Likes AI for specific things, not for the whole task — she felt she was faster and better herself, and preferred that sense of autonomy. She felt AI wins on speed, humans win on trust."
+    ],
+    "media": [
+      "media/melody-portrait.jpg",
+      "media/be-my-eyes-logo.svg"
+    ]
+  },
+  {
+    "index": 5,
+    "headings": [
+      "Matthew",
+      "Accessibility AI should be like training wheels, not autopilot"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [
+      "“[…] you have to put your name to things. If it went ahead, did a bunch of tasks, emailed people, and I couldn't really take it back — that feels … uncomfortable, giving it that much autonomy.”"
+    ],
+    "notes": [
+      "Matthew is autistic, has ADHD, and struggles with active listening due to tinnitus. He was very specific about what he wanted, and it changed by situation — granular control for anything law-related, fine with AI elsewhere. Not lazy: he'd choose 20 complicated clicks over an unpredictable prompt, as long as it was reliable and deterministic."
+    ],
+    "media": []
+  },
+  {
+    "index": 6,
+    "headings": [
+      "Sinead",
+      "AI can explain the cause, not just adapt the interface"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [
+      "“I was really struggling one day … but then, interestingly, it came up with a really insightful reason: it was the drop in barometric pressure. The change had been so fast. And it said that's really common with people with brain injuries.”"
+    ],
+    "notes": [
+      "Sinead had a brain injury five years ago — came to disability later in life. Screen time is hard; reading a lot in one day is hard. Her setup is a stack of fighting extensions: a plugin that bolds half of each word breaks the one that overlays numbers for voice control; the number-grid alternative is invisible under her dark-mode plugin. It doesn't work in Safari, and it collapses the moment she also wants to watch a lecture. She has strong preferences (she likes Gwyneth Paltrow's voice in her screen reader) — but can't get these tools to work together. AI providing information in an interface that is highly compatible and tailored for the user — not just adapting a layout, but making sense of what's happening to them."
+    ],
+    "media": [
+      "media/image36.png"
+    ]
+  },
+  {
+    "index": 7,
+    "headings": [
+      "No Revolution"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "Agents & chatbots are very helpful tools",
+      "Simple interface is very accessible",
+      "Trust & Reliability is a large problem",
+      "We want assistants and not replacements"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "At this point in the interviews we put our heads together for an intermediate result: agents and bots are very helpful tools, but no revolution yet. Among the reasons, there is a large overhead with the general population. They are not accessibility-specific. Trust and reliability are big hindrances. People want tools and assistants, not to be replaced. They want to stay in the driver's seat and “do the work” themselves. So we continued, to see what else is out there."
+    ],
+    "media": []
+  },
+  {
+    "index": 8,
+    "headings": [
+      "Allana",
+      "AI should only remove the tax that a disability imposes on everyday tasks"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [
+      "“Part of the enjoyable thing in life is struggling through things. Having everything taken care of for you takes away a bit of the fun.”"
+    ],
+    "notes": [
+      "Allana studies law in the UK. Her issues are reading and writing; she struggles with high contrast and bright interfaces — her setup is large font and forced dark mode. Energy budget is the big theme: a lot of hers is spent fighting apps that don't cooperate with her setup and behave unpredictably. She wouldn't want everything taken care of for her — she just wants AI to remove that extra tax."
+    ],
+    "media": [
+      "media/image27.jpg"
+    ]
+  },
+  {
+    "index": 9,
+    "headings": [
+      "Rose",
+      "Everyone's settings are different and incompatible"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [
+      "“I live in a disabled house […] all our settings are different, even across our iPads. It's actually an in-house joke: I can't look at my husband's iPad, he can't look at mine, and the kids hate using either.”"
+    ],
+    "notes": [
+      "Rose studies cyber security. She has hyperphotosensitivity — she lives with closed curtains and wears very dark sunglasses outside. Light drains her energy and can genuinely make her sick. Striking example: a design change on Ravelry (a knitting website she uses) once put her in bed for three days. Her setup is highly personalized and changes quite a bit throughout the day. But I'll let her describe this herself… Hit play — 35 seconds, with sound."
+    ],
+    "media": [
+      "media/DEEPL-GR_3-5_Everyone-in-the-family-has-incompatible-settings_1.mp4"
+    ]
+  },
+  {
+    "index": 10,
+    "headings": [
+      "Myron",
+      "AI can provide an interface where you are already a power user"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [
+      "“If I had an AI box, I could tell it to line up all my headers from cell A1 to A20 and just send it. That would save so much time. That would be a life changer for me.”"
+    ],
+    "notes": [
+      "Myron is a college professor in Louisiana who has written a book. No perception problems — it's purely about movement, from a spine injury 23 years ago. He's a virtuoso of voice control — steers his wheelchair by head movement, and the same controls drive his mouse pointer. In the screenshot he's reading out grid numbers to click precisely. Takeaway: he's an expert user of his setup — but it took him 23 years to get there. Can AI shorten that path for others?"
+    ],
+    "media": [
+      "media/image40.png"
+    ]
+  },
+  {
+    "index": 11,
+    "headings": [
+      "Today's model"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Today's model: the vendor ships one interface, built for the statistical average. Users have to either live with it or stack adaptation layers on top (screen reader, dark mode, zoom, larger fonts). Those adaptations require that the app was built in a compatible way with standards in mind. That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed its limitations."
+    ],
+    "media": []
+  },
+  {
+    "index": 12,
+    "headings": [
+      "Opportunities"
+    ],
+    "paragraphs": [
+      "→ One interface can't fit the variety of needs of its diverse users"
+    ],
+    "listItems": [
+      "Setups are very personalized",
+      "Adaptations conflict with each other",
+      "Configuration costs energy",
+      "Standardization has limits"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "Everyone we spoke to had done real work to adapt a standard interface — and for every one of them it kept failing: Sinead's plugins fought each other, Rose's family needs incompatible settings, Allana burns her energy budget on uncooperative apps. Setups are very personalized and the standardization has its limits. One interface just can't fit the wide variety of needs of its users. So we want to propose a new concept…"
+    ],
+    "media": []
+  },
+  {
+    "index": 13,
+    "headings": [
+      "Your UI is not my UI"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Reveal:Your UI is not my UI So… what do we mean by that? Our core proposal: AI-generated bespoke interfaces. Instead of adapting one UI for everyone, generate a unique UI for each person."
+    ],
+    "media": []
+  },
+  {
+    "index": 14,
+    "headings": [
+      "Your UI is not my UI",
+      "Personalization over adaptability"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Adaptation assumes one interface underneath that everyone bends toward themselves. That's where it breaks. So instead of improving how we adapt to the standard interface, we want to propose that the interface is created personalized for you right from the get go."
+    ],
+    "media": []
+  },
+  {
+    "index": 15,
+    "headings": [
+      "Your UI is not my UI",
+      "Create specific UIs on the fly for your needs"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "Adapt to your current task",
+      "Adapt to your preferences",
+      "Adapt to your accessibility needs",
+      "Adapt to your circumstances",
+      "Adapt to your state of mind",
+      "Adapt to your external environment"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "A UI should be the result of two things: what you're trying to do, and who you are. An app for the exact same task needs to look different depending on the condition, state, environment and preferences of the user. In one word, the interface needs to be empathetic to the person in front of it. The empathetic UI meets you where you are, so the adaptation work disappears. [While we talk here about this in an accessibility context, we think this is a generally desired property that goes beyond the topic.] Where this goes: launching an app is creating an app, just for you, in that moment. Generated on the fly, instead of adapted with layered tools."
+    ],
+    "media": []
+  },
+  {
+    "index": 16,
+    "headings": [
+      "Demo: same task, two people",
+      "Person A",
+      "Person B"
+    ],
+    "paragraphs": [
+      "Stressed by long paragraphs, prefers dark backgrounds, standing on a subway with headphones on, one hand free, headache from a barometric pressure change.",
+      "[ placeholder — calm, minimal, dark-mode UI ]",
+      "Has a tremor, avoids precise pointer input, prefers keyboard interactions, at home in a relaxed setting writing an email to friends.",
+      "[ placeholder — large keyboard-first targets ]"
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "PLACEHOLDER SLIDE: swap these two panels for the real split-screen animation once it's ready. Same underlying task (using the DeepL translation UI), generated as two completely different interfaces — tailored to two humans with vastly different requirements, preferences, and situational needs."
+    ],
+    "media": []
+  },
+  {
+    "index": 17,
+    "headings": [
+      "[UI] = f([Intent], [Empathy])"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "[depending what we do in the demo, move content from the previous slide to here. Maybe this slide could even go. It's the same content as the one before the demo]"
+    ],
+    "media": []
+  },
+  {
+    "index": 18,
+    "headings": [
+      "Observations of existing state. The industry is already doing this"
+    ],
+    "paragraphs": [
+      "[here screenshots of those examples might fit]"
+    ],
+    "listItems": [
+      "Google Search AI Mode — custom layouts assembled per query, not served from a template",
+      "Artifacts — every major AI tool now generates working interfaces inline, on demand"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "Generated UIs are already emerging everywhere around us. But so far they only take into account your intent, the query, the task. That half is handled. The half that isn't, yet, is the human: your needs, abilities, context. Today's generated UI answers “what are you trying to do?” but not “who is doing it?” That missing half is our whole argument. We think there is lots of missed opportunity here."
+    ],
+    "media": []
+  },
+  {
+    "index": 19,
+    "headings": [
+      "What is gained?"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "Burden of adaptation is shifted from the user to the application",
+      "Users not at the mercy of hopefully compatible application following standards"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "Rose doesn't need a dark mode plugin, myron doesn't need to rely on the OS's voice control grid, and any other frustrations that come with the plugin toil. Our users are not at the mercy of the developers following the standards and hoping it all works out on their end. The drawbacks of the existing single UI bending to the needs of the user are no longer present. (There is no spoon moment) Its not that we are trying to bend the UI, its that you have to remember truth, there is no UI."
+    ],
+    "media": []
+  },
+  {
+    "index": 20,
+    "headings": [
+      "What if launching an app means creating an app?"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Operating systems such as Omarchy have reduced the interface to an ongoing terminal chat. It's in the best interest of these products to be empathetic and we conclude by making the case that personalized interfaces are therefore an inevitable leap. We broaden the scope beyond disability. Everyone arrives with different needs, situations, and abilities. What would it mean for browsers, apps, and platforms if interfaces were generated rather than served?"
+    ],
+    "media": []
+  },
+  {
+    "index": 21,
+    "headings": [
+      "Focus shifts from UI to API"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "Launching an app is programming an app",
+      "Focus on content and functionality (APIs), not UI",
+      "The interface becomes disposable — generated fresh, every time"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "We stop designing screens and start designing outcomes. The question flips from “what should this screen look like?” to “what is this person trying to do?” The layout becomes downstream of intent. A second version: instead of generating a UI for you, the app just exposes its functionality — an API — and you bring your own interaction layer."
+    ],
+    "media": []
+  },
+  {
+    "index": 22,
+    "headings": [
+      "Applications are no longer a commodity"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "A hand-crafted UI stops being the default way software is distributed",
+      "Disabled users are just the ones suffering most from this today",
+      "Personalized UIs would help everyone, not only accessibility use cases"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "Why have we always had one-size-fits-all interfaces? It's not a design failure — it's economics. Building a custom app for every individual need was never affordable, so we abstract what a big population has in common and ship one reusable solution. That's why there's no dinner-party app, no family-travel app, no grant-writing app — everyone does those differently. Instead we get rigid apps (the developer decides what matters — Airbnb won't show “pet-friendly” on the map) or bloated ones (everything dumped in). AI changes that economics: for the first time, the made-for-one interface is affordable. That's the “why now.” And it's not a new idea — the field's founders chased it for decades. Engelbart, in the 1960s, complained that we design for a “statistical population” with no attempt to fit the individual. David Karger later put it: “no developer can predict all the ways a user will want to manipulate information.” They were right, and stuck — the idea was lovely but impractical, because ordinary people had no way to build it. That's the part that just changed. Google Research frames the shift well: LLMs already turned a finite library of texts into an infinite one — generated on the spot for any need. Interfaces are next: instead of picking from a finite library of apps, you get the right interface generated on the spot, for you. For accessibility this lands hardest. No standards body can anticipate Sinead's exact combination of a brain injury, dark-mode plugin, and voice-control grid. The person who understands that interface best is Sinead — and for the first time, it can be made for her, in her context."
+    ],
+    "media": []
+  },
+  {
+    "index": 23,
+    "headings": [
+      "Revisiting: 8 months later"
+    ],
+    "paragraphs": [
+      "Rose tried to build a bespoke Steam library manager"
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Our initial research for this started internally, and 8 months later we revisited it in preparation for this talk. Rose attempted to build a bespoke manager application for her Steam library."
+    ],
+    "media": []
+  },
+  {
+    "index": 24,
+    "headings": [
+      "It didn't really work out"
+    ],
+    "paragraphs": [
+      "We replaced configuration toil with developer toil."
+    ],
+    "listItems": [
+      "Lack of support",
+      "Lack of knowledge",
+      "Still too time consuming",
+      "Too much tinkering required"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "Don't rush past this — it's the most honest moment in the talk. The bespoke, personal interface we just proposed failed for the exact person we proposed it for. Rose is technical and motivated; if anyone could build her own tool, it's her. And she couldn't. We didn't remove the toil — we moved it: configuration toil became developer toil. The AI generated a front-end; what defeated her was the glue — storage, accounts, the plumbing you don't know exists unless you write software. So hold both things at once: the vision is real, and today it doesn't work for the people who need it."
+    ],
+    "media": []
+  },
+  {
+    "index": 25,
+    "headings": [
+      "Is Rose's failure the idea, or the moment?"
+    ],
+    "paragraphs": [
+      "We think it's the moment."
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Is that failure telling us the idea is wrong, or that we're just early? We think it's the moment — and we have evidence, not just hope. Google Research found generating a working interface is an emergent capability: their newest model produced valid UIs with zero errors, while a model one generation older failed on 60% of prompts. It crossed a threshold rather than improving gradually. So our honest position: the plumbing that beat Rose is a property of today's tooling, not of the idea. We could be wrong — but the trend line and our users' needs point the same way."
+    ],
+    "media": []
+  },
+  {
+    "index": 26,
+    "headings": [
+      "Whose context is it?"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "A UI generated for you needs to know a lot about you",
+      "For our interviewees that's the most sensitive data there is — health, disability, cognitive state",
+      "Generated interfaces only work if that context can stay private",
+      "On-device / local AI is the path that keeps it that way"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "A tension we have to name: everything we've proposed depends on the interface knowing your context — your task, your energy budget, that you steer a wheelchair with your head. That's exactly the data you'd least want leaving your device. So on-device AI isn't just a technical nicety. If the model runs locally and the context stays on your machine, personalization stops being a privacy trade-off. For our users that's not a nice-to-have — it's the difference between a tool they can trust and one they can't."
+    ],
+    "media": []
+  },
+  {
+    "index": 27,
+    "headings": [
+      "“But a UI that keeps changing breaks screen readers.”",
+      "Personal is not the same as volatile"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "Screen readers and muscle memory depend on stability",
+      "Personalize the content and what's pre-selected — never relocate the controls",
+      "Generated once for you — then remembered and reused",
+      "Stability is empathy for anyone who navigates by memory"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "The sharpest objection, met head-on: if interfaces are generated fresh every time, don't you destroy the thing a screen-reader user relies on — consistency, muscle memory, the button being where it was yesterday? A constantly re-rolling UI would be an accessibility disaster. But personalization isn't volatility. The model is memory: generated once, for you, then remembered and reused. And that's itself empathy — an interface that understands a screen-reader user knows they navigate by memory, so it holds still. Meanwhile today's one-size-fits-all UI changes underneath you whenever a vendor redesigns it — that's the Ravelry change that put Rose in bed for three days. The rule: personalize the content, not the structure. Don't move the button — change what's shown and pre-selected. Not “different every time,” but “different for each person, then dependable for that person.”"
+    ],
+    "media": []
+  },
+  {
+    "index": 28,
+    "headings": [
+      "Key takeaways"
+    ],
+    "paragraphs": [],
+    "listItems": [
+      "Today we adapt one majority interface — it can't serve the variety of humans",
+      "An interface should account for both the task and the human doing it",
+      "With generated UIs, that's economically viable for the first time in history"
+    ],
+    "blockquotes": [],
+    "notes": [
+      "If you take one thing: the generated-interface future is coming either way — it's already shipping, and Google Research measured people preferring generated interfaces over the usual chat “wall of text” in 83–93% of cases. So this isn't a maybe. Our contribution is the requirement — that it be empathetic to the person in front of it, which is what the accessibility community has needed all along. That's the difference between an interface that helps you and one that just does the task."
+    ],
+    "media": []
+  },
+  {
+    "index": 29,
+    "headings": [
+      "Back to Sinead"
+    ],
+    "paragraphs": [
+      "No fighting plugins. No dark grid she can't see. No setup that collapses when she opens a lecture. Just an interface that already understands her — and already fits."
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Let's end where we started — with a person, not a paradigm. Remember Sinead: the bolding plugin fighting the voice-control grid, the grid lines invisible under dark mode, the whole fragile stack collapsing the moment she wants to watch a lecture. Every layer she added to adapt a hostile interface was one more thing that could break. Now imagine the interface simply arrived understanding her — her contrast, her reading load, her voice control — the result of what she's trying to do and who she is. Not adapted. Not fought with. Empathetic to her from the first moment. That's not a nice-to-have for Sinead. That's the difference between software she can use and software that puts her in bed for three days. That's the future we want to build. Questions?"
+    ],
+    "media": []
+  },
+  {
+    "index": 30,
+    "headings": [
+      "Thank you!"
+    ],
+    "paragraphs": [],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [],
+    "media": []
+  },
+  {
+    "index": 31,
+    "headings": [
+      "Backup — Q&A"
+    ],
+    "paragraphs": [
+      "Anticipated objections"
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Backup slides for likely questions — not part of the main flow. Jump here if asked about ownership/agency, fragmentation, or adoption."
+    ],
+    "media": []
+  },
+  {
+    "index": 32,
+    "headings": [
+      "“Doesn't this just hand more power to whoever owns the AI?”"
+    ],
+    "paragraphs": [
+      "A generated UI can be empathetic to you — or to whoever owns it."
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "There's a plausible future where your agent generates the interface and you never see the underlying app — the “buy” button drawn for you by the platform, tuned to its goals, not yours. Same technology, pointed the opposite way. The capability that could give Sinead an interface shaped around her could give a platform one shaped around its incentives. The deciding factor is who the UI is empathetic to — which is exactly why local, user-owned generation matters."
+    ],
+    "media": []
+  },
+  {
+    "index": 33,
+    "headings": [
+      "“If everyone's UI is different, don't we lose common ground?”"
+    ],
+    "paragraphs": [
+      "Real cost. Keep the periphery visible — personal shouldn't mean sealed."
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "Yes — you and I could buy the same thing and never know, because our interfaces showed it differently. And a UI that only shows what it thinks you need is a filter bubble: you stop stumbling on the useful thing you weren't looking for. Honest answer: it's a real cost, and the mitigation is to keep peripheral information visible — a personal UI shouldn't be a sealed one. Worth naming rather than pretending personalization is free."
+    ],
+    "media": []
+  },
+  {
+    "index": 34,
+    "headings": [
+      "“Will people actually use this, or just accept the default?”"
+    ],
+    "paragraphs": [
+      "The empathy framing sidesteps it — the default already fits."
+    ],
+    "listItems": [],
+    "blockquotes": [],
+    "notes": [
+      "People still use untitled.txt over more powerful tools because customizing has an upfront cost — “I'm busy, I just need to finish.” So will users shape these interfaces or just accept what the AI hands them? We don't fully know. But empathy largely sidesteps it: the whole point is the default already fits, so there's little to tinker with. An empathetic interface does the accommodating — the user shouldn't have to. That's the opposite of untitled.txt, which does nothing until you do everything."
+    ],
+    "media": []
+  }
+]

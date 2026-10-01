@@ -1,0 +1,11 @@
+import { launch, sleep } from './cdp.mjs';
+const b = await launch();
+await b.goto(`http://localhost:${process.env.PORT || 8123}/index.html#launching-is-creating/whose-context-is-it`);
+await sleep(500);
+const before = await b.eval(`JSON.stringify({ y: Math.round(scrollY), hash: location.hash })`);
+await b.send('Emulation.setDeviceMetricsOverride', { width: 900, height: 700, deviceScaleFactor: 1, mobile: false });
+await sleep(1200);
+const after = await b.eval(`(() => { const beat = window.__deck.beats().find(x => x.id === 'launching-is-creating/whose-context-is-it'); return JSON.stringify({ y: Math.round(scrollY), beatPos: Math.round(beat.trigger.start + beat.time), top: Math.round(beat.scene.getBoundingClientRect().top) }); })()`);
+console.log('before', before, 'after', after, 'errors', JSON.stringify(b.errors));
+await b.shot('resize-after');
+process.exit(0);
