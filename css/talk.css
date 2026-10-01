@@ -1,0 +1,660 @@
+/* Talk theme: GreenSock "Slides Pinning" pen structure — white 100vh act
+   cards, one AAA named colour per act. Shared by index.html and
+   type-system.html. See docs/plans/2026-09-29-pen-cards-design.md */
+
+/* Ronzino and Necto Mono by Collletttivo, SIL Open Font License 1.1
+   (licences in fonts/ronzino and fonts/necto-mono); Libre Baskerville by
+   Impallari Type, OFL 1.1 (fonts/libre-baskerville, variable, Latin subset);
+   Aileron by Sora Sagano, public domain (CC0; fonts/aileron, Latin subset).
+   Aileron has no Medium, so its SemiBold also answers 500. Black comes from
+   the designer's own release (dotcolon.net), as Fontsource stops at 800. */
+/* Light comes from the designer's release: Fontsource's "300" file is
+   actually Aileron UltraLight */
+@font-face {
+	font-family: 'Aileron';
+	src: url('../fonts/aileron/Aileron-Light.otf') format('opentype');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Aileron';
+	src: url('../fonts/aileron/Aileron-Black.otf') format('opentype');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Aileron';
+	src: url('../fonts/aileron/aileron-latin-400-normal.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Aileron';
+	src: url('../fonts/aileron/aileron-latin-600-normal.woff2') format('woff2');
+	font-weight: 500 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Aileron';
+	src: url('../fonts/aileron/aileron-latin-700-normal.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Libre Baskerville';
+	src: url('../fonts/libre-baskerville/LibreBaskerville-latin.woff2') format('woff2');
+	font-weight: 400 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Libre Baskerville';
+	src: url('../fonts/libre-baskerville/LibreBaskerville-Italic-latin.woff2') format('woff2');
+	font-weight: 400 700;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Oblique.woff2') format('woff2');
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-MediumOblique.woff2') format('woff2');
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Ronzino';
+	src: url('../fonts/ronzino/Ronzino-BoldOblique.woff2') format('woff2');
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Necto Mono';
+	src: url('../fonts/necto-mono/NectoMono-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	/* how far the act cards sit in from each window edge (js/site.js reads
+	   the top and bottom values for the scroll maths) */
+	/* the first card sits below a band for the talk title and event, and one
+	   stack step from the left, like the gap between stacked cards; literal
+	   px because js/site.js reads them */
+	--inset-top: 42px;
+	--inset-left: 4px;
+	/* each act card sits this much further in (top and left) than the last */
+	--stack-step: 4px;
+	--inset-right: 0rem;
+	--inset-bottom: 0rem;
+	/* the chrome sits 1.5rem inside the card (Notes button); corner tabs pad
+	   their text equally on every side */
+	--chrome-pad: 1.5rem;
+	--tab-pad: 0.75rem;
+	/* frames' side padding: content runs full width between these */
+	--frame-pad-x: 6rem;
+	--font-sans: 'Aileron', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	--font-serif: 'Libre Baskerville', Baskerville, 'Times New Roman', serif;
+	--hairline: rgba(0, 0, 0, 0.14);
+}
+
+body {
+	background: #fff;
+	color: #000;
+	font-family: var(--font-sans);
+	overflow-x: hidden;
+}
+
+/* space above the first card and below the last */
+main {
+	padding: var(--inset-top) 0 var(--inset-bottom);
+}
+
+/* one colour per act: a single family at the same OKLCH lightness (0.43)
+   and chroma (0.10, 0.035 for the two neutrals), varying only in hue; each
+   ≥ 7:1 (WCAG AAA) on white */
+.act-panel[data-act='hypothesis'],
+body[data-current-act='hypothesis'] { --act-color: #265085; }
+.act-panel[data-act='user-research'],
+body[data-current-act='user-research'] { --act-color: #6e396a; }
+.act-panel[data-act='limits-of-adaptability'],
+body[data-current-act='limits-of-adaptability'] { --act-color: #7e3633; }
+.act-panel[data-act='personalization-over-adaptability'],
+body[data-current-act='personalization-over-adaptability'] { --act-color: #265e2b; }
+.act-panel[data-act='empathy-is-our-point'],
+body[data-current-act='empathy-is-our-point'] { --act-color: #006061; }
+.act-panel[data-act='launching-is-creating'],
+body[data-current-act='launching-is-creating'] { --act-color: #764002; }
+.act-panel[data-act='closing'],
+body[data-current-act='closing'] { --act-color: #4a4f63; }
+.act-panel[data-act='backup-qa'],
+body[data-current-act='backup-qa'] { --act-color: #3a555d; }
+
+.act-panel {
+	/* read by the inline "Today's model" SVG */
+	--r-background-color: #fff;
+	--r-main-color: var(--act-color);
+	--r-link-color: var(--act-color);
+	--muted-color: var(--act-color);
+
+	position: relative;
+	/* this card's offsets: the base inset plus its place in the stack
+	   (--stack is set per act by js/site.js) */
+	--card-top: calc(var(--inset-top) + var(--stack, 0) * var(--stack-step));
+	--card-left: calc(var(--inset-left) + var(--stack, 0) * var(--stack-step));
+	width: calc(100% - var(--card-left) - var(--inset-right));
+	height: calc(100vh - var(--card-top) - var(--inset-bottom));
+	margin-left: var(--card-left);
+	margin-right: var(--inset-right);
+	box-sizing: border-box;
+	/* clip, not hidden: focusing a control inside must not scroll the card */
+	overflow: clip;
+	background: #fff;
+	color: var(--act-color);
+	/* the leading corner of each card, as it slides up over the last */
+	border-radius: 1rem 0 0 0;
+	font-weight: 400;
+	font-size: 1.5em;
+	/* no shadow: each act's leading edge is its opener's mark-field landscape */
+}
+
+/* each act card is outlined in its colour; as one slides up over the last,
+   its top edge and rounded leading corner mark the overlap */
+.act-panel {
+	border: 2px solid var(--act-color);
+	/* open at the bottom and right: the card runs off those window edges */
+	border-bottom: none;
+	border-right: none;
+}
+
+/* scenes sit side by side and slide left inside the pinned card */
+.act-panel-inner {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	width: max-content;
+}
+
+/* frames: the act opener and every scene fill at least one viewport */
+.act-opener,
+main section[data-scene] {
+	box-sizing: border-box;
+	/* set from the card's measured width, so no scrollbar sliver of
+	   the next scene shows */
+	flex: 0 0 var(--card-width, 100vw);
+	width: var(--card-width, 100vw);
+	/* the card's inner height: window minus the insets and the 2px top border */
+	min-height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
+	/* room for the fixed slide chrome along the edges (two lines at the top) */
+	padding: 6rem var(--frame-pad-x) 4.5rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+/* act openers: a generated mark-field landscape (js/landscape.js), flipped
+   so its dense bands run along the card's top edge — the edge that slides up
+   over the previous act — with the title set bottom-left below it */
+.act-opener {
+	justify-content: flex-end;
+	align-items: flex-start;
+	text-align: left;
+	/* 40px more than the frame's usual bottom padding lifts the title clear
+	   of the bottom chrome */
+	padding-bottom: 7rem;
+}
+
+.act-opener > .act-title {
+	margin: 0;
+}
+
+/* fills the space above the title and bleeds off the top and side edges; a
+   taller title crops more of the sky, so art and title never overlap */
+.landscape {
+	order: -1;
+	flex: 1 1 0;
+	min-height: 0;
+	width: calc(100% + 2 * var(--frame-pad-x));
+	max-width: none;
+	margin: -6rem calc(-1 * var(--frame-pad-x)) 1.5rem;
+	transform: scaleY(-1);
+	/* flipped with the art: marks dissolve toward the title instead of
+	   meeting a hard crop line */
+	mask-image: linear-gradient(to bottom, transparent, #000 22%);
+	pointer-events: none;
+}
+
+.lm-fill {
+	fill: currentColor;
+}
+
+.lm-stroke {
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: round;
+}
+
+.lm-tint-100 { color: var(--act-color); }
+.lm-tint-70 { color: color-mix(in srgb, var(--act-color) 70%, white); }
+.lm-tint-55 { color: color-mix(in srgb, var(--act-color) 55%, white); }
+.lm-tint-35 { color: color-mix(in srgb, var(--act-color) 35%, white); }
+
+/* act titles, and the talk title that opens the page in place of an act
+   opener: one style */
+.act-title,
+main [data-scene='your-ui-is-not-my-ui-title'] h2 {
+	font-family: var(--font-sans);
+	/* sized so the longest word, "Personalization" (7.7em wide in Aileron
+	   Black), always fits the card's width minus its 1.5rem padding; 222px
+	   on wide screens */
+	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), 13.875rem); /* up to 222px */
+	font-weight: 900;
+	line-height: 0.8;
+	margin: 0 auto;
+	hyphens: auto;
+}
+
+main [data-scene='your-ui-is-not-my-ui-title'] h2 {
+	margin-bottom: 0.4em;
+}
+
+/* editorial scene layout: serif headline, sans body, serif lede and
+   quotes. The scene line lives in each card's tab (.act-tab). */
+
+main h2 {
+	font-family: var(--font-serif);
+	font-size: 9.375rem; /* 150px */
+	font-weight: 900; /* Libre Baskerville tops out at 700 */
+	line-height: 1.2;
+	text-wrap: balance;
+	margin: 0 auto 0.5em;
+}
+
+main h3 {
+	font-size: 1.25em;
+	font-weight: 700;
+	margin: 0 auto 0.5em;
+}
+
+/* lede (formerly the standfirst): the line under a headline and the Q&A
+   questions. Its own rule: the quote's size in Aileron Regular, without the
+   quote's indent, so it can be changed or dropped on its own. */
+main h4 {
+	font-family: var(--font-sans);
+	font-size: 3.4375rem; /* 55px */
+	font-weight: 400;
+	line-height: 1.2;
+	text-decoration: underline;
+	text-decoration-thickness: 0.05em;
+	text-underline-offset: 0.12em;
+	text-wrap: balance;
+	margin: 0 auto 0.8em;
+}
+
+/* the lede sits directly on what follows it: a Q&A answer, or a quote */
+main section[data-scene] > h4:has(+ :is(p, blockquote, .persona)) {
+	margin-bottom: 0;
+}
+
+/* scenes are left-aligned, except a headline with at most one other text
+   element (a statement, or headline + one line), which stays centred */
+main section[data-scene] {
+	align-items: flex-start;
+	text-align: left;
+}
+
+main section[data-scene] > * {
+	margin-left: 0;
+}
+
+/* text and layout blocks run the full width between the frame's padding */
+main section[data-scene] > :is(h2, h4, p, ul, ol, blockquote, .persona, .demo-panels) {
+	align-self: stretch;
+}
+
+main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) {
+	align-items: center;
+	text-align: center;
+}
+
+main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) > * {
+	margin-left: auto;
+}
+
+main p,
+main ul,
+main blockquote {
+	margin: 0 auto 0.8em;
+	line-height: 1.4;
+}
+
+main ul {
+	padding-left: 1.2em;
+	list-style: disc;
+}
+
+/* body: paragraphs and lists share one style. rem, not em, so it doesn't
+   compound inside the card's 1.5em and still follows the reader's root size */
+main p,
+main ul {
+	font-size: 3.4375rem; /* 55px */
+	line-height: 1.2;
+}
+
+.demo-panel p {
+	font-size: inherit;
+}
+
+main li + li {
+	margin-top: 0.3em;
+}
+
+main blockquote {
+	font-family: var(--font-serif);
+	font-size: 3.75rem; /* 60px */
+	font-weight: 400;
+	line-height: 1.2;
+	/* a big editorial first-line indent */
+	text-indent: 3em;
+}
+
+/* interview scenes (those with a quote): only the person's name is centred */
+main section[data-scene]:has(blockquote) > h2 {
+	text-align: center;
+}
+
+
+/* one meta style for authors and labels, demo panel labels, the slide
+   chrome and the Notes button. rem, so it stays meta-sized inside a 40px
+   paragraph. */
+main small,
+.act-tab,
+.demo-panel > h4,
+.deck-chrome,
+#notes-toggle {
+	font-family: var(--font-sans);
+	font-size: 1rem; /* 16px */
+	font-weight: 700;
+	line-height: 1.4;
+	/* demo panel labels are h4s; they don't take the lede's indent or underline */
+	text-indent: 0;
+	text-decoration: none;
+}
+
+/* the font has no longer dash, so a doubled em dash is the glyph stretched
+   2× with matching side room (an em dash is about 1em wide) */
+.em-dash {
+	display: inline-block;
+	transform: scaleX(2);
+	margin-inline: 0.5em;
+}
+
+/* sub-meta: the secondary part of a meta line, in title-case serif
+   italic — the one italic in the system */
+.sub-meta {
+	font-family: var(--font-serif);
+	font-size: 0.875rem; /* 14px */
+	font-style: italic;
+	font-weight: 400;
+}
+
+/* inline-block so wrapped meta keeps its own leading instead of the
+   surrounding 40px paragraph's */
+main small {
+	display: inline-block;
+}
+
+main em {
+	font-style: normal;
+}
+
+main a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+main img,
+main video {
+	max-width: 100%;
+	max-height: 70vh;
+	border-radius: 8px;
+}
+
+main svg {
+	max-width: 100%;
+	height: auto;
+}
+
+main section[data-scene].is-wide {
+	padding-inline: 1.5rem;
+}
+
+main section[data-scene].is-wide > svg {
+	width: min(900px, 100%);
+}
+
+/* persona scenes: interview quote stacked above its screenshot or clip, so
+   the quote gets the full column at quote size */
+.persona {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2.5rem;
+	width: 100%;
+}
+
+.persona > blockquote {
+	margin: 0 auto;
+}
+
+/* the markup sizes media for a side-by-side row; let it span the column */
+.persona > img,
+.persona > video {
+	flex: none !important;
+	max-width: 100% !important;
+	height: auto !important;
+	/* the act card's corner radius (the markup sets 4px inline) */
+	border-radius: 1rem !important;
+}
+
+/* generated persona portraits already carry the smeared style. They sit on
+   a ground of the act's colour and multiply into it, so the image takes on
+   the act's hue. */
+.portrait-ground {
+	width: min(100%, 720px);
+	background: var(--act-color);
+	line-height: 0;
+	border-radius: 1rem;
+	overflow: hidden;
+}
+
+/* a tool's logo in place of a screenshot */
+.persona > .persona-logo {
+	width: min(100%, 360px) !important;
+	border-radius: 0 !important;
+}
+
+.persona-portrait {
+	display: block;
+	width: 100%;
+	height: auto;
+	mix-blend-mode: multiply;
+}
+
+.demo-panels {
+	display: flex;
+	gap: 1.5rem;
+	width: 100%;
+}
+
+.demo-panel > * {
+	max-width: none;
+	margin-inline: 0;
+}
+
+@media (max-width: 699px) {
+	:root {
+		--frame-pad-x: 1.5rem;
+	}
+
+	main h2 {
+		font-size: 2.375rem; /* 38px */
+	}
+
+	.demo-panels {
+		flex-direction: column;
+	}
+}
+
+/* slide chrome: talk, event, authors and slide number in the corners,
+   in the current act's colour */
+.deck-chrome {
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	pointer-events: none;
+	color: var(--act-color, #000);
+}
+
+.deck-chrome > span {
+	position: absolute;
+	box-sizing: border-box;
+}
+
+/* the talk title and event sit on one line each in the white band above
+   the card stack, their text aligned with the tabs' text below */
+.chrome-bar {
+	top: calc((var(--inset-top) - 1lh) / 2);
+}
+
+.chrome-talk {
+	left: calc(var(--inset-left) + 1px + 2 * var(--tab-pad));
+}
+
+.chrome-event {
+	right: calc(var(--inset-right) + 2 * var(--tab-pad));
+	text-align: right;
+}
+
+/* each act card's own tab (added by js/site.js): act name, scene count and
+   page, at the card's top centre so it scrolls in and away with the card;
+   plain text, no outline or background. */
+.act-tab {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	/* --tab-shift (js/site.js) carries the tab in with each act's second slide */
+	transform: translateX(calc(-50% + var(--tab-shift, 0px)));
+	z-index: 1;
+	box-sizing: border-box;
+	/* at least 40% of the card, so the tab keeps one width across scenes */
+	min-width: 40%;
+	text-align: center;
+	white-space: nowrap;
+	padding: var(--tab-pad) calc(2 * var(--tab-pad));
+	font-variant-numeric: tabular-nums;
+}
+
+/* phones: only the talk title fits in the top band */
+@media (max-width: 699px) {
+	.chrome-talk .sub-meta,
+	.chrome-event {
+		display: none;
+	}
+}
+
+/* reset.css sets aside {display: block}, which beats the UA [hidden]
+   rule — notes are only ever shown via the drawer. */
+aside.notes {
+	display: none;
+}
+
+/* bottom centre: the right-hand corner belongs to the slide number */
+#notes-toggle {
+	position: fixed;
+	bottom: calc(var(--inset-bottom) + var(--chrome-pad));
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 30;
+	background: #fff;
+	color: #000;
+	border: 1px solid #000;
+	border-radius: 6px;
+	padding: 0.5em 0.9em;
+	cursor: pointer;
+}
+
+#notes-drawer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: min(360px, 90vw);
+	box-sizing: border-box;
+	background: #fff;
+	color: #000;
+	border-left: 1px solid #000;
+	padding: 5rem 1.5rem 1.5rem;
+	overflow-y: auto;
+	transform: translateX(100%);
+	transition: transform 0.25s ease;
+	z-index: 25;
+	font-family: var(--font-sans);
+	font-size: 0.9375rem; /* 15px */
+	line-height: 1.6;
+}
+
+#notes-drawer.is-open {
+	transform: translateX(0);
+}

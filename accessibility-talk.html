@@ -6,7 +6,7 @@
 		<title>Your UI is not my UI</title>
 
 		<meta name="description" content="Your UI is not my UI" />
-		<meta name="author" content="Simon Lenz, Matthew Seccafien" />
+		<meta name="author" content="Simon Lenz &amp; Matthew Seccafien" />
 
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="mobile-web-app-status-bar-style" content="black-translucent" />
@@ -20,50 +20,125 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="dist/plugin/highlight/monokai.css" />
 
-		<!-- Theme was just a one-shot claude thingy. feel free to change _completely_ as you please -->
+		<!-- Theme: blueprint/technical-manual look, styled after makingsoftware.com -->
 		<style>
-			:root {
-				--r-background-color: #f8f7f4;
-				--r-main-color: #1f1f1d;
-				--r-heading-color: #1f1f1d;
-
-				--r-main-font: 'Helvetica Neue', Helvetica, Arial, 'Liberation Sans', sans-serif;
-				--r-heading-font: var(--r-main-font);
-				--r-heading-font-weight: 600;
-				--r-heading-text-transform: none;
-				--r-heading-letter-spacing: -0.02em;
-				--r-heading-line-height: 1.15;
-
-				--r-link-color: #195e59;
-				--r-link-color-hover: #1f6f6a;
-				--r-selection-background-color: #195e59;
-				--r-selection-color: #f8f7f4;
-
-				--muted-color: #57554e;
+			@font-face {
+				font-family: 'Departure Mono';
+				src:
+					url('fonts/departure-mono/DepartureMono-Regular.woff2') format('woff2'),
+					url('fonts/departure-mono/DepartureMono-Regular.woff') format('woff');
+				font-weight: 500;
+				font-style: normal;
+				font-display: swap;
 			}
 
+			:root {
+				/* cobalt scale, sampled from makingsoftware.com */
+				--ink-700: #0026c9;
+				--ink-600: #002ef4;
+				--ink-500: #155cf0;
+				--ink-400: #5f8bf5;
+				--ink-300: #9bb6f7;
+				--ink-200: #cbdafb;
+				--ink-100: #e6ecfd;
+
+				--stone-950: #241f1b;
+				--stone-600: #6b6459;
+				--stone-300: #d8d3cb;
+
+				--r-background-color: #fbfbfb;
+				--r-main-color: var(--stone-950);
+				--r-heading-color: var(--ink-600);
+
+				--r-main-font: 'Helvetica Neue', Helvetica, Arial, 'Liberation Sans', sans-serif;
+				--r-mono-font: 'Departure Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+				--r-heading-font: var(--r-main-font);
+				--r-heading-font-weight: 700;
+				--r-heading-text-transform: none;
+				--r-heading-letter-spacing: -0.02em;
+				--r-heading-line-height: 1.1;
+
+				--r-link-color: var(--ink-600);
+				--r-link-color-hover: var(--ink-500);
+				--r-selection-background-color: var(--ink-200);
+				--r-selection-color: var(--stone-950);
+
+				--muted-color: var(--stone-600);
+			}
+
+			.reveal {
+				background-color: var(--r-background-color);
+				background-image: radial-gradient(var(--ink-300) 1.4px, transparent 1.5px);
+				background-size: 22px 22px;
+			}
+
+			.reveal .slides {
+				font-family: var(--r-main-font);
+			}
+
+			/* corner tick marks, echoing the plate frames on makingsoftware.com */
+			.reveal::before,
+			.reveal::after {
+				content: '';
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				border: 1px solid var(--ink-500);
+				opacity: 0.45;
+				pointer-events: none;
+				z-index: 20;
+			}
+
+			.reveal::before {
+				top: 24px;
+				left: 24px;
+				border-right: none;
+				border-bottom: none;
+			}
+
+			.reveal::after {
+				bottom: 24px;
+				right: 24px;
+				border-left: none;
+				border-top: none;
+			}
+
+			.reveal h1,
 			.reveal h2,
-			.reveal h3,
-			.reveal h4 {
+			.reveal h3 {
 				max-width: 88%;
 				margin-left: auto;
 				margin-right: auto;
 			}
 
-			.reveal h4,
-			.reveal small {
-				color: var(--muted-color);
+			.reveal h4 {
+				max-width: 88%;
+				margin-left: auto;
+				margin-right: auto;
+				font-family: var(--r-mono-font);
+				font-size: 0.42em;
 				font-weight: 500;
-				letter-spacing: 0;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: var(--muted-color);
+			}
+
+			.reveal small,
+			.reveal .fig-label {
+				font-family: var(--r-mono-font);
+				font-size: 0.5em;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: var(--muted-color);
 			}
 
 			.reveal blockquote {
 				width: 80%;
 				padding: 0.1em 0 0.1em 1.2em;
-				border-left: 3px solid var(--r-link-color);
+				border-left: 2px solid var(--ink-500);
 				background: none;
 				box-shadow: none;
-				font-style: normal;
+				font-style: italic;
 				text-align: left;
 			}
 
@@ -73,8 +148,37 @@
 				text-align: left;
 			}
 
+			.reveal ul li::marker {
+				font-family: var(--r-mono-font);
+				color: var(--ink-500);
+			}
+
 			.reveal video {
-				border-radius: 4px;
+				border-radius: 2px;
+				border: 1px solid var(--ink-300);
+			}
+
+			.reveal img {
+				border: 1px solid var(--ink-300);
+			}
+
+			.reveal .controls {
+				color: var(--ink-500);
+			}
+
+			.reveal .progress {
+				color: var(--ink-600);
+				height: 3px;
+			}
+
+			.reveal .progress span {
+				background: var(--ink-600);
+			}
+
+			.reveal .slide-number {
+				font-family: var(--r-mono-font);
+				color: var(--muted-color);
+				background: transparent;
 			}
 		</style>
 	</head>
@@ -86,7 +190,7 @@
 
 				<section>
 					<h2>Your UI is not my UI</h2>
-					<p><small>Simon Lenz, Matthew Seccafien</small></p>
+					<p><small>Simon Lenz &amp; Matthew Seccafien</small></p>
 					<aside class="notes">
 						<p>
 							Everyone arrives at software with a different mix of needs, abilities, and context.
@@ -255,14 +359,14 @@
 							result: agents and bots are very helpful tools, but no revolution yet.
 						</p>
 						<p>
-							In the resons there is a large overhead with the general population. They are not
+							Among the reasons, there is a large overhead with the general population. They are not
 							accessibility-specific.
 						</p>
 						<p>
 							Trust and reliability are big hindrances.
 						</p>
 						<p>
-							People want tools and assistants, not to be replaced &mdash;. They want to stay in
+							People want tools and assistants, not to be replaced. They want to stay in
 							the driver's seat and &ldquo;do the work&rdquo; themselves.
 						</p>
 						<p>So we continued, to see what else is out there.</p>
@@ -472,11 +576,11 @@
 							Today's model: the vendor ships one interface, built for the statistical average.
 						<p/>
 						<p>
-							User have to either live with it or stack adaptation layers on top (screen reader, dark mode, zoom, larger fonts).
+							Users have to either live with it or stack adaptation layers on top (screen reader, dark mode, zoom, larger fonts).
 							Those adaptations require that the app was built in a compatible way with standards in mind.
 						</p>
 						<p>
-							That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed it's limitations.
+							That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed its limitations.
 						</p>
 					</aside>
 				</section>
@@ -490,7 +594,7 @@
 						<li>Standardization has limits</li>
 					</ul>
 					<p>
-						→ One interface can't fit the varienty of needs of its diverse users
+						→ One interface can't fit the variety of needs of its diverse users
 					</p>
 					<aside class="notes">
 						<p>
@@ -606,7 +710,7 @@
 				<section>
 					<h2>[UI] = f([Intent], [Empathy])</h2>
 					<aside class="notes">
-						[depending what we do in the demo, move content from the previous slide to here. Maybe this slight could even go. It's the same content as the one before the demo]
+						[depending what we do in the demo, move content from the previous slide to here. Maybe this slide could even go. It's the same content as the one before the demo]
 					</aside>
 				</section>
 
