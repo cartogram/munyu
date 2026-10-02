@@ -125,10 +125,10 @@
 :root {
 	/* how far the act cards sit in from each window edge (js/site.js reads
 	   the top and bottom values for the scroll maths) */
-	/* the first card sits below a band for the talk title and event, flush
-	   with the left edge; literal px because js/site.js reads them */
+	/* the first card sits below a band for the talk title and event, 1px in
+	   from the left edge; literal px because js/site.js reads them */
 	--inset-top: 42px;
-	--inset-left: 0px;
+	--inset-left: 1px;
 	/* each act card sits this much further in (top and left) than the last,
 	   so each earlier card shows as a thin extra line */
 	--stack-step: 3px;
@@ -771,10 +771,10 @@ aside.notes {
 
 /* the index is a card, like the act cards: outlined, its top corners
    rounded, open at the bottom where it runs off the window. It sits in from
-   the window's left edge and below the top band, and pads its text out to
-   line up with the talk title. */
+   the window's left edge (by 1px, like the first act card) and below the
+   top band, and pads its text out to line up with the talk title. */
 .drawer-toc {
-	--card-inset-left: 1.25rem;
+	--card-inset-left: 1px;
 	--card-inset-top: 2rem;
 	--pad-left: calc(var(--title-left) - var(--card-inset-left) - 1px);
 	margin: var(--card-inset-top) 0 0 var(--card-inset-left);
@@ -865,4 +865,65 @@ aside.notes {
 		padding-top: 1.5rem;
 	}
 
+}
+
+/* the pointer over the deck (js/site.js): an outlined circle like the
+   notes toggle, centred on the pointer, with → on an act opener and ×
+   over the cards while the drawer is open. The system cursor is hidden
+   only while it shows. */
+#deck-cursor {
+	--size: 44px;
+	position: fixed;
+	top: calc(var(--size) / -2);
+	left: calc(var(--size) / -2);
+	z-index: 40;
+	display: grid;
+	place-items: center;
+	width: var(--size);
+	height: var(--size);
+	box-sizing: border-box;
+	background: #fff;
+	color: var(--act-color, #000);
+	border: 1.5px solid currentColor;
+	border-radius: 50%;
+	pointer-events: none;
+	opacity: 0;
+	scale: 0.5;
+	transition: opacity 0.15s, scale 0.2s ease-out;
+}
+
+#deck-cursor[data-icon='next'],
+#deck-cursor[data-icon='close'] {
+	opacity: 1;
+	scale: 1;
+}
+
+#deck-cursor svg {
+	grid-area: 1 / 1;
+	width: 18px;
+	height: 18px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+
+#deck-cursor[data-icon='next'] .cursor-next,
+#deck-cursor[data-icon='close'] .cursor-close {
+	opacity: 1;
+}
+
+.has-deck-cursor,
+.has-deck-cursor * {
+	cursor: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#deck-cursor,
+	#deck-cursor svg {
+		transition: none;
+	}
 }
