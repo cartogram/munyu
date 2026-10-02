@@ -9,7 +9,8 @@ npm run build    # static build into dist/
 ```
 
 - `index.html` — the talk: every scene, with speaker notes in `<aside class="notes">`
-- `type-system.html` — every layout in the talk, rendered live from `index.html`
+- `system.html` — type, act colours, illustrations and every layout, rendered live from `index.html`
+- `DESIGN.md` — the design rules; `npm run check` keeps the deck and the system in sync
 - `css/talk.css` — all styles; `css/reset.css` — the reset it sits on
 - `js/site.js` — GSAP ScrollTrigger scroll choreography, beat navigation, notes drawer
 - `js/landscape.js` — the generated line fields on the act openers

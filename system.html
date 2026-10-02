@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Type system — Your UI is not my UI</title>
+		<title>System — Your UI is not my UI</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<link rel="stylesheet" href="css/reset.css" />
@@ -210,13 +210,6 @@
 				gap: 1rem;
 			}
 
-			.ts-swatch.act-panel {
-				height: auto;
-				overflow: visible;
-				font-size: 1rem;
-				box-shadow: none;
-			}
-
 			.ts-swatch {
 				border: 1px solid var(--hairline);
 				border-radius: 10px;
@@ -240,6 +233,71 @@
 				font-size: 0.8rem;
 				line-height: 1.5;
 				font-variant-numeric: tabular-nums;
+			}
+
+			/* illustrations: the --ramp-* steps, then every illustration at half
+			   the page width (one column on phones) */
+			.ts-ramp {
+				display: grid;
+				overflow: hidden;
+				font-size: 0.8rem;
+				margin-bottom: 1.5rem;
+				border: 1px solid var(--hairline);
+				border-radius: 10px;
+			}
+
+			.ts-ramp-step {
+				height: 4rem;
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+				gap: 0.5rem;
+				padding: 0.5rem 0.75rem;
+				background: color-mix(in srgb, var(--act-color) var(--mix), white);
+				color: var(--act-color);
+			}
+
+			.ts-ramp-step:nth-child(-n + 3) {
+				color: #fff;
+			}
+
+			.ts-illustrations {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 1.5rem;
+			}
+
+			@media (max-width: 699px) {
+				.ts-illustrations {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			.ts-illustrations figure {
+				margin: 0;
+				border: 1px solid var(--hairline);
+				border-radius: 10px;
+				overflow: hidden;
+			}
+
+			.ts-illustrations img {
+				display: block;
+				width: 100%;
+				height: auto;
+				aspect-ratio: 1;
+			}
+
+			.ts-illustrations figcaption {
+				display: flex;
+				justify-content: space-between;
+				gap: 1rem;
+				padding: 0.75rem 1rem 1rem;
+				font-size: 1rem;
+			}
+
+			.ts-illustrations figcaption span {
+				font-size: 0.8rem;
+				color: #555;
 			}
 
 			/* slide templates: a wireframe of labelled areas beside the real slide,
@@ -363,7 +421,7 @@
 	<body>
 		<main>
 		<header class="ts-header">
-			<h1>Type system</h1>
+			<h1>System</h1>
 			<p>
 				<em>Your UI is not my UI</em> — React Advanced 2026. Every sample on this page is styled by the
 				same rules as the slides (<code>css/talk.css</code>), inside a card at slide scale: 1em = the
@@ -382,7 +440,7 @@
 					</div>
 					<div class="ts-face-meta">
 						Sora Sagano · public domain (CC0)<br />
-						Light 300 · Regular 400 · SemiBold 600 (also used for 500) · Bold 700 · Black 900<br />
+						<span data-weights="Aileron"></span><br />
 						Act and talk titles, body, lists, meta
 					</div>
 				</div>
@@ -393,7 +451,7 @@
 					</div>
 					<div class="ts-face-meta">
 						Impallari Type · SIL OFL 1.1<br />
-						Variable 400–700 (Latin subset); no italics<br />
+						<span data-weights="Libre Baskerville"></span><br />
 						Scene headlines and quotes
 					</div>
 				</div>
@@ -552,22 +610,29 @@
 			</div>
 		</section>
 
+		<!-- Act colours and Illustrations are built at load: the acts and the
+		     persona illustrations from index.html, the colours and ramp steps
+		     from the tokens at the top of css/talk.css. -->
 		<section class="ts-section">
 			<h2>Act colours</h2>
 			<p class="ts-note">
-				One named colour per act, used for all of that act's text, rules and diagram strokes. Every one
-				passes WCAG AAA (≥ 7:1) on white.
+				One named colour per act (<code>--act-*</code>), used for all of that act's text, rules and diagram
+				strokes, in deck order. Each should pass WCAG AAA (≥ 7:1) on white; any that doesn't is flagged.
 			</p>
-			<div class="ts-swatches">
-				<div class="ts-swatch act-panel" data-act="hypothesis"></div>
-				<div class="ts-swatch act-panel" data-act="user-research"></div>
-				<div class="ts-swatch act-panel" data-act="limits-of-adaptability"></div>
-				<div class="ts-swatch act-panel" data-act="personalization-over-adaptability"></div>
-				<div class="ts-swatch act-panel" data-act="empathy-is-our-point"></div>
-				<div class="ts-swatch act-panel" data-act="launching-is-creating"></div>
-				<div class="ts-swatch act-panel" data-act="closing"></div>
-				<div class="ts-swatch act-panel" data-act="backup-qa"></div>
-			</div>
+			<div class="ts-swatches" id="ts-swatches"></div>
+		</section>
+
+		<section class="ts-section">
+			<h2>Illustrations</h2>
+			<p class="ts-note">
+				Every persona illustration in the deck, each in its act's colour.
+				<code>scripts/normalize-personas.mjs</code> builds them from the traced originals in
+				<code>media/personas/originals/</code>: every colour snaps to the ramp below (<code>--ramp-*</code>),
+				and each drawing is cropped to a square with the same padding and its floor on the bottom edge, so
+				the figures share a scale.
+			</p>
+			<div class="ts-ramp" id="ts-ramp"></div>
+			<div class="ts-illustrations" id="ts-illustrations"></div>
 		</section>
 
 		<section class="ts-section">
@@ -617,14 +682,69 @@
 				return 1.05 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.05);
 			}
 
-			document.querySelectorAll('.ts-swatch').forEach((swatch) => {
-				const name = getComputedStyle(swatch).getPropertyValue('--act-color').trim();
+			// ---- Typefaces: the weights and styles each @font-face declares --------
+			document.querySelectorAll('[data-weights]').forEach((el) => {
+				const faces = [...document.fonts]
+					.filter((f) => f.family.replace(/["']/g, '') === el.dataset.weights)
+					.sort((a, b) => (a.style !== 'normal') - (b.style !== 'normal') || parseInt(a.weight) - parseInt(b.weight));
+				el.textContent = faces.length
+					? faces.map((f) => `${f.weight.replace(' ', '–')}${f.style === 'normal' ? '' : ` ${f.style}`}`).join(' · ')
+					: 'no @font-face in css/talk.css';
+			});
+
+			// ---- Act colours, built from the deck ----------------------------------
+			// Every act in index.html, in order; its colour is its --act-* token.
+			const source = new DOMParser().parseFromString(await (await fetch('index.html')).text(), 'text/html');
+			const root = getComputedStyle(document.documentElement);
+			const actIds = [...source.querySelectorAll('section[data-act]')].map((s) => s.dataset.act);
+
+			for (const act of actIds) {
+				const token = `--act-${act}`;
+				const value = root.getPropertyValue(token).trim();
+				const swatch = document.createElement('div');
+				swatch.className = 'ts-swatch';
+				swatch.style.setProperty('--act-color', value || 'transparent');
+				document.getElementById('ts-swatches').append(swatch);
+				if (!value) {
+					swatch.innerHTML = `<div class="ts-swatch-name">missing</div><div class="ts-swatch-meta">${act}<br />no ${token} in css/talk.css</div>`;
+					continue;
+				}
 				const ratio = contrastOnWhite(getComputedStyle(swatch).color);
 				swatch.innerHTML = `
 					<div class="ts-swatch-chip"></div>
-					<div class="ts-swatch-name">${name}</div>
-					<div class="ts-swatch-meta">${swatch.dataset.act}<br />${ratio.toFixed(2)} : 1 · ${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
-			});
+					<div class="ts-swatch-name">${value}</div>
+					<div class="ts-swatch-meta">${token}<br />${ratio.toFixed(2)} : 1 · ${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
+			}
+
+			// ---- Illustrations, built from the deck ---------------------------------
+			// The ramp steps are every --ramp-* token on :root, in source order.
+			const rampSteps = [...document.styleSheets]
+				.flatMap((sheet) => [...sheet.cssRules])
+				.filter((rule) => rule.selectorText === ':root')
+				.flatMap((rule) => [...rule.style].filter((prop) => prop.startsWith('--ramp-')));
+			const firstPersonaAct = source.querySelector('.persona-portrait')?.closest('[data-act]')?.dataset.act;
+			const ramp = document.getElementById('ts-ramp');
+			ramp.style.setProperty('--act-color', `var(--act-${firstPersonaAct})`);
+			for (const prop of rampSteps) {
+				const step = document.createElement('div');
+				step.className = 'ts-ramp-step';
+				step.style.setProperty('--mix', `var(${prop})`);
+				step.innerHTML = `<span>${prop.replace('--ramp-', '')}</span><small>${root.getPropertyValue(prop).trim()}</small>`;
+				ramp.append(step);
+			}
+			ramp.style.gridTemplateColumns = `repeat(${rampSteps.length}, 1fr)`;
+
+			// Every illustration the deck uses, with its scene's name and act.
+			for (const img of source.querySelectorAll('.persona-portrait')) {
+				const scene = img.closest('section[data-scene]');
+				const act = img.closest('section[data-act]').dataset.act;
+				const figure = document.createElement('figure');
+				figure.innerHTML = `
+					<img src="${img.getAttribute('src')}" alt="${img.getAttribute('alt') ?? ''}" />
+					<figcaption><strong>${scene.querySelector('h2')?.textContent ?? scene.dataset.scene}</strong>
+					<span>${img.getAttribute('src')} · --act-${act}</span></figcaption>`;
+				document.getElementById('ts-illustrations').append(figure);
+			}
 
 			// Per-row tuner: each row gets its own injected rule, so overrides also
 			// reach generated content (e.g. ::before) and never touch the
@@ -739,8 +859,6 @@
 				['svg', 'Diagram'],
 				['img, video', 'Media'],
 			];
-
-			const source = new DOMParser().parseFromString(await (await fetch('index.html')).text(), 'text/html');
 
 			function buildSlide(t) {
 				const srcAct = source.querySelector(`section[data-act="${t.act}"]`);

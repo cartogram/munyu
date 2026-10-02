@@ -9,7 +9,7 @@ export default defineConfig({
 		rollupOptions: {
 			input: {
 				index: resolve(import.meta.dirname, 'index.html'),
-				'type-system': resolve(import.meta.dirname, 'type-system.html'),
+				system: resolve(import.meta.dirname, 'system.html'),
 			},
 		},
 	},

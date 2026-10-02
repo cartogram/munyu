@@ -1,19 +1,19 @@
 // Bring the traced persona illustrations (media/personas/originals/) into one
 // consistent set, written to media/personas/:
 //   1. flatten gradients to their average colour, and fill-opacity against white
-//   2. snap every colour to one shared ramp of the act colour, by lightness;
-//      saturated colours (the yellow screens and light beams) become the accent
+//   2. snap every colour to the --ramp-* steps of its act's --act-* colour
+//      (both in css/talk.css), by lightness; saturated colours (the yellow
+//      screens and light beams) become the accent
 //   3. crop each to its drawing with the same padding, on a shared square frame
 //      with the floor along the bottom, so the figures sit at a common scale
-//   node scripts/normalize-personas.mjs [#hex]
-import { readdirSync, readFileSync, writeFileSync } from 'fs';
+// Each illustration takes the colour of the act its scene sits in (index.html).
+//   node scripts/normalize-personas.mjs
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { personas, tokens } from './theme.mjs';
 
 const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
-const TINT = process.argv[2] || '#6e396a'; // the user-research act colour
-
-// Shared ramp: how far each step is mixed towards white.
-const RAMP = { ink: 0, deep: 0.3, accent: 0.5, soft: 0.72, wash: 0.9, paper: 1 };
+const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
 
 const NAMED = { black: '#000000', white: '#ffffff' };
@@ -23,7 +23,6 @@ const rgb = (hex) => {
 	return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
 };
 const toHex = (c) => '#' + c.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
-const tint = rgb(TINT);
 const mixWhite = (c, a) => c.map((v) => v * a + 255 * (1 - a));
 
 function step([r, g, b]) {
@@ -36,9 +35,10 @@ function step([r, g, b]) {
 	if (l < 0.95) return 'wash';
 	return 'paper';
 }
-const shade = (name) => toHex(tint.map((c) => c + (255 - c) * RAMP[name]));
+function normalize(src, act) {
+	const tint = rgb(ACTS[act]);
+	const shade = (name) => toHex(mixWhite(tint, RAMP[name]));
 
-function normalize(src) {
 	// 1. average colour of each gradient
 	const grads = {};
 	for (const [, id, body] of src.matchAll(/<(?:linear|radial)Gradient[^>]*id="([^"]+)"[^>]*>(.*?)<\/(?:linear|radial)Gradient>/gs)) {
@@ -71,7 +71,17 @@ function normalize(src) {
 	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}">${body}</svg>\n`;
 }
 
-for (const file of readdirSync(SRC).filter((f) => f.endsWith('.svg'))) {
-	writeFileSync(new URL(file, DIR), normalize(readFileSync(new URL(file, SRC), 'utf8')));
-	console.log(file);
+// --check: write nothing, exit 1 if any output is out of date
+const check = process.argv.includes('--check');
+let stale = 0;
+for (const { file, act } of personas()) {
+	const out = normalize(readFileSync(new URL(file, SRC), 'utf8'), act);
+	if (!check) {
+		writeFileSync(new URL(file, DIR), out);
+		console.log(`${file} · ${act} ${ACTS[act]}`);
+	} else if (!existsSync(new URL(file, DIR)) || readFileSync(new URL(file, DIR), 'utf8') !== out) {
+		console.error(`media/personas/${file} is out of date: run node scripts/normalize-personas.mjs`);
+		stale++;
+	}
 }
+if (stale) process.exit(1);
