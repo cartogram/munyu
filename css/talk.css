@@ -578,12 +578,10 @@ main section[data-scene].is-wide > svg {
 	border-radius: calc(16 * var(--u)) !important;
 }
 
-/* generated persona portraits already carry the smeared style. They sit on
-   a ground of the act's colour and multiply into it, so the image takes on
-   the act's hue. */
+/* persona illustrations, pre-tinted into shades of the act's colour by
+   scripts/tint-personas.mjs, sit straight on the card */
 .portrait-ground {
 	width: min(100%, calc(720 * var(--u)));
-	background: var(--act-color);
 	line-height: 0;
 	border-radius: calc(16 * var(--u));
 	overflow: hidden;
@@ -599,7 +597,6 @@ main section[data-scene].is-wide > svg {
 	display: block;
 	width: 100%;
 	height: auto;
-	mix-blend-mode: multiply;
 }
 
 .demo-panels {
