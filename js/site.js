@@ -684,7 +684,7 @@ function setDrawerOpen(isOpen) {
 
 	drawerTl?.kill();
 	const speed = reduceMotion ? 0 : 1;
-	drawerTl = gsap.timeline({ defaults: { duration: 0.5 * speed } });
+	drawerTl = gsap.timeline({ defaults: { duration: 0.5 * speed }, onUpdate: updateCursor });
 	if (isOpen) {
 		drawerTl
 			.set(notesDrawer, { visibility: 'visible' })
@@ -699,6 +699,7 @@ function setDrawerOpen(isOpen) {
 			// hidden once covered, so its links leave the tab order
 			.set(notesDrawer, { visibility: 'hidden' });
 	}
+	updateCursor();
 }
 
 notesToggle.addEventListener('click', () => {
@@ -706,6 +707,55 @@ notesToggle.addEventListener('click', () => {
 	// Hand focus back to the page so the arrow keys keep navigating.
 	notesToggle.blur();
 });
+
+// The pointer over the deck: a → on an act opener, and a × anywhere over the
+// cards while the drawer is open, where a click closes it. Elsewhere, and
+// for touch, the system cursor.
+const deckCursor = document.getElementById('deck-cursor');
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+let pointer = null; // the mouse's last { x, y }, or null once it's left the window
+
+function cursorIcon(target) {
+	if (!target?.closest('.act-panel')) return '';
+	if (notesDrawer.classList.contains('is-open')) return 'close';
+	return target.closest('.act-opener') ? 'next' : '';
+}
+
+// Hit-tested afresh on scroll and as the cards slide, since the deck moves
+// under a still pointer.
+function updateCursor() {
+	const icon = pointer && finePointer.matches ? cursorIcon(document.elementFromPoint(pointer.x, pointer.y)) : '';
+	if (deckCursor.dataset.icon !== icon) deckCursor.dataset.icon = icon;
+	document.documentElement.classList.toggle('has-deck-cursor', icon !== '');
+	if (pointer) deckCursor.style.translate = `${pointer.x}px ${pointer.y}px`;
+}
+
+window.addEventListener('pointermove', (event) => {
+	if (event.pointerType !== 'mouse') return;
+	pointer = { x: event.clientX, y: event.clientY };
+	updateCursor();
+}, { passive: true });
+document.documentElement.addEventListener('pointerleave', () => {
+	pointer = null;
+	updateCursor();
+});
+window.addEventListener('scroll', updateCursor, { passive: true });
+
+// A click on the cards closes the open drawer; on an act opener, it moves on
+// to the next beat, as the → says. Captured, so nothing in the cards (links,
+// video) acts on the click too.
+document.addEventListener('click', (event) => {
+	const icon = cursorIcon(event.target);
+	if (!icon) return;
+	event.preventDefault();
+	event.stopPropagation();
+	if (icon === 'close') {
+		setDrawerOpen(false);
+		return;
+	}
+	const target = nextStop(navTween ? navTarget : window.scrollY, 1);
+	if (target !== undefined) moveTo(target);
+}, { capture: true });
 
 window.addEventListener('keydown', (event) => {
 	if (event.key !== 'Escape' || !notesDrawer.classList.contains('is-open')) return;
