@@ -125,16 +125,16 @@
 :root {
 	/* how far the act cards sit in from each window edge (js/site.js reads
 	   the top and bottom values for the scroll maths) */
-	/* the first card sits below a band for the talk title and event, and one
-	   stack step from the left, like the gap between stacked cards; literal
-	   px because js/site.js reads them */
+	/* the first card sits below a band for the talk title and event, flush
+	   with the left edge; literal px because js/site.js reads them */
 	--inset-top: 42px;
-	--inset-left: 4px;
-	/* each act card sits this much further in (top and left) than the last */
-	--stack-step: 4px;
+	--inset-left: 0px;
+	/* each act card sits this much further in (top and left) than the last,
+	   so each earlier card shows as a thin extra line */
+	--stack-step: 3px;
 	--inset-right: 0rem;
-	/* the notes drawer's width; on wide windows js/site.js tweens
-	   --drawer-push on body to push the act cards that far left */
+	/* the notes drawer's width; opening it, js/site.js tweens --drawer-push
+	   on body to slide the act cards that far right, off the drawer */
 	--drawer-width: 60vw;
 	--drawer-push: 0px;
 	--inset-bottom: 0rem;
@@ -142,8 +142,13 @@
 	   their text equally on every side */
 	--chrome-pad: 1.5rem;
 	--tab-pad: 0.75rem;
-	/* the notes toggle: a + in the top band's right-hand corner */
+	/* the notes toggle: a + in the top band's left-hand corner */
 	--toggle-size: 28px;
+	/* the front act card's corner, and the drawer's index card */
+	--corner: 10px;
+	/* where the talk title starts, right of the toggle; the drawer's text
+	   lines up with it */
+	--title-left: calc(var(--inset-left) + 2 * var(--tab-pad) + var(--toggle-size));
 	/* slide units: everything inside a slide is sized in --u, one px of a
 	   1920 × 1080 reference window, scaled to fit the real one (like a
 	   presentation canvas). Type, padding and media keep the same proportions
@@ -213,8 +218,12 @@ body[data-current-act='backup-qa'] { --act-color: #3a555d; }
 	overflow: clip;
 	background: #fff;
 	color: var(--act-color);
-	/* the leading corner of each card, as it slides up over the last */
-	border-radius: 1rem 0 0 0;
+	/* the leading corner of each card, as it slides up over the last. Each
+	   card sits one stack step further in, so its radius is one step smaller
+	   than the card behind it: the corners share a centre and the stacked
+	   edges stay evenly spaced round the curve. The last card's is --corner.
+	   (--stacks, the number of cards, is set by js/site.js.) */
+	border-radius: calc(var(--corner) + (var(--stacks, 1) - 1 - var(--stack, 0)) * var(--stack-step)) 0 0 0;
 	font-weight: 400;
 	font-size: 1.5em;
 	/* no shadow: each act's leading edge is its opener's mark-field landscape */
@@ -260,6 +269,8 @@ main section[data-scene] {
    so its dense bands run along the card's top edge — the edge that slides up
    over the previous act — with the title set bottom-left below it */
 .act-opener {
+	/* exactly the card's height, so the line field gives way to the title */
+	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	justify-content: flex-end;
 	align-items: flex-start;
 	text-align: left;
@@ -272,26 +283,25 @@ main section[data-scene] {
 	margin: 0;
 }
 
-/* fills the space above the title and bleeds off the top and side edges; a
-   taller title crops more of the sky, so art and title never overlap */
-.landscape {
+/* the line field (js/landscape.js): the top 60% of the window, bleeding off
+   the card's top and side edges, one continuous image down to its edge. The
+   auto bottom margin keeps it at the top while the title sits bottom-left;
+   on a short window it gives way rather than push the title off the card.
+   (Also matched as a scene's child, to beat the scenes' margin-left: 0.) */
+.landscape,
+main section[data-scene] > .landscape {
 	order: -1;
-	flex: 1 1 0;
+	flex: 0 1 auto;
+	height: calc(60vh - var(--card-top, 0px));
 	min-height: 0;
 	width: calc(100% + 2 * var(--frame-pad-x));
 	max-width: none;
-	margin: calc(-1 * var(--frame-pad-top)) calc(-1 * var(--frame-pad-x)) calc(24 * var(--u));
-	transform: scaleY(-1);
-	/* flipped with the art: marks dissolve toward the title instead of
-	   meeting a hard crop line */
-	mask-image: linear-gradient(to bottom, transparent, #000 22%);
+	margin: calc(-1 * var(--frame-pad-top)) calc(-1 * var(--frame-pad-x)) auto;
 	pointer-events: none;
 }
 
-.lm-fill {
-	fill: currentColor;
-}
-
+/* every mark is a stroke (js/landscape.js); round caps turn the zero-length
+   ones into dots */
 .lm-stroke {
 	fill: none;
 	stroke: currentColor;
@@ -319,6 +329,16 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 
 main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	margin-bottom: 0.4em;
+}
+
+/* the talk's title slide is laid out like an act opener: its landscape
+   above, the title and authors bottom-left */
+main section[data-scene='your-ui-is-not-my-ui-title'] {
+	/* exactly the card's height (not just at least), so the line field
+	   gives way instead of the slide growing */
+	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
+	justify-content: flex-end;
+	padding-bottom: calc(var(--frame-pad-bottom) + 40 * var(--u));
 }
 
 /* editorial scene layout: serif headline, sans body, serif lede and
@@ -419,6 +439,43 @@ main blockquote {
 	line-height: 1.2;
 	/* a big editorial first-line indent */
 	text-indent: 3em;
+}
+
+/* a list shown as one line whose ending rotates (js/site.js): the endings
+   stack in one grid cell, so the slot is as wide as the longest and the
+   line never reflows, and the slot clips them, so they slide in and out
+   of view. Padding with a matching negative margin keeps descenders inside
+   the clip without moving the baseline. */
+main p.rotator {
+	font-size: calc(80 * var(--u));
+}
+
+.rotator-slot {
+	display: inline-grid;
+	justify-items: start;
+	vertical-align: bottom;
+	overflow: clip;
+	padding-bottom: 0.15em;
+	margin-bottom: -0.15em;
+}
+
+.rotator-ending {
+	grid-area: 1 / 1;
+	white-space: nowrap;
+	font-weight: 700;
+}
+
+/* in the page for screen readers only */
+.visually-hidden {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
 }
 
 /* interview scenes (those with a quote): only the person's name is centred */
@@ -590,13 +647,13 @@ main section[data-scene].is-wide > svg {
 	top: calc((var(--inset-top) - 1lh) / 2);
 }
 
+/* leaves the band's left-hand corner to the notes toggle */
 .chrome-talk {
-	left: calc(var(--inset-left) + 1px + 2 * var(--tab-pad));
+	left: var(--title-left);
 }
 
-/* leaves the band's right-hand corner to the notes toggle */
 .chrome-event {
-	right: calc(var(--inset-right) + 2 * var(--tab-pad) + var(--toggle-size));
+	right: calc(var(--inset-right) + 2 * var(--tab-pad));
 	text-align: right;
 }
 
@@ -638,7 +695,7 @@ aside.notes {
 #notes-toggle {
 	position: fixed;
 	top: calc((var(--inset-top) - var(--toggle-size)) / 2);
-	right: calc(var(--inset-right) + var(--tab-pad));
+	left: calc(var(--inset-left) + var(--tab-pad));
 	z-index: 30;
 	display: grid;
 	place-items: center;
@@ -661,46 +718,75 @@ aside.notes {
 	stroke-linecap: round;
 }
 
-/* the cards slide out with the drawer, unresized. On each card, not an
-   ancestor: the cards pin with position: fixed. `translate`, not transform,
-   which GSAP owns; !important because pinning writes an inline
-   translate: none. */
+/* the cards slide right, unresized, to uncover the drawer beneath them. On
+   each card, not an ancestor: the cards pin with position: fixed.
+   `translate`, not transform, which GSAP owns; !important because pinning
+   writes an inline translate: none. Stacked above the drawer. */
 .act-panel {
-	translate: calc(-1 * var(--drawer-push)) 0 !important;
+	translate: var(--drawer-push) 0 !important;
+	z-index: 1;
 }
 
-/* drops in below the top band: notes on the left, the contents beside them;
-   each column scrolls on its own. Opened and closed by js/site.js. */
+/* ScrollTrigger's pin spacers copy a card's z-index but don't slide with it,
+   so on the last act one would sit over the uncovered drawer; they're only
+   wrappers, so clicks go through them (the cards inside still take theirs) */
+.pin-spacer {
+	pointer-events: none;
+}
+
+.act-panel {
+	pointer-events: auto;
+}
+
+/* fixed under the deck, below the top band and against the left edge: the
+   cards slide off it to open it (js/site.js). The index on the left, its
+   text lined up with the talk title above, and the notes beside the deck;
+   each column scrolls on its own. */
 #notes-drawer {
 	position: fixed;
 	top: var(--inset-top);
-	right: 0;
+	left: 0;
 	bottom: 0;
 	width: min(var(--drawer-width), 100vw);
 	box-sizing: border-box;
 	display: grid;
-	/* the contents column never narrower than 250px */
-	grid-template-columns: minmax(0, 3fr) minmax(250px, 2fr);
+	/* the index never narrower than 250px */
+	grid-template-columns: minmax(250px, 2fr) minmax(0, 3fr);
 	background: #fff;
 	color: #000;
-	border-left: 1px solid var(--act-color, #000);
-	border-top: 1px solid var(--act-color, #000);
-	/* js/site.js slides it in from off the right edge */
+	/* hidden while the deck covers it, so its links stay out of the tab order */
 	visibility: hidden;
-	z-index: 25;
+	z-index: 0;
 	font-family: var(--font-sans);
 	font-size: 0.9375rem; /* 15px */
 	line-height: 1.6;
 }
 
 .drawer-column {
+	--pad-left: 1.5rem;
+	--pad-right: 1.5rem;
 	overflow-y: auto;
-	padding: 1.5rem;
+	padding: 1.5rem var(--pad-right) 1.5rem var(--pad-left);
 }
 
-/* the divider takes the current act's colour */
+/* the index is a card, like the act cards: outlined, its top corners
+   rounded, open at the bottom where it runs off the window. It sits in from
+   the window's left edge and below the top band, and pads its text out to
+   line up with the talk title. */
 .drawer-toc {
-	border-left: 1px solid var(--act-color, #000);
+	--card-inset-left: 1.25rem;
+	--card-inset-top: 2rem;
+	--pad-left: calc(var(--title-left) - var(--card-inset-left) - 1px);
+	margin: var(--card-inset-top) 0 0 var(--card-inset-left);
+	border: 1px solid currentColor;
+	border-bottom: 0;
+	border-radius: var(--corner) var(--corner) 0 0;
+}
+
+/* the notes sit beside the card, their heading level with the index's */
+.drawer-notes {
+	--pad-left: 2rem;
+	padding-top: calc(2rem + 1px + 1.5rem);
 }
 
 .drawer-heading {
@@ -709,6 +795,7 @@ aside.notes {
 }
 
 #notes-drawer-content p {
+	max-width: 60ch;
 	margin: 0 0 1em;
 }
 
@@ -731,13 +818,12 @@ aside.notes {
 }
 
 /* entries run the column's full width, out through its padding, so a
-   highlight reaches from the column's left border to its right edge */
+   highlight reaches from the window's edge to the notes */
 .toc-link {
-	--toc-pad: 1.5rem; /* .drawer-column's padding */
 	display: block;
-	margin-inline: calc(-1 * var(--toc-pad));
-	/* text lines up with the Contents heading, inside the 3px bar */
-	padding: 0.2rem var(--toc-pad) 0.2rem calc(var(--toc-pad) - 3px);
+	margin-inline: calc(-1 * var(--pad-left)) calc(-1 * var(--pad-right));
+	/* text lines up with the Index heading, inside the 3px bar */
+	padding: 0.2rem var(--pad-right) 0.2rem calc(var(--pad-left) - 3px);
 	border-left: 3px solid transparent;
 	/* highlights start under the bar, not 3px in from it */
 	background-origin: border-box;
@@ -767,8 +853,16 @@ aside.notes {
 		overflow-y: visible;
 	}
 
+	/* stacked, the index card closes at the bottom above the notes, and
+	   the notes line up with the talk title too */
 	.drawer-toc {
-		border-left: 0;
-		border-top: 1px solid var(--act-color, #000);
+		border-bottom: 1px solid currentColor;
+		border-radius: var(--corner);
 	}
+
+	.drawer-notes {
+		--pad-left: var(--title-left);
+		padding-top: 1.5rem;
+	}
+
 }

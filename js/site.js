@@ -12,6 +12,7 @@ ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilityc
 // they've finished.
 const STEPPED_SCENES = {
 	'todays-model': todaysModelSteps,
+	'your-ui-is-not-my-ui-create-specific': (scene) => rotatorSteps(scene.querySelector('ul')),
 	'demo-two-people': (scene) => [...scene.querySelectorAll('.demo-panel')].map(fadeInStep),
 };
 const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
@@ -63,11 +64,67 @@ function todaysModelSteps(scene) {
 	];
 }
 
+// A list whose items share their opening words, shown as one line: the shared
+// words hold still and the endings rotate through a mask, one per beat, each
+// sliding up out as the next rises in. The list stays in the page,
+// visually hidden, for screen readers; the line is hidden from them.
+function rotatorSteps(list) {
+	const line = list.previousElementSibling?.classList.contains('rotator') ? list.previousElementSibling : buildRotator(list);
+	const endings = [...line.querySelectorAll('.rotator-ending')];
+
+	// all but the first ending wait below the mask (or, with reduced motion,
+	// invisible in place)
+	const hidden = reduceMotion ? { opacity: 0 } : { yPercent: 110 };
+	gsap.set(endings.slice(1), hidden);
+
+	return endings.slice(1).map((incoming, i) => (tl, hold) => {
+		const outgoing = endings[i];
+		if (reduceMotion) {
+			tl.to(outgoing, { opacity: 0, duration: hold * 0.15, ease: 'none' }).fromTo(
+				incoming,
+				{ opacity: 0 },
+				{ opacity: 1, duration: hold * 0.15, ease: 'none' },
+			);
+			return;
+		}
+		tl.to(outgoing, { yPercent: -110, duration: hold * 0.25, ease: 'power2.in' }).fromTo(
+			incoming,
+			{ yPercent: 110 },
+			{ yPercent: 0, duration: hold * 0.5, ease: 'expo.out' },
+			`<+=${hold * 0.12}`,
+		);
+	});
+}
+
+function buildRotator(list) {
+	const items = [...list.querySelectorAll('li')].map((li) => li.textContent.trim().split(/\s+/));
+	let shared = 0;
+	while (items.every((words) => shared < words.length - 1 && words[shared] === items[0][shared])) shared += 1;
+
+	const line = document.createElement('p');
+	line.className = 'rotator';
+	line.setAttribute('aria-hidden', 'true');
+	const slot = document.createElement('span');
+	slot.className = 'rotator-slot';
+	items.forEach((words) => {
+		const ending = document.createElement('span');
+		ending.className = 'rotator-ending';
+		ending.textContent = words.slice(shared).join(' ');
+		slot.append(ending);
+	});
+	line.append(`${items[0].slice(0, shared).join(' ')} `, slot);
+	list.before(line);
+	list.classList.add('visually-hidden');
+	return line;
+}
+
 const acts = gsap.utils.toArray('main .act-panel');
 
 // Cards stack: act k sits k × --stack-step further in from the top and left
 // than the first, so earlier cards' corners show behind the current one.
+// --stacks lets css/talk.css size each card's corner to nest with the rest.
 acts.forEach((panel, k) => panel.style.setProperty('--stack', k));
+document.documentElement.style.setProperty('--stacks', acts.length);
 
 // --inset-top / --inset-bottom / --stack-step from css/talk.css, in px.
 function cardInsets() {
@@ -82,6 +139,12 @@ function cardInsets() {
 
 // Each act opener gets its own seeded mark-field landscape, in the act's tints.
 acts.forEach((panel) => panel.querySelector('.act-opener')?.append(landscape(panel.dataset.act)));
+
+// The talk's title slide gets one too, so the talk opens like an act; its
+// landscape keeps moving while it's on screen (titleMotion, below).
+const titleScene = document.querySelector('[data-scene="your-ui-is-not-my-ui-title"]');
+const titleArt = landscape('your-ui-is-not-my-ui');
+titleScene?.append(titleArt);
 
 // Rebuilt with every setup(). A beat's scroll position is its trigger's start
 // plus its timeline time: durations are in scroll pixels, so 1s = 1px.
@@ -286,6 +349,36 @@ history.scrollRestoration = 'manual';
 setup();
 restoreHash();
 
+// The title slide's line field drifts for as long as the title is on
+// screen, so its lines keep turning (art.draw's time, js/landscape.js). Not
+// with reduced motion.
+const titleMotion = { enabled: false, flowing: false, time: 0 };
+
+function flowTick(time, deltaTime) {
+	titleMotion.time += Math.min(deltaTime, 100) / 1000; // no leap after a stalled tab
+	titleArt.draw(titleMotion.time);
+}
+
+gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+	titleMotion.enabled = true;
+	syncTitleMotion();
+	return () => {
+		titleMotion.enabled = false;
+		syncTitleMotion();
+		titleMotion.time = 0;
+		titleArt.draw(0);
+	};
+});
+
+// The field drifts only while the title is the current frame.
+function syncTitleMotion() {
+	const flow = titleMotion.enabled && currentBeat()?.scene === titleScene;
+	if (flow === titleMotion.flowing) return;
+	titleMotion.flowing = flow;
+	if (flow) gsap.ticker.add(flowTick);
+	else gsap.ticker.remove(flowTick);
+}
+
 // Images and video metadata change scene heights after first layout.
 window.addEventListener('load', () => {
 	rebuild();
@@ -400,10 +493,10 @@ window.addEventListener('keydown', (event) => {
 
 let currentSceneNotes = null;
 
-// One paragraph per <p> in the scene's notes (or the notes' whole text).
+// One paragraph per <p> or <li> in the scene's notes (or the notes' whole text).
 function renderDrawer() {
 	const paragraphs = currentSceneNotes
-		? [...(currentSceneNotes.querySelectorAll('p').length ? currentSceneNotes.querySelectorAll('p') : [currentSceneNotes])]
+		? [...(currentSceneNotes.querySelectorAll('p, li').length ? currentSceneNotes.querySelectorAll('p, li') : [currentSceneNotes])]
 		: [];
 	const texts = paragraphs.map((el) => el.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
 	notesDrawerContent.replaceChildren(
@@ -475,11 +568,12 @@ function updateChrome() {
 	document.body.dataset.currentAct = current.trigger.trigger.dataset.act;
 }
 
-// The drawer's contents: every act and its scenes, in order. Entries link to
+// The drawer's index: every act and its scenes, in order. Entries link to
 // their frame's beat id; an act without an opener (the first, which opens on
 // the talk title) lists its scenes without an act heading.
 const tocList = document.getElementById('drawer-toc');
 const tocLinks = new Map(); // beat id → link
+const frameNames = new Map(); // beat id → { title, number }, e.g. Melody, 2.2
 
 function tocLink(id, label, className) {
 	const link = document.createElement('a');
@@ -498,20 +592,27 @@ function tocLink(id, label, className) {
 	return link;
 }
 
-acts.forEach((panel) => {
+// Acts count from 1 and scenes within an act from 1; an act opener is just
+// its act's number.
+acts.forEach((panel, k) => {
 	const act = panel.dataset.act;
 	const item = document.createElement('li');
 	item.style.setProperty('--act-color', getComputedStyle(panel).getPropertyValue('--act-color'));
 	const name = actNames.get(panel);
-	if (panel.querySelector('.act-opener')) item.append(tocLink(act, name, 'toc-act toc-link'));
+	if (panel.querySelector('.act-opener')) {
+		item.append(tocLink(act, name, 'toc-act toc-link'));
+		frameNames.set(act, { title: name, number: `${k + 1}` });
+	}
 	const scenes = document.createElement('ol');
-	panel.querySelectorAll('section[data-scene]').forEach((scene) => {
+	panel.querySelectorAll('section[data-scene]').forEach((scene, i) => {
 		// the h2 is a scene's title; an h4 above it is only an eyebrow
 		const heading = scene.querySelector('h2') ?? scene.querySelector('h1, h3, h4');
 		const label = heading?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
+		const id = `${act}/${scene.dataset.scene}`;
 		const entry = document.createElement('li');
-		entry.append(tocLink(`${act}/${scene.dataset.scene}`, label, 'toc-link'));
+		entry.append(tocLink(id, label, 'toc-link'));
 		scenes.append(entry);
+		frameNames.set(id, { title: label, number: `${k + 1}.${i + 1}` });
 	});
 	item.append(scenes);
 	tocList.append(item);
@@ -529,9 +630,23 @@ function centreInDrawer(link) {
 	scroller.scrollTop += target.top - box.top - (box.height - target.height) / 2;
 }
 
-// Marks the current frame (act opener or scene, not a reveal step).
+const drawerSlide = document.getElementById('drawer-slide');
+let drawerSlideId = null;
+
+// Marks the current frame (act opener or scene, not a reveal step) in the
+// index, and names it over the notes in the chrome's meta style:
+// "Melody—2.2".
 function updateToc() {
 	const id = currentBeat()?.id.split('/').slice(0, 2).join('/');
+	const frame = frameNames.get(id);
+	if (frame && id !== drawerSlideId) {
+		drawerSlideId = id;
+		const number = document.createElement('span');
+		number.className = 'sub-meta';
+		number.innerHTML = '<span class="em-dash">—</span>';
+		number.append(frame.number);
+		drawerSlide.replaceChildren(frame.title, number);
+	}
 	const link = tocLinks.get(id) ?? null;
 	if (link === activeTocLink) return;
 	activeTocLink?.removeAttribute('aria-current');
@@ -544,28 +659,20 @@ window.addEventListener('scroll', () => {
 	updateCurrentScene();
 	updateChrome();
 	updateToc();
+	syncTitleMotion();
 }, { passive: true });
 updateChrome();
 updateToc();
 
-// On wide windows the open drawer pushes the cards left (--drawer-push, read
-// by css/talk.css) rather than covering them. Narrower windows keep it as an
-// overlay.
-const drawerPushQuery = window.matchMedia('(min-width: 900px)');
+// The drawer sits still under the deck, against the left edge; opening it
+// slides the act cards right by its width (--drawer-push, read by
+// css/talk.css) to uncover it, and closing slides them back over it.
 const drawerIcon = notesToggle.querySelector('svg');
-const drawerToc = notesDrawer.querySelector('.drawer-toc');
-const drawerPush = () =>
-	notesDrawer.classList.contains('is-open') && drawerPushQuery.matches ? notesDrawer.offsetWidth : 0;
+const drawerPush = () => (notesDrawer.classList.contains('is-open') ? notesDrawer.offsetWidth : 0);
 
-drawerPushQuery.addEventListener('change', () => gsap.set(document.body, { '--drawer-push': `${drawerPush()}px` }));
-
-// A fresh timeline per toggle. The drawer, the cards' push and the icon tween
-// from wherever they are, so an interrupted toggle turns around smoothly and
-// the drawer and cards stay in step. The two columns come apart in motion:
-// on open the Contents trails the Notes and overshoots into place; on close
-// it leads, pulling away to the right before the Notes follow.
+// A fresh timeline per toggle. The cards' push and the icon tween from
+// wherever they are, so an interrupted toggle turns around smoothly.
 let drawerTl = null;
-gsap.set(notesDrawer, { xPercent: 100 });
 
 function setDrawerOpen(isOpen) {
 	notesDrawer.classList.toggle('is-open', isOpen);
@@ -581,20 +688,16 @@ function setDrawerOpen(isOpen) {
 	if (isOpen) {
 		drawerTl
 			.set(notesDrawer, { visibility: 'visible' })
-			.to(notesDrawer, { xPercent: 0, ease: 'expo.out', duration: 0.6 * speed }, 0)
 			.to(document.body, { '--drawer-push': `${drawerPush()}px`, ease: 'expo.out', duration: 0.6 * speed }, 0)
-			.fromTo(drawerToc, { x: 160 }, { x: 0, ease: 'back.out(1.4)', duration: 0.8 * speed }, 0.12 * speed)
-			.to(drawerIcon, { rotation: 45, ease: 'back.out(2)', duration: 0.4 * speed }, 0);
+			.to(drawerIcon, { rotation: 45, ease: 'power3.out', duration: 0.4 * speed }, 0);
 		if (activeTocLink) centreInDrawer(activeTocLink);
 	} else {
 		drawerTl
 			// eased out as well as in, so the slides settle back rather than snap
-			.to(drawerToc, { x: 160, ease: 'back.inOut(1.4)', duration: 0.5 * speed }, 0)
-			.to(notesDrawer, { xPercent: 100, ease: 'power3.inOut', duration: 0.6 * speed }, 0.1 * speed)
-			.to(document.body, { '--drawer-push': '0px', ease: 'power3.inOut', duration: 0.6 * speed }, 0.1 * speed)
+			.to(document.body, { '--drawer-push': '0px', ease: 'power3.inOut', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 0, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
-			.set(notesDrawer, { visibility: 'hidden' })
-			.set(drawerToc, { x: 0 });
+			// hidden once covered, so its links leave the tab order
+			.set(notesDrawer, { visibility: 'hidden' });
 	}
 }
 
