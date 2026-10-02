@@ -38,12 +38,7 @@
 
 					<section data-scene="ai-accessibility-today">
 						<h2>AI &amp; Accessibility today</h2>
-						<video
-							class="r-stretch"
-							src="media/Kazam_screencast_00147.mp4"
-							controls
-							preload="auto"
-						></video>
+						<video src="media/Kazam_screencast_00147.mp4" preload="auto"></video>
 						<aside class="notes" hidden>
 							<p>
 								Accessibility is an early adopter of AI &mdash; speech-to-text, text-to-speech,
@@ -257,12 +252,7 @@
 								&ldquo;I live in a disabled house [&hellip;] all our settings are different, even across our iPads. It's actually an in-house joke: I can't look at my
 								husband's iPad, he can't look at mine, and the kids hate using either.&rdquo;
 							</blockquote>
-							<video
-								src="media/DEEPL-GR_3-5_Everyone-in-the-family-has-incompatible-settings_1.mp4"
-								controls
-								preload="auto"
-								style="flex: 1 1 55%; max-width: 55%; height: 100%; width: auto; border-radius: 4px"
-							></video>
+							<video src="media/DEEPL-GR_3-5_Everyone-in-the-family-has-incompatible-settings_1.mp4" preload="auto"></video>
 						</div>
 						<aside class="notes" hidden>
 							<p>
@@ -997,11 +987,13 @@
 			</section>
 		</aside>
 
-		<!-- the pointer over the deck (js/site.js): → on an act opener, × over
-		     the cards while the drawer is open -->
+		<!-- the pointer over the deck (js/site.js): → on an act opener, ▶ on a
+		     video, × over
+		     the cards while the drawer or a video is open -->
 		<div id="deck-cursor" aria-hidden="true">
 			<svg class="cursor-next" viewBox="0 0 16 16"><path d="M2 8h12M9 3l5 5-5 5" /></svg>
 			<svg class="cursor-close" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" /></svg>
+			<svg class="cursor-play" viewBox="0 0 16 16"><path d="M5 2.5v11l9-5.5z" /></svg>
 		</div>
 
 		<script type="module" src="/js/site.js"></script>
