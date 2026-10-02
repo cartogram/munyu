@@ -269,6 +269,8 @@ main section[data-scene] {
    so its dense bands run along the card's top edge — the edge that slides up
    over the previous act — with the title set bottom-left below it */
 .act-opener {
+	/* exactly the card's height, so the line field gives way to the title */
+	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	justify-content: flex-end;
 	align-items: flex-start;
 	text-align: left;
@@ -281,19 +283,20 @@ main section[data-scene] {
 	margin: 0;
 }
 
-/* fills the space above the title and bleeds off the top and side edges; a
-   taller title crops more of the sky, so art and title never overlap */
-.landscape {
+/* the line field (js/landscape.js): the top 60% of the window, bleeding off
+   the card's top and side edges, one continuous image down to its edge. The
+   auto bottom margin keeps it at the top while the title sits bottom-left;
+   on a short window it gives way rather than push the title off the card.
+   (Also matched as a scene's child, to beat the scenes' margin-left: 0.) */
+.landscape,
+main section[data-scene] > .landscape {
 	order: -1;
-	flex: 1 1 0;
+	flex: 0 1 auto;
+	height: calc(60vh - var(--card-top, 0px));
 	min-height: 0;
 	width: calc(100% + 2 * var(--frame-pad-x));
 	max-width: none;
-	margin: calc(-1 * var(--frame-pad-top)) calc(-1 * var(--frame-pad-x)) calc(24 * var(--u));
-	transform: scaleY(-1);
-	/* flipped with the art: marks dissolve toward the title instead of
-	   meeting a hard crop line */
-	mask-image: linear-gradient(to bottom, transparent, #000 22%);
+	margin: calc(-1 * var(--frame-pad-top)) calc(-1 * var(--frame-pad-x)) auto;
 	pointer-events: none;
 }
 
@@ -331,6 +334,9 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 /* the talk's title slide is laid out like an act opener: its landscape
    above, the title and authors bottom-left */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
+	/* exactly the card's height (not just at least), so the line field
+	   gives way instead of the slide growing */
+	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	justify-content: flex-end;
 	padding-bottom: calc(var(--frame-pad-bottom) + 40 * var(--u));
 }
@@ -789,6 +795,7 @@ aside.notes {
 }
 
 #notes-drawer-content p {
+	max-width: 60ch;
 	margin: 0 0 1em;
 }
 

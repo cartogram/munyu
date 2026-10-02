@@ -143,7 +143,7 @@ acts.forEach((panel) => panel.querySelector('.act-opener')?.append(landscape(pan
 // The talk's title slide gets one too, so the talk opens like an act; its
 // landscape keeps moving while it's on screen (titleMotion, below).
 const titleScene = document.querySelector('[data-scene="your-ui-is-not-my-ui-title"]');
-const titleArt = landscape('your-ui-is-not-my-ui', { live: true });
+const titleArt = landscape('your-ui-is-not-my-ui');
 titleScene?.append(titleArt);
 
 // Rebuilt with every setup(). A beat's scroll position is its trigger's start
@@ -222,8 +222,6 @@ function buildAct(panel, isLast) {
 		tl.to({}, { duration: document.documentElement.clientHeight - (top + stackStep) });
 	}
 
-	revealLandscape(panel, top);
-
 	// One trigger scrubs the act's timeline over its own stretch of scroll.
 	// The last act also pins (with spacing) for that stretch, which gives the
 	// page its final length.
@@ -253,37 +251,6 @@ function buildAct(panel, isLast) {
 
 	actBeats.forEach((beat) => beats.push({ ...beat, trigger }));
 	actRanges.forEach((range) => freeRanges.push({ ...range, trigger }));
-}
-
-// An act opener's landscape grows in as its card slides up over the last act:
-// band by band from the card's leading edge in toward the horizon, then the
-// sky, and within each band strip by strip left to right (the way the mounds
-// taper off). Every mark grows in place: dots swell, asterisk and leaf arms
-// draw out from their centres, contour lines draw themselves. Scrubbed, so
-// it is complete as the card lands on its stack position. Static with
-// reduced motion.
-function revealLandscape(panel, top) {
-	const art = panel.querySelector('.act-opener .landscape');
-	if (!art || reduceMotion) return;
-	const tl = gsap.timeline({
-		scrollTrigger: { trigger: panel, start: 'top bottom', end: `top ${top}px`, scrub: true },
-	});
-	art.querySelectorAll('[data-reveal]').forEach((piece) => {
-		const { reveal, strip, grow, size } = piece.dataset;
-		const at = Number(reveal) * 0.18 + Number(strip) * 0.08;
-		if (grow === 'dot') {
-			tl.fromTo(piece, { attr: { 'stroke-width': 0 } }, { attr: { 'stroke-width': size }, duration: 0.6, ease: 'back.out(2.5)' }, at);
-		} else {
-			// a gap longer than any arm or line, so each subpath shows one dash
-			const gap = Number(size) * 2;
-			tl.fromTo(
-				piece,
-				{ attr: { 'stroke-dasharray': `0 ${gap}` } },
-				{ attr: { 'stroke-dasharray': `${size} ${gap}` }, duration: grow === 'line' ? 1.4 : 0.6, ease: 'power2.out' },
-				at,
-			);
-		}
-	});
 }
 
 const beatPosition = (beat) => beat.trigger.start + beat.time;
@@ -382,50 +349,30 @@ history.scrollRestoration = 'manual';
 setup();
 restoreHash();
 
-// The title slide's landscape: on a timer rather than scroll, since no card
-// arrives to scrub it. Opening on the title, it grows in (as the act
-// openers' do); and for as long as the title is on screen its bands flow,
-// drifting and swelling like a streamgraph, the marks riding along with
-// them (svg.flow, js/landscape.js). Built once, outside setup(), so a
-// rebuild doesn't replay it. None of it with reduced motion.
-const titleMotion = { intro: null, flowing: false, time: 0 };
+// The title slide's line field drifts for as long as the title is on
+// screen, so its lines keep turning (art.draw's time, js/landscape.js). Not
+// with reduced motion.
+const titleMotion = { enabled: false, flowing: false, time: 0 };
 
 function flowTick(time, deltaTime) {
 	titleMotion.time += Math.min(deltaTime, 100) / 1000; // no leap after a stalled tab
-	titleArt.flow(titleMotion.time);
+	titleArt.draw(titleMotion.time);
 }
 
 gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
-	const pieces = [...titleArt.querySelectorAll('[data-reveal]')];
-	const sized = (piece, share) =>
-		piece.dataset.grow === 'dot'
-			? { attr: { 'stroke-width': piece.dataset.size * share } }
-			: { attr: { 'stroke-dasharray': `${piece.dataset.size * share} ${piece.dataset.size * 2}` } };
-
-	const intro = gsap.timeline({ paused: true });
-	pieces.forEach((piece) => {
-		const { reveal, strip, grow } = piece.dataset;
-		intro.fromTo(
-			piece,
-			sized(piece, 0),
-			{ ...sized(piece, 1), duration: grow === 'line' ? 1.6 : 0.8, ease: grow === 'dot' ? 'back.out(2.5)' : 'power2.out' },
-			Number(reveal) * 0.25 + Number(strip) * 0.06,
-		);
-	});
-	if (currentBeat()?.scene === titleScene) intro.play();
-	else intro.progress(1);
-
-	titleMotion.intro = intro;
+	titleMotion.enabled = true;
 	syncTitleMotion();
 	return () => {
-		titleMotion.intro = null;
+		titleMotion.enabled = false;
 		syncTitleMotion();
+		titleMotion.time = 0;
+		titleArt.draw(0);
 	};
 });
 
-// The bands flow only while the title is the current frame.
+// The field drifts only while the title is the current frame.
 function syncTitleMotion() {
-	const flow = Boolean(titleMotion.intro) && currentBeat()?.scene === titleScene;
+	const flow = titleMotion.enabled && currentBeat()?.scene === titleScene;
 	if (flow === titleMotion.flowing) return;
 	titleMotion.flowing = flow;
 	if (flow) gsap.ticker.add(flowTick);
