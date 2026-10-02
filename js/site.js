@@ -285,14 +285,16 @@ function stopPositions() {
 }
 
 // Beats are pushed act by act in timeline order, so they're sorted by position.
-function currentBeat() {
+function beatAt(y) {
 	let current = beats[0];
 	for (const beat of beats) {
-		if (beatPosition(beat) > window.scrollY + 2) break;
+		if (beatPosition(beat) > y + 2) break;
 		current = beat;
 	}
 	return current;
 }
+
+const currentBeat = () => beatAt(window.scrollY);
 
 let navTween = null;
 let navTarget = null;
@@ -420,6 +422,8 @@ window.addEventListener('resize', () => {
 });
 
 // The hash names the current beat, so a reload during rehearsal lands on it.
+// Stepping and scrolling only keep the current history entry's hash up to
+// date; deliberate jumps (jumpTo, below) add entries of their own.
 ScrollTrigger.addEventListener('scrollEnd', () => {
 	const beat = currentBeat();
 	const hash = beat ? `#${beat.id}` : '';
@@ -507,7 +511,27 @@ window.addEventListener('keydown', (event) => {
 	event.preventDefault();
 	const from = navTween ? navTarget : window.scrollY;
 	const target = nextStop(from, direction);
-	if (target !== undefined) moveTo(target);
+	if (target === undefined) return;
+	if (typeof direction === 'string') jumpTo(target);
+	else moveTo(target);
+});
+
+// A deliberate jump (from the index, or Home and End) gets its own history
+// entry, as following a link would, so Back returns to where it started.
+// The entry being left is brought up to date first, since scrolling only
+// updates it once the scroll settles.
+function jumpTo(y) {
+	const here = beatAt(navTween ? navTarget : window.scrollY);
+	const there = beatAt(y);
+	if (here) history.replaceState(null, '', `#${here.id}`);
+	if (there && there !== here) history.pushState(null, '', `#${there.id}`);
+	moveTo(y);
+}
+
+// Back and Forward glide to the beat their entry names.
+window.addEventListener('popstate', () => {
+	const beat = beatById(decodeURIComponent(window.location.hash.slice(1)));
+	if (beat) moveTo(beatPosition(beat));
 });
 
 let currentSceneNotes = null;
@@ -602,7 +626,7 @@ function tocLink(id, label, className) {
 	link.addEventListener('click', (event) => {
 		event.preventDefault();
 		const beat = beatById(id);
-		if (beat) moveTo(beatPosition(beat));
+		if (beat) jumpTo(beatPosition(beat));
 		// a mouse click hands focus back to the page so the arrow keys keep
 		// navigating; keyboard activation keeps focus in the list
 		if (event.detail > 0) link.blur();
