@@ -5,13 +5,17 @@
 <title>Branching demo</title>
 <style>
 	:root {
-		--bg: #0b0c10;
-		--line: #6b7280;
-		--node: #e5e7eb;
-		--accent-a: #7dd3fc; /* Rose: calm, sparse, dark-mode */
-		--accent-b: #38bdf8; /* Myron: voice-only */
-		--accent-b2: #d946ef; /* Myron: voice-only, secondary wave color */
-		--accent-c: #6b7280; /* generic: unresolved */
+		--bg: #fbfbfb;
+		--panel-bg: #f3f5f9;
+		--ink: #0b3eff;
+		--ink-dim: #6b84ff;
+		--fill-light: #d9defe;
+		--fill-mid: #96acff;
+		--label-gray: #8a93a6;
+		--side-right: #dde2f5;
+		--side-left: #c9d0ef;
+		--side-right-context: #eef0f8;
+		--side-left-context: #e2e6f4;
 	}
 
 	html, body {
@@ -21,363 +25,558 @@
 		height: 100%;
 		background: var(--bg);
 		overflow: hidden;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+		display: flex;
+		flex-direction: column;
 	}
 
 	svg {
 		width: 100%;
-		height: 100%;
+		flex: 1 1 auto;
 		display: block;
 	}
 
-	/*
-	 * Timeline (9s total):
-	 *   0.0s  origin text + trunk draw
-	 *   1.0s  Rose/Myron branches draw, frames fade in (Phase 1 layout: 2 personas, centered)
-	 *   5.0s  expansion: Phase-1 branches/trunk fade out, Phase-2 branches/trunk fade in
-	 *         (wider layout), generic frame slides in from the right
-	 */
+	.grid-bg {
+		fill: url(#dot-grid);
+	}
+
+	.frame-border {
+		fill: none;
+		stroke: var(--ink);
+		stroke-width: 1;
+		opacity: 0.25;
+	}
 
 	.origin-text {
-		fill: var(--node);
-		font-size: 18px;
+		fill: var(--ink);
+		font-size: 15px;
 		text-anchor: middle;
-		opacity: 0;
-	}
-
-	.origin-text.phase-1 {
-		animation: fadein 0.5s ease-out forwards, fadeout 0.6s ease-in forwards;
-		animation-delay: 0s, 4.6s;
-	}
-
-	.origin-text.phase-2 {
-		animation: fadein 0.6s ease-out forwards;
-		animation-delay: 5s;
-	}
-
-	.trunk {
-		stroke: var(--line);
-		stroke-width: 3;
-		fill: none;
-	}
-
-	.phase-1-lines .trunk {
-		stroke-dasharray: 300;
-		stroke-dashoffset: 300;
-		animation: draw 1s ease-out forwards, fadeout 0.6s ease-in forwards;
-		animation-delay: 0.6s, 4.6s;
-	}
-
-	.phase-2-lines .trunk {
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
 		opacity: 0;
 		animation: fadein 0.5s ease-out forwards;
-		animation-delay: 5s;
 	}
 
-	.branch {
-		stroke-width: 3;
-		fill: none;
-	}
-
-	.phase-1-lines .branch {
-		stroke-dasharray: 400;
-		stroke-dashoffset: 400;
-		animation: draw 1.2s ease-out forwards, fadein 1.2s ease-out forwards,
-			fadeout 0.6s ease-in forwards;
-		animation-delay: 1.6s, 1.6s, 4.6s;
-		opacity: 0;
-	}
-
-	.phase-2-lines .branch {
-		opacity: 0;
-		animation: fadein 0.6s ease-out forwards;
-		animation-delay: 5.2s;
-	}
-
-	.branch-a { stroke: var(--accent-a); }
-	.branch-b { stroke: var(--accent-b); }
-	.branch-c { stroke: var(--accent-c); stroke-dasharray: 6 6; }
-
-	@keyframes draw {
-		to { stroke-dashoffset: 0; }
+	.origin-text .action-prefix {
+		fill: var(--label-gray);
 	}
 
 	@keyframes fadein {
 		to { opacity: 1; }
 	}
 
-	@keyframes fadeout {
-		to { opacity: 0; }
+	/* spring-down entrance, played when a layer is triggered to explode in */
+	.spring-in {
+		opacity: 0;
+		transform: translateY(-70px);
+		animation: spring-down 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 	}
 
-	.fragment {
+	@keyframes spring-down {
+		0% { opacity: 0; transform: translateY(-70px); }
+		60% { opacity: 1; }
+		100% { opacity: 1; transform: translateY(0); }
+	}
+
+	.ui-plate {
 		opacity: 0;
 		animation: fadein 0.6s ease-out forwards;
-		animation-delay: 2.7s;
+		animation-delay: 0.3s;
 	}
 
-	.persona-label {
-		fill: #d1d5db;
-		font-size: 15px;
-		font-weight: 600;
-		text-anchor: middle;
-		opacity: 0;
-		animation: fadein 0.6s ease-out forwards;
-		animation-delay: 2.7s;
-	}
-
-	.sub-label {
-		fill: #9ca3af;
-		font-size: 12px;
-		text-anchor: middle;
-		opacity: 0;
-		animation: fadein 0.6s ease-out forwards;
-		animation-delay: 2.9s;
-	}
-
-	/* persona frames slide from their Phase-1 position to Phase-2 position at t=5s */
-	.rose-group {
-		animation: shift-rose 9s ease-in-out forwards;
-	}
-
-	@keyframes shift-rose {
-		0%, 55.5% { transform: translateX(0); }
-		100% { transform: translateX(-160px); }
-	}
-
-	.myron-group {
-		animation: shift-myron 9s ease-in-out forwards;
-	}
-
-	@keyframes shift-myron {
-		0%, 55.5% { transform: translateX(0); }
-		100% { transform: translateX(-160px); }
-	}
-
-	/* generic frame: absent, then slides in from further right at t=5s */
-	.generic-group {
-		opacity: 0;
-		animation: enter-generic 9s ease-out forwards;
-	}
-
-	@keyframes enter-generic {
-		0%, 55.5% { transform: translateX(120px); opacity: 0; }
-		75% { transform: translateX(0); opacity: 1; }
-		100% { transform: translateX(0); opacity: 1; }
-	}
-
-	/* Rose: translator UI, two stacked text panels */
-	.device-frame {
-		fill: #14181f;
-		stroke: #262b33;
+	/* thick-card-stock plates: top face + two shaded side faces for depth */
+	.plate-top {
+		fill: var(--panel-bg);
+		stroke: var(--ink);
 		stroke-width: 1.5;
 	}
 
-	.panel-src {
-		fill: #1f2937;
+	.plate-side-right {
+		fill: var(--side-right);
+		stroke: var(--ink);
+		stroke-width: 1.5;
 	}
 
-	.panel-tgt {
-		fill: #1c2b38;
+	.plate-side-left {
+		fill: var(--side-left);
+		stroke: var(--ink);
+		stroke-width: 1.5;
+	}
+
+	.plate-top.context {
+		fill: var(--bg);
+		stroke: var(--ink-dim);
+	}
+
+	.plate-side-right.context {
+		fill: var(--side-right-context);
+		stroke: var(--ink-dim);
+	}
+
+	.plate-side-left.context {
+		fill: var(--side-left-context);
+		stroke: var(--ink-dim);
+	}
+
+	.plate-top.muted,
+	.plate-side-right.muted,
+	.plate-side-left.muted {
+		stroke-dasharray: 5 4;
+		opacity: 0.5;
+	}
+
+	.example-text {
+		fill: var(--ink-dim);
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+	}
+
+	.more-caption {
+		fill: var(--label-gray);
+		font-size: 10px;
+		text-anchor: middle;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+
+	/* connecting thread: a breadboard-style trace that detours sideways to tap
+	   each layer's specific decision text before continuing up to the UI */
+	.thread-segment {
+		stroke: var(--ink);
+		stroke-width: 1.5;
+		fill: none;
+		opacity: 0;
+		/* pathLength="1" on the element normalizes dash units to 0..1,
+		   regardless of the actual (variable) zigzag length */
+		stroke-dasharray: 1;
+		stroke-dashoffset: 1;
+		animation: draw-thread 0.6s ease-out forwards;
+	}
+
+	@keyframes draw-thread {
+		0% { opacity: 0; stroke-dashoffset: 1; }
+		15% { opacity: 1; }
+		100% { opacity: 1; stroke-dashoffset: 0; }
+	}
+
+	.thread-node {
+		fill: var(--ink);
+		opacity: 0;
+		animation: fadein 0.3s ease-out forwards;
+	}
+
+	.thread-pin {
+		fill: var(--bg);
+		stroke: var(--ink);
+		stroke-width: 1.5;
+		opacity: 0;
+		animation: fadein 0.3s ease-out forwards;
+	}
+
+	.shared-label {
+		fill: var(--ink);
+		font-size: 12px;
+		font-weight: 500;
+		text-anchor: middle;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		opacity: 0;
+	}
+
+	.persona-label {
+		fill: var(--ink);
+		font-size: 14px;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		text-anchor: middle;
+		opacity: 0;
+		animation: fadein 0.6s ease-out forwards;
+		animation-delay: 0.6s;
+	}
+
+	/* Rose: translator UI content, skewed onto the isometric top face */
+	.panel-outline {
+		fill: #fff;
+		stroke: var(--ink-dim);
+		stroke-width: 1;
 	}
 
 	.text-line {
-		fill: #7dd3fc;
-		opacity: 0.85;
+		fill: var(--ink);
+		opacity: 0.8;
 	}
 
 	.text-line.dim {
-		opacity: 0.45;
+		fill: var(--ink-dim);
+		opacity: 0.6;
 	}
 
 	.lang-chip {
 		fill: none;
-		stroke: #4b5563;
+		stroke: var(--ink);
 		stroke-width: 1;
 	}
 
 	.lang-chip-text {
-		fill: #9ca3af;
-		font-size: 10px;
+		fill: var(--ink);
+		font-size: 8px;
+		letter-spacing: 0.04em;
 	}
 
-	/* Myron: voice-only interface, styled after a listening/voice-assistant UI */
-	.myron-frame {
-		fill: #0f1420;
-		stroke: #1e2740;
-		stroke-width: 1.5;
+	.arrow-glyph {
+		stroke: var(--ink);
+		stroke-width: 1.3;
+		fill: none;
 	}
 
-	.mic-glow {
-		fill: url(#mic-glow-gradient);
-	}
-
+	/* Myron: voice-only UI content, skewed onto the isometric top face */
 	.mic-core {
-		fill: #10192e;
-		stroke: #2c3a5c;
-		stroke-width: 1;
+		fill: var(--fill-mid);
+		stroke: var(--ink);
+		stroke-width: 1.3;
 	}
 
 	.mic-ring {
 		fill: none;
-		stroke: var(--accent-b);
-		stroke-width: 1.5;
+		stroke: var(--ink);
+		stroke-width: 1;
 		opacity: 0;
 	}
 
-	.mic-ring-1 {
-		animation: pulse-ring 2.4s ease-out infinite;
-		animation-delay: 3.2s;
-	}
-
-	.mic-ring-2 {
-		animation: pulse-ring 2.4s ease-out infinite;
-		animation-delay: 3.6s;
-	}
-
-	.mic-ring-3 {
-		animation: pulse-ring 2.4s ease-out infinite;
-		animation-delay: 4s;
-	}
+	.mic-ring-1 { animation: pulse-ring 2.4s ease-out infinite; animation-delay: 0.4s; }
+	.mic-ring-2 { animation: pulse-ring 2.4s ease-out infinite; animation-delay: 0.8s; }
+	.mic-ring-3 { animation: pulse-ring 2.4s ease-out infinite; animation-delay: 1.2s; }
 
 	@keyframes pulse-ring {
-		0% { r: 12; opacity: 0.6; }
-		100% { r: 34; opacity: 0; }
+		0% { r: 10; opacity: 0.5; }
+		100% { r: 26; opacity: 0; }
 	}
 
 	.wave-line {
 		fill: none;
-		stroke-width: 1.5;
+		stroke: var(--ink);
+		stroke-width: 1.3;
 		stroke-linecap: round;
-		opacity: 0.85;
-	}
-
-	.wave-line-a {
-		stroke: var(--accent-b);
-		animation: flow-wave-a 2.6s ease-in-out infinite;
+		opacity: 0.8;
 	}
 
 	.wave-line-b {
-		stroke: var(--accent-b2);
-		animation: flow-wave-b 3.1s ease-in-out infinite;
-	}
-
-	@keyframes flow-wave-a {
-		0%, 100% { d: path('M 0 12 Q 25 -4, 50 12 T 100 12 T 150 12 T 200 12'); }
-		50% { d: path('M 0 12 Q 25 26, 50 12 T 100 12 T 150 12 T 200 12'); }
-	}
-
-	@keyframes flow-wave-b {
-		0%, 100% { d: path('M 0 12 Q 30 24, 60 12 T 120 12 T 200 12'); }
-		50% { d: path('M 0 12 Q 30 2, 60 12 T 120 12 T 200 12'); }
+		stroke: var(--ink-dim);
+		stroke-dasharray: 3 3;
 	}
 
 	.listening-caption {
-		fill: #9ca3af;
-		font-size: 11px;
+		fill: var(--label-gray);
+		font-size: 9px;
 		text-anchor: middle;
-		opacity: 0;
-		animation: fadein 0.6s ease-out forwards;
-		animation-delay: 3s;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
-	.generic-frame-mark {
-		fill: none;
-		stroke: var(--accent-c);
-		stroke-width: 2;
-		stroke-dasharray: 6 6;
-		opacity: 0.5;
+	/* controls */
+	.controls {
+		flex: 0 0 auto;
+		display: flex;
+		justify-content: center;
+		padding: 10px 0 16px;
+		background: var(--bg);
+	}
+
+	.expand-btn {
+		font-family: inherit;
+		font-size: 12px;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: #fff;
+		background: var(--ink);
+		border: 1.5px solid var(--ink);
+		border-radius: 4px;
+		padding: 8px 20px;
+		cursor: pointer;
+	}
+
+	.expand-btn:hover {
+		opacity: 0.85;
+	}
+
+	.expand-btn:disabled {
+		background: var(--label-gray);
+		border-color: var(--label-gray);
+		cursor: default;
 	}
 </style>
 </head>
 <body>
-	<svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid meet">
+	<svg viewBox="0 0 1000 680" preserveAspectRatio="xMidYMid meet">
 		<defs>
-			<radialGradient id="mic-glow-gradient" cx="50%" cy="50%" r="50%">
-				<stop offset="0%" stop-color="var(--accent-b)" stop-opacity="0.35" />
-				<stop offset="100%" stop-color="var(--accent-b)" stop-opacity="0" />
-			</radialGradient>
-			<clipPath id="myron-frame-clip">
-				<rect x="0" y="0" width="260" height="170" rx="14" />
-			</clipPath>
+			<pattern id="dot-grid" width="16" height="16" patternUnits="userSpaceOnUse">
+				<circle cx="1" cy="1" r="1" fill="#0b3eff" opacity="0.12" />
+			</pattern>
 		</defs>
 
-		<!-- Phase 1: shared task centered above Rose (340) & Myron (760) -->
-		<text class="origin-text phase-1" x="550" y="48">&ldquo;I'd like to translate this text&rdquo;</text>
-		<g class="phase-1-lines">
-			<path class="trunk" d="M 550 64 L 550 160" />
-			<path class="branch branch-a" d="M 550 160 L 550 220 L 340 220 L 340 300" />
-			<path class="branch branch-b" d="M 550 160 L 550 220 L 760 220 L 760 300" />
-		</g>
+		<rect class="grid-bg" x="0" y="0" width="1000" height="680" />
+		<rect class="frame-border" x="8" y="8" width="984" height="664" />
 
-		<!-- Phase 2 (from t=5s): shared task recenters above Rose (180), Myron (600), generic (1020) -->
-		<text class="origin-text phase-2" x="600" y="48">&ldquo;I'd like to translate this text&rdquo;</text>
-		<g class="phase-2-lines">
-			<path class="trunk" d="M 600 64 L 600 160" />
-			<path class="branch branch-a" d="M 600 160 L 600 220 L 180 220 L 180 300" />
-			<path class="branch branch-b" d="M 600 160 L 600 220 L 600 300" />
-			<path class="branch branch-c" d="M 600 160 L 600 220 L 1020 220 L 1020 300" />
-		</g>
+		<!-- shared action -->
+		<text class="origin-text" x="500" y="40">
+			<tspan class="action-prefix">ACTION:</tspan> I'D LIKE TO TRANSLATE THIS TEXT
+		</text>
 
-		<!-- Rose: calm, sparse, dark-mode translator UI (slides from x=340 to x=180 at t=5s) -->
-		<g class="rose-group">
-			<g class="fragment" transform="translate(210, 310)">
-				<rect class="device-frame" x="0" y="0" width="260" height="170" rx="14" />
+		<!-- exploded context layers + their example-text labels, injected on Expand -->
+		<!-- these must come BEFORE the fixed UI plates in document order so the
+		     fixed UI always paints on top of the layers (and their labels) beneath it -->
+		<g id="rose-context"></g>
+		<g id="myron-context"></g>
+		<g id="rose-labels"></g>
+		<g id="myron-labels"></g>
+		<g id="rose-thread"></g>
+		<g id="myron-thread"></g>
 
-				<!-- source panel -->
-				<rect class="panel-src" x="16" y="16" width="228" height="62" rx="8" />
-				<rect class="lang-chip" x="24" y="24" width="46" height="16" rx="8" />
-				<text class="lang-chip-text" x="47" y="35" text-anchor="middle">EN</text>
-				<rect class="text-line" x="24" y="48" width="180" height="7" rx="3" />
-				<rect class="text-line dim" x="24" y="60" width="130" height="7" rx="3" />
-
-				<!-- target panel -->
-				<rect class="panel-tgt" x="16" y="86" width="228" height="62" rx="8" />
-				<rect class="lang-chip" x="24" y="94" width="46" height="16" rx="8" />
-				<text class="lang-chip-text" x="47" y="105" text-anchor="middle">DE</text>
-				<rect class="text-line" x="24" y="118" width="196" height="7" rx="3" />
-				<rect class="text-line dim" x="24" y="130" width="150" height="7" rx="3" />
-			</g>
-			<text class="persona-label" x="340" y="512">Rose</text>
-			<text class="sub-label" x="340" y="530">Sparse, Dark</text>
-		</g>
-
-		<!-- Myron: voice-only interface, styled after a listening/voice-assistant UI (slides from x=760 to x=600 at t=5s) -->
-		<g class="myron-group">
-			<g class="fragment" transform="translate(630, 310)">
-				<rect class="myron-frame" x="0" y="0" width="260" height="170" rx="14" />
-
-				<g clip-path="url(#myron-frame-clip)">
-					<!-- mic, centered in top 50% of the frame -->
-					<g transform="translate(130, 46)">
-						<circle class="mic-ring mic-ring-1" cx="0" cy="0" r="12" />
-						<circle class="mic-ring mic-ring-2" cx="0" cy="0" r="12" />
-						<circle class="mic-ring mic-ring-3" cx="0" cy="0" r="12" />
-						<circle class="mic-glow" cx="0" cy="0" r="30" />
-						<circle class="mic-core" cx="0" cy="0" r="14" />
-					</g>
-
-					<!-- flowing wave lines, contained within the bottom 50% of the frame -->
-					<g transform="translate(30, 118)">
-						<path class="wave-line wave-line-a" d="M 0 12 Q 25 -4, 50 12 T 100 12 T 150 12 T 200 12" />
-						<path class="wave-line wave-line-b" d="M 0 12 Q 30 24, 60 12 T 120 12 T 200 12" />
-					</g>
+		<!-- ================= ROSE (left): already-built UI ================= -->
+		<g id="rose-plates">
+			<g class="ui-plate">
+				<path class="plate-side-right" d="M 388.9 262.5 L 259.0 337.5 L 259.0 351.5 L 388.9 276.5 Z" />
+				<path class="plate-side-left" d="M 51.1 217.5 L 259.0 337.5 L 259.0 351.5 L 51.1 231.5 Z" />
+				<path class="plate-top" d="M 181.0 142.5 L 388.9 262.5 L 259.0 337.5 L 51.1 217.5 Z" />
+				<g transform="matrix(0.86603,0.50000,-0.86603,0.50000,220,240)">
+					<rect class="panel-outline" x="-100" y="-58" width="200" height="46" />
+					<rect class="lang-chip" x="-92" y="-50" width="34" height="13" />
+					<text class="lang-chip-text" x="-75" y="-41" text-anchor="middle">EN</text>
+					<rect class="text-line" x="-92" y="-28" width="150" height="4" />
+					<rect class="text-line dim" x="-92" y="-19" width="105" height="4" />
+					<path class="arrow-glyph" d="M 0 -8 L 0 6 M -5 1 L 0 7 L 5 1" />
+					<rect class="panel-outline" x="-100" y="14" width="200" height="46" />
+					<rect class="lang-chip" x="-92" y="22" width="34" height="13" />
+					<text class="lang-chip-text" x="-75" y="31" text-anchor="middle">DE</text>
+					<rect class="text-line" x="-92" y="44" width="164" height="4" />
+					<rect class="text-line dim" x="-92" y="53" width="120" height="4" />
 				</g>
-
-				<text class="listening-caption" x="130" y="152">Listening&hellip;</text>
-			</g>
-			<text class="persona-label" x="760" y="512">Myron</text>
-			<text class="sub-label" x="760" y="530">Voice Only</text>
-		</g>
-
-		<!-- generic: unresolved / unnamed, slides in from the right at t=5s, settling at x=1020 -->
-		<g class="generic-group">
-			<g transform="translate(890, 310)">
-				<rect class="device-frame" x="0" y="0" width="260" height="170" rx="14" />
-				<line class="generic-frame-mark" x1="40" y1="40" x2="220" y2="130" />
-				<line class="generic-frame-mark" x1="220" y1="40" x2="40" y2="130" />
 			</g>
 		</g>
+		<text class="persona-label" x="220" y="650">ROSE</text>
+
+		<!-- ================= MYRON (right): already-built UI ================= -->
+		<g id="myron-plates">
+			<g class="ui-plate">
+				<path class="plate-side-right" d="M 948.9 262.5 L 819.0 337.5 L 819.0 351.5 L 948.9 276.5 Z" />
+				<path class="plate-side-left" d="M 611.1 217.5 L 819.0 337.5 L 819.0 351.5 L 611.1 231.5 Z" />
+				<path class="plate-top" d="M 741.0 142.5 L 948.9 262.5 L 819.0 337.5 L 611.1 217.5 Z" />
+				<g transform="matrix(0.86603,0.50000,-0.86603,0.50000,780,240)">
+					<circle class="mic-ring mic-ring-1" cx="0" cy="-16" r="10" />
+					<circle class="mic-ring mic-ring-2" cx="0" cy="-16" r="10" />
+					<circle class="mic-ring mic-ring-3" cx="0" cy="-16" r="10" />
+					<circle class="mic-core" cx="0" cy="-16" r="12" />
+					<path class="wave-line" d="M -70 30 Q -50 14, -30 30 T 10 30 T 50 30 T 70 30" />
+					<path class="wave-line wave-line-b" d="M -70 34 Q -45 46, -20 34 T 30 34 T 70 34" />
+					<text class="listening-caption" x="0" y="54">LISTENING&hellip;</text>
+				</g>
+			</g>
+		</g>
+		<text class="persona-label" x="780" y="650">MYRON</text>
+
+		<!-- shared middle labels, revealed alongside each layer's explode -->
+		<text class="shared-label" id="shared-label-1" x="500" y="310">CAPABILITIES &amp; PREFERENCES</text>
+		<text class="shared-label" id="shared-label-2" x="500" y="376">USER CONTEXT</text>
+		<text class="shared-label" id="shared-label-3" x="500" y="442">MEMORY &amp; HISTORY</text>
+		<text class="shared-label" id="shared-label-4" x="500" y="508">+ MORE</text>
 	</svg>
+
+	<div class="controls">
+		<button class="expand-btn" id="expand-btn">Expand</button>
+	</div>
+
+	<script>
+		function isoMatrix(cx, cy) {
+			return `matrix(0.86603,0.50000,-0.86603,0.50000,${cx},${cy})`;
+		}
+
+		// layer geometry, shared shape for both columns (only cx differs)
+		const LAYER_H = 66;
+		const BASE_CY = 240;
+
+		function layerPaths(cx, layerIndex) {
+			const cy = BASE_CY + layerIndex * LAYER_H;
+			// precomputed per-column path sets (index 1..4), generated from the same
+			// isometric projection as the fixed UI plates above
+			const paths = {
+				220: {
+					1: {
+						top: "M 181.0 208.5 L 388.9 328.5 L 259.0 403.5 L 51.1 283.5 Z",
+						right: "M 388.9 328.5 L 259.0 403.5 L 259.0 417.5 L 388.9 342.5 Z",
+						left: "M 51.1 283.5 L 259.0 403.5 L 259.0 417.5 L 51.1 297.5 Z",
+					},
+					2: {
+						top: "M 181.0 274.5 L 388.9 394.5 L 259.0 469.5 L 51.1 349.5 Z",
+						right: "M 388.9 394.5 L 259.0 469.5 L 259.0 483.5 L 388.9 408.5 Z",
+						left: "M 51.1 349.5 L 259.0 469.5 L 259.0 483.5 L 51.1 363.5 Z",
+					},
+					3: {
+						top: "M 181.0 340.5 L 388.9 460.5 L 259.0 535.5 L 51.1 415.5 Z",
+						right: "M 388.9 460.5 L 259.0 535.5 L 259.0 549.5 L 388.9 474.5 Z",
+						left: "M 51.1 415.5 L 259.0 535.5 L 259.0 549.5 L 51.1 429.5 Z",
+					},
+					4: {
+						top: "M 181.0 406.5 L 388.9 526.5 L 259.0 601.5 L 51.1 481.5 Z",
+						right: "M 388.9 526.5 L 259.0 601.5 L 259.0 615.5 L 388.9 540.5 Z",
+						left: "M 51.1 481.5 L 259.0 601.5 L 259.0 615.5 L 51.1 495.5 Z",
+					},
+				},
+				780: {
+					1: {
+						top: "M 741.0 208.5 L 948.9 328.5 L 819.0 403.5 L 611.1 283.5 Z",
+						right: "M 948.9 328.5 L 819.0 403.5 L 819.0 417.5 L 948.9 342.5 Z",
+						left: "M 611.1 283.5 L 819.0 403.5 L 819.0 417.5 L 611.1 297.5 Z",
+					},
+					2: {
+						top: "M 741.0 274.5 L 948.9 394.5 L 819.0 469.5 L 611.1 349.5 Z",
+						right: "M 948.9 394.5 L 819.0 469.5 L 819.0 483.5 L 948.9 408.5 Z",
+						left: "M 611.1 349.5 L 819.0 469.5 L 819.0 483.5 L 611.1 363.5 Z",
+					},
+					3: {
+						top: "M 741.0 340.5 L 948.9 460.5 L 819.0 535.5 L 611.1 415.5 Z",
+						right: "M 948.9 460.5 L 819.0 535.5 L 819.0 549.5 L 948.9 474.5 Z",
+						left: "M 611.1 415.5 L 819.0 535.5 L 819.0 549.5 L 611.1 429.5 Z",
+					},
+					4: {
+						top: "M 741.0 406.5 L 948.9 526.5 L 819.0 601.5 L 611.1 481.5 Z",
+						right: "M 948.9 526.5 L 819.0 601.5 L 819.0 615.5 L 948.9 540.5 Z",
+						left: "M 611.1 481.5 L 819.0 601.5 L 819.0 615.5 L 611.1 495.5 Z",
+					},
+				},
+			};
+			return { cy, ...paths[cx][layerIndex] };
+		}
+
+		// persona-specific example text per real layer (1: capabilities, 2: user context, 3: memory & history)
+		const EXAMPLES = {
+			rose: {
+				1: 'PRIORITIZE READABILITY',
+				2: 'ON THE MOVE, LOW LIGHT',
+				3: 'TRANSLATED 40+ TIMES',
+			},
+			myron: {
+				1: 'PRIORITIZE SPEECH',
+				2: 'HANDS OCCUPIED',
+				3: 'FREQUENT VOICE USER',
+			},
+		};
+
+		function renderLayer(cx, layerIndex, delayMs) {
+			const p = layerPaths(cx, layerIndex);
+			const isMuted = layerIndex === 4;
+			const contextClass = isMuted ? 'muted' : 'context';
+			return `
+				<g class="spring-in" style="animation-delay:${delayMs}ms">
+					<path class="plate-side-right ${contextClass}" d="${p.right}" />
+					<path class="plate-side-left ${contextClass}" d="${p.left}" />
+					<path class="plate-top ${contextClass}" d="${p.top}" />
+				</g>`;
+		}
+
+		function renderLabel(persona, cx, layerIndex, delayMs) {
+			if (layerIndex === 4) return '';
+			const p = layerPaths(cx, layerIndex);
+			const label = EXAMPLES[persona][layerIndex];
+			return `
+				<g class="spring-in" style="animation-delay:${delayMs}ms">
+					<g transform="${isoMatrix(cx, p.cy)}">
+						<text class="example-text" x="-95" y="6">${label}</text>
+					</g>
+				</g>`;
+		}
+
+		// the thread runs up the center line of each stack, detouring sideways at
+		// layers 2 and 3 to tap the specific point where that layer's decision
+		// text sits (like a breadboard jumper touching a component's pin) before
+		// returning to center and continuing up. layer 1 stays a plain straight
+		// run since its text sits hidden under the fixed UI anyway. the thread
+		// starts at the fixed UI's own center and stops at layer 3 -- it does not
+		// extend into the muted "+ more" layer.
+		const UI_CY = 240;
+		const COS30 = 0.86603;
+		const SIN30 = 0.5;
+
+		// project a layer's local example-text anchor (-95, 6) into screen space
+		function textTapPoint(cx, cy) {
+			const ix = -95, iy = 6;
+			return {
+				x: Math.round((cx + COS30 * ix - COS30 * iy) * 10) / 10,
+				y: Math.round((cy + SIN30 * ix + SIN30 * iy) * 10) / 10,
+			};
+		}
+
+		function renderThreadSegment(cx, fromCy, toCy, delayMs, layerIndex) {
+			const hasDetour = layerIndex === 2 || layerIndex === 3;
+
+			if (!hasDetour) {
+				return `
+					<g style="animation-delay:${delayMs}ms">
+						<line class="thread-segment" pathLength="1" x1="${cx}" y1="${fromCy}" x2="${cx}" y2="${toCy}" />
+					</g>`;
+			}
+
+			const tap = textTapPoint(cx, toCy);
+			// route: down from fromCy to the tap's height, across to the tap
+			// point, a pin marker, back to center, then down to toCy
+			const path = `M ${cx} ${fromCy} L ${cx} ${tap.y} L ${tap.x} ${tap.y} L ${cx} ${tap.y} L ${cx} ${toCy}`;
+			return `
+				<g style="animation-delay:${delayMs}ms">
+					<path class="thread-segment" pathLength="1" d="${path}" />
+					<rect class="thread-pin" x="${tap.x - 3}" y="${tap.y - 3}" width="6" height="6"
+						style="animation-delay:${delayMs + 300}ms" />
+					<circle class="thread-node" cx="${cx}" cy="${toCy}" r="4" style="animation-delay:${delayMs + 500}ms" />
+				</g>`;
+		}
+
+		const expandBtn = document.getElementById('expand-btn');
+		const roseContext = document.getElementById('rose-context');
+		const myronContext = document.getElementById('myron-context');
+		const roseLabels = document.getElementById('rose-labels');
+		const myronLabels = document.getElementById('myron-labels');
+		const roseThread = document.getElementById('rose-thread');
+		const myronThread = document.getElementById('myron-thread');
+		const sharedLabels = [1, 2, 3, 4].map((i) => document.getElementById(`shared-label-${i}`));
+
+		let expanded = false;
+
+		expandBtn.addEventListener('click', () => {
+			if (expanded) return;
+			expanded = true;
+			expandBtn.disabled = true;
+			expandBtn.textContent = 'Expanded';
+
+			let roseThreadCy = UI_CY;
+			let myronThreadCy = UI_CY;
+
+			[1, 2, 3, 4].forEach((layerIndex, i) => {
+				const delay = i * 550;
+				setTimeout(() => {
+					// insert plates at the front so each new (lower) layer paints
+					// BEHIND the layers already placed above it, keeping seams clean
+					roseContext.insertAdjacentHTML('afterbegin', renderLayer(220, layerIndex, 0));
+					myronContext.insertAdjacentHTML('afterbegin', renderLayer(780, layerIndex, 0));
+					// labels live in their own top-most group so no plate can ever clip them
+					roseLabels.insertAdjacentHTML('beforeend', renderLabel('rose', 220, layerIndex, 0));
+					myronLabels.insertAdjacentHTML('beforeend', renderLabel('myron', 780, layerIndex, 0));
+					sharedLabels[i].style.animation = 'fadein 0.5s ease-out forwards';
+
+					// thread stops at layer 3 -- the muted "+ more" layer isn't a
+					// real decision, so no segment is drawn into it. layer 1 stays
+					// a plain straight run: its text sits directly under the fixed
+					// UI, so a detour there would be invisible anyway.
+					if (layerIndex <= 3) {
+						const p220 = layerPaths(220, layerIndex);
+						const p780 = layerPaths(780, layerIndex);
+						roseThread.insertAdjacentHTML('beforeend', renderThreadSegment(220, roseThreadCy, p220.cy, 0, layerIndex));
+						myronThread.insertAdjacentHTML('beforeend', renderThreadSegment(780, myronThreadCy, p780.cy, 0, layerIndex));
+						roseThreadCy = p220.cy;
+						myronThreadCy = p780.cy;
+					}
+				}, delay);
+			});
+		});
+	</script>
 </body>
 </html>
