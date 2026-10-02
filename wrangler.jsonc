@@ -1,0 +1,8 @@
+// Static site: Workers Builds runs `npm run build`, then serves dist/ as assets.
+{
+	"name": "munyu",
+	"compatibility_date": "2026-10-01",
+	"assets": {
+		"directory": "./dist",
+	},
+}
