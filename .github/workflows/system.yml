@@ -1,0 +1,25 @@
+name: System
+
+# The deck, the theme tokens in css/talk.css, the persona illustrations and
+# system.html must agree. See DESIGN.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # No install: the check uses only Node's built-ins.
+      - run: node scripts/check-system.mjs
