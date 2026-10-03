@@ -344,13 +344,14 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 }
 
 /* act titles, and the talk title that opens the page in place of an act
-   opener: one style */
+   opener: one style, two lines each, broken by hand in index.html (a space
+   before each <br />, so the titles' text still reads as words) */
 .act-title,
 main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	font-family: var(--font-sans);
-	/* sized so the longest word, "Personalization" (7.7em wide in Aileron
+	/* sized so the longest line, "over adaptability" (8.5em wide in Aileron
 	   Black), always fits the card's width minus its padding; 222 at most */
-	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), calc(222 * var(--u)));
+	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 8.7), calc(222 * var(--u)));
 	font-weight: 900;
 	line-height: 0.8;
 	margin: 0 auto;
@@ -725,6 +726,9 @@ main section[data-scene]:has(> .persona) > * {
 	display: block;
 	width: 100%;
 	height: auto;
+	/* never stretched: where its frame isn't square (a narrow column caps
+	   its width), the drawing scales to fit inside it */
+	object-fit: contain;
 }
 
 .demo-panels {
