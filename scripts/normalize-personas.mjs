@@ -14,6 +14,7 @@
 // Each illustration takes the colour of the act its scene sits in (index.html).
 //   node scripts/normalize-personas.mjs
 import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { pathToFileURL } from 'url';
 import { personas, tokens } from './theme.mjs';
 import { isCurrent, render } from './personas/render.mjs';
 
@@ -21,7 +22,7 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg', 'matthew.svg']);
+const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg', 'matthew.svg', 'demo-two-people.svg']);
 // per-illustration changes to the CUT settings: Allana's trace has finer lines
 // than the rest, so its strips are thinner and swing less
 const CUT_FOR = { 'allana.svg': { strip: 0.8, weight: { frequency: 0.006, scale: 2.5 } } };
@@ -46,7 +47,7 @@ function step([r, g, b]) {
 	if (l < 0.95) return 'wash';
 	return 'paper';
 }
-function normalize(src, act, cutPaper, file) {
+export function normalize(src, act, cutPaper, file) {
 	const tint = rgb(ACTS[act]);
 	const shade = (name) => toHex(mixWhite(tint, RAMP[name]));
 
@@ -59,8 +60,15 @@ function normalize(src, act, cutPaper, file) {
 		grads[id] = stops[0].map((_, i) => stops.reduce((s, c) => s + c[i], 0) / stops.length);
 	}
 
-	// every path, with its flattened colour and the extent of its points
-	const paths = [...src.matchAll(/<path\b([^>]*?)\/?>/g)].map(([, attrs]) => {
+	// every path, with its flattened colour and the extent of its points, and
+	// any text (a label an edit script sets on a piece), in drawing order. An
+	// edit script can name the part of the drawing a shape belongs to, so the
+	// deck can move it: data-part="card-1".
+	const elements = [...src.matchAll(/<path\b([^>]*?)\/?>|<text\b([^>]*)>([\s\S]*?)<\/text>/g)].map(([, attrs, textAttrs, content]) => {
+		if (textAttrs !== undefined) {
+			const part = textAttrs.match(/\bdata-part="([^"]+)"/)?.[1];
+			return { text: true, part, attrs: textAttrs.replace(/\s*\b(fill|data-part)="[^"]*"/g, ''), content };
+		}
 		const fill = attrs.match(/\bfill="([^"]+)"/)?.[1] ?? 'black';
 		const url = fill.match(/^url\(#(.+)\)$/);
 		let c = url ? grads[url[1]] : rgb(fill);
@@ -85,8 +93,21 @@ function normalize(src, act, cutPaper, file) {
 		// an edit script can name a shape's finish outright (e.g. a fine grid
 		// that must keep its drawn weight): data-finish="edge"
 		const finish = attrs.match(/\bdata-finish="(\w+)"/)?.[1];
-		return { d, step: step(c), box, breadth, light, rule, finish };
+		const part = attrs.match(/\bdata-part="([^"]+)"/)?.[1];
+		return { d, step: step(c), box, breadth, light, rule, finish, part };
 	});
+	const paths = elements.filter((e) => !e.text);
+	// the drawing in order, each run of one part's shapes wrapped in a
+	// <g data-part>; text is set in the ink tone
+	const draw = (render) => {
+		let out = '', part;
+		for (const e of elements) {
+			if (e.part !== part) out += `${part ? '</g>' : ''}${e.part ? `<g data-part="${e.part}">` : ''}`;
+			part = e.part;
+			out += e.text ? `<text${e.attrs} fill="${shade('ink')}">${e.content}</text>` : render(e);
+		}
+		return out + (part ? '</g>' : '');
+	};
 
 	// 3. the drawing's extent: everything that isn't paper
 	const ink = paths.filter((p) => p.step !== 'paper');
@@ -99,7 +120,7 @@ function normalize(src, act, cutPaper, file) {
 
 	const vb = [vx, vy, side, side].map((v) => +v.toFixed(2)).join(' ');
 	if (!cutPaper) {
-		const body = paths.map((p) => `<path fill="${shade(p.step)}"${p.rule} d="${p.d}"/>`).join('');
+		const body = draw((p) => `<path fill="${shade(p.step)}"${p.rule} d="${p.d}"/>`);
 		return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}">${body}</svg>\n`;
 	}
 
@@ -134,9 +155,7 @@ function normalize(src, act, cutPaper, file) {
 						? 'sheet'
 						: 'piece'
 					: 'edge';
-	const body = paths
-		.map((p) => `<path fill="${shade(p.step)}"${p.rule} filter="url(#${filter(p)})" d="${p.d}"/>`)
-		.join('');
+	const body = draw((p) => `<path fill="${shade(p.step)}"${p.rule} filter="url(#${filter(p)})" d="${p.d}"/>`);
 	// The wash: the lighter coloured pieces again, a little out of register,
 	// spread and bled, like a watercolour layer printed off the cut paper. Each
 	// piece's own area is cut out of it, so only the spill is left, and that is
@@ -251,24 +270,28 @@ ${edge('thick', INK)}${shadow(C.shadow.opacity / 2)}
 </filter>`.replace(/\n/g, '');
 }
 
-// --check: write nothing, exit 1 if any output is out of date
-const check = process.argv.includes('--check');
-let stale = 0;
-const finished = [];
-for (const { file, act } of personas()) {
-	const out = normalize(readFileSync(new URL(file, SRC), 'utf8'), act, CUT_PAPER.has(file), file);
-	finished.push({ file, svg: out });
-	if (!check) {
-		writeFileSync(new URL(file, DIR), out);
-		console.log(`${file} · ${act} ${ACTS[act]}`);
-	} else if (!existsSync(new URL(file, DIR)) || readFileSync(new URL(file, DIR), 'utf8') !== out) {
-		console.error(`media/personas/${file} is out of date: run node scripts/normalize-personas.mjs`);
-		stale++;
-	} else if (!isCurrent(file, out)) {
-		console.error(`media/personas/${file.replace(/\.svg$/, '.webp')} is out of date: run node scripts/normalize-personas.mjs`);
-		stale++;
+// Run as a script (not imported for normalize()): write every illustration
+// and render its WebP, or with --check write nothing and exit 1 if any output
+// is out of date
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+	const check = process.argv.includes('--check');
+	let stale = 0;
+	const finished = [];
+	for (const { file, act } of personas()) {
+		const out = normalize(readFileSync(new URL(file, SRC), 'utf8'), act, CUT_PAPER.has(file), file);
+		finished.push({ file, svg: out });
+		if (!check) {
+			writeFileSync(new URL(file, DIR), out);
+			console.log(`${file} · ${act} ${ACTS[act]}`);
+		} else if (!existsSync(new URL(file, DIR)) || readFileSync(new URL(file, DIR), 'utf8') !== out) {
+			console.error(`media/personas/${file} is out of date: run node scripts/normalize-personas.mjs`);
+			stale++;
+		} else if (!isCurrent(file, out)) {
+			console.error(`media/personas/${file.replace(/\.svg$/, '.webp')} is out of date: run node scripts/normalize-personas.mjs`);
+			stale++;
+		}
 	}
+	// 5. render each finished SVG to the WebP the deck shows (scripts/personas/render.mjs)
+	if (!check) await render(finished);
+	if (stale) process.exit(1);
 }
-// 5. render each finished SVG to the WebP the deck shows (scripts/personas/render.mjs)
-if (!check) await render(finished);
-if (stale) process.exit(1);

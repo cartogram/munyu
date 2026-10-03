@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import branchingArtSvg from '../media/personas/demo-two-people.svg?raw';
 
 gsap.registerPlugin(ScrollTrigger);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
@@ -63,81 +64,36 @@ function todaysModelSteps(scene) {
 	];
 }
 
-// The branching demo: the intent branches to Rose's and Myron's UIs, then to
-// the next person's, then each beat springs one layer of context out from
-// under every UI, with its row label, while the thread draws down to pin
-// that layer's example. Reduced motion keeps the beats but fades pieces in
-// place.
+// The branching demo: the illustration builds from the top down, one part
+// per beat (the person, each context card, then the UI), while the beat texts
+// on the right take turns. Each part slides up from below the frame and stops
+// in its place: no easing, so it moves only as the reader scrolls, and sticks.
+// Reduced motion fades each part in place.
+const BRANCHING_PARTS = ['person', 'card-1', 'card-2', 'card-3', 'ui'];
+
 function branchingSteps(scene) {
-	const svg = scene.querySelector('.branching');
-	layoutBranching(svg, window.matchMedia('(max-width: 699px)').matches);
-	const piece = (...names) => svg.querySelectorAll(names.map((name) => `[data-piece="${name}"]`).join());
-	// one part of layer n in every stack: its plate, thread or pin
-	const everyStack = (part, n) => svg.querySelectorAll(`[data-piece$="-${part}-${n}"]`);
+	const texts = [...scene.querySelectorAll('.branching-beats > p')];
+	const art = scene.querySelector('svg.branching-illustration');
+	gsap.set(texts.slice(1), { opacity: 0 });
 
-	const fade = (tl, targets, at, duration) =>
-		tl.fromTo(targets, { opacity: 0 }, { opacity: 1, duration, ease: 'none' }, at);
-	const draw = (tl, lines, at, duration) => {
-		if (reduceMotion) return fade(tl, lines, at, duration);
-		tl.fromTo(lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration, ease: 'power1.inOut' }, at);
-	};
-	// each piece springs down out of the one above it
-	const arrive = (tl, targets, at, hold, rise) => {
-		if (reduceMotion) return fade(tl, targets, at, hold * STEP_FADE);
-		tl.fromTo(
-			targets,
-			{ opacity: 0, y: -rise },
-			{ opacity: 1, y: 0, duration: hold * 0.45, ease: 'back.out(1.6)', stagger: hold * 0.04 },
-			at,
+	return BRANCHING_PARTS.map((name, i) => (tl, hold) => {
+		const at = tl.duration();
+		tl.to(texts[i], { opacity: 0, duration: hold * 0.1, ease: 'none' }, at).fromTo(
+			texts[i + 1],
+			{ opacity: 0 },
+			{ opacity: 1, duration: hold * 0.1, ease: 'none' },
+			at + hold * 0.1,
 		);
-	};
-
-	return [
-		(tl, hold) => {
-			const at = tl.duration();
-			draw(tl, piece('branch-two'), at, hold * 0.2);
-			arrive(tl, piece('rose-ui', 'myron-ui'), at + hold * 0.12, hold, 30);
-			fade(tl, piece('rose-name', 'myron-name'), at + hold * 0.3, hold * 0.15);
-		},
-		(tl, hold) => {
-			const at = tl.duration();
-			fade(tl, piece('branch-next'), at, hold * 0.15);
-			arrive(tl, piece('next-ui'), at + hold * 0.08, hold, 30);
-			fade(tl, piece('next-name'), at + hold * 0.25, hold * 0.15);
-		},
-		...[1, 2, 3, 4].map((n) => (tl, hold) => {
-			const at = tl.duration();
-			fade(tl, piece(`row-${n}`), at, hold * 0.15);
-			arrive(tl, everyStack('layer', n), at, hold, 66);
-			// the thread stops at the last real layer; "+ more" has no example
-			if (n === 4) return;
-			draw(tl, everyStack('thread', n), at + hold * 0.25, hold * 0.2);
-			fade(tl, everyStack('pin', n), at + hold * 0.42, hold * 0.06);
-		}),
-	];
-}
-
-// Where the branching demo's parts sit (data-place): three stacks in a row
-// under the tree, as drawn in index.html, or on phones one column, the rows
-// repeated beside each stack and the tree left out (css/talk.css).
-const BRANCHING_LAYOUTS = {
-	row: {
-		viewBox: '0 0 1560 720',
-		place: { intent: [0, 0], rose: [530, 250], myron: [950, 250], next: [1370, 250] },
-	},
-	column: {
-		viewBox: '0 0 720 1960',
-		place: { intent: [-590, 0], rose: [530, 250], myron: [530, 870], next: [530, 1490], 'rows-myron': [0, 620], 'rows-next': [0, 1240] },
-	},
-};
-
-function layoutBranching(svg, column) {
-	const layout = BRANCHING_LAYOUTS[column ? 'column' : 'row'];
-	svg.setAttribute('viewBox', layout.viewBox);
-	svg.classList.toggle('is-column', column);
-	svg.querySelectorAll('[data-place]').forEach((el) => {
-		const [x, y] = layout.place[el.dataset.place] ?? [0, 0];
-		el.setAttribute('transform', `translate(${x} ${y})`);
+		const part = art?.querySelector(`[data-part="${name}"]`);
+		if (!part) return;
+		if (reduceMotion) {
+			tl.fromTo(part, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' }, at);
+			return;
+		}
+		// from below the frame's bottom edge, clear of the finish's rough edges
+		const frame = art.viewBox.baseVal;
+		const below = frame.y + frame.height * 1.05 - part.getBBox().y;
+		tl.fromTo(part, { y: below }, { y: 0, duration: hold * 0.9, ease: 'none' }, at);
 	});
 }
 
@@ -437,6 +393,18 @@ function rebuild() {
 function restoreHash() {
 	const beat = beatById(decodeURIComponent(window.location.hash.slice(1)));
 	if (beat) window.scrollTo(0, beatPosition(beat));
+}
+
+// The branching demo's illustration is a WebP like the others, for the page
+// without scripts and the system page; here the finished SVG takes its
+// place, inline, so its parts can move (branchingSteps).
+const branchingArt = document.querySelector('img.branching-illustration');
+if (branchingArt) {
+	const svg = new DOMParser().parseFromString(branchingArtSvg, 'image/svg+xml').documentElement;
+	svg.setAttribute('class', branchingArt.className);
+	svg.setAttribute('role', 'img');
+	svg.setAttribute('aria-label', branchingArt.alt);
+	branchingArt.replaceWith(svg);
 }
 
 history.scrollRestoration = 'manual';

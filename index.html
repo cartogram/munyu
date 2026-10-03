@@ -578,199 +578,40 @@
 				
 					</section>
 
-					<section data-scene="demo-two-people">
-						<h2>One task, many UIs</h2>
-						<!-- js/site.js steps through it (branchingSteps) and, on phones, lays it out as a column -->
-						<svg class="branching" viewBox="0 0 1560 720" role="img" aria-labelledby="branching-title branching-desc">
-							<title id="branching-title">One intent, a different interface for each person</title>
-							<desc id="branching-desc">
-								The intent &ldquo;I&rsquo;d like to translate this text&rdquo; branches to three interfaces. Rose
-								gets a dark, low-glare translator; Myron gets a voice-only one that listens; the next
-								person&rsquo;s is still open. Under each interface sit layers of context: capabilities and
-								preferences (Rose: keep it dim, low glare; Myron: speaks, doesn&rsquo;t point), user context
-								(Rose: curtains drawn, at home; Myron: hands-free at his desk), memory and history (Rose:
-								retunes her setup daily; Myron: 23 years of voice control), and more.
-							</desc>
-							<defs>
-								<!-- an isometric card-stock plate: two side faces, then the top face, centred on 0 0.
-								     Each use sets its faces' colours (.plate-* in css/talk.css). -->
-								<g id="branching-plate">
-									<path class="plate-right" d="M 168.9 22.5 L 39 97.5 L 39 111.5 L 168.9 36.5 Z" />
-									<path class="plate-left" d="M -168.9 -22.5 L 39 97.5 L 39 111.5 L -168.9 -8.5 Z" />
-									<path class="plate-top" d="M -39 -97.5 L 168.9 22.5 L 39 97.5 L -168.9 -22.5 Z" />
-								</g>
-							</defs>
-
-							<!-- the intent, and the tree that branches from it to each person's UI -->
-							<g data-place="intent">
-								<text class="branching-eyebrow" x="950" y="30">Intent</text>
-								<text class="branching-intent" x="950" y="78">&ldquo;I&rsquo;d like to translate this text&rdquo;</text>
-							</g>
-							<g class="branching-tree">
-								<path class="branching-branch" d="M 950 92 V 130" />
-								<path class="branching-branch branching-draw" data-piece="branch-two" pathLength="1" d="M 950 130 H 530 V 180" />
-								<path class="branching-branch branching-draw" data-piece="branch-two" pathLength="1" d="M 950 130 V 180" />
-								<path class="branching-branch is-dashed" data-piece="branch-next" d="M 950 130 H 1370 V 180" />
-							</g>
-
-							<!-- the kinds of context, one row per layer, level with Rose's stack -->
-							<g class="branching-rows" id="branching-rows">
-								<text data-piece="row-1" x="340" y="300.5">Capabilities &amp; preferences</text>
-								<text data-piece="row-2" x="340" y="366.5">User context</text>
-								<text data-piece="row-3" x="340" y="432.5">Memory &amp; history</text>
-								<text data-piece="row-4" x="340" y="498.5">+ More</text>
-							</g>
-							<!-- on phones, the rows again beside Myron's and the next person's stacks -->
-							<use class="branching-rows-copy" data-place="rows-myron" href="#branching-rows" />
-							<use class="branching-rows-copy" data-place="rows-next" href="#branching-rows" />
-
-							<!-- Each stack is drawn around its UI's centre: context layers 66 apart below it,
-							     lowest first so each paints behind the one above; the thread pinning each
-							     layer's example; then the UI on top. Examples sit on the strip of their layer
-							     that shows below the one above. -->
-							<g data-place="rose" transform="translate(530 250)">
-								<g transform="translate(0 264)">
-									<g data-piece="rose-layer-4"><use class="plate plate-more" href="#branching-plate" /></g>
-								</g>
-								<g transform="translate(0 198)">
-									<g data-piece="rose-layer-3">
-										<use class="plate plate-layer" href="#branching-plate" />
-										<text class="branching-example" transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)" x="-100" y="60">Retunes her setup daily</text>
-									</g>
-								</g>
-								<g transform="translate(0 132)">
-									<g data-piece="rose-layer-2">
-										<use class="plate plate-layer" href="#branching-plate" />
-										<text class="branching-example" transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)" x="-100" y="60">Curtains drawn, at home</text>
-									</g>
-								</g>
-								<g transform="translate(0 66)">
-									<g data-piece="rose-layer-1">
-										<use class="plate plate-layer" href="#branching-plate" />
-										<text class="branching-example" transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)" x="-100" y="60">Keep it dim, low glare</text>
-									</g>
-								</g>
-								<path class="branching-thread branching-draw" data-piece="rose-thread-1" pathLength="1" d="M -142 -10 V 38" />
-								<path class="branching-thread branching-draw" data-piece="rose-thread-2" pathLength="1" d="M -142 38 V 104" />
-								<path class="branching-thread branching-draw" data-piece="rose-thread-3" pathLength="1" d="M -142 104 V 170" />
-								<circle class="branching-pin" data-piece="rose-pin-1" cx="-142" cy="38" r="4.5" />
-								<circle class="branching-pin" data-piece="rose-pin-2" cx="-142" cy="104" r="4.5" />
-								<circle class="branching-pin" data-piece="rose-pin-3" cx="-142" cy="170" r="4.5" />
-								<!-- a dark, low-glare translator: EN above, DE below -->
-								<g data-piece="rose-ui">
-									<use class="plate plate-ui plate-dark" href="#branching-plate" />
-									<g transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)">
-										<rect class="ui-panel" x="-100" y="-60" width="200" height="48" rx="4" />
-										<rect class="ui-chip" x="-92" y="-52" width="34" height="14" rx="7" />
-										<text class="ui-chip-text" x="-75" y="-41.5">EN</text>
-										<rect class="ui-line" x="-92" y="-30" width="150" height="5" rx="2.5" />
-										<rect class="ui-line is-dim" x="-92" y="-21" width="105" height="5" rx="2.5" />
-										<path class="ui-arrow" d="M 0 -8 V 6 M -5 1 L 0 7 L 5 1" />
-										<rect class="ui-panel" x="-100" y="12" width="200" height="48" rx="4" />
-										<rect class="ui-chip" x="-92" y="20" width="34" height="14" rx="7" />
-										<text class="ui-chip-text" x="-75" y="30.5">DE</text>
-										<rect class="ui-line" x="-92" y="42" width="164" height="5" rx="2.5" />
-										<rect class="ui-line is-dim" x="-92" y="51" width="120" height="5" rx="2.5" />
-									</g>
-								</g>
-								<g data-piece="rose-name">
-									<text class="branching-name" y="415">Rose</text>
-									<text class="branching-sub" y="447">Dark, low glare</text>
-								</g>
-							</g>
-
-							<g data-place="myron" transform="translate(950 250)">
-								<g transform="translate(0 264)">
-									<g data-piece="myron-layer-4"><use class="plate plate-more" href="#branching-plate" /></g>
-								</g>
-								<g transform="translate(0 198)">
-									<g data-piece="myron-layer-3">
-										<use class="plate plate-layer" href="#branching-plate" />
-										<text class="branching-example" transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)" x="-100" y="60">23 years of voice control</text>
-									</g>
-								</g>
-								<g transform="translate(0 132)">
-									<g data-piece="myron-layer-2">
-										<use class="plate plate-layer" href="#branching-plate" />
-										<text class="branching-example" transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)" x="-100" y="60">Hands-free, at his desk</text>
-									</g>
-								</g>
-								<g transform="translate(0 66)">
-									<g data-piece="myron-layer-1">
-										<use class="plate plate-layer" href="#branching-plate" />
-										<text class="branching-example" transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)" x="-100" y="60">Speaks, doesn&rsquo;t point</text>
-									</g>
-								</g>
-								<path class="branching-thread branching-draw" data-piece="myron-thread-1" pathLength="1" d="M -142 -10 V 38" />
-								<path class="branching-thread branching-draw" data-piece="myron-thread-2" pathLength="1" d="M -142 38 V 104" />
-								<path class="branching-thread branching-draw" data-piece="myron-thread-3" pathLength="1" d="M -142 104 V 170" />
-								<circle class="branching-pin" data-piece="myron-pin-1" cx="-142" cy="38" r="4.5" />
-								<circle class="branching-pin" data-piece="myron-pin-2" cx="-142" cy="104" r="4.5" />
-								<circle class="branching-pin" data-piece="myron-pin-3" cx="-142" cy="170" r="4.5" />
-								<!-- voice only: a listening mic and its waveform -->
-								<g data-piece="myron-ui">
-									<use class="plate plate-ui" href="#branching-plate" />
-									<g transform="matrix(0.86603 0.5 -0.86603 0.5 0 0)">
-										<circle class="ui-ring" cx="0" cy="-16" r="16" />
-										<circle class="ui-ring" cx="0" cy="-16" r="16" />
-										<circle class="ui-ring" cx="0" cy="-16" r="16" />
-										<circle class="ui-mic" cx="0" cy="-16" r="12" />
-										<path class="ui-wave" d="M -70 30 Q -50 14, -30 30 T 10 30 T 50 30 T 70 30" />
-										<path class="ui-wave is-dim" d="M -70 34 Q -45 46, -20 34 T 30 34 T 70 34" />
-										<text class="ui-caption" x="0" y="58">Listening&hellip;</text>
-									</g>
-								</g>
-								<g data-piece="myron-name">
-									<text class="branching-name" y="415">Myron</text>
-									<text class="branching-sub" y="447">Voice only</text>
-								</g>
-							</g>
-
-							<!-- the next person: a UI and context still to be found out -->
-							<g data-place="next" transform="translate(1370 250)">
-								<g transform="translate(0 264)">
-									<g data-piece="next-layer-4"><use class="plate plate-more" href="#branching-plate" /></g>
-								</g>
-								<g transform="translate(0 198)">
-									<g data-piece="next-layer-3"><use class="plate plate-layer plate-open" href="#branching-plate" /></g>
-								</g>
-								<g transform="translate(0 132)">
-									<g data-piece="next-layer-2"><use class="plate plate-layer plate-open" href="#branching-plate" /></g>
-								</g>
-								<g transform="translate(0 66)">
-									<g data-piece="next-layer-1"><use class="plate plate-layer plate-open" href="#branching-plate" /></g>
-								</g>
-								<g data-piece="next-ui"><use class="plate plate-ui plate-open" href="#branching-plate" /></g>
-								<g data-piece="next-name">
-									<text class="branching-name" y="415">And the next person&hellip;</text>
-								</g>
-							</g>
-						</svg>
+					<section data-scene="demo-two-people" class="branching">
+						<!-- js/site.js puts the illustration's SVG in place of the WebP and builds it
+						     one part per beat (branchingSteps), as the beat texts on the right take turns -->
+						<div class="branching-art">
+							<p class="branching-intent"><small>Intent</small> &ldquo;I&rsquo;d like to translate this text&rdquo;</p>
+							<img
+								class="branching-illustration"
+								src="media/personas/demo-two-people.webp"
+								alt="Rose, in dark glasses, above three cards: keep it dim, low glare; curtains drawn, at home; retunes her setup daily. An arrow leads from them down to a tablet showing a dark, dim translator."
+							/>
+						</div>
+						<div class="branching-text">
+							<h2>One task, many UIs</h2>
+							<div class="branching-beats">
+								<p>Everyone starts from the same intent.</p>
+								<p><strong>Rose.</strong> Light drains her energy and can make her ill.</p>
+								<p><strong>Capabilities &amp; preferences.</strong> She needs it dim, with nothing bright.</p>
+								<p><strong>User context.</strong> At home, curtains drawn.</p>
+								<p><strong>Memory &amp; history.</strong> She retunes her setup through the day.</p>
+								<p><strong>Her UI</strong> is what they add up to: a translator that&rsquo;s dark and low-glare.</p>
+							</div>
+						</div>
 						<aside class="notes" hidden>
 							<p>
 								One intent, the same for everyone: &ldquo;I&rsquo;d like to translate this text.&rdquo;
 							</p>
-							<p>
-								[Next] It branches. For Rose, a dark, low-glare translator. For Myron, nothing to point
-								at: it listens.
-							</p>
-							<p>
-								[Next] And the next person gets yet another. Every person who opens the app branches
-								the tree again.
-							</p>
-							<p>
-								[Next, four times] Why do they differ? Under each UI sits a stack of context, one layer
-								at a time:
-							</p>
+							<p>[Next] Start with the person, not the interface. Rose: light drains her energy.</p>
+							<p>[Next, three times] Then what we know about her, one layer at a time:</p>
 							<ul>
-								<li>capabilities and preferences: Rose keeps it dim, Myron speaks rather than points;</li>
-								<li>user context: curtains drawn at home; hands-free at his desk;</li>
-								<li>memory and history: Rose retunes her setup through the day, Myron has 23 years of voice control behind him;</li>
-								<li>and more we haven't listed.</li>
+								<li>capabilities and preferences: keep it dim, low glare;</li>
+								<li>user context: at home, curtains drawn;</li>
+								<li>memory and history: she retunes her setup through the day.</li>
 							</ul>
-							<p>
-								Same task, same app. The UI is the result of the intent and the person.
-							</p>
+							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator.</p>
 						</aside>
 					</section>
 				</div>
