@@ -32,11 +32,12 @@ export function media() {
 	);
 }
 
-// Every persona illustration in the deck: its file, scene and act.
+// Every persona illustration in the deck: its file (the finished SVG; the
+// deck shows the WebP rendered from it), scene and act.
 export function personas() {
 	return acts().flatMap((act) =>
-		[...act.html.matchAll(/<section data-scene="([^"]+)"(?:(?!<section data-scene=)[\s\S])*?src="media\/personas\/([a-z-]+\.svg)"/g)].map(
-			(m) => ({ scene: m[1], file: m[2], act: act.id }),
+		[...act.html.matchAll(/<section data-scene="([^"]+)"(?:(?!<section data-scene=)[\s\S])*?src="media\/personas\/([a-z-]+)\.webp"/g)].map(
+			(m) => ({ scene: m[1], file: `${m[2]}.svg`, act: act.id }),
 		),
 	);
 }

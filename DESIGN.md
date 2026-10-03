@@ -32,7 +32,8 @@ tell from the name where it's used:
 
 - `media/<scene>-<what>.<ext>`: screencasts, clips, logos. For example,
   `media/rose-family-settings.mp4` is the clip in the `rose` scene.
-- `media/personas/<scene>.svg`: the persona illustration for that scene,
+- `media/personas/<scene>.webp`: the persona illustration for that scene,
+  rendered from the finished `media/personas/<scene>.svg`, which is
   generated from `media/personas/originals/<scene>.svg`.
 
 ## Principles
@@ -58,8 +59,12 @@ Phones get a fixed scale and read the deck as a column.
 
 ## Persona illustrations
 
-Each persona scene stacks the interview quote above one illustration of that
-person's setup. The illustrations form one set:
+Each persona scene is one frame that never scrolls. Name, lede, a cut-paper
+divider and the interview quote sit centred in one half, and one
+illustration of that person's setup fills the other: text left by default,
+illustration left with `class="is-flipped"` on the scene. Phones stack the
+text above the illustration. A clip shows as a turning "Play video" ring in
+the slide's top-right corner. The illustrations form one set:
 
 - **In the act's colour, as steps of a shared ramp.** Lightness maps to a
   ramp step, from ink through to paper. Saturated colours (screens, light)
@@ -93,11 +98,16 @@ person's setup. The illustrations form one set:
 2. In the persona's scene in `index.html`, inside `.persona`, add:
    ```html
    <div class="portrait-ground">
-   	<img class="persona-portrait" src="media/personas/<name>.svg" alt="…" />
+   	<img class="persona-portrait" src="media/personas/<name>.webp" alt="…" />
    </div>
    ```
 3. Run `npm run personas`. It writes `media/personas/<name>.svg` in the
-   colour of the act the scene sits in.
+   colour of the act the scene sits in, then renders it to
+   `media/personas/<name>.webp` in headless Chrome
+   (`scripts/personas/render.mjs`). The deck shows the WebP: the cut-paper
+   finish is SVG filters that are too slow to run while the slides scroll.
+   `media/personas/rendered.json` records which SVG each WebP came from, so
+   the check catches a stale one.
 4. Run `npm run check`. The illustration then shows up in `system.html` on
    its own.
 

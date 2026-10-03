@@ -264,12 +264,17 @@ body[data-current-act='backup-qa'] { --act-color: var(--act-backup-qa); }
 	border-right: none;
 }
 
-/* scenes sit side by side and slide left inside the pinned card */
+/* scenes sit side by side and slide left inside the pinned card. The row is
+   always its own compositor layer, so as GSAP moves it (js/site.js) its
+   scenes are drawn once and slid, not repainted every frame: GSAP only
+   promotes it while a tween runs (force3D: 'auto'), and repainting re-runs
+   the persona illustrations' cut-paper filters, which made scrolling lag. */
 .act-panel-inner {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
 	width: max-content;
+	will-change: transform;
 }
 
 /* frames: the act opener and every scene fill at least one viewport */
@@ -584,18 +589,118 @@ main section[data-scene].is-wide > svg {
 	width: min(calc(900 * var(--u)), 100%);
 }
 
-/* persona scenes: interview quote stacked above its screenshot or clip, so
-   the quote gets the full column at quote size */
+/* persona scenes: name, lede, a divider, the interview quote and its
+   illustration, all centred in one column. One gap spaces every element,
+   the divider included, so margins are zeroed and the gap does the work. */
+main section[data-scene]:has(> .persona) {
+	--persona-gap: calc(48 * var(--u));
+	align-items: center;
+	text-align: center;
+	gap: var(--persona-gap);
+}
+
+main section[data-scene]:has(> .persona) > * {
+	margin: 0 auto;
+}
+
 .persona {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
-	gap: calc(40 * var(--u));
+	align-items: center;
+	gap: var(--persona-gap);
 	width: 100%;
+}
+
+/* the divider: a strip of cut paper a fifth of the column wide, above the
+   quote, cut like the illustrations' line work (its weight swells and thins,
+   its edges are rough). media/persona-divider.svg is its shape, filled with
+   the act's ink. */
+.persona::before {
+	content: '';
+	width: 20%;
+	height: calc(16 * var(--u));
+	background: currentColor;
+	mask: url('../media/persona-divider.svg') center / 100% 100% no-repeat;
 }
 
 .persona > blockquote {
 	margin: 0 auto;
+	/* centred, so no editorial first-line indent */
+	text-indent: 0;
+}
+
+/* a persona scene is one frame and never pages, in two columns: the text
+   (name, lede, divider, quote) centred as a group in the left half, the
+   illustration filling the right half. .persona steps aside (display: contents) so its quote,
+   divider and media join the scene's grid. The empty rows above
+   and below the text centre it; the gap is a top margin on the text, not a
+   row gap, so those rows cost nothing when the text fills the frame. Phones
+   read the scene as a column instead. */
+@media (min-width: 700px) {
+	main section[data-scene]:has(> .persona) {
+		height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		grid-template-rows: 1fr repeat(4, auto) 1fr;
+		column-gap: calc(2 * var(--persona-gap));
+		row-gap: 0;
+		align-items: center;
+		justify-items: center;
+	}
+
+	/* the name is one line, so it's set solid */
+	main section[data-scene]:has(> .persona) > h2 {
+		grid-area: 2 / 1;
+		line-height: 1;
+	}
+	main section[data-scene]:has(> .persona) > h4 { grid-area: 3 / 1; }
+	.persona::before { grid-area: 4 / 1; }
+
+	main section[data-scene]:has(> .persona) > h4,
+	.persona::before,
+	.persona > blockquote {
+		margin-top: var(--persona-gap);
+	}
+	/* half the width holds fewer words a line, so the quote steps down from
+	   60 to fit the frame */
+	.persona > blockquote {
+		grid-area: 5 / 1;
+		font-size: calc(42 * var(--u));
+	}
+
+	.persona {
+		display: contents;
+	}
+
+	/* the illustration's own size mustn't stretch the rows (contain: size),
+	   so it takes the right column's full height, square */
+	.persona > .portrait-ground {
+		grid-column: 2;
+		grid-row: 1 / -1;
+		contain: size;
+		width: auto;
+		height: 100%;
+		max-width: 100%;
+		min-height: 0;
+		aspect-ratio: 1;
+		margin: 0;
+	}
+
+	/* flipped (.is-flipped): the illustration on the left, the text on the
+	   right */
+	main section[data-scene].is-flipped > :is(h2, h4),
+	.is-flipped .persona::before,
+	.is-flipped .persona > blockquote {
+		grid-column: 2;
+	}
+
+	.is-flipped .persona > .portrait-ground {
+		grid-column: 1;
+	}
+
+	.persona .persona-portrait {
+		height: 100%;
+	}
 }
 
 /* the markup sizes media for a side-by-side row; let it span the column */
@@ -996,36 +1101,30 @@ aside.notes {
 	}
 }
 
-/* a slide's video shows as an outlined "Play video" panel the video's
-   size and shape (js/site.js swaps it in, and sets --ratio once the video
-   knows its own); pressing it plays the video in the spotlight. With a
+/* a slide's video shows as a round "Play video" button (js/site.js swaps
+   it in), fixed in the slide's top-right corner, inside the frame's
+   padding: its label three times round a circle, turning slowly, with no
+   border or ground. Pressing it plays the video in the spotlight. With a
    mouse, the cursor turns to ▶ over it. */
-.video-play {
-	display: grid;
-	place-items: center;
-	box-sizing: border-box;
-	/* a third of the frame's width (--card-width, js/site.js), centred */
-	width: calc(var(--card-width, 100vw) / 3);
-	max-width: 100%;
-	aspect-ratio: var(--ratio, 16 / 9);
-	align-self: center;
-	padding: 0;
-	/* tinted at rest, white under the pointer */
-	background: color-mix(in srgb, var(--act-color) 6%, white);
-	color: var(--act-color);
-	border: 1.5px solid currentColor;
-	border-radius: calc(16 * var(--u));
-	cursor: pointer;
-	transition: background-color 0.15s;
+main section[data-scene]:has(.video-play) {
+	position: relative;
 }
 
-/* matched as a scene's descendant, to beat the scenes' margin-left: 0 */
 main section[data-scene] .video-play {
-	margin-inline: auto;
-}
-
-.video-play:hover {
-	background: #fff;
+	position: absolute;
+	top: var(--frame-pad-top);
+	right: var(--frame-pad-x);
+	z-index: 1;
+	box-sizing: border-box;
+	width: calc(240 * var(--u));
+	aspect-ratio: 1;
+	margin: 0;
+	padding: 0;
+	background: none;
+	color: var(--act-color);
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
 }
 
 .video-play:focus-visible {
@@ -1033,10 +1132,32 @@ main section[data-scene] .video-play {
 	outline-offset: 3px;
 }
 
-/* phones: a third would be a sliver, so it spans the column */
-@media (max-width: 699px) {
-	.video-play {
-		width: 100%;
+/* the label, in the meta style's face and weight, tracked capitals sized
+   in the ring's own units so it scales with the button (js/site.js spaces
+   it evenly round the circle); one turn every 20s */
+.video-play-ring {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	animation: video-play-turn 20s linear infinite;
+}
+
+.video-play-ring text {
+	fill: currentColor;
+	font-family: var(--font-sans);
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+@keyframes video-play-turn {
+	to { transform: rotate(1turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.video-play-ring {
+		animation: none;
 	}
 }
 

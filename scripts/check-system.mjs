@@ -42,12 +42,12 @@ for (const [, entry] of system.matchAll(/^\s*\{ name: (.*) \},?$/gm)) {
 }
 
 // every media file exists and is named for its scene: media/<scene>-<what>.<ext>,
-// or media/personas/<scene>.svg for an illustration
+// or media/personas/<scene>.webp for an illustration
 for (const { path, scene } of media()) {
 	if (!existsSync(new URL(`../${path}`, import.meta.url))) errors.push(`${scene}: ${path} is missing`);
 	const name = path.replace(/^media\//, '');
-	const ok = name.startsWith('personas/') ? name === `personas/${scene}.svg` : name.startsWith(`${scene}-`);
-	if (!ok) errors.push(`${scene}: ${path} should be named ${name.startsWith('personas/') ? `media/personas/${scene}.svg` : `media/${scene}-<what>.<ext>`}`);
+	const ok = name.startsWith('personas/') ? name === `personas/${scene}.webp` : name.startsWith(`${scene}-`);
+	if (!ok) errors.push(`${scene}: ${path} should be named ${name.startsWith('personas/') ? `media/personas/${scene}.webp` : `media/${scene}-<what>.<ext>`}`);
 }
 
 // every illustration has its original, and the generated files are current
