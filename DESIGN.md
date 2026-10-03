@@ -71,6 +71,18 @@ person's setup. The illustrations form one set:
 - **Described.** Every illustration has `alt` text saying what the person is
   doing, not what the drawing looks like.
 
+- **Cut paper, one at a time.** The illustrations listed in `CUT_PAPER` in
+  `scripts/normalize-personas.mjs` get a collage finish, after Stephanie
+  Wunderlich's work for Mailchimp. Lines become cut strips of uneven weight,
+  edges are rough, and coloured pieces carry a grain. Light (beams, screens)
+  isn't paper, so it shows no outline. Small details keep thin lines. The `CUT`
+  table holds every setting. Run `npm run personas:watch` alongside
+  `npm start` to see changes as you save.
+- **Edited traces.** When a drawing needs changing, as Melody's did, the
+  untouched trace sits in `media/personas/traces/` and
+  `scripts/personas/<name>.mjs` applies the edits to it, writing
+  `originals/<name>.svg`.
+
 ### Adding or changing a persona
 
 1. Put the traced SVG in `media/personas/originals/<name>.svg`.

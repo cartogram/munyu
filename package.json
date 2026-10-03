@@ -10,7 +10,8 @@
 		"build": "npm run check && vite build",
 		"preview": "vite preview",
 		"check": "node scripts/check-system.mjs",
-		"personas": "node scripts/normalize-personas.mjs"
+		"personas": "node scripts/normalize-personas.mjs",
+		"personas:watch": "node --watch-path=scripts --watch-path=css --watch-path=index.html --watch-path=media/personas/originals scripts/normalize-personas.mjs"
 	},
 	"devEngines": {
 		"runtime": {
