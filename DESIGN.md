@@ -58,8 +58,12 @@ Phones get a fixed scale and read the deck as a column.
 
 ## Persona illustrations
 
-Each persona scene stacks the interview quote above one illustration of that
-person's setup. The illustrations form one set:
+Each persona scene is one frame that never scrolls. Name, lede, a cut-paper
+divider and the interview quote sit centred in one half, and one
+illustration of that person's setup fills the other: text left by default,
+illustration left with `class="is-flipped"` on the scene. Phones stack the
+text above the illustration. A clip shows as a turning "Play video" ring in
+the slide's top-right corner. The illustrations form one set:
 
 - **In the act's colour, as steps of a shared ramp.** Lightness maps to a
   ramp step, from ink through to paper. Saturated colours (screens, light)
