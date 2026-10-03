@@ -124,6 +124,11 @@ lists whatever is missing.
 
 Every scene uses one of the layouts in `system.html` → *Slide templates*
 (title, act opener, statement, headline + body, headline + list, persona,
-diagram, demo panels, Q&A, and so on). Each entry there points at a real
+side by side, demo panels, Q&A, and so on). Each entry there points at a real
 scene in `index.html`. Prefer an existing template to a new layout. If you
 add one, point a template entry at a scene that uses it.
+
+**Side by side** is the persona layout used for anything else: the scene's
+`<h2>` and `<h4>`, then a `.persona` holding a `<p>` (in the quote's place)
+and a `.portrait-ground` frame holding the media, such as a diagram. Text
+sits left and media right; `class="is-flipped"` swaps them.

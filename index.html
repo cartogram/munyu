@@ -336,128 +336,124 @@
 
 					<section data-scene="todays-model">
 						<h2>Today's model</h2>
-						<svg viewBox="0 0 640 460" style="max-height: calc(480 * var(--u)); max-width: 100%; height: auto; overflow: visible;">
+						<h4>One interface, built for the average, with tools stacked on top</h4>
+						<div class="persona">
 							<!-- Revealed on the last beat, as the layers start to fight -->
-							<text
-								data-piece="conflict"
-								x="320"
-								y="70"
-								text-anchor="middle"
-								font-size="24"
-								font-weight="600"
-								fill="var(--act-color)"
-							>
-								&hellip;and they start to conflict
-							</text>
-							<!-- Left stack: screen reader -->
-							<text x="188" y="210" text-anchor="middle" font-size="26" fill="var(--muted-color)">
-								&#8942;
-							</text>
-							<g class="diagram-piece" data-piece="screen-reader">
-								<rect
-									x="108"
-									y="224"
-									width="180"
-									height="60"
-									rx="8"
-									fill="var(--r-background-color)"
-									stroke="var(--r-link-color)"
-									stroke-width="2"
-									stroke-dasharray="6 4"
-								/>
-								<rect
-									x="108"
-									y="255"
-									width="180"
-									height="60"
-									rx="8"
-									fill="var(--r-background-color)"
-									stroke="var(--r-link-color)"
-									stroke-width="2"
-									stroke-dasharray="6 4"
-								/>
-								<text x="196" y="290" text-anchor="middle" font-size="20" fill="var(--r-main-color)">
-									Screen reader
-								</text>
-							</g>
-
-							<!-- Right stack: voice control, zoom, dark mode -->
-							<text x="443" y="145" text-anchor="middle" font-size="26" fill="var(--muted-color)">
-								&#8942;
-							</text>
-							<g class="diagram-piece" data-piece="voice">
-								<rect
-									x="348"
-									y="160"
-									width="190"
-									height="60"
-									rx="8"
-									fill="var(--r-background-color)"
-									stroke="var(--r-link-color)"
-									stroke-width="2"
-									stroke-dasharray="6 4"
-								/>
-								<text x="443" y="195" text-anchor="middle" font-size="20" fill="var(--r-main-color)">
-									Voice control
-								</text>
-							</g>
-
-							<g class="diagram-piece" data-piece="zoom">
-								<rect
-									x="348"
-									y="210"
-									width="190"
-									height="60"
-									rx="8"
-									fill="var(--r-background-color)"
-									stroke="var(--r-link-color)"
-									stroke-width="2"
-									stroke-dasharray="6 4"
-								/>
-								<text x="443" y="245" text-anchor="middle" font-size="20" fill="var(--r-main-color)">
-									Zoom
-								</text>
-							</g>
-
-							<g class="diagram-piece" data-piece="dark">
-								<rect
-									x="348"
-									y="256"
-									width="190"
-									height="60"
-									rx="8"
-									fill="var(--r-background-color)"
-									stroke="var(--r-link-color)"
-									stroke-width="2"
-									stroke-dasharray="6 4"
-								/>
-								<text x="443" y="291" text-anchor="middle" font-size="20" fill="var(--r-main-color)">
-									Dark mode
-								</text>
-							</g>
-
-							<!-- Base -->
-							<g class="diagram-piece" data-piece="base">
-								<rect
-									x="70"
-									y="310"
-									width="500"
-									height="100"
-									rx="10"
-									fill="var(--r-link-color)"
-								/>
-								<text
-									x="320"
-									y="368"
-									text-anchor="middle"
-									font-size="22"
-									font-weight="600"
-									fill="var(--r-background-color)"
+							<p data-piece="conflict">&hellip;and they start to conflict</p>
+							<div class="portrait-ground">
+								<!-- One interface, and the tools stacked on top of it: each layer is
+								     a pane of the same 400 × 240 dashboard, tilted by the same
+								     isometric matrix and lifted 100 above the last. Each data-piece
+								     drops in on its own beat (todaysModelSteps, js/site.js), and on
+								     the last its .stack-pane slips out of register, leaving its
+								     label in place. The matrix groups are never animated: GSAP
+								     would overwrite their transform. -->
+								<svg
+									class="stack-diagram"
+									viewBox="0 50 900 670"
+									role="img"
+									aria-label="One base interface with four accessibility tools stacked on top of it: dark mode, a screen reader, high contrast and magnification. Each is a separate layer, and they start to conflict."
 								>
-									one (hopefully) adaptive interface
-								</text>
-							</g>
-						</svg>
+									<!-- Base UI: the dashboard, on paper, with the sheet's edge below it -->
+									<g data-piece="base">
+										<path class="tone-soft" d="M92 554L438 694L438 706L92 566Z" />
+										<path class="tone-deep" d="M438 694L646 610L646 622L438 706Z" />
+										<g transform="matrix(0.866 0.35 -0.866 0.35 300 470)">
+											<rect class="tone-paper stack-sheet-edge" width="400" height="240" rx="10" />
+											<rect class="tone-deep" x="10" y="10" width="380" height="26" rx="6" />
+											<rect class="tone-wash" x="10" y="46" width="70" height="184" rx="6" />
+											<rect class="tone-soft" x="92" y="46" width="90" height="70" rx="6" />
+											<rect class="tone-soft" x="192" y="46" width="90" height="70" rx="6" />
+											<rect class="tone-soft" x="292" y="46" width="98" height="70" rx="6" />
+											<rect class="tone-wash" x="92" y="126" width="298" height="104" rx="6" />
+											<rect class="tone-accent" x="110" y="178" width="24" height="40" />
+											<rect class="tone-accent" x="152" y="156" width="24" height="62" />
+											<rect class="tone-accent" x="194" y="188" width="24" height="30" />
+											<rect class="tone-accent" x="236" y="142" width="24" height="76" />
+											<rect class="tone-accent" x="278" y="166" width="24" height="52" />
+											<rect class="tone-accent" x="320" y="134" width="24" height="84" />
+										</g>
+										<path class="stack-leader" d="M656 610h28" />
+										<text class="stack-label" x="694" y="620">Base UI</text>
+									</g>
+
+									<!-- Dark mode: a dark sheet laid over the whole interface -->
+									<g data-piece="dark">
+										<g class="stack-pane">
+											<g transform="matrix(0.866 0.35 -0.866 0.35 300 370)">
+												<rect class="tone-ink stack-tint" width="400" height="240" rx="10" />
+												<rect class="tone-deep" x="10" y="10" width="380" height="26" rx="6" />
+											</g>
+										</g>
+										<path class="stack-leader" d="M656 510h28" />
+										<text class="stack-label" x="694" y="520">Dark mode</text>
+									</g>
+
+									<!-- Screen reader: focus rings and the reading order, on a clear sheet -->
+									<g data-piece="screen-reader">
+										<g class="stack-pane">
+											<g transform="matrix(0.866 0.35 -0.866 0.35 300 270)">
+												<rect class="stack-clear" width="400" height="240" rx="10" />
+												<rect class="stack-focus" x="85" y="39" width="104" height="84" rx="10" />
+												<rect class="stack-focus is-queued" x="185" y="39" width="104" height="84" rx="10" />
+												<rect class="stack-focus is-queued" x="285" y="39" width="112" height="84" rx="10" />
+												<circle class="tone-ink" cx="96" cy="50" r="13" />
+												<circle class="tone-ink" cx="196" cy="50" r="13" />
+												<circle class="tone-ink" cx="296" cy="50" r="13" />
+												<text class="stack-order" x="96" y="56">1</text>
+												<text class="stack-order" x="196" y="56">2</text>
+												<text class="stack-order" x="296" y="56">3</text>
+											</g>
+										</g>
+										<path class="stack-leader" d="M656 410h28" />
+										<text class="stack-label" x="694" y="420">Screen reader</text>
+									</g>
+
+									<!-- High contrast: heavy borders forced round every element -->
+									<g data-piece="contrast">
+										<g class="stack-pane">
+											<g transform="matrix(0.866 0.35 -0.866 0.35 300 170)">
+												<rect class="stack-clear" width="400" height="240" rx="10" />
+												<rect class="stack-border" x="10" y="10" width="380" height="26" rx="6" />
+												<rect class="stack-border" x="10" y="46" width="70" height="184" rx="6" />
+												<rect class="stack-border" x="92" y="46" width="90" height="70" rx="6" />
+												<rect class="stack-border" x="192" y="46" width="90" height="70" rx="6" />
+												<rect class="stack-border" x="292" y="46" width="98" height="70" rx="6" />
+												<rect class="stack-border" x="92" y="126" width="298" height="104" rx="6" />
+											</g>
+										</g>
+										<path class="stack-leader" d="M656 310h28" />
+										<text class="stack-label" x="694" y="320">High contrast</text>
+									</g>
+
+									<!-- Magnification: a lens over the third card, showing it enlarged -->
+									<g data-piece="magnifier">
+										<g class="stack-pane">
+											<g transform="matrix(0.866 0.35 -0.866 0.35 300 70)">
+												<defs>
+													<clipPath id="stack-lens">
+														<circle cx="341" cy="81" r="62" />
+													</clipPath>
+												</defs>
+												<rect class="stack-clear" width="400" height="240" rx="10" />
+												<circle class="tone-paper" cx="341" cy="81" r="62" />
+												<g clip-path="url(#stack-lens)">
+													<g transform="translate(341 81) scale(1.9) translate(-341 -81)">
+														<rect class="tone-soft" x="292" y="46" width="98" height="70" rx="6" />
+														<rect class="tone-deep" x="304" y="60" width="50" height="8" rx="4" />
+														<rect class="tone-wash" x="304" y="76" width="74" height="6" rx="3" />
+														<rect class="tone-wash" x="304" y="88" width="60" height="6" rx="3" />
+													</g>
+												</g>
+												<circle class="stack-lens-rim" cx="341" cy="81" r="62" />
+											</g>
+										</g>
+										<path class="stack-leader" d="M656 210h28" />
+										<text class="stack-label" x="694" y="220">Magnification</text>
+									</g>
+								</svg>
+							</div>
+						</div>
 
 						<aside class="notes" hidden>
 							<p>
@@ -471,7 +467,7 @@
 								That approach brought us quite far. It's amazing to see in the interviews how low the barriers can get. But we also noticed its limitations.
 							</p>
 							<p>
-								[Next] The layers start bumping into each other &mdash; zoom shoves dark mode off the stack. That's Sinead's setup in one picture.
+								[Next] The layers start bumping into each other &mdash; none of them knows about the others, so they slide out of line and the magnifier no longer sits over what it was meant to show. That's Sinead's setup in one picture.
 							</p>
 						</aside>
 					</section>

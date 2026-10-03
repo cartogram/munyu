@@ -21,44 +21,45 @@ function fadeInStep(piece) {
 	return (tl, hold) => tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
 }
 
-// Today's model: the base arrives, each adaptation drops onto the stack, then
-// they jostle until zoom shoves dark mode off the edge. Reduced motion keeps
-// the beats but fades pieces in place and skips the jostling.
+// Today's model: the base interface arrives, then each tool drops onto the
+// stack as its own pane (dark mode, screen reader, high contrast,
+// magnification). On the last beat they jostle and slide out of register,
+// none aware of the others, and the magnifier drifts off what it was
+// showing. Reduced motion keeps the beats but fades each pane in place and
+// shows the conflict without moving anything.
 function todaysModelSteps(scene) {
 	const piece = (name) => scene.querySelector(`[data-piece="${name}"]`);
-	const layers = ['screen-reader', 'voice', 'zoom', 'dark'].map(piece);
-	const [screenReader, voice, zoom, dark] = layers;
+	const layers = ['dark', 'screen-reader', 'contrast', 'magnifier'].map(piece);
+	const [dark, screenReader, contrast, magnifier] = layers;
 
 	const arrive = (target, from) => (tl, hold) => {
 		if (reduceMotion) return fadeInStep(target)(tl, hold);
-		tl.fromTo(target, { opacity: 0, ...from }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.4)' });
+		tl.fromTo(target, { opacity: 0, ...from }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.2)' });
 	};
+
+	// the conflict moves each tool's pane, not its label, so the labels stay
+	// lined up while the panes slip out of register
+	const pane = (layer) => layer.querySelector('.stack-pane');
 
 	const conflict = (tl, hold) => {
 		tl.fromTo(piece('conflict'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
-		if (!reduceMotion) {
-			tl.to(
-				layers,
-				{
-					rotation: (i) => (i % 2 ? 2.5 : -2.5),
-					transformOrigin: '50% 100%',
-					duration: hold * 0.08,
-					ease: 'sine.inOut',
-					yoyo: true,
-					repeat: 3,
-				},
-				'<',
-			);
-		}
-		tl.to(zoom, { scale: 1.15, transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' })
-			.to(dark, { x: 150, y: 40, rotation: 14, opacity: 0.35, duration: hold * 0.35, ease: 'power2.out' }, `<+=${hold * 0.02}`)
-			.to(voice, { y: -18, rotation: -5, duration: hold * 0.3, ease: 'power2.out' }, '<')
-			.to(screenReader, { x: -10, rotation: -6, duration: hold * 0.3, ease: 'power2.out' }, '<');
+		if (reduceMotion) return;
+		// a jostle, each pane nudged its own way, then each settles out of
+		// line with the interface beneath
+		tl.to(
+			layers.map(pane),
+			{ x: (i) => (i % 2 ? 6 : -6), duration: hold * 0.05, ease: 'sine.inOut', yoyo: true, repeat: 3 },
+			'<',
+		)
+			.to(pane(dark), { x: -34, y: 6, duration: hold * 0.3, ease: 'power2.out' })
+			.to(pane(screenReader), { x: 28, y: -4, duration: hold * 0.3, ease: 'power2.out' }, '<')
+			.to(pane(contrast), { x: -18, y: 10, duration: hold * 0.3, ease: 'power2.out' }, '<')
+			.to(pane(magnifier), { x: 70, y: -26, duration: hold * 0.35, ease: 'power2.out' }, '<');
 	};
 
 	return [
 		arrive(piece('base'), { y: 40 }),
-		...layers.map((layer) => arrive(layer, { y: -140 })),
+		...layers.map((layer) => arrive(layer, { y: -120 })),
 		conflict,
 	];
 }
