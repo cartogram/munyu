@@ -7,6 +7,7 @@ import { readFileSync, writeFileSync } from 'fs';
 const SRC = new URL('../../media/personas/traces/melody.svg', import.meta.url);
 const OUT = new URL('../../media/personas/originals/melody.svg', import.meta.url);
 const INK = '#000000', WHITE = '#FEFEFE', FLOOR = '#C8C7C8';
+const CHAIR = '#DCDBDD'; // faded: the pale wash step, so it's clean, with no grain or spill
 
 const f = (v) => +v.toFixed(1);
 const poly = (pts) => 'M' + pts.map(([x, y]) => `${f(x)} ${f(y)}`).join('L') + 'Z';
@@ -122,7 +123,7 @@ svg = svg.replace(/<path\b[^>]*?\/?>/g, (p) => {
 // defined between the paths stay where they are.
 const first = svg.match(/<path\b[^>]*?\/?>/);
 const at = first.index + first[0].length;
-svg = svg.slice(0, at) + path(WHITE, clearBack) + path(INK, chairBack) + svg.slice(at);
+svg = svg.slice(0, at) + path(WHITE, clearBack) + path(CHAIR, chairBack) + svg.slice(at);
 const top = [
 	path(WHITE, cover),
 	path(FLOOR, floor),

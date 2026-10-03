@@ -19,7 +19,7 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['melody.svg', 'allana.svg']); // rolling the finish out one at a time
+const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg']); // rolling the finish out one at a time
 
 const NAMED = { black: '#000000', white: '#ffffff' };
 const rgb = (hex) => {
@@ -143,7 +143,7 @@ function normalize(src, act, cutPaper) {
 	const wash = tinted
 		.map((p) => `<path fill="${shade(CUT.wash.tone)}"${p.rule} d="${p.d}"/>`)
 		.join('');
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><defs>${cutPaperFilters([vx, vy, side], shade('ink'))}</defs>${body}<g filter="url(#wash)" style="mix-blend-mode:multiply">${wash}</g></svg>\n`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><defs>${cutPaperFilters([vx, vy, side], shade('ink'), [x0, y0, x1, y1])}</defs>${body}<g filter="url(#wash)" style="mix-blend-mode:multiply">${wash}</g></svg>\n`;
 }
 
 // Sizes are per mille of the frame, so every illustration gets the same look.
@@ -169,7 +169,7 @@ const WASHED = ['deep', 'accent', 'soft', 'wash']; // ramp steps that get a wash
 // one noise field for everything, so neighbouring edges wobble together and
 // never open a gap. The weight wobble is one field for the pieces and another
 // for the ink, so the strips between them vary in width.
-function cutPaperFilters([x, y, side], ink) {
+function cutPaperFilters([x, y, side], ink, [dx0, dy0, dx1, dy1]) {
 	const n = (v) => +v.toFixed(3);
 	const u = side / 1000;
 	const region = `filterUnits="userSpaceOnUse" x="${n(x - side * 0.05)}" y="${n(y - side * 0.05)}" width="${n(side * 1.1)}" height="${n(side * 1.1)}" color-interpolation-filters="sRGB"`;
@@ -190,7 +190,10 @@ function cutPaperFilters([x, y, side], ink) {
 <feFlood flood-color="${ink}" flood-opacity="${opacity}"/>
 <feComposite in2="offset" operator="in" result="shadow"/>`;
 	const W = CUT.wash;
-	return `<filter id="wash" ${region}>
+	// the wash stays within the drawing: it may spill onto the page inside it,
+	// never past its edges
+	const within = `filterUnits="userSpaceOnUse" x="${n(dx0)}" y="${n(dy0)}" width="${n(dx1 - dx0)}" height="${n(dy1 - dy0)}" color-interpolation-filters="sRGB"`;
+	return `<filter id="wash" ${within}>
 <feOffset in="SourceGraphic" dx="${n(W.dx * u)}" dy="${n(W.dy * u)}" result="shifted"/>
 <feMorphology in="shifted" operator="dilate" radius="${n(W.spread * u)}" result="spread"/>
 <feTurbulence type="fractalNoise" baseFrequency="${n(0.012 / u)}" numOctaves="3" seed="51" result="bleedNoise"/>
