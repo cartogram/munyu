@@ -423,7 +423,7 @@ main section[data-scene] > * {
 }
 
 /* text and layout blocks run the full width between the frame's padding */
-main section[data-scene] > :is(h2, h4, p, ul, ol, blockquote, .persona, .demo-panels) {
+main section[data-scene] > :is(h2, h4, p, ul, ol, blockquote, .persona) {
 	align-self: stretch;
 }
 
@@ -456,10 +456,6 @@ main p,
 main ul {
 	font-size: calc(55 * var(--u));
 	line-height: 1.2;
-}
-
-.demo-panel p {
-	font-size: inherit;
 }
 
 main li + li {
@@ -518,12 +514,10 @@ main section[data-scene]:has(blockquote) > h2 {
 }
 
 
-/* one meta style for authors and labels, demo panel labels, the slide
-   chrome and the Notes button. rem, so it stays meta-sized inside a 40px
-   paragraph. */
+/* one meta style for authors and labels, the slide chrome and the Notes
+   button. rem, so it stays meta-sized inside a 40px paragraph. */
 main small,
 .act-tab,
-.demo-panel > h4,
 .deck-chrome,
 .drawer-heading,
 .video-play {
@@ -531,9 +525,6 @@ main small,
 	font-size: 1rem; /* 16px */
 	font-weight: 700;
 	line-height: 1.4;
-	/* demo panel labels are h4s; they don't take the lede's indent or underline */
-	text-indent: 0;
-	text-decoration: none;
 }
 
 /* the font has no longer dash, so a doubled em dash is the glyph stretched
@@ -727,15 +718,219 @@ main section[data-scene]:has(> .persona) > * {
 	height: auto;
 }
 
-.demo-panels {
-	display: flex;
-	gap: calc(24 * var(--u));
-	width: 100%;
+/* the branching demo (demo-two-people): one intent branching to each
+   person's UI, with the context layers that shape it sprung out beneath.
+   Drawn in the act's colour as steps of the illustration ramp. js/site.js
+   steps it and, on phones, swaps in a column layout (.is-column). */
+.branching {
+	--ink: var(--act-color);
+	--deep: color-mix(in srgb, var(--act-color) var(--ramp-deep), white);
+	--accent: color-mix(in srgb, var(--act-color) var(--ramp-accent), white);
+	--soft: color-mix(in srgb, var(--act-color) var(--ramp-soft), white);
+	--wash: color-mix(in srgb, var(--act-color) var(--ramp-wash), white);
+	/* the frame's height under a one-line headline */
+	height: calc(600 * var(--u));
+	width: auto;
+	max-width: 100%;
+	overflow: visible;
+	fill: var(--ink);
+	font-family: var(--font-sans);
+	font-weight: 700;
 }
 
-.demo-panel > * {
-	max-width: none;
-	margin-inline: 0;
+.branching-eyebrow,
+.branching-intent,
+.branching-name,
+.branching-sub {
+	text-anchor: middle;
+}
+
+.branching-eyebrow {
+	font-size: 20px;
+}
+
+.branching-intent {
+	font-family: var(--font-serif);
+	font-size: 36px;
+	font-weight: 400;
+}
+
+.branching-rows text {
+	font-size: 22px;
+	text-anchor: end;
+}
+
+.branching-name {
+	font-size: 26px;
+}
+
+/* the sub-meta: serif italic */
+.branching-sub {
+	font-family: var(--font-serif);
+	font-size: 18px;
+	font-style: italic;
+	font-weight: 400;
+}
+
+.branching-example {
+	font-size: 17px;
+	font-weight: 600;
+}
+
+.branching-branch,
+.branching-thread {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: 2;
+}
+
+.branching-branch.is-dashed {
+	stroke-dasharray: 8 6;
+}
+
+/* drawn on by js/site.js, from a dash offset of 1 (pathLength="1") to 0 */
+.branching-draw {
+	stroke-dasharray: 1;
+}
+
+.branching-pin {
+	fill: var(--ink);
+}
+
+/* the plates: each use sets the colours its faces take */
+.plate {
+	--plate-top: #fff;
+	--plate-right: var(--wash);
+	--plate-left: var(--soft);
+	--plate-stroke: var(--deep);
+	--plate-dash: none;
+	stroke-width: 2;
+	stroke-linejoin: round;
+}
+
+.plate-top,
+.plate-right,
+.plate-left {
+	stroke: var(--plate-stroke);
+	stroke-dasharray: var(--plate-dash);
+}
+
+.plate-top { fill: var(--plate-top); }
+.plate-right { fill: var(--plate-right); }
+.plate-left { fill: var(--plate-left); }
+
+.plate-ui {
+	--plate-right: var(--soft);
+	--plate-left: var(--accent);
+	--plate-stroke: var(--ink);
+}
+
+.plate-dark {
+	--plate-top: var(--ink);
+}
+
+.plate-open {
+	--plate-right: var(--wash);
+	--plate-left: var(--wash);
+	--plate-dash: 8 6;
+}
+
+.plate-more {
+	--plate-right: #fff;
+	--plate-left: #fff;
+	--plate-stroke: var(--accent);
+	--plate-dash: 8 6;
+}
+
+/* the UIs on the plates. Rose's is dark and dim: nothing on it is brighter
+   than the ramp's middle step. */
+.ui-panel,
+.ui-chip,
+.ui-arrow {
+	fill: none;
+	stroke: var(--deep);
+	stroke-width: 1.5;
+}
+
+.ui-chip {
+	stroke: var(--accent);
+}
+
+.ui-arrow {
+	stroke: var(--accent);
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.ui-chip-text {
+	font-size: 8px;
+	text-anchor: middle;
+	fill: var(--accent);
+}
+
+.ui-line {
+	fill: var(--accent);
+}
+
+.ui-line.is-dim {
+	fill: var(--deep);
+}
+
+.ui-mic {
+	fill: var(--accent);
+	stroke: var(--ink);
+	stroke-width: 1.5;
+}
+
+.ui-wave {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: 1.5;
+	stroke-linecap: round;
+}
+
+.ui-wave.is-dim {
+	stroke: var(--accent);
+	stroke-dasharray: 3 3;
+}
+
+.ui-caption {
+	font-size: 10px;
+	font-weight: 600;
+	text-anchor: middle;
+}
+
+/* Myron's mic listens: its rings pulse out, one after another */
+.ui-ring {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: 1;
+	opacity: 0;
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: ui-ring 2.4s ease-out infinite;
+}
+
+.ui-ring:nth-of-type(2) { animation-delay: 0.8s; }
+.ui-ring:nth-of-type(3) { animation-delay: 1.6s; }
+
+@keyframes ui-ring {
+	0% { opacity: 0.8; transform: scale(0.75); }
+	100% { opacity: 0; transform: scale(1.7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ui-ring {
+		animation: none;
+		opacity: 1;
+	}
+}
+
+/* the rows repeat beside every stack only in the column layout, which has
+   no room for the tree */
+.branching:not(.is-column) .branching-rows-copy,
+.branching.is-column .branching-tree {
+	display: none;
 }
 
 /* phones read the deck as a column rather than a canvas: a fixed scale,
@@ -746,8 +941,9 @@ main section[data-scene]:has(> .persona) > * {
 		--frame-pad-x: 1.5rem;
 	}
 
-	.demo-panels {
-		flex-direction: column;
+	.branching {
+		width: 100%;
+		height: auto;
 	}
 }
 

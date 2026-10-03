@@ -12,7 +12,7 @@ ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilityc
 const STEPPED_SCENES = {
 	'todays-model': todaysModelSteps,
 	'your-ui-is-not-my-ui-create-specific': (scene) => rotatorSteps(scene.querySelector('ul')),
-	'demo-two-people': (scene) => [...scene.querySelectorAll('.demo-panel')].map(fadeInStep),
+	'demo-two-people': branchingSteps,
 };
 const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
 const STEP_FADE = 0.1; // share of a step spent fading its piece in
@@ -61,6 +61,84 @@ function todaysModelSteps(scene) {
 		...layers.map((layer) => arrive(layer, { y: -140 })),
 		conflict,
 	];
+}
+
+// The branching demo: the intent branches to Rose's and Myron's UIs, then to
+// the next person's, then each beat springs one layer of context out from
+// under every UI, with its row label, while the thread draws down to pin
+// that layer's example. Reduced motion keeps the beats but fades pieces in
+// place.
+function branchingSteps(scene) {
+	const svg = scene.querySelector('.branching');
+	layoutBranching(svg, window.matchMedia('(max-width: 699px)').matches);
+	const piece = (...names) => svg.querySelectorAll(names.map((name) => `[data-piece="${name}"]`).join());
+	// one part of layer n in every stack: its plate, thread or pin
+	const everyStack = (part, n) => svg.querySelectorAll(`[data-piece$="-${part}-${n}"]`);
+
+	const fade = (tl, targets, at, duration) =>
+		tl.fromTo(targets, { opacity: 0 }, { opacity: 1, duration, ease: 'none' }, at);
+	const draw = (tl, lines, at, duration) => {
+		if (reduceMotion) return fade(tl, lines, at, duration);
+		tl.fromTo(lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration, ease: 'power1.inOut' }, at);
+	};
+	// each piece springs down out of the one above it
+	const arrive = (tl, targets, at, hold, rise) => {
+		if (reduceMotion) return fade(tl, targets, at, hold * STEP_FADE);
+		tl.fromTo(
+			targets,
+			{ opacity: 0, y: -rise },
+			{ opacity: 1, y: 0, duration: hold * 0.45, ease: 'back.out(1.6)', stagger: hold * 0.04 },
+			at,
+		);
+	};
+
+	return [
+		(tl, hold) => {
+			const at = tl.duration();
+			draw(tl, piece('branch-two'), at, hold * 0.2);
+			arrive(tl, piece('rose-ui', 'myron-ui'), at + hold * 0.12, hold, 30);
+			fade(tl, piece('rose-name', 'myron-name'), at + hold * 0.3, hold * 0.15);
+		},
+		(tl, hold) => {
+			const at = tl.duration();
+			fade(tl, piece('branch-next'), at, hold * 0.15);
+			arrive(tl, piece('next-ui'), at + hold * 0.08, hold, 30);
+			fade(tl, piece('next-name'), at + hold * 0.25, hold * 0.15);
+		},
+		...[1, 2, 3, 4].map((n) => (tl, hold) => {
+			const at = tl.duration();
+			fade(tl, piece(`row-${n}`), at, hold * 0.15);
+			arrive(tl, everyStack('layer', n), at, hold, 66);
+			// the thread stops at the last real layer; "+ more" has no example
+			if (n === 4) return;
+			draw(tl, everyStack('thread', n), at + hold * 0.25, hold * 0.2);
+			fade(tl, everyStack('pin', n), at + hold * 0.42, hold * 0.06);
+		}),
+	];
+}
+
+// Where the branching demo's parts sit (data-place): three stacks in a row
+// under the tree, as drawn in index.html, or on phones one column, the rows
+// repeated beside each stack and the tree left out (css/talk.css).
+const BRANCHING_LAYOUTS = {
+	row: {
+		viewBox: '0 0 1560 720',
+		place: { intent: [0, 0], rose: [530, 250], myron: [950, 250], next: [1370, 250] },
+	},
+	column: {
+		viewBox: '0 0 720 1960',
+		place: { intent: [-590, 0], rose: [530, 250], myron: [530, 870], next: [530, 1490], 'rows-myron': [0, 620], 'rows-next': [0, 1240] },
+	},
+};
+
+function layoutBranching(svg, column) {
+	const layout = BRANCHING_LAYOUTS[column ? 'column' : 'row'];
+	svg.setAttribute('viewBox', layout.viewBox);
+	svg.classList.toggle('is-column', column);
+	svg.querySelectorAll('[data-place]').forEach((el) => {
+		const [x, y] = layout.place[el.dataset.place] ?? [0, 0];
+		el.setAttribute('transform', `translate(${x} ${y})`);
+	});
 }
 
 // A list whose items share their opening words, shown as one line: the shared

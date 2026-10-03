@@ -550,8 +550,8 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="small">
 					<strong>Meta</strong>
-					Authors, section labels, asides, demo panel labels, the slide chrome and the Notes button.
-					<code>main small, .demo-panel &gt; h4, .deck-chrome, #notes-toggle</code>
+					Authors, section labels, asides, the slide chrome and the Notes button.
+					<code>main small, .deck-chrome, #notes-toggle</code>
 					<output></output>
 				</div>
 				<div class="ts-sample act-panel" data-act="hypothesis">
@@ -833,17 +833,16 @@
 				{ name: 'Persona', act: 'user-research', scene: 'sinead', note: 'Name, lede, divider and quote on the left; the illustration fills the right. One frame, never scrolls.' },
 				{ name: 'Headline + media', act: 'hypothesis', scene: 'ai-accessibility-today' },
 				{ name: 'Diagram', act: 'limits-of-adaptability', scene: 'todays-model', note: 'Layers reveal one per ↓ on the slides.' },
-				{ name: 'Demo panels', act: 'personalization-over-adaptability', scene: 'demo-two-people', note: 'Panels reveal one per ↓ on the slides.' },
+				{ name: 'Demo', act: 'personalization-over-adaptability', scene: 'demo-two-people', note: 'The intent branches to each UI, then context layers spring out beneath, one per ↓ on the slides.' },
 				{ name: 'Q&A', act: 'backup-qa', scene: 'doesnt-this-just-hand-more-power', note: 'Question as the lede, answer as body.' },
 			];
 
 			// Areas to label, in priority order; an element claimed by an earlier
-			// role (e.g. a demo panel) isn't labelled again by a later one.
+			// role (e.g. a quote's paragraph) isn't labelled again by a later one.
 			const ROLES = [
 				['.act-tab', 'Meta · act tab'],
 				['.act-title', 'Act title'],
 				["[data-scene='your-ui-is-not-my-ui-title'] h2", 'Act title'],
-				['.demo-panels', 'Demo panels · meta'],
 				['h2', 'Scene headline'],
 				['h4', 'Lede'],
 				['blockquote', 'Quote'],
