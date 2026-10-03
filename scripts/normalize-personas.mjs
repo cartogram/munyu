@@ -20,6 +20,9 @@ const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
 const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg', 'matthew.svg']);
+// per-illustration changes to the CUT settings: Allana's trace has finer lines
+// than the rest, so its strips are thinner and swing less
+const CUT_FOR = { 'allana.svg': { strip: 0.8, weight: { frequency: 0.006, scale: 2.5 } } };
 
 const NAMED = { black: '#000000', white: '#ffffff' };
 const rgb = (hex) => {
@@ -41,7 +44,7 @@ function step([r, g, b]) {
 	if (l < 0.95) return 'wash';
 	return 'paper';
 }
-function normalize(src, act, cutPaper) {
+function normalize(src, act, cutPaper, file) {
 	const tint = rgb(ACTS[act]);
 	const shade = (name) => toHex(mixWhite(tint, RAMP[name]));
 
@@ -148,7 +151,7 @@ function normalize(src, act, cutPaper) {
 	const wash = tinted
 		.map((p) => `<path fill="${shade(CUT.wash.tone)}"${p.rule} d="${p.d}"/>`)
 		.join('');
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><defs>${cutPaperFilters([vx, vy, side], shade('ink'), [x0, y0, x1, y1])}</defs>${body}<g filter="url(#wash)" style="mix-blend-mode:multiply">${wash}</g></svg>\n`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><defs>${cutPaperFilters([vx, vy, side], shade('ink'), [x0, y0, x1, y1], { ...CUT, ...CUT_FOR[file] })}</defs>${body}<g filter="url(#wash)" style="mix-blend-mode:multiply">${wash}</g></svg>\n`;
 }
 
 // Sizes are per mille of the frame, so every illustration gets the same look.
@@ -176,7 +179,7 @@ const WASHED = [];
 // one noise field for everything, so neighbouring edges wobble together and
 // never open a gap. The weight wobble is one field for the pieces and another
 // for the ink, so the strips between them vary in width.
-function cutPaperFilters([x, y, side], ink, [dx0, dy0, dx1, dy1]) {
+function cutPaperFilters([x, y, side], ink, [dx0, dy0, dx1, dy1], C = CUT) {
 	const n = (v) => +v.toFixed(3);
 	const u = side / 1000;
 	const region = `filterUnits="userSpaceOnUse" x="${n(x - side * 0.05)}" y="${n(y - side * 0.05)}" width="${n(side * 1.1)}" height="${n(side * 1.1)}" color-interpolation-filters="sRGB"`;
@@ -184,19 +187,19 @@ function cutPaperFilters([x, y, side], ink, [dx0, dy0, dx1, dy1]) {
 	const edge = (
 		from,
 		layer
-	) => `<feTurbulence type="fractalNoise" baseFrequency="${n(CUT.weight.frequency / u)}" numOctaves="1" seed="${layer}" result="drift"/>
-<feDisplacementMap in="${from}" in2="drift" scale="${n(CUT.weight.scale * u)}" xChannelSelector="R" yChannelSelector="G" result="drifted"/>
+	) => `<feTurbulence type="fractalNoise" baseFrequency="${n(C.weight.frequency / u)}" numOctaves="1" seed="${layer}" result="drift"/>
+<feDisplacementMap in="${from}" in2="drift" scale="${n(C.weight.scale * u)}" xChannelSelector="R" yChannelSelector="G" result="drifted"/>
 <feTurbulence type="fractalNoise" baseFrequency="${n(0.03 / u)}" numOctaves="2" seed="4" result="warp"/>
-<feDisplacementMap in="drifted" in2="warp" scale="${n(CUT.rough * u)}" xChannelSelector="R" yChannelSelector="G" result="cut"/>`;
+<feDisplacementMap in="drifted" in2="warp" scale="${n(C.rough * u)}" xChannelSelector="R" yChannelSelector="G" result="cut"/>`;
 	const PIECES = 21,
 		INK = 37; // noise seeds for the weight wobble
 	const shadow = (
 		opacity
-	) => `<feGaussianBlur in="cut" stdDeviation="${n(CUT.shadow.blur * u)}" result="blur"/>
-<feOffset in="blur" dx="${n(CUT.shadow.dx * u)}" dy="${n(CUT.shadow.dy * u)}" result="offset"/>
+	) => `<feGaussianBlur in="cut" stdDeviation="${n(C.shadow.blur * u)}" result="blur"/>
+<feOffset in="blur" dx="${n(C.shadow.dx * u)}" dy="${n(C.shadow.dy * u)}" result="offset"/>
 <feFlood flood-color="${ink}" flood-opacity="${opacity}"/>
 <feComposite in2="offset" operator="in" result="shadow"/>`;
-	const W = CUT.wash;
+	const W = C.wash;
 	// the wash stays within the drawing: it may spill onto the page inside it,
 	// never past its edges
 	const within = `filterUnits="userSpaceOnUse" x="${n(dx0)}" y="${n(dy0)}" width="${n(dx1 - dx0)}" height="${n(dy1 - dy0)}" color-interpolation-filters="sRGB"`;
@@ -209,7 +212,7 @@ function cutPaperFilters([x, y, side], ink, [dx0, dy0, dx1, dy1]) {
 <feTurbulence type="fractalNoise" baseFrequency="${n(0.02 / u)}" numOctaves="2" seed="63" result="pool"/>
 <feColorMatrix in="pool" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ${n(W.opacity * 1.2)} 0 0 0 ${n(W.opacity * 0.4)}" result="poolAlpha"/>
 <feComposite in="soft" in2="poolAlpha" operator="in" result="pooled"/>
-<feMorphology in="SourceAlpha" operator="dilate" radius="${n((CUT.strip + 0.6) * u)}" result="covered"/>
+<feMorphology in="SourceAlpha" operator="dilate" radius="${n((C.strip + 0.6) * u)}" result="covered"/>
 <feComposite in="pooled" in2="covered" operator="out"/>
 </filter>
 <filter id="edge" ${region}>${edge('SourceGraphic', PIECES)}</filter>
@@ -218,18 +221,18 @@ ${['piece', 'sheet', 'glow']
 		(id) => `<filter id="${id}" ${region}>
 ${
 	id !== 'glow'
-		? `<feMorphology in="SourceGraphic" operator="erode" radius="${n(CUT.strip * u)}" result="trimmed"/>`
+		? `<feMorphology in="SourceGraphic" operator="erode" radius="${n(C.strip * u)}" result="trimmed"/>`
 		: // thickened and drifted exactly as the ink beneath it, so where only ink
 			// lies under its edge the two match and no outline shows; a real line
 			// between it and a neighbouring piece survives, as that piece is trimmed
-			`<feMorphology in="SourceGraphic" operator="dilate" radius="${n((CUT.strip + 0.6) * u)}" result="trimmed"/>`
+			`<feMorphology in="SourceGraphic" operator="dilate" radius="${n((C.strip + 0.6) * u)}" result="trimmed"/>`
 }
-${edge('trimmed', id === 'glow' ? INK : PIECES)}${id === 'glow' ? '' : shadow(CUT.shadow.opacity)}
+${edge('trimmed', id === 'glow' ? INK : PIECES)}${id === 'glow' ? '' : shadow(C.shadow.opacity)}
 ${
 	id === 'sheet'
 		? '' // near-white paper stays clean
-		: `<feTurbulence type="fractalNoise" baseFrequency="${n(CUT.grain.frequency / u)}" numOctaves="2" seed="9" result="noise"/>
-<feColorMatrix in="noise" type="matrix" values="0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0.9 0 0 0 ${CUT.grain.threshold}" result="speck"/>
+		: `<feTurbulence type="fractalNoise" baseFrequency="${n(C.grain.frequency / u)}" numOctaves="2" seed="9" result="noise"/>
+<feColorMatrix in="noise" type="matrix" values="0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0.9 0 0 0 ${C.grain.threshold}" result="speck"/>
 <feComposite in="speck" in2="cut" operator="in" result="grain"/>`
 }
 <feMerge>${id === 'glow' ? '' : '<feMergeNode in="shadow"/>'}<feMergeNode in="cut"/>${id === 'sheet' ? '' : '<feMergeNode in="grain"/>'}</feMerge>
@@ -237,10 +240,10 @@ ${
 	)
 	.join('')}
 <filter id="strip" ${region}>
-<feMorphology in="SourceGraphic" operator="dilate" radius="${n(CUT.strip * u)}" result="thick"/>
-${edge('thick', INK)}${shadow(CUT.shadow.opacity / 2)}
-<feTurbulence type="fractalNoise" baseFrequency="${n(CUT.fibre.frequency / u)}" numOctaves="2" seed="13" result="noise"/>
-<feColorMatrix in="noise" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 ${n(CUT.fibre.opacity * 4)} 0 0 0 ${n(-CUT.fibre.opacity * 2)}" result="fibre"/>
+<feMorphology in="SourceGraphic" operator="dilate" radius="${n(C.strip * u)}" result="thick"/>
+${edge('thick', INK)}${shadow(C.shadow.opacity / 2)}
+<feTurbulence type="fractalNoise" baseFrequency="${n(C.fibre.frequency / u)}" numOctaves="2" seed="13" result="noise"/>
+<feColorMatrix in="noise" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 ${n(C.fibre.opacity * 4)} 0 0 0 ${n(-C.fibre.opacity * 2)}" result="fibre"/>
 <feComposite in="fibre" in2="cut" operator="in" result="texture"/>
 <feMerge><feMergeNode in="shadow"/><feMergeNode in="cut"/><feMergeNode in="texture"/></feMerge>
 </filter>`.replace(/\n/g, '');
@@ -250,7 +253,7 @@ ${edge('thick', INK)}${shadow(CUT.shadow.opacity / 2)}
 const check = process.argv.includes('--check');
 let stale = 0;
 for (const { file, act } of personas()) {
-	const out = normalize(readFileSync(new URL(file, SRC), 'utf8'), act, CUT_PAPER.has(file));
+	const out = normalize(readFileSync(new URL(file, SRC), 'utf8'), act, CUT_PAPER.has(file), file);
 	if (!check) {
 		writeFileSync(new URL(file, DIR), out);
 		console.log(`${file} · ${act} ${ACTS[act]}`);
