@@ -10,10 +10,12 @@
 //      scissor-rough edges on every
 //      shape, and on each larger coloured or paper piece a small cast shadow
 //      and a paper grain, as if it were cut out and laid on the page
+//   5. render each to the WebP the deck shows (scripts/personas/render.mjs)
 // Each illustration takes the colour of the act its scene sits in (index.html).
 //   node scripts/normalize-personas.mjs
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { personas, tokens } from './theme.mjs';
+import { isCurrent, render } from './personas/render.mjs';
 
 const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
@@ -252,14 +254,21 @@ ${edge('thick', INK)}${shadow(C.shadow.opacity / 2)}
 // --check: write nothing, exit 1 if any output is out of date
 const check = process.argv.includes('--check');
 let stale = 0;
+const finished = [];
 for (const { file, act } of personas()) {
 	const out = normalize(readFileSync(new URL(file, SRC), 'utf8'), act, CUT_PAPER.has(file), file);
+	finished.push({ file, svg: out });
 	if (!check) {
 		writeFileSync(new URL(file, DIR), out);
 		console.log(`${file} · ${act} ${ACTS[act]}`);
 	} else if (!existsSync(new URL(file, DIR)) || readFileSync(new URL(file, DIR), 'utf8') !== out) {
 		console.error(`media/personas/${file} is out of date: run node scripts/normalize-personas.mjs`);
 		stale++;
+	} else if (!isCurrent(file, out)) {
+		console.error(`media/personas/${file.replace(/\.svg$/, '.webp')} is out of date: run node scripts/normalize-personas.mjs`);
+		stale++;
 	}
 }
+// 5. render each finished SVG to the WebP the deck shows (scripts/personas/render.mjs)
+if (!check) await render(finished);
 if (stale) process.exit(1);

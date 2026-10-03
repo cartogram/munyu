@@ -17,8 +17,15 @@ media/personas/traces/<scene>.svg      untouched source (a trace, or a drawing y
   └ scripts/personas/<scene>.mjs       that illustration's edits, by code
      → media/personas/originals/<scene>.svg
         └ scripts/normalize-personas.mjs   tint, ramp, crop, cut-paper finish
-           → media/personas/<scene>.svg     what index.html uses
+           → media/personas/<scene>.svg     the finished drawing
+              └ scripts/personas/render.mjs  rendered once in headless Chrome
+                 → media/personas/<scene>.webp   what index.html uses
 ```
+
+The deck shows the WebP, not the SVG: the cut-paper filters are too slow to
+run while the slides scroll. `npm run personas` re-renders a WebP only when
+its SVG changed, and `media/personas/rendered.json` lets `npm run check`
+catch a stale one.
 
 - `<scene>` is the `data-scene` the illustration sits in. `npm run check`
   enforces the name.
@@ -92,7 +99,7 @@ These are the conventions the set has settled on. Match them:
    `.persona` (wrapping the quote if the scene has none):
    ```html
    <div class="portrait-ground">
-   	<img class="persona-portrait" src="media/personas/<scene>.svg" alt="…" />
+   	<img class="persona-portrait" src="media/personas/<scene>.webp" alt="…" />
    </div>
    ```
    The `alt` says what the person is doing, not what the drawing looks like.
@@ -146,9 +153,11 @@ animation needs to solve both:
    `normalize-personas.mjs` carry `data-part` through to the output. Shapes
    that move together can then be wrapped in a `<g data-part>` in the output.
 2. **Images can't be animated.** The scenes use `<img>`, which scripts can't
-   reach into. Load the illustration inline instead: fetch the SVG and
-   replace the `<img>` with it, keeping the `alt` as the SVG's `role="img"`
-   and `aria-label`.
+   reach into, and they show the rendered WebP. Load the illustration inline
+   instead: fetch the finished SVG and replace the `<img>` with it, keeping
+   the `alt` as the SVG's `role="img"` and `aria-label`. That brings back
+   the filter cost the WebP avoids (see *Filters*), so inline only the
+   illustration being animated.
 
 Then animate in `js/site.js`, beside the scroll choreography:
 
@@ -160,9 +169,10 @@ Then animate in `js/site.js`, beside the scroll choreography:
   gentle sway or a flutter, never a bounce.
 - **Reduced motion:** honour `prefers-reduced-motion` the way `site.js`
   already does. No movement, with the still drawing as the end state.
-- **Filters:** the cut-paper filters are expensive to repaint. Animate whole
-  pieces, not their filtered edges, and check it stays smooth on a slow
-  machine.
+- **Filters:** the cut-paper filters are expensive to repaint; drawn live,
+  they stalled scrolling, which is why the deck shows WebPs. Animate whole
+  pieces, not their filtered edges, and check it stays smooth with
+  `scripts/cdp/perf-scroll.mjs`.
 
 ## Before you finish
 
