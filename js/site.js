@@ -1,6 +1,5 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { landscape } from './landscape.js';
 
 gsap.registerPlugin(ScrollTrigger);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
@@ -136,15 +135,6 @@ function cardInsets() {
 	};
 	return { insetTop: px('--inset-top'), insetBottom: px('--inset-bottom'), stackStep: px('--stack-step') };
 }
-
-// Each act opener gets its own seeded mark-field landscape, in the act's tints.
-acts.forEach((panel) => panel.querySelector('.act-opener')?.append(landscape(panel.dataset.act)));
-
-// The talk's title slide gets one too, so the talk opens like an act; its
-// landscape keeps moving while it's on screen (titleMotion, below).
-const titleScene = document.querySelector('[data-scene="your-ui-is-not-my-ui-title"]');
-const titleArt = landscape('your-ui-is-not-my-ui');
-titleScene?.append(titleArt);
 
 // Each slide's video shows as a "Play video" panel in its place, its size and
 // shape; pressing it plays the video in the spotlight (openSpotlight, below).
@@ -369,36 +359,6 @@ function restoreHash() {
 history.scrollRestoration = 'manual';
 setup();
 restoreHash();
-
-// The title slide's line field drifts for as long as the title is on
-// screen, so its lines keep turning (art.draw's time, js/landscape.js). Not
-// with reduced motion.
-const titleMotion = { enabled: false, flowing: false, time: 0 };
-
-function flowTick(time, deltaTime) {
-	titleMotion.time += Math.min(deltaTime, 100) / 1000; // no leap after a stalled tab
-	titleArt.draw(titleMotion.time);
-}
-
-gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
-	titleMotion.enabled = true;
-	syncTitleMotion();
-	return () => {
-		titleMotion.enabled = false;
-		syncTitleMotion();
-		titleMotion.time = 0;
-		titleArt.draw(0);
-	};
-});
-
-// The field drifts only while the title is the current frame.
-function syncTitleMotion() {
-	const flow = titleMotion.enabled && currentBeat()?.scene === titleScene;
-	if (flow === titleMotion.flowing) return;
-	titleMotion.flowing = flow;
-	if (flow) gsap.ticker.add(flowTick);
-	else gsap.ticker.remove(flowTick);
-}
 
 // Images and video metadata change scene heights after first layout.
 window.addEventListener('load', () => {
@@ -702,7 +662,6 @@ window.addEventListener('scroll', () => {
 	updateCurrentScene();
 	updateChrome();
 	updateToc();
-	syncTitleMotion();
 }, { passive: true });
 updateChrome();
 updateToc();
