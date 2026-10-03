@@ -124,6 +124,18 @@ svg = svg.replace(/<path\b[^>]*?\/?>/g, (p) => {
 const first = svg.match(/<path\b[^>]*?\/?>/);
 const at = first.index + first[0].length;
 svg = svg.slice(0, at) + path(WHITE, clearBack) + path(CHAIR, chairBack) + svg.slice(at);
+// a small smile: a curved stroke from a to b, sagging by `depth`, tapered at the ends
+function smile([x0, y0], [x1, y1], depth, w) {
+	const n = 16, upper = [], lower = [];
+	for (let i = 0; i <= n; i++) {
+		const t = i / n, x = x0 + (x1 - x0) * t, y = y0 + (y1 - y0) * t + depth * 4 * t * (1 - t);
+		const half = (w / 2) * Math.sin(Math.PI * Math.min(Math.max(t, 0.1), 0.9));
+		upper.push([x, y - half]);
+		lower.unshift([x, y + half]);
+	}
+	return poly([...upper, ...lower]);
+}
+
 const top = [
 	path(WHITE, cover),
 	path(FLOOR, floor),
@@ -132,6 +144,9 @@ const top = [
 	path(WHITE, tableRight),
 	...tableLegs.map((d) => path(WHITE, d)),	...SHOES.flatMap(([h, a, t]) => [path(INK, shoe(h, a, t, 2.5)), path(WHITE, shoe(h, a, t))]),
 	...nails.map((e) => path(INK, ellipse(e))),
+	// her mouth, as Sinead's: a small upturned curve for the trace's dash
+	path('#FDEABF', poly([[404, 307.5], [420, 307.5], [420, 315], [404, 315]])),
+	path(INK, smile([406, 310], [418, 309.5], 2.6, 2.4)),
 	...symbol.map((d) => path(WHITE, d)),
 ].join('');
 svg = svg.replace(/<\/svg>\s*$/, `${top}</svg>\n`);

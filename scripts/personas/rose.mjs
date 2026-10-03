@@ -93,6 +93,9 @@ svg = svg.replaceAll('<path data-scarf/>', '');
 const floor =
 	'M128 936L930 936C946 937 954 943 946 949C934 954 880 953 820 954L240 955C180 955 126 954 120 949C114 943 116 937 128 936Z';
 
-svg = svg.replace(/<\/svg>\s*$/, `${path(FLOOR, floor)}</svg>\n`);
+// no nose: white over the little curl under her glasses
+const noNose = 'M336.5 388L339.5 383.4L344.5 381.6L347.4 382.9L350.6 383.7L350 385.4L346 388.9L343.4 389.2L337.6 390.2Z';
+
+svg = svg.replace(/<\/svg>\s*$/, `${path('#FDFDFD', noNose)}${path(FLOOR, floor)}</svg>\n`);
 writeFileSync(OUT, svg);
 console.log('wrote', OUT.pathname, (svg.match(/<path\b/g) || []).length, 'paths');
