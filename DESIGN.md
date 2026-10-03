@@ -81,7 +81,11 @@ person's setup. The illustrations form one set:
 - **Edited traces.** When a drawing needs changing, as Melody's did, the
   untouched trace sits in `media/personas/traces/` and
   `scripts/personas/<name>.mjs` applies the edits to it, writing
-  `originals/<name>.svg`.
+  `originals/<name>.svg`. The drawing helpers for those scripts are in
+  `scripts/personas/draw.mjs`, and the tools for finding and checking shapes
+  are in `scripts/personas/tools/`. The `persona-illustration` skill
+  (`.claude/skills/`) walks through adding or changing an illustration, and
+  covers animating one with GSAP.
 
 ### Adding or changing a persona
 
