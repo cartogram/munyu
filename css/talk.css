@@ -609,12 +609,6 @@ main section[data-scene].is-wide > svg {
 	overflow: hidden;
 }
 
-/* a tool's logo in place of a screenshot */
-.persona > .persona-logo {
-	width: min(100%, calc(360 * var(--u))) !important;
-	border-radius: 0 !important;
-}
-
 .persona-portrait {
 	display: block;
 	width: 100%;
@@ -826,10 +820,26 @@ aside.notes {
 	border-radius: var(--corner) var(--corner) 0 0;
 }
 
-/* the notes sit beside the card, their heading level with the index's */
+/* the notes sit beside the card, their heading level with the index's; a
+   column, so the footer can sit at its very bottom */
 .drawer-notes {
 	--pad-left: 2rem;
 	padding-top: calc(2rem + 1px + 1.5rem);
+	display: flex;
+	flex-direction: column;
+}
+
+/* the link to system.html, below the notes however long they run */
+.drawer-footer {
+	margin-top: auto;
+	padding-top: 1.5rem;
+	font-size: 0.8125rem; /* 13px */
+	color: #555;
+}
+
+.drawer-footer a {
+	color: var(--act-color, #000);
+	font-weight: 700;
 }
 
 .drawer-heading {
