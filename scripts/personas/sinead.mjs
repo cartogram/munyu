@@ -60,25 +60,29 @@ const ellipse = ([cx, cy, rx, ry, deg = 0]) => {
 	return poly(pts);
 };
 // a stroke along a quadratic curve, as a filled strip that tapers at the ends
-const stroke = ([x0, y0], [cx, cy], [x1, y1], w) => {
+const stroke = ([x0, y0], [cx, cy], [x1, y1], w, taper = true) => {
 	const pt = (t) => [(1 - t) ** 2 * x0 + 2 * (1 - t) * t * cx + t * t * x1, (1 - t) ** 2 * y0 + 2 * (1 - t) * t * cy + t * t * y1];
 	const n = 12, left = [], right = [];
 	for (let i = 0; i <= n; i++) {
 		const t = i / n, [x, y] = pt(t), [ax, ay] = pt(Math.min(t + 0.01, 1)), [bx, by] = pt(Math.max(t - 0.01, 0));
-		const len = Math.hypot(ax - bx, ay - by) || 1, half = (w / 2) * Math.sin(Math.PI * Math.max(t, 0.12) * Math.min(1, (1 - t) / 0.12 + 0.5));
+		const len = Math.hypot(ax - bx, ay - by) || 1, half = taper ? (w / 2) * Math.sin(Math.PI * Math.max(t, 0.12) * Math.min(1, (1 - t) / 0.12 + 0.5)) : w / 2;
 		const nx = (-(ay - by) / len) * half, ny = ((ax - bx) / len) * half;
 		left.push([x + nx, y + ny]);
 		right.unshift([x - nx, y - ny]);
 	}
 	return poly([...left, ...right]);
 };
-const CHEEK = '#C8C7C8'; // the soft step
+// Just a dot of an eye and a pointed nose out of her profile, after the
+// cartoon profiles in the references. The nose is white over the profile line
+// (so the face runs into it) with its two outer edges drawn in.
+const WHITE = '#FEFEFE';
 const face = [
-	path(CHEEK, ellipse([383, 389, 12.5, 12])),
-	path(INK, ellipse([403.5, 361, 3, 3.8, -10])), // eye
-	path(INK, stroke([405, 357.5], [408, 354], [412.5, 353], 2.4)), // lash
-	path(INK, stroke([394.5, 347], [402, 342], [411, 342.5], 3.2)), // brow
-	path(INK, stroke([398, 402.5], [404.5, 409], [412, 403], 2.8)), // smile
+	path(WHITE, poly([[412, 356], [423, 356], [438, 379], [415, 389], [411, 389]])),
+	path(INK, stroke([423, 354], [426, 368], [438, 379], 5.6, false)),
+	path(INK, ellipse([437.5, 379.5, 2.8, 2.8])),
+	path(INK, stroke([438, 379.5], [428, 387], [414.5, 389], 5.6, false)),
+	path(INK, ellipse([405, 361, 3.9, 3.9])), // eye
+	path(INK, stroke([394, 397.5], [400, 402.5], [407, 398], 3.8)), // mouth
 ].join('');
 
 // 4. the storm: a cartoon cloud, flat underneath and bumped on top, coming in
@@ -87,20 +91,35 @@ const face = [
 // beam's colour from Melody's illustration, so it's treated as light: pale,
 // grained, no outline. The bolt is the originals' saturated yellow, so it's
 // light too, at the accent step.
-const BEAM = '#FDEABF', BOLT = '#F8C55A';
+// the bolt is bold: the deep step, darker than the clouds and screens
+const BEAM = '#FDEABF', BOLT = '#6A6A6A';
+// Three clouds, each its own cut piece: a different shape and tone, a white
+// edge where one overlaps the next (its silhouette, a little grown, cut in
+// white under it), so they read apart rather than as one bank
 const clouds = [
-	// in from the right
-	'M838 262L582 262C548 262 540 230 562 219C558 186 600 174 622 191' +
-		'C632 158 690 157 702 187C718 167 760 171 764 199C790 186 830 191 838 206Z',
-	// pushing out past the window's left edge
-	'M420 252L132 252C96 252 90 214 118 204C110 170 160 156 184 176' +
-		'C198 150 254 148 266 176C282 158 332 160 338 188C364 174 406 184 412 208C434 212 444 240 420 252Z',
-	// a small one between them
-	'M566 214L432 214C410 214 404 192 422 186C422 166 456 158 470 172C482 156 522 156 532 176C556 172 578 194 566 214Z',
+	// pushing out past the window's left edge: long and low, the pale one
+	{ tone: BEAM, d: 'M420 252L132 252C96 252 90 214 118 204C110 170 160 156 184 176' +
+		'C198 150 254 148 266 176C282 158 332 160 338 188C364 174 406 184 412 208C434 212 444 240 420 252Z' },
+	// a little one drifting below, in the pale tone
+	{ tone: BEAM, d: 'M520 294L456 294C440 294 438 278 450 274C450 260 470 254 480 264C488 254 510 256 512 270C528 270 532 294 520 294Z' },
+	// a small, round, tall one between, in front and darker: the soft step
+	{ tone: '#C8C7C8', d: 'M560 232L452 232C426 232 420 204 442 194C440 160 482 142 506 162C528 140 574 156 570 192C590 198 588 232 560 232Z' },
+	// in from the right, in front of the small one: the wash step
+	{ tone: '#DCDBDD', d: 'M838 262L582 262C548 262 540 230 562 219C558 186 600 174 622 191' +
+		'C632 158 690 157 702 187C718 167 760 171 764 199C790 186 830 191 838 206Z' },
 ];
+// the white edge: the cloud scaled up a few units about its centre
+const edge = (d) => {
+	const n = d.match(/-?\d*\.?\d+/g).map(Number);
+	const xs = n.filter((_, i) => i % 2 === 0), ys = n.filter((_, i) => i % 2 === 1);
+	const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+	const sx = 1 + 14 / (Math.max(...xs) - Math.min(...xs)), sy = 1 + 14 / (Math.max(...ys) - Math.min(...ys));
+	let i = 0;
+	return path('#FEFEFE', d.replace(/-?\d*\.?\d+/g, (v) => f(i++ % 2 === 0 ? cx + (v - cx) * sx : cy + (v - cy) * sy)));
+};
 // chunky: a fat zigzag
-const bolt = 'M802 256L756 326L792 326L742 412L834 302L798 302L834 256Z';
-svg = svg.replace('<path data-cloud/>', clouds.map((d) => path(BEAM, d)).join('') + path(BOLT, bolt));
+const bolt = 'M796 252L740 334L782 334L726 432L846 300L800 300L842 252Z';
+svg = svg.replace('<path data-cloud/>', clouds.map((c) => edge(c.d) + path(c.tone, c.d)).join('') + path(BOLT, bolt));
 
 // 5. a chair like Allana's: a dark rounded back standing behind her, white
 // between it and her sweater so they read apart, running into a dark seat

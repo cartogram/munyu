@@ -19,7 +19,7 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg']); // rolling the finish out one at a time
+const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg']);
 
 const NAMED = { black: '#000000', white: '#ffffff' };
 const rgb = (hex) => {
@@ -77,7 +77,10 @@ function normalize(src, act, cutPaper) {
 		const light = max > 0 && (max - Math.min(...c)) / max > 0.2;
 		// keep an even-odd fill (a logo with holes); everything else is nonzero
 		const rule = /\bfill-rule="evenodd"/.test(attrs) ? ' fill-rule="evenodd"' : '';
-		return { d, step: step(c), box, breadth, light, rule };
+		// an edit script can name a shape's finish outright (e.g. a fine grid
+		// that must keep its drawn weight): data-finish="edge"
+		const finish = attrs.match(/\bdata-finish="(\w+)"/)?.[1];
+		return { d, step: step(c), box, breadth, light, rule, finish };
 	});
 
 	// 3. the drawing's extent: everything that isn't paper
@@ -113,7 +116,9 @@ function normalize(src, act, cutPaper) {
 	// and blunt them. Long thin shapes, like lines of text, aren't details.
 	const detail = (p) => Math.max(p.box[2] - p.box[0], p.box[3] - p.box[1]) < 0.06 * side;
 	const filter = (p) =>
-		detail(p)
+		p.finish
+			? p.finish
+			: detail(p)
 			? 'edge'
 			: p.step === 'ink'
 			? 'strip'

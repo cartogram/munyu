@@ -235,8 +235,8 @@
 				font-variant-numeric: tabular-nums;
 			}
 
-			/* illustrations: the --ramp-* steps, then every illustration at half
-			   the page width (one column on phones) */
+			/* illustrations: the --ramp-* steps, then every illustration in a
+			   single column, at the full page width */
 			.ts-ramp {
 				display: grid;
 				overflow: hidden;
@@ -263,14 +263,8 @@
 
 			.ts-illustrations {
 				display: grid;
-				grid-template-columns: repeat(2, minmax(0, 1fr));
+				grid-template-columns: 1fr;
 				gap: 1.5rem;
-			}
-
-			@media (max-width: 699px) {
-				.ts-illustrations {
-					grid-template-columns: 1fr;
-				}
 			}
 
 			.ts-illustrations figure {
