@@ -64,19 +64,64 @@ function todaysModelSteps(scene) {
 	];
 }
 
-// The branching demo: the illustration builds from the top down, one part
-// per beat (the person, each context card, then the UI), while the beat texts
-// on the right take turns. Each part slides up from below the frame and stops
-// in its place: no easing, so it moves only as the reader scrolls, and sticks.
-// Reduced motion fades each part in place.
-const BRANCHING_PARTS = ['person', 'card-1', 'card-2', 'card-3', 'ui'];
+// The branching demo: one fan of phones per person, built one screen per beat
+// while the beat texts on the right take turns. A person's part starts with
+// their avatar lighting up and their profile phone arriving; then a screen for
+// each kind of context, and last the UI. Each screen slides up from below the
+// frame and stops in its place: no easing, so it moves only as the reader
+// scrolls, and sticks. The next person's fan slides in from the right as the
+// last one leaves. Reduced motion fades each piece in place.
+const BRANCHING_PEOPLE = ['rose', 'myron'];
+const BRANCHING_SCREENS = ['screen-1', 'screen-2', 'screen-3', 'ui'];
+const AVATAR_DIM = 0.4;
 
 function branchingSteps(scene) {
 	const texts = [...scene.querySelectorAll('.branching-beats > p')];
+	const avatars = Object.fromEntries([...scene.querySelectorAll('.branching-person')].map((b) => [b.dataset.person, b]));
 	const art = scene.querySelector('svg.branching-illustration');
+	const part = (name) => art?.querySelector(`[data-part="${name}"]`);
+	const fan = (person) => [...(art?.querySelectorAll(`[data-part^="${person}-"]`) ?? [])];
 	gsap.set(texts.slice(1), { opacity: 0 });
+	gsap.set(Object.values(avatars), { opacity: AVATAR_DIM });
 
-	return BRANCHING_PARTS.map((name, i) => (tl, hold) => {
+	const fade = (tl, targets, at, duration, from = 0, to = 1) =>
+		tl.fromTo(targets, { opacity: from }, { opacity: to, duration, ease: 'none' }, at);
+	// up from below the frame's bottom edge, clear of the finish's rough edges
+	const rise = (tl, pieces, at, hold) => {
+		if (reduceMotion) return fade(tl, pieces, at, hold * STEP_FADE);
+		const frame = art.viewBox.baseVal;
+		pieces.forEach((piece) => {
+			const below = frame.y + frame.height * 1.05 - piece.getBBox().y;
+			tl.fromTo(piece, { y: below }, { y: 0, duration: hold * 0.9, ease: 'none' }, at);
+		});
+	};
+
+	const steps = [];
+	BRANCHING_PEOPLE.forEach((person, i) => {
+		const before = BRANCHING_PEOPLE[i - 1];
+		// the person: their avatar lights up and their profile arrives, rising
+		// into the empty frame, or, after someone else's, sliding in from the
+		// right as the last fan slides out to the left
+		steps.push((tl, hold, at) => {
+			fade(tl, avatars[person], at, hold * 0.15, AVATAR_DIM, 1);
+			if (before) fade(tl, avatars[before], at, hold * 0.15, 1, AVATAR_DIM);
+			if (!art) return;
+			if (!before) return rise(tl, [part(`${person}-phone`), part(`${person}-head`)], at, hold);
+			// the fans are drawn side by side, this one a fan's width to the right
+			const width = part(`${person}-phone`).getBBox().x - part(`${before}-phone`).getBBox().x;
+			const pieces = [...fan(before), ...fan(person)];
+			if (reduceMotion) {
+				tl.fromTo(pieces, { x: -width * (i - 1) }, { x: -width * i, duration: 0 }, at);
+				return fade(tl, [part(`${person}-phone`), part(`${person}-head`)], at, hold * STEP_FADE);
+			}
+			tl.fromTo(pieces, { x: -width * (i - 1) }, { x: -width * i, duration: hold * 0.9, ease: 'none' }, at);
+		});
+		// then a screen per kind of context, and the UI
+		BRANCHING_SCREENS.forEach((screen) => steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-${screen}`)], at, hold)));
+	});
+
+	// each step also swaps the beat text
+	return steps.map((step, i) => (tl, hold) => {
 		const at = tl.duration();
 		tl.to(texts[i], { opacity: 0, duration: hold * 0.1, ease: 'none' }, at).fromTo(
 			texts[i + 1],
@@ -84,16 +129,7 @@ function branchingSteps(scene) {
 			{ opacity: 1, duration: hold * 0.1, ease: 'none' },
 			at + hold * 0.1,
 		);
-		const part = art?.querySelector(`[data-part="${name}"]`);
-		if (!part) return;
-		if (reduceMotion) {
-			tl.fromTo(part, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' }, at);
-			return;
-		}
-		// from below the frame's bottom edge, clear of the finish's rough edges
-		const frame = art.viewBox.baseVal;
-		const below = frame.y + frame.height * 1.05 - part.getBBox().y;
-		tl.fromTo(part, { y: below }, { y: 0, duration: hold * 0.9, ease: 'none' }, at);
+		step(tl, hold, at);
 	});
 }
 
@@ -397,14 +433,42 @@ function restoreHash() {
 
 // The branching demo's illustration is a WebP like the others, for the page
 // without scripts and the system page; here the finished SVG takes its
-// place, inline, so its parts can move (branchingSteps).
+// place, inline, framed on one person's fan of phones (data-frame), so its
+// parts can move (branchingSteps). Each avatar button shows its person's head
+// from the drawing, and jumps to their part.
 const branchingArt = document.querySelector('img.branching-illustration');
 if (branchingArt) {
 	const svg = new DOMParser().parseFromString(branchingArtSvg, 'image/svg+xml').documentElement;
 	svg.setAttribute('class', branchingArt.className);
+	svg.setAttribute('viewBox', branchingArt.dataset.frame);
 	svg.setAttribute('role', 'img');
 	svg.setAttribute('aria-label', branchingArt.alt);
 	branchingArt.replaceWith(svg);
+
+	const scene = svg.closest('section[data-scene]');
+	scene.querySelectorAll('.branching-person').forEach((button) => {
+		const { person } = button.dataset;
+		// the head moves with its phone, so the avatar shows a still copy of
+		// what's inside it
+		const head = svg.querySelector(`[data-part="${person}-head"]`);
+		const still = document.createElementNS(svg.namespaceURI, 'g');
+		still.id = `branching-${person}-head`;
+		still.append(...head.childNodes);
+		head.append(still);
+		const box = still.getBBox();
+		const side = box.width * 0.86;
+		const avatar = document.createElementNS(svg.namespaceURI, 'svg');
+		avatar.setAttribute('viewBox', `${box.x + (box.width - side) / 2} ${box.y - side * 0.06} ${side} ${side}`);
+		avatar.setAttribute('aria-hidden', 'true');
+		const use = document.createElementNS(svg.namespaceURI, 'use');
+		use.setAttribute('href', `#${still.id}`);
+		avatar.append(use);
+		button.querySelector('.branching-avatar').append(avatar);
+		button.addEventListener('click', () => {
+			const beat = beatById(`${scene.closest('[data-act]').dataset.act}/${scene.dataset.scene}/${button.dataset.beat}`);
+			if (beat) jumpTo(beatPosition(beat));
+		});
+	});
 }
 
 history.scrollRestoration = 'manual';

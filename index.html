@@ -579,14 +579,26 @@
 					</section>
 
 					<section data-scene="demo-two-people" class="branching">
-						<!-- js/site.js puts the illustration's SVG in place of the WebP and builds it
-						     one part per beat (branchingSteps), as the beat texts on the right take turns -->
+						<!-- js/site.js puts the illustration's SVG in place of the WebP, shows one
+						     person's fan of phones at a time (data-frame), builds it one screen per
+						     beat (branchingSteps) and draws each person's head in their button -->
+						<nav class="branching-people" aria-label="People in the demo">
+							<button type="button" class="branching-person" data-person="rose" data-beat="1">
+								<span class="branching-avatar"></span>
+								<span class="branching-person-name">Rose</span>
+							</button>
+							<button type="button" class="branching-person" data-person="myron" data-beat="6">
+								<span class="branching-avatar"></span>
+								<span class="branching-person-name">Myron</span>
+							</button>
+						</nav>
 						<div class="branching-art">
 							<p class="branching-intent"><small>Intent</small> &ldquo;I&rsquo;d like to translate this text&rdquo;</p>
 							<img
 								class="branching-illustration"
 								src="media/personas/demo-two-people.webp"
-								alt="Rose, in dark glasses, above three cards: keep it dim, low glare; curtains drawn, at home; retunes her setup daily. An arrow leads from them down to a tablet showing a dark, dim translator."
+								data-frame="120 56 720 960"
+								alt="Two fans of phones. Rose's: her profile, then screens for keep it dim, low glare; curtains drawn, at home; retunes her setup daily; and last a dark, dim translator. Myron's: his profile, then speaks, doesn't point; hands-free, at his desk; 23 years of voice control; and last a translator that only listens."
 							/>
 						</div>
 						<div class="branching-text">
@@ -598,6 +610,11 @@
 								<p><strong>User context.</strong> At home, curtains drawn.</p>
 								<p><strong>Memory &amp; history.</strong> She retunes her setup through the day.</p>
 								<p><strong>Her UI</strong> is what they add up to: a translator that&rsquo;s dark and low-glare.</p>
+								<p><strong>Myron.</strong> A spine injury, 23 years ago. He works by voice.</p>
+								<p><strong>Capabilities &amp; preferences.</strong> He speaks rather than points.</p>
+								<p><strong>User context.</strong> At his desk, hands-free.</p>
+								<p><strong>Memory &amp; history.</strong> 23 years of voice control.</p>
+								<p><strong>His UI</strong> has nothing to point at: it listens.</p>
 							</div>
 						</div>
 						<aside class="notes" hidden>
@@ -605,13 +622,17 @@
 								One intent, the same for everyone: &ldquo;I&rsquo;d like to translate this text.&rdquo;
 							</p>
 							<p>[Next] Start with the person, not the interface. Rose: light drains her energy.</p>
-							<p>[Next, three times] Then what we know about her, one layer at a time:</p>
+							<p>[Next, three times] Then what we know about her, one screen at a time:</p>
 							<ul>
 								<li>capabilities and preferences: keep it dim, low glare;</li>
 								<li>user context: at home, curtains drawn;</li>
 								<li>memory and history: she retunes her setup through the day.</li>
 							</ul>
 							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator.</p>
+							<p>[Next] Same intent, another person. Myron works by voice.</p>
+							<p>[Next, three times] He speaks rather than points; he's at his desk, hands-free; and he has 23 years of voice control behind him.</p>
+							<p>[Next] His UI has nothing to point at: it listens. Same task, a different UI.</p>
+							<p>The avatars on the left jump to each person's part.</p>
 						</aside>
 					</section>
 				</div>

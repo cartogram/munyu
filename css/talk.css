@@ -718,28 +718,80 @@ main section[data-scene]:has(> .persona) > * {
 	height: auto;
 }
 
-/* the branching demo (demo-two-people): a split frame. On the left the
-   intent and the illustration (media/personas/demo-two-people.svg, loaded
-   inline by js/site.js), built one part per beat; on the right the headline
-   and the beat texts, one at a time. Both halves hold still while the beats
-   play. */
+/* the branching demo (demo-two-people): three columns that hold still while
+   the beats play. On the left an avatar button per person, which jumps to
+   their part; in the middle the intent and the illustration
+   (media/personas/demo-two-people.svg, inline from js/site.js), a fan of
+   phones built one screen per beat; on the right the headline and the beat
+   texts, one at a time. */
 main section[data-scene].branching {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: auto auto 1fr;
 	align-items: center;
-	column-gap: calc(96 * var(--u));
+	column-gap: calc(72 * var(--u));
 }
 
+.branching-people {
+	display: flex;
+	flex-direction: column;
+	gap: calc(48 * var(--u));
+}
+
+/* a round avatar over the person's name; js/site.js dims the one whose part
+   isn't playing */
+.branching-person {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: calc(12 * var(--u));
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+
+.branching-avatar {
+	display: block;
+	width: calc(150 * var(--u));
+	height: calc(150 * var(--u));
+	border: 2px solid var(--act-color);
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--act-color) var(--ramp-wash), white);
+	overflow: hidden;
+}
+
+.branching-avatar svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.branching-person:focus-visible .branching-avatar {
+	outline: 3px solid var(--act-color);
+	outline-offset: 4px;
+}
+
+/* the name, in the meta style */
+.branching-person-name {
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+/* as wide as the phones; the intent wraps to fit */
 .branching-art {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: calc(24 * var(--u));
+	max-width: calc(560 * var(--u));
 }
 
 main .branching-intent {
 	font-family: var(--font-serif);
-	font-size: calc(48 * var(--u));
+	font-size: calc(44 * var(--u));
+	text-wrap: balance;
 	text-align: center;
 	margin: 0;
 }
@@ -749,11 +801,12 @@ main .branching-intent {
 	display: block;
 }
 
-/* square, and clipped, so the parts slide in from below its bottom edge */
+/* one fan of phones, clipped, so the screens slide in from below its bottom
+   edge and the next fan from beside it */
 main .branching-illustration {
 	display: block;
 	width: auto;
-	height: calc(720 * var(--u));
+	height: calc(740 * var(--u));
 	max-width: 100%;
 	max-height: none;
 	border-radius: 0;
@@ -782,13 +835,23 @@ main .branching-illustration {
 		--frame-pad-x: 1.5rem;
 	}
 
-	/* the demo reads as a column: the text, then the illustration */
+	/* the demo reads as a column: the text, the avatars in a row, then the
+	   illustration */
 	main section[data-scene].branching {
 		grid-template-columns: 1fr;
 		row-gap: calc(48 * var(--u));
 	}
 
+	.branching-people {
+		flex-direction: row;
+		justify-content: center;
+	}
+
 	.branching-text {
+		order: -2;
+	}
+
+	.branching-people {
 		order: -1;
 	}
 

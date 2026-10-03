@@ -67,7 +67,8 @@ export function normalize(src, act, cutPaper, file) {
 	const elements = [...src.matchAll(/<path\b([^>]*?)\/?>|<text\b([^>]*)>([\s\S]*?)<\/text>/g)].map(([, attrs, textAttrs, content]) => {
 		if (textAttrs !== undefined) {
 			const part = textAttrs.match(/\bdata-part="([^"]+)"/)?.[1];
-			return { text: true, part, attrs: textAttrs.replace(/\s*\b(fill|data-part)="[^"]*"/g, ''), content };
+			const fill = textAttrs.match(/\bfill="([^"]+)"/)?.[1] ?? 'black';
+			return { text: true, part, step: step(rgb(fill)), attrs: textAttrs.replace(/\s*\b(fill|data-part)="[^"]*"/g, ''), content };
 		}
 		const fill = attrs.match(/\bfill="([^"]+)"/)?.[1] ?? 'black';
 		const url = fill.match(/^url\(#(.+)\)$/);
@@ -98,13 +99,13 @@ export function normalize(src, act, cutPaper, file) {
 	});
 	const paths = elements.filter((e) => !e.text);
 	// the drawing in order, each run of one part's shapes wrapped in a
-	// <g data-part>; text is set in the ink tone
+	// <g data-part>; text takes the ramp step of its grey, like a shape
 	const draw = (render) => {
 		let out = '', part;
 		for (const e of elements) {
 			if (e.part !== part) out += `${part ? '</g>' : ''}${e.part ? `<g data-part="${e.part}">` : ''}`;
 			part = e.part;
-			out += e.text ? `<text${e.attrs} fill="${shade('ink')}">${e.content}</text>` : render(e);
+			out += e.text ? `<text${e.attrs} fill="${shade(e.step)}">${e.content}</text>` : render(e);
 		}
 		return out + (part ? '</g>' : '');
 	};
