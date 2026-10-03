@@ -148,8 +148,6 @@
 	--toggle-size: 28px;
 	/* the front act card's corner, and the drawer's index card */
 	--corner: 10px;
-	/* the gap between an opener's paper block and its card's edges */
-	--paper-inset: 8px;
 	/* where the talk title starts, right of the toggle; the drawer's text
 	   lines up with it */
 	--title-left: calc(var(--inset-left) + 2 * var(--tab-pad) + var(--toggle-size));
@@ -248,13 +246,12 @@ body[data-current-act='backup-qa'] { --act-color: var(--act-backup-qa); }
 	   card sits one stack step further in, so its radius is one step smaller
 	   than the card behind it: the corners share a centre and the stacked
 	   edges stay evenly spaced round the curve. The last card's is --corner.
-	   (--stacks, the number of cards, is set by js/site.js.) Its opener's
-	   paper block takes the same radius on every corner. */
+	   (--stacks, the number of cards, is set by js/site.js.) */
 	--card-corner: calc(var(--corner) + (var(--stacks, 1) - 1 - var(--stack, 0)) * var(--stack-step));
 	border-radius: var(--card-corner) 0 0 0;
 	font-weight: 400;
 	font-size: 1.5em;
-	/* no shadow: each act's leading edge is its opener's paper block */
+	/* no shadow: each act's leading edge is its opener's grained ground */
 }
 
 /* each act card is outlined in its colour; as one slides up over the last,
@@ -301,7 +298,7 @@ main section[data-scene] {
 /* act openers: a block of grained paper in the act's colour filling the
    card, with the title set bottom-left on it */
 .act-opener {
-	/* exactly the card's height, so the paper block ends at the card's foot */
+	/* exactly the card's height, so the grained ground ends at the card's foot */
 	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	justify-content: flex-end;
 	align-items: flex-start;
@@ -315,11 +312,8 @@ main section[data-scene] {
 	margin: 0;
 }
 
-/* the paper block: the whole frame in the act's colour, inset from the
-   card's edges and rounded on every corner, with the title in white on it.
-   It carries the illustrations' ink grain (the fibre in
-   scripts/normalize-personas.mjs: white mottling, at most 20% opaque) at the
-   scale of a 720u-wide illustration (1000 of its units to 720u). */
+/* the act opener's ground: the whole card in a grained gradient of the
+   act's colour, with the title in white on it */
 .act-opener,
 main section[data-scene='your-ui-is-not-my-ui-title'] {
 	position: relative;
@@ -328,14 +322,62 @@ main section[data-scene='your-ui-is-not-my-ui-title'] {
 
 .act-opener::before,
 main section[data-scene='your-ui-is-not-my-ui-title']::before {
-	--paper-tile: calc(512 * 0.72 * var(--u)); /* 512 illustration units */
 	content: '';
 	position: absolute;
-	inset: var(--paper-inset);
-	border-radius: var(--card-corner, var(--corner));
+	/* to the card's edges; the card's own clip rounds its leading corner */
+	inset: 0;
+	/* a grained gradient in the act's ramp: the ink, under the white title,
+	   held along the bottom and then fading towards the top to a lighter step,
+	   with a high-contrast grain laid over in soft-light. Each act sets its
+	   own angle, lighter step and hold (below); angles stay within 0-40deg so
+	   the dark end is always along the title's edge. */
+	--grain-tile: calc(700 * var(--u));
 	background-color: var(--act-color);
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='2' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.4 0 0 0 -0.2'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23f)'/%3E%3C/svg%3E");
-	background-size: var(--paper-tile);
+	background-image:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.59' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3'/%3E%3CfeFuncG type='linear' slope='3'/%3E%3CfeFuncB type='linear' slope='3'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -12'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23g)' opacity='0.76'/%3E%3C/svg%3E"),
+		linear-gradient(var(--fade-angle, 20deg), var(--act-color) var(--fade-hold, 30%), color-mix(in srgb, var(--act-color) var(--fade-to, var(--ramp-accent)), white));
+	background-size: var(--grain-tile), 100% 100%;
+	background-blend-mode: soft-light, normal;
+	pointer-events: none;
+	/* its own compositor layer, one frame in size, drawn once and slid with
+	   the scene row. Left in the row's layer, it was drawn tile by tile as
+	   the row flew past, and the fine grain flickered from the blurry
+	   low-resolution tiles Chrome shows first. */
+	will-change: transform;
+}
+
+/* each act's fade: angle, the ramp step it lightens to, and how much of the
+   frame stays ink before it starts */
+.act-panel[data-act='hypothesis'] { --fade-angle: 30deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
+.act-panel[data-act='user-research'] { --fade-angle: 8deg; --fade-to: var(--ramp-soft); --fade-hold: 40%; }
+.act-panel[data-act='limits-of-adaptability'] { --fade-angle: 38deg; --fade-to: var(--ramp-accent); --fade-hold: 25%; }
+.act-panel[data-act='personalization-over-adaptability'] { --fade-angle: 18deg; --fade-to: var(--ramp-wash); --fade-hold: 45%; }
+.act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-accent); --fade-hold: 35%; }
+.act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-soft); --fade-hold: 30%; }
+.act-panel[data-act='closing'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
+.act-panel[data-act='backup-qa'] { --fade-angle: 34deg; --fade-to: var(--ramp-soft); --fade-hold: 35%; }
+
+/* the chapter number, top right on each act opener: the act's place in the
+   talk (as in the notes drawer's index, so the first act, which opens on the
+   talk title, is 01 and the first opener 02), in the title's face */
+main {
+	counter-reset: act;
+}
+
+.act-panel {
+	counter-increment: act;
+}
+
+.act-opener::after {
+	content: counter(act, decimal-leading-zero);
+	position: absolute;
+	top: var(--frame-pad-top);
+	right: var(--frame-pad-x);
+	font-family: var(--font-sans);
+	font-size: calc(96 * var(--u));
+	font-weight: 900;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
 	pointer-events: none;
 }
 
@@ -355,7 +397,7 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	   Black), always fits the card's width minus its padding; 222 at most */
 	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 8.7), calc(222 * var(--u)));
 	font-weight: 900;
-	line-height: 0.8;
+	line-height: 0.9;
 	margin: 0 auto;
 	hyphens: auto;
 }
@@ -364,10 +406,10 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	margin: 0;
 }
 
-/* the talk's title slide is laid out like an act opener: its paper block
+/* the talk's title slide is laid out like an act opener: its grained ground
    behind, the title bottom-left (the authors are in the top band) */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
-	/* exactly the card's height (not just at least), so the paper block
+	/* exactly the card's height (not just at least), so the grained ground
 	   ends at the card's foot */
 	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	justify-content: flex-end;
