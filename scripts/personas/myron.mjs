@@ -179,5 +179,23 @@ const top = [
 	path(FLOOR, floor),
 ].join('');
 svg = svg.replace(/<\/svg>\s*$/, `${top}</svg>\n`);
+
+// 9. the wheels in the soft tint. The inside of the big wheel is a hole in
+// the figure's ink sheet (the first path's contour 1): that exact contour,
+// filled, goes under it. The back wheel shows only below the frame bar, where
+// it opens onto the page, so it is traced from the
+// inner edge of its rim. The castor is solid ink: a tinted disc on top, inset
+// to leave its outline.
+const WHEEL = '#C8C7C8';
+const circle = ([x, y], r) => poly(Array.from({ length: 72 }, (_, k) => [x + r * Math.cos((k / 72) * 2 * Math.PI), y + r * Math.sin((k / 72) * 2 * Math.PI)]));
+const sheet = readFileSync(SRC, 'utf8').match(/<path\b[^>]*\bd="([^"]+)"/)[1].split(/(?=M)/);
+const lowerBack = poly([
+	[436, 873], [577, 873], [578, 880], [581, 890], [585, 900], [591, 910], [597, 920], [604, 930],
+	[594, 940], [581, 950], [560, 960], [530, 965], [499, 960], [478, 950], [465, 940], [456, 930],
+	[449, 920], [444, 910], [440, 900], [438, 890], [436, 880],
+]);
+const under = [sheet[1], lowerBack].map((d) => path(WHEEL, d)).join('');
+svg = svg.replace(/<path\b/, `${under}<path`);
+svg = svg.replace(/<\/svg>\s*$/, `${path(WHEEL, circle([399, 935], 27))}</svg>\n`);
 writeFileSync(OUT, svg);
 console.log('wrote', OUT.pathname, (svg.match(/<path\b/g) || []).length, 'paths');
