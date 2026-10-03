@@ -19,7 +19,7 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg']); // rolling the finish out one at a time
+const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg']); // rolling the finish out one at a time
 
 const NAMED = { black: '#000000', white: '#ffffff' };
 const rgb = (hex) => {
@@ -163,7 +163,9 @@ const CUT = {
 	// ramp step
 	wash: { dx: -6, dy: -14, spread: 8, bleed: 20, blur: 2, opacity: 0.8, tone: 'soft' },
 };
-const WASHED = ['deep', 'accent', 'soft', 'wash']; // ramp steps that get a wash
+// ramp steps that get a wash. Off for now: every spill so far read as a
+// smudge. To bring it back, list the steps, e.g. ['deep', 'accent', 'soft'].
+const WASHED = [];
 
 // One region for every shape, in the drawing's own units. The rough edge is
 // one noise field for everything, so neighbouring edges wobble together and

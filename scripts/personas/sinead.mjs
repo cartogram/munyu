@@ -88,11 +88,19 @@ const face = [
 // grained, no outline. The bolt is the originals' saturated yellow, so it's
 // light too, at the accent step.
 const BEAM = '#FDEABF', BOLT = '#F8C55A';
-const cloud =
+const clouds = [
+	// in from the right
 	'M838 262L582 262C548 262 540 230 562 219C558 186 600 174 622 191' +
-	'C632 158 690 157 702 187C718 167 760 171 764 199C790 186 830 191 838 206Z';
-const bolt = 'M796 258L770 302L786 302L758 352L806 290L789 290L812 258Z';
-svg = svg.replace('<path data-cloud/>', path(BEAM, cloud) + path(BOLT, bolt));
+		'C632 158 690 157 702 187C718 167 760 171 764 199C790 186 830 191 838 206Z',
+	// pushing out past the window's left edge
+	'M420 252L132 252C96 252 90 214 118 204C110 170 160 156 184 176' +
+		'C198 150 254 148 266 176C282 158 332 160 338 188C364 174 406 184 412 208C434 212 444 240 420 252Z',
+	// a small one between them
+	'M566 214L432 214C410 214 404 192 422 186C422 166 456 158 470 172C482 156 522 156 532 176C556 172 578 194 566 214Z',
+];
+// chunky: a fat zigzag
+const bolt = 'M802 256L756 326L792 326L742 412L834 302L798 302L834 256Z';
+svg = svg.replace('<path data-cloud/>', clouds.map((d) => path(BEAM, d)).join('') + path(BOLT, bolt));
 
 // 5. a chair like Allana's: a dark rounded back standing behind her, white
 // between it and her sweater so they read apart, running into a dark seat
