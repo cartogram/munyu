@@ -328,11 +328,11 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 }
 
 main [data-scene='your-ui-is-not-my-ui-title'] h2 {
-	margin-bottom: 0.4em;
+	margin: 0;
 }
 
 /* the talk's title slide is laid out like an act opener: its landscape
-   above, the title and authors bottom-left */
+   above, the title bottom-left (the authors are in the top band) */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
 	/* exactly the card's height (not just at least), so the line field
 	   gives way instead of the slide growing */
