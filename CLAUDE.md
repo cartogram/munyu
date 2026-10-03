@@ -18,8 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `index.html`: the content. Acts are `main > section[data-act].act-panel`; each scene is a `section[data-scene]`; speaker notes live in `aside.notes` and feed the notes drawer.
 - `js/site.js`: scroll choreography (GSAP ScrollTrigger), beat stops, keyboard navigation, hash sync, notes drawer, reduced-motion handling.
-- `js/landscape.js`: seeded SVG line fields for the act openers and the title.
-- `css/talk.css`: all styles and the type system; the theme tokens (`--act-*`, `--ramp-*`) sit at the top of `:root`. `css/reset.css` is the reset.
+- `css/talk.css`: all styles and the type system, including the act openers' grained paper blocks; the theme tokens (`--act-*`, `--ramp-*`) sit at the top of `:root`. `css/reset.css` is the reset.
 - `system.html`: the live specimen — type, act colours, illustrations and every layout, built from `css/talk.css` and `index.html` at runtime.
 - `DESIGN.md`: the design rules and how to add a persona, act or media file. Read it before changing the look.
 - `scripts/personas/`: each persona illustration's edits (`<scene>.mjs`), the shared drawing helpers (`draw.mjs`) and tools to inspect and render SVGs (`tools/`). Use the `persona-illustration` skill to add, change or animate an illustration.
