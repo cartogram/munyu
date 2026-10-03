@@ -345,12 +345,13 @@ function rebuild() {
 	navTween = null;
 	closeSpotlight();
 	// Pins are measured from the cards' layout, so take off the drawer's push
-	// while they're rebuilt, then put it back (the drawer may have resized).
+	// and shrink while they're rebuilt, then put them back (the drawer may
+	// have resized).
 	drawerTl?.progress(1);
-	gsap.set(document.body, { '--drawer-push': '0px' });
+	gsap.set(document.body, { '--drawer-push': '0px', '--drawer-scale': 1 });
 	mm?.revert();
 	setup();
-	gsap.set(document.body, { '--drawer-push': `${drawerPush()}px` });
+	gsap.set(document.body, drawerVars());
 	const same = beat && beatById(beat.id);
 	if (same) window.scrollTo(0, beatPosition(same) + offset);
 	updateChrome();
@@ -672,10 +673,16 @@ updateChrome();
 updateToc();
 
 // The drawer sits still under the deck, against the left edge; opening it
-// slides the act cards right by its width (--drawer-push, read by
-// css/talk.css) to uncover it, and closing slides them back over it.
+// shrinks the act cards into the room beside it (--drawer-scale, read by
+// css/talk.css) so the whole slide stays in view, and closing grows them back
+// over it. On a phone the drawer fills the window, so the cards slide right
+// by its width (--drawer-push) instead.
 const drawerIcon = notesToggle.querySelector('svg');
-const drawerPush = () => (notesDrawer.classList.contains('is-open') ? notesDrawer.offsetWidth : 0);
+const phone = window.matchMedia('(max-width: 699px)');
+const drawerIsOpen = () => notesDrawer.classList.contains('is-open');
+const drawerPush = () => (drawerIsOpen() && phone.matches ? notesDrawer.offsetWidth : 0);
+const drawerScale = () => (drawerIsOpen() && !phone.matches ? 1 - notesDrawer.offsetWidth / document.documentElement.clientWidth : 1);
+const drawerVars = () => ({ '--drawer-push': `${drawerPush()}px`, '--drawer-scale': drawerScale() });
 
 // A fresh timeline per toggle. The cards' push and the icon tween from
 // wherever they are, so an interrupted toggle turns around smoothly.
@@ -696,13 +703,13 @@ function setDrawerOpen(isOpen) {
 	if (isOpen) {
 		drawerTl
 			.set(notesDrawer, { visibility: 'visible' })
-			.to(document.body, { '--drawer-push': `${drawerPush()}px`, ease: 'expo.out', duration: 0.6 * speed }, 0)
+			.to(document.body, { ...drawerVars(), ease: 'expo.out', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 45, ease: 'power3.out', duration: 0.4 * speed }, 0);
 		if (activeTocLink) centreInDrawer(activeTocLink);
 	} else {
 		drawerTl
 			// eased out as well as in, so the slides settle back rather than snap
-			.to(document.body, { '--drawer-push': '0px', ease: 'power3.inOut', duration: 0.6 * speed }, 0)
+			.to(document.body, { ...drawerVars(), ease: 'power3.inOut', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 0, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
 			// hidden once covered, so its links leave the tab order
 			.set(notesDrawer, { visibility: 'hidden' });

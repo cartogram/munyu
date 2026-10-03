@@ -133,9 +133,11 @@
 	   so each earlier card shows as a thin extra line */
 	--stack-step: 3px;
 	--inset-right: 0rem;
-	/* the notes drawer's width; opening it, js/site.js tweens --drawer-push
-	   on body to slide the act cards that far right, off the drawer */
-	--drawer-width: 60vw;
+	/* the notes drawer's width; opening it, js/site.js tweens --drawer-scale
+	   on body to shrink the act cards into the room beside it (on phones,
+	   where the drawer fills the window, --drawer-push slides them away) */
+	--drawer-width: 50vw;
+	--drawer-scale: 1;
 	--drawer-push: 0px;
 	--inset-bottom: 0rem;
 	/* the chrome sits 1.5rem inside the card (Notes button); corner tabs pad
@@ -871,12 +873,16 @@ aside.notes {
 	}
 }
 
-/* the cards slide right, unresized, to uncover the drawer beneath them. On
-   each card, not an ancestor: the cards pin with position: fixed.
-   `translate`, not transform, which GSAP owns; !important because pinning
-   writes an inline translate: none. Stacked above the drawer. */
+/* the cards shrink toward the window's top right corner, whole, to uncover
+   the drawer beneath them (the slide keeps its proportions; only its size
+   changes). On phones they slide right instead. On each card, not an
+   ancestor: the cards pin with position: fixed. `translate` and `scale`, not
+   transform, which GSAP owns; !important because pinning writes an inline
+   translate: none. Stacked above the drawer. */
 .act-panel {
 	translate: var(--drawer-push) 0 !important;
+	scale: var(--drawer-scale) !important;
+	transform-origin: 100% 0 !important;
 	z-index: 1;
 }
 
@@ -892,7 +898,7 @@ aside.notes {
 }
 
 /* fixed under the deck, below the top band and against the left edge: the
-   cards slide off it to open it (js/site.js). The index on the left, its
+   cards shrink off it to open it (js/site.js). The index on the left, its
    text lined up with the talk title above, and the notes beside the deck;
    each column scrolls on its own. */
 #notes-drawer {
