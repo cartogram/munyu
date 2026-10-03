@@ -176,7 +176,8 @@ function buildAct(panel, isLast) {
 	const tl = gsap.timeline();
 	// An act without an opener (the first, which opens on the talk title)
 	// starts directly on its first scene.
-	const actBeats = panel.querySelector('.act-opener') ? [{ id: act, scene: null, time: 0 }] : [];
+	const opener = panel.querySelector('.act-opener');
+	const actBeats = opener ? [{ id: act, scene: null, opener, time: 0 }] : [];
 	const actRanges = [];
 
 	gsap.set(panel, { '--card-width': `${panel.clientWidth}px` });
@@ -520,7 +521,9 @@ function renderDrawer() {
 let currentScene;
 
 function updateCurrentScene() {
-	const scene = currentBeat()?.scene ?? null;
+	const beat = currentBeat();
+	// an act opener can carry notes of its own, like a scene
+	const scene = beat?.scene ?? beat?.opener ?? null;
 	if (scene === currentScene) return;
 	currentScene = scene;
 	currentSceneNotes = scene?.querySelector('aside.notes') ?? null;
@@ -876,6 +879,17 @@ window.addEventListener('scroll', () => {
 
 window.addEventListener('keydown', (event) => {
 	if (event.key === 'Escape' && spotlight) closeSpotlight();
+});
+
+// N opens and closes the notes and index, as the + does. Ignored while typing
+// in a field or playing a video, where the key means something else.
+window.addEventListener('keydown', (event) => {
+	if (event.key.toLowerCase() !== 'n' || event.repeat || event.defaultPrevented) return;
+	if (event.metaKey || event.ctrlKey || event.altKey || spotlight) return;
+	const active = document.activeElement;
+	if (active && (KEY_BLOCKING_TAGS.includes(active.tagName) || active.isContentEditable)) return;
+	event.preventDefault();
+	setDrawerOpen(!notesDrawer.classList.contains('is-open'));
 });
 
 window.addEventListener('keydown', (event) => {
