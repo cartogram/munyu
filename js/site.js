@@ -146,6 +146,24 @@ const titleScene = document.querySelector('[data-scene="your-ui-is-not-my-ui-tit
 const titleArt = landscape('your-ui-is-not-my-ui');
 titleScene?.append(titleArt);
 
+// Each slide's video shows as a "Play video" panel in its place, its size and
+// shape; pressing it plays the video in the spotlight (openSpotlight, below).
+// The video stays inside, unseen, for its source and where it was left off.
+document.querySelectorAll('main video').forEach((video) => {
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.className = 'video-play';
+	button.dataset.title = video.closest('section[data-scene]')?.querySelector('h2')?.textContent.trim() ?? '';
+	if (button.dataset.title) button.setAttribute('aria-label', `Play video: ${button.dataset.title}`);
+	video.removeAttribute('controls');
+	video.replaceWith(button);
+	button.append('Play video', video);
+	// 16:9 (css/talk.css) until the video knows its own shape
+	const setRatio = () => button.style.setProperty('--ratio', `${video.videoWidth} / ${video.videoHeight}`);
+	if (video.readyState >= 1) setRatio();
+	else video.addEventListener('loadedmetadata', setRatio, { once: true });
+});
+
 // Rebuilt with every setup(). A beat's scroll position is its trigger's start
 // plus its timeline time: durations are in scroll pixels, so 1s = 1px.
 let beats = []; // { id, scene, trigger, time }
@@ -267,14 +285,16 @@ function stopPositions() {
 }
 
 // Beats are pushed act by act in timeline order, so they're sorted by position.
-function currentBeat() {
+function beatAt(y) {
 	let current = beats[0];
 	for (const beat of beats) {
-		if (beatPosition(beat) > window.scrollY + 2) break;
+		if (beatPosition(beat) > y + 2) break;
 		current = beat;
 	}
 	return current;
 }
+
+const currentBeat = () => beatAt(window.scrollY);
 
 let navTween = null;
 let navTarget = null;
@@ -328,6 +348,7 @@ function rebuild() {
 	const offset = beat ? window.scrollY - beatPosition(beat) : 0;
 	navTween?.kill();
 	navTween = null;
+	closeSpotlight();
 	// Pins are measured from the cards' layout, so take off the drawer's push
 	// while they're rebuilt, then put it back (the drawer may have resized).
 	drawerTl?.progress(1);
@@ -401,6 +422,8 @@ window.addEventListener('resize', () => {
 });
 
 // The hash names the current beat, so a reload during rehearsal lands on it.
+// Stepping and scrolling only keep the current history entry's hash up to
+// date; deliberate jumps (jumpTo, below) add entries of their own.
 ScrollTrigger.addEventListener('scrollEnd', () => {
 	const beat = currentBeat();
 	const hash = beat ? `#${beat.id}` : '';
@@ -488,7 +511,27 @@ window.addEventListener('keydown', (event) => {
 	event.preventDefault();
 	const from = navTween ? navTarget : window.scrollY;
 	const target = nextStop(from, direction);
-	if (target !== undefined) moveTo(target);
+	if (target === undefined) return;
+	if (typeof direction === 'string') jumpTo(target);
+	else moveTo(target);
+});
+
+// A deliberate jump (from the index, or Home and End) gets its own history
+// entry, as following a link would, so Back returns to where it started.
+// The entry being left is brought up to date first, since scrolling only
+// updates it once the scroll settles.
+function jumpTo(y) {
+	const here = beatAt(navTween ? navTarget : window.scrollY);
+	const there = beatAt(y);
+	if (here) history.replaceState(null, '', `#${here.id}`);
+	if (there && there !== here) history.pushState(null, '', `#${there.id}`);
+	moveTo(y);
+}
+
+// Back and Forward glide to the beat their entry names.
+window.addEventListener('popstate', () => {
+	const beat = beatById(decodeURIComponent(window.location.hash.slice(1)));
+	if (beat) moveTo(beatPosition(beat));
 });
 
 let currentSceneNotes = null;
@@ -583,7 +626,7 @@ function tocLink(id, label, className) {
 	link.addEventListener('click', (event) => {
 		event.preventDefault();
 		const beat = beatById(id);
-		if (beat) moveTo(beatPosition(beat));
+		if (beat) jumpTo(beatPosition(beat));
 		// a mouse click hands focus back to the page so the arrow keys keep
 		// navigating; keyboard activation keeps focus in the list
 		if (event.detail > 0) link.blur();
@@ -678,13 +721,14 @@ function setDrawerOpen(isOpen) {
 	notesDrawer.classList.toggle('is-open', isOpen);
 	notesToggle.setAttribute('aria-expanded', String(isOpen));
 	if (isOpen) {
+		closeSpotlight();
 		updateCurrentScene();
 		renderDrawer();
 	}
 
 	drawerTl?.kill();
 	const speed = reduceMotion ? 0 : 1;
-	drawerTl = gsap.timeline({ defaults: { duration: 0.5 * speed } });
+	drawerTl = gsap.timeline({ defaults: { duration: 0.5 * speed }, onUpdate: updateCursor });
 	if (isOpen) {
 		drawerTl
 			.set(notesDrawer, { visibility: 'visible' })
@@ -699,12 +743,168 @@ function setDrawerOpen(isOpen) {
 			// hidden once covered, so its links leave the tab order
 			.set(notesDrawer, { visibility: 'hidden' });
 	}
+	updateCursor();
 }
 
 notesToggle.addEventListener('click', () => {
 	setDrawerOpen(!notesDrawer.classList.contains('is-open'));
 	// Hand focus back to the page so the arrow keys keep navigating.
 	notesToggle.blur();
+});
+
+// The pointer over the deck: a → on an act opener, a ▶ on a video, and a ×
+// anywhere over the cards while the drawer is open, or around a spotlit
+// video, where a click closes it. Elsewhere, and for touch, the system cursor.
+const deckCursor = document.getElementById('deck-cursor');
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+let pointer = null; // the mouse's last { x, y }, or null once it's left the window
+
+function cursorIcon(target) {
+	if (!target?.closest('.act-panel')) return '';
+	if (notesDrawer.classList.contains('is-open')) return 'close';
+	// the spotlit video and its close button keep the system cursor
+	if (spotlight?.el.contains(target)) return target.closest('video, button') ? '' : 'close';
+	if (target.closest('.video-play')) return 'play';
+	return target.closest('.act-opener') ? 'next' : '';
+}
+
+// Hit-tested afresh on scroll and as the cards slide, since the deck moves
+// under a still pointer.
+function updateCursor() {
+	const icon = pointer && finePointer.matches ? cursorIcon(document.elementFromPoint(pointer.x, pointer.y)) : '';
+	if (deckCursor.dataset.icon !== icon) deckCursor.dataset.icon = icon;
+	document.documentElement.classList.toggle('has-deck-cursor', icon !== '');
+	if (pointer) deckCursor.style.translate = `${pointer.x}px ${pointer.y}px`;
+}
+
+window.addEventListener('pointermove', (event) => {
+	if (event.pointerType !== 'mouse') return;
+	pointer = { x: event.clientX, y: event.clientY };
+	updateCursor();
+}, { passive: true });
+document.documentElement.addEventListener('pointerleave', () => {
+	pointer = null;
+	updateCursor();
+});
+window.addEventListener('scroll', updateCursor, { passive: true });
+
+// A click on the cards closes the open drawer or spotlight; on a video, it
+// opens the spotlight; on an act opener, it moves on to the next beat, as the
+// → says. Captured, so nothing in the cards (links, video) acts on it too.
+// Keyboard presses of the video's button come through here as well.
+document.addEventListener('click', (event) => {
+	const icon = cursorIcon(event.target);
+	if (!icon) return;
+	event.preventDefault();
+	event.stopPropagation();
+	if (icon === 'close') {
+		if (notesDrawer.classList.contains('is-open')) setDrawerOpen(false);
+		else closeSpotlight();
+	} else if (icon === 'play') {
+		openSpotlight(event.target.closest('.video-play'), event.detail === 0);
+	} else {
+		const target = nextStop(navTween ? navTarget : window.scrollY, 1);
+		if (target !== undefined) moveTo(target);
+	}
+}, { capture: true });
+
+// The spotlight plays a slide's video over the whole act card, as large as
+// fits, growing out of its panel and shrinking back into it. It closes with
+// its ×, Escape, a click on the ground around the video, or any scroll.
+let spotlight = null; // { el, video, panel, layout, scrollY, tl, fromKeyboard }
+
+function spotlightLayout(el, ratio) {
+	const box = el.getBoundingClientRect();
+	// clears the × in the corner
+	const pad = Math.max(56, Math.min(box.width, box.height) * 0.06);
+	const width = Math.min(box.width - 2 * pad, (box.height - 2 * pad) * ratio);
+	const height = width / ratio;
+	return { box, width, height, left: (box.width - width) / 2, top: (box.height - height) / 2 };
+}
+
+// The transform that shrinks the spotlit video onto its panel, as wide as
+// the panel and centred on it.
+function onPanel(panel, layout) {
+	const rect = panel.getBoundingClientRect();
+	const scale = rect.width / layout.width;
+	return {
+		x: rect.left + rect.width / 2 - layout.box.left - layout.left - (layout.width * scale) / 2,
+		y: rect.top + rect.height / 2 - layout.box.top - layout.top - (layout.height * scale) / 2,
+		scale,
+	};
+}
+
+function openSpotlight(panel, fromKeyboard) {
+	if (spotlight) return;
+	const source = panel.querySelector('video');
+	const el = document.createElement('div');
+	el.className = 'video-spotlight';
+	el.setAttribute('role', 'dialog');
+	el.setAttribute('aria-modal', 'true');
+	el.setAttribute('aria-label', panel.dataset.title ? `Video: ${panel.dataset.title}` : 'Video');
+	const backdrop = document.createElement('div');
+	backdrop.className = 'spotlight-backdrop';
+	const video = document.createElement('video');
+	video.src = source.currentSrc || source.src;
+	video.controls = true;
+	video.playsInline = true;
+	video.currentTime = source.currentTime; // picks up where it was closed
+	const close = document.createElement('button');
+	close.type = 'button';
+	close.className = 'spotlight-close';
+	close.setAttribute('aria-label', 'Close video');
+	close.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" /></svg>';
+	close.addEventListener('click', closeSpotlight);
+	el.append(backdrop, video, close);
+	panel.closest('.act-panel').append(el);
+
+	const layout = spotlightLayout(el, source.videoWidth / source.videoHeight || 16 / 9);
+	gsap.set(video, { width: layout.width, height: layout.height, left: layout.left, top: layout.top });
+	const speed = reduceMotion ? 0 : 1;
+	const tl = gsap.timeline();
+	tl.fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.35 * speed, ease: 'power2.out' }, 0)
+		.fromTo(close, { opacity: 0 }, { opacity: 1, duration: 0.3 * speed }, 0.2 * speed);
+	if (reduceMotion) tl.fromTo(video, { opacity: 0 }, { opacity: 1, duration: 0 }, 0);
+	else {
+		tl.fromTo(video, onPanel(panel, layout), { x: 0, y: 0, scale: 1, duration: 0.6, ease: 'expo.out' }, 0)
+			.fromTo(video, { opacity: 0 }, { opacity: 1, duration: 0.15 }, 0);
+	}
+
+	spotlight = { el, video, panel, layout, scrollY: window.scrollY, tl, fromKeyboard };
+	video.play().catch(() => {});
+	video.focus({ preventScroll: true });
+	updateCursor();
+}
+
+function closeSpotlight() {
+	if (!spotlight) return;
+	const { el, video, panel, layout, tl, fromKeyboard } = spotlight;
+	spotlight = null;
+	video.pause();
+	panel.querySelector('video').currentTime = video.currentTime;
+	el.style.pointerEvents = 'none';
+	const hadFocus = el.contains(document.activeElement);
+	if (hadFocus && fromKeyboard) panel.focus({ preventScroll: true });
+	else if (hadFocus) document.activeElement.blur();
+
+	tl.kill();
+	const speed = reduceMotion ? 0 : 1;
+	const out = gsap.timeline({ onComplete: () => el.remove() });
+	out.to(el.querySelectorAll('.spotlight-backdrop, .spotlight-close'), { opacity: 0, duration: 0.35 * speed, ease: 'power2.in' }, 0);
+	if (reduceMotion) out.to(video, { opacity: 0, duration: 0 }, 0);
+	else {
+		out.to(video, { ...onPanel(panel, layout), duration: 0.45, ease: 'power3.inOut' }, 0)
+			.to(video, { opacity: 0, duration: 0.12 }, 0.33);
+	}
+	updateCursor();
+}
+
+window.addEventListener('scroll', () => {
+	if (spotlight && Math.abs(window.scrollY - spotlight.scrollY) > 2) closeSpotlight();
+}, { passive: true });
+
+window.addEventListener('keydown', (event) => {
+	if (event.key === 'Escape' && spotlight) closeSpotlight();
 });
 
 window.addEventListener('keydown', (event) => {

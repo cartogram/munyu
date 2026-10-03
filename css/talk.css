@@ -125,10 +125,10 @@
 :root {
 	/* how far the act cards sit in from each window edge (js/site.js reads
 	   the top and bottom values for the scroll maths) */
-	/* the first card sits below a band for the talk title and event, flush
-	   with the left edge; literal px because js/site.js reads them */
+	/* the first card sits below a band for the talk title and event, 1px in
+	   from the left edge; literal px because js/site.js reads them */
 	--inset-top: 42px;
-	--inset-left: 0px;
+	--inset-left: 1px;
 	/* each act card sits this much further in (top and left) than the last,
 	   so each earlier card shows as a thin extra line */
 	--stack-step: 3px;
@@ -328,11 +328,11 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 }
 
 main [data-scene='your-ui-is-not-my-ui-title'] h2 {
-	margin-bottom: 0.4em;
+	margin: 0;
 }
 
 /* the talk's title slide is laid out like an act opener: its landscape
-   above, the title and authors bottom-left */
+   above, the title bottom-left (the authors are in the top band) */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
 	/* exactly the card's height (not just at least), so the line field
 	   gives way instead of the slide growing */
@@ -395,12 +395,12 @@ main section[data-scene] > :is(h2, h4, p, ul, ol, blockquote, .persona, .demo-pa
 	align-self: stretch;
 }
 
-main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) {
+main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) {
 	align-items: center;
 	text-align: center;
 }
 
-main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) > * {
+main section[data-scene]:has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) > * {
 	margin-left: auto;
 }
 
@@ -491,7 +491,8 @@ main small,
 .act-tab,
 .demo-panel > h4,
 .deck-chrome,
-.drawer-heading {
+.drawer-heading,
+.video-play {
 	font-family: var(--font-sans);
 	font-size: 1rem; /* 16px */
 	font-weight: 700;
@@ -569,8 +570,7 @@ main section[data-scene].is-wide > svg {
 }
 
 /* the markup sizes media for a side-by-side row; let it span the column */
-.persona > img,
-.persona > video {
+.persona > img {
 	flex: none !important;
 	max-width: 100% !important;
 	height: auto !important;
@@ -690,8 +690,8 @@ aside.notes {
 	display: none;
 }
 
-/* a + in the top band's right-hand corner; turns into a × while the drawer
-   is open */
+/* an outlined + in the top band's left-hand corner; turns into a × while
+   the drawer is open. Under the pointer the outline grows, the + doesn't. */
 #notes-toggle {
 	position: fixed;
 	top: calc((var(--inset-top) - var(--toggle-size)) / 2);
@@ -702,11 +702,29 @@ aside.notes {
 	width: var(--toggle-size);
 	height: var(--toggle-size);
 	padding: 0;
-	background: #fff;
+	background: none;
 	color: var(--act-color, #000);
+	border: 0;
+	cursor: pointer;
+}
+
+/* the outlined disc behind the +, so it can grow on its own (the button's
+   z-index keeps it above the band, below the +). It grows by its box, not
+   a scale, so the outline keeps its 1.5px stroke. */
+#notes-toggle::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background: #fff;
 	border: 1.5px solid currentColor;
 	border-radius: 50%;
-	cursor: pointer;
+	transition: inset 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* 1.14× the toggle's size */
+#notes-toggle:hover::before {
+	inset: calc(var(--toggle-size) * -0.07);
 }
 
 #notes-toggle svg {
@@ -716,6 +734,12 @@ aside.notes {
 	stroke: currentColor;
 	stroke-width: 2;
 	stroke-linecap: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#notes-toggle::before {
+		transition: none;
+	}
 }
 
 /* the cards slide right, unresized, to uncover the drawer beneath them. On
@@ -771,10 +795,10 @@ aside.notes {
 
 /* the index is a card, like the act cards: outlined, its top corners
    rounded, open at the bottom where it runs off the window. It sits in from
-   the window's left edge and below the top band, and pads its text out to
-   line up with the talk title. */
+   the window's left edge (by 1px, like the first act card) and below the
+   top band, and pads its text out to line up with the talk title. */
 .drawer-toc {
-	--card-inset-left: 1.25rem;
+	--card-inset-left: 1px;
 	--card-inset-top: 2rem;
 	--pad-left: calc(var(--title-left) - var(--card-inset-left) - 1px);
 	margin: var(--card-inset-top) 0 0 var(--card-inset-left);
@@ -865,4 +889,177 @@ aside.notes {
 		padding-top: 1.5rem;
 	}
 
+}
+
+/* the pointer over the deck (js/site.js): an outlined circle like the
+   notes toggle, centred on the pointer, with → on an act opener, ▶ on a
+   video, and × over the cards while the drawer or a video is open. The
+   system cursor is hidden only while it shows. */
+#deck-cursor {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 40;
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	box-sizing: border-box;
+	transform: translate(-50%, -50%);
+	background: #fff;
+	color: var(--act-color, #000);
+	border: 1.5px solid currentColor;
+	border-radius: 50%;
+	pointer-events: none;
+	opacity: 0;
+	scale: 0.5;
+	transition: opacity 0.15s, scale 0.2s ease-out;
+}
+
+#deck-cursor[data-icon='next'],
+#deck-cursor[data-icon='close'],
+#deck-cursor[data-icon='play'] {
+	opacity: 1;
+	scale: 1;
+}
+
+#deck-cursor svg {
+	grid-area: 1 / 1;
+	width: 18px;
+	height: 18px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+
+#deck-cursor[data-icon='next'] .cursor-next,
+#deck-cursor[data-icon='close'] .cursor-close,
+#deck-cursor[data-icon='play'] .cursor-play {
+	opacity: 1;
+}
+
+/* ▶ is the one filled icon */
+#deck-cursor .cursor-play {
+	fill: currentColor;
+}
+
+.has-deck-cursor,
+.has-deck-cursor * {
+	cursor: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#deck-cursor,
+	#deck-cursor svg,
+	.video-play {
+		transition: none;
+	}
+}
+
+/* a slide's video shows as an outlined "Play video" panel the video's
+   size and shape (js/site.js swaps it in, and sets --ratio once the video
+   knows its own); pressing it plays the video in the spotlight. With a
+   mouse, the cursor turns to ▶ over it. */
+.video-play {
+	display: grid;
+	place-items: center;
+	box-sizing: border-box;
+	/* a third of the frame's width (--card-width, js/site.js), centred */
+	width: calc(var(--card-width, 100vw) / 3);
+	max-width: 100%;
+	aspect-ratio: var(--ratio, 16 / 9);
+	align-self: center;
+	padding: 0;
+	/* tinted at rest, white under the pointer */
+	background: color-mix(in srgb, var(--act-color) 6%, white);
+	color: var(--act-color);
+	border: 1.5px solid currentColor;
+	border-radius: calc(16 * var(--u));
+	cursor: pointer;
+	transition: background-color 0.15s;
+}
+
+/* matched as a scene's descendant, to beat the scenes' margin-left: 0 */
+main section[data-scene] .video-play {
+	margin-inline: auto;
+}
+
+.video-play:hover {
+	background: #fff;
+}
+
+.video-play:focus-visible {
+	outline: 2px solid var(--act-color);
+	outline-offset: 3px;
+}
+
+/* phones: a third would be a sliver, so it spans the column */
+@media (max-width: 699px) {
+	.video-play {
+		width: 100%;
+	}
+}
+
+/* kept, unseen, for its source and where it was left off */
+.video-play > video {
+	display: none;
+}
+
+/* the spotlight: covers the current act card (not the band above) with a
+   dark ground in the act's hue, and plays the video on it as large as fits,
+   with native controls. js/site.js sizes the video and grows it out of its
+   panel. Unrounded: the card's clip rounds it to the inside of the card's
+   border, where the card's own (outer) radius would leave a sliver. */
+.video-spotlight {
+	position: absolute;
+	inset: 0;
+	z-index: 2; /* over the act tab */
+}
+
+.spotlight-backdrop {
+	position: absolute;
+	inset: 0;
+	background: color-mix(in srgb, var(--act-color) 25%, #0b0b0b);
+}
+
+.video-spotlight > video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	/* sized by js/site.js, not by `main video` */
+	max-width: none;
+	max-height: none;
+	border-radius: calc(16 * var(--u));
+	background: #000;
+	transform-origin: 0 0;
+}
+
+/* like the notes toggle, white on the dark ground */
+.spotlight-close {
+	position: absolute;
+	top: var(--tab-pad);
+	right: calc(var(--inset-right) + var(--tab-pad));
+	display: grid;
+	place-items: center;
+	width: var(--toggle-size);
+	height: var(--toggle-size);
+	padding: 0;
+	background: #fff;
+	color: var(--act-color);
+	border: 0;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.spotlight-close svg {
+	width: 14px;
+	height: 14px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
 }
