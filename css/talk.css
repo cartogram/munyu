@@ -264,12 +264,17 @@ body[data-current-act='backup-qa'] { --act-color: var(--act-backup-qa); }
 	border-right: none;
 }
 
-/* scenes sit side by side and slide left inside the pinned card */
+/* scenes sit side by side and slide left inside the pinned card. The row is
+   always its own compositor layer, so as GSAP moves it (js/site.js) its
+   scenes are drawn once and slid, not repainted every frame: GSAP only
+   promotes it while a tween runs (force3D: 'auto'), and repainting re-runs
+   the persona illustrations' cut-paper filters, which made scrolling lag. */
 .act-panel-inner {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
 	width: max-content;
+	will-change: transform;
 }
 
 /* frames: the act opener and every scene fill at least one viewport */
