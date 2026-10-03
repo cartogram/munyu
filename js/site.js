@@ -618,9 +618,13 @@ acts.forEach((panel, k) => {
 	}
 	const scenes = document.createElement('ol');
 	panel.querySelectorAll('section[data-scene]').forEach((scene, i) => {
-		// the h2 is a scene's title; an h4 above it is only an eyebrow
-		const heading = scene.querySelector('h2') ?? scene.querySelector('h1, h3, h4');
-		const label = heading?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
+		// the h2 is a scene's title
+		const heading = scene.querySelector('h2') ?? scene.querySelector('h1, h3');
+		// read as a screen reader would: without what's hidden from one (a
+		// rotating headline's endings)
+		const read = heading?.cloneNode(true);
+		read?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
+		const label = read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
 		const id = `${act}/${scene.dataset.scene}`;
 		const entry = document.createElement('li');
 		entry.append(tocLink(id, label, 'toc-link'));

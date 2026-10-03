@@ -486,25 +486,9 @@
 			</div>
 
 			<div class="ts-row">
-				<div class="ts-spec" data-spec="h4">
-					<strong>Lede</strong>
-					The line under a scene headline; also the Q&amp;A questions. Formerly the standfirst.
-					<code>main h4</code>
-					<output></output>
-				</div>
-				<div class="ts-sample act-panel" data-act="user-research">
-					<div class="act-panel-inner">
-						<section data-scene="ts-standfirst">
-							<h4>AI as an Accessibility &ldquo;Assistant,&rdquo; not a Replacement</h4>
-						</section>
-					</div>
-				</div>
-			</div>
-
-			<div class="ts-row">
 				<div class="ts-spec" data-spec="p" data-edit="p, ul">
-					<strong>Body</strong>
-					Paragraphs and lists; a fit-content block in a 40ch column.
+					<strong>Body sans</strong>
+					Paragraphs and lists, and the line under a persona's name.
 					<code>main p, main ul</code>
 					<output></output>
 				</div>
@@ -524,8 +508,8 @@
 
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="blockquote">
-					<strong>Quote</strong>
-					Interview quotes, on their own or beside a screenshot.
+					<strong>Body serif</strong>
+					Interview quotes and the Q&amp;A questions; centred where they're used.
 					<code>main blockquote</code>
 					<output></output>
 				</div>
@@ -828,13 +812,12 @@
 				{ name: 'Statement', act: 'empathy-is-our-point', scene: 'what-is-gained', note: 'A headline on its own.' },
 				{ name: 'Headline + body', act: 'hypothesis', scene: 'hypothesis' },
 				{ name: 'Headline + list', act: 'limits-of-adaptability', scene: 'opportunities' },
-				{ name: 'Headline + lede + list', act: 'launching-is-creating', scene: 'but-a-ui-that-keeps-changing-breaks-screen-readers' },
-				{ name: 'Headline + lede + quote', act: 'user-research', scene: 'matthew' },
-				{ name: 'Persona', act: 'user-research', scene: 'sinead', note: 'Name, lede, divider and quote on the left; the illustration fills the right. One frame, never scrolls.' },
+				{ name: 'Headline + body + list', act: 'launching-is-creating', scene: 'but-a-ui-that-keeps-changing-breaks-screen-readers' },
+				{ name: 'Persona', act: 'user-research', scene: 'sinead', note: 'Name, body sans, divider and body serif on one side, the illustration on the other. One frame, never scrolls.' },
 				{ name: 'Headline + media', act: 'hypothesis', scene: 'ai-accessibility-today' },
 				{ name: 'Side by side', act: 'limits-of-adaptability', scene: 'todays-model', note: 'The persona layout with a diagram in the frame. Layers reveal one per ↓ on the slides.' },
 				{ name: 'Demo panels', act: 'personalization-over-adaptability', scene: 'demo-two-people', note: 'Panels reveal one per ↓ on the slides.' },
-				{ name: 'Q&A', act: 'backup-qa', scene: 'doesnt-this-just-hand-more-power', note: 'Question as the lede, answer as body.' },
+				{ name: 'Q&A', act: 'backup-qa', scene: 'doesnt-this-just-hand-more-power', note: 'Centred like a persona quote: the question in the quote serif, the divider, then the answer.' },
 			];
 
 			// Areas to label, in priority order; an element claimed by an earlier
@@ -845,11 +828,10 @@
 				["[data-scene='your-ui-is-not-my-ui-title'] h2", 'Act title'],
 				['.demo-panels', 'Demo panels · meta'],
 				['h2', 'Scene headline'],
-				['h4', 'Lede'],
-				['blockquote', 'Quote'],
+				['blockquote', 'Body serif'],
 				['p:has(> small:only-child)', 'Meta'],
-				['p', 'Body'],
-				['ul', 'Body · list'],
+				['p', 'Body sans'],
+				['ul', 'Body sans · list'],
 				['svg', 'Diagram'],
 				['img, video', 'Media'],
 			];

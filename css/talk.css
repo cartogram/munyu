@@ -348,14 +348,14 @@ main section[data-scene='your-ui-is-not-my-ui-title']::before {
 
 /* each act's fade: angle, the ramp step it lightens to, and how much of the
    frame stays ink before it starts */
-.act-panel[data-act='hypothesis'] { --fade-angle: 30deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
-.act-panel[data-act='user-research'] { --fade-angle: 8deg; --fade-to: var(--ramp-soft); --fade-hold: 40%; }
-.act-panel[data-act='limits-of-adaptability'] { --fade-angle: 38deg; --fade-to: var(--ramp-accent); --fade-hold: 25%; }
-.act-panel[data-act='personalization-over-adaptability'] { --fade-angle: 18deg; --fade-to: var(--ramp-wash); --fade-hold: 45%; }
-.act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-accent); --fade-hold: 35%; }
-.act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-soft); --fade-hold: 30%; }
+.act-panel[data-act='hypothesis'] { --fade-angle: 30deg; --fade-to: var(--ramp-deep); --fade-hold: 30%; }
+.act-panel[data-act='user-research'] { --fade-angle: 8deg; --fade-to: var(--ramp-accent); --fade-hold: 40%; }
+.act-panel[data-act='limits-of-adaptability'] { --fade-angle: 38deg; --fade-to: var(--ramp-deep); --fade-hold: 25%; }
+.act-panel[data-act='personalization-over-adaptability'] { --fade-angle: 18deg; --fade-to: var(--ramp-soft); --fade-hold: 45%; }
+.act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-deep); --fade-hold: 35%; }
+.act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
 .act-panel[data-act='closing'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
-.act-panel[data-act='backup-qa'] { --fade-angle: 34deg; --fade-to: var(--ramp-soft); --fade-hold: 35%; }
+.act-panel[data-act='backup-qa'] { --fade-angle: 34deg; --fade-to: var(--ramp-accent); --fade-hold: 35%; }
 
 /* the chapter number, top right on each act opener: the act's place in the
    talk (as in the notes drawer's index, so the first act, which opens on the
@@ -418,8 +418,9 @@ main section[data-scene='your-ui-is-not-my-ui-title'] {
 	padding-bottom: calc(var(--frame-pad-bottom) + 40 * var(--u));
 }
 
-/* editorial scene layout: serif headline, sans body, serif lede and
-   quotes. The scene line lives in each card's tab (.act-tab). */
+/* editorial scene layout: a serif headline, then body in one of two
+   styles, body sans (paragraphs and lists) and body serif (quotes, and the
+   Q&A questions). The scene line lives in each card's tab (.act-tab). */
 
 main h2 {
 	font-family: var(--font-serif);
@@ -436,26 +437,6 @@ main h3 {
 	margin: 0 auto 0.5em;
 }
 
-/* lede (formerly the standfirst): the line under a headline and the Q&A
-   questions. Its own rule: the quote's size in Aileron Regular, without the
-   quote's indent, so it can be changed or dropped on its own. */
-main h4 {
-	font-family: var(--font-sans);
-	font-size: calc(55 * var(--u));
-	font-weight: 400;
-	line-height: 1.2;
-	text-decoration: underline;
-	text-decoration-thickness: 0.05em;
-	text-underline-offset: 0.12em;
-	text-wrap: balance;
-	margin: 0 auto 0.8em;
-}
-
-/* the lede sits directly on what follows it: a Q&A answer, or a quote */
-main section[data-scene] > h4:has(+ :is(p, blockquote, .persona)) {
-	margin-bottom: 0;
-}
-
 /* scenes are left-aligned, except a headline with at most one other text
    element (a statement, or headline + one line), which stays centred */
 main section[data-scene] {
@@ -468,18 +449,18 @@ main section[data-scene] > * {
 }
 
 /* text and layout blocks run the full width between the frame's padding */
-main section[data-scene] > :is(h2, h4, p, ul, ol, blockquote, .persona, .demo-panels) {
+main section[data-scene] > :is(h2, p, ul, ol, blockquote, .persona, .demo-panels) {
 	align-self: stretch;
 }
 
 /* a headline-only scene is centred; not the title slide, which is set
    bottom-left like an act opener */
-main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) {
+main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ p ~ p)) {
 	align-items: center;
 	text-align: center;
 }
 
-main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) > * {
+main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ p ~ p)) > * {
 	margin-left: auto;
 }
 
@@ -495,8 +476,8 @@ main ul {
 	list-style: disc;
 }
 
-/* body: paragraphs and lists share one style. In --u, not em, so it doesn't
-   compound inside the card's 1.5em */
+/* body sans: paragraphs and lists share one style. In --u, not em, so it
+   doesn't compound inside the card's 1.5em */
 main p,
 main ul {
 	font-size: calc(55 * var(--u));
@@ -511,13 +492,13 @@ main li + li {
 	margin-top: 0.3em;
 }
 
+/* body serif: interview quotes and the Q&A questions, always centred (the
+   persona and Q&A layouts) */
 main blockquote {
 	font-family: var(--font-serif);
 	font-size: calc(60 * var(--u));
 	font-weight: 400;
 	line-height: 1.2;
-	/* a big editorial first-line indent */
-	text-indent: 3em;
 }
 
 /* a list shown as one line whose ending rotates (js/site.js): the endings
@@ -576,9 +557,6 @@ main small,
 	font-size: 1rem; /* 16px */
 	font-weight: 700;
 	line-height: 1.4;
-	/* demo panel labels are h4s; they don't take the lede's indent or underline */
-	text-indent: 0;
-	text-decoration: none;
 }
 
 /* the font has no longer dash, so a doubled em dash is the glyph stretched
@@ -719,8 +697,8 @@ main section[data-scene].is-wide > svg {
 	font-weight: 700;
 }
 
-/* persona scenes: name, lede, a divider, the interview quote and its
-   illustration, all centred in one column. One gap spaces every element,
+/* persona scenes: name, a line of body sans, a divider, the interview quote
+   (body serif) and its illustration, all centred in one column. One gap spaces every element,
    the divider included, so margins are zeroed and the gap does the work. */
 main section[data-scene]:has(> .persona) {
 	--persona-gap: calc(48 * var(--u));
@@ -731,6 +709,10 @@ main section[data-scene]:has(> .persona) {
 
 main section[data-scene]:has(> .persona) > * {
 	margin: 0 auto;
+}
+
+main section[data-scene]:has(> .persona) > p {
+	text-wrap: balance;
 }
 
 .persona {
@@ -755,12 +737,46 @@ main section[data-scene]:has(> .persona) > * {
 
 .persona > :is(blockquote, p) {
 	margin: 0 auto;
-	/* centred, so no editorial first-line indent */
-	text-indent: 0;
+}
+
+/* Q&A scenes (a quoted question, then its answer): treated like a persona's
+   quote. One centred column at the persona gap: the question in body serif,
+   the persona divider, then the answer in body sans. The divider is the
+   scene's own ::after, ordered between the two. */
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) {
+	--persona-gap: calc(48 * var(--u));
+	align-items: center;
+	text-align: center;
+	gap: var(--persona-gap);
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > * {
+	margin: 0 auto;
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > blockquote {
+	order: 1;
+	max-width: calc(1400 * var(--u));
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p)::after {
+	content: '';
+	order: 2;
+	flex: none;
+	width: 20%;
+	height: calc(16 * var(--u));
+	background: currentColor;
+	mask: url('../media/persona-divider.svg') center / 100% 100% no-repeat;
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > p {
+	order: 3;
+	max-width: calc(1400 * var(--u));
+	text-wrap: balance;
 }
 
 /* a persona scene is one frame and never pages, in two columns: the text
-   (name, lede, divider, quote) centred as a group in the left half, the
+   (name, body line, divider, quote) centred as a group in the left half, the
    illustration filling the right half. Other scenes use it as the side by
    side template: a <p> takes the quote's place and the frame can hold a
    diagram (Today's model). .persona steps aside (display: contents) so its quote,
@@ -785,10 +801,10 @@ main section[data-scene]:has(> .persona) > * {
 		grid-area: 2 / 1;
 		line-height: 1;
 	}
-	main section[data-scene]:has(> .persona) > h4 { grid-area: 3 / 1; }
+	main section[data-scene]:has(> .persona) > p { grid-area: 3 / 1; }
 	.persona::before { grid-area: 4 / 1; }
 
-	main section[data-scene]:has(> .persona) > h4,
+	main section[data-scene]:has(> .persona) > p,
 	.persona::before,
 	.persona > :is(blockquote, p) {
 		margin-top: var(--persona-gap);
@@ -820,7 +836,7 @@ main section[data-scene]:has(> .persona) > * {
 
 	/* flipped (.is-flipped): the illustration on the left, the text on the
 	   right */
-	main section[data-scene].is-flipped > :is(h2, h4),
+	main section[data-scene].is-flipped > :is(h2, p),
 	.is-flipped .persona::before,
 	.is-flipped .persona > :is(blockquote, p) {
 		grid-column: 2;
