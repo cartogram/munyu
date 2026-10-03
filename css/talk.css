@@ -690,8 +690,8 @@ aside.notes {
 	display: none;
 }
 
-/* a + in the top band's right-hand corner; turns into a × while the drawer
-   is open */
+/* an outlined + in the top band's left-hand corner; turns into a × while
+   the drawer is open. Under the pointer the outline grows, the + doesn't. */
 #notes-toggle {
 	position: fixed;
 	top: calc((var(--inset-top) - var(--toggle-size)) / 2);
@@ -702,11 +702,29 @@ aside.notes {
 	width: var(--toggle-size);
 	height: var(--toggle-size);
 	padding: 0;
-	background: #fff;
+	background: none;
 	color: var(--act-color, #000);
+	border: 0;
+	cursor: pointer;
+}
+
+/* the outlined disc behind the +, so it can grow on its own (the button's
+   z-index keeps it above the band, below the +). It grows by its box, not
+   a scale, so the outline keeps its 1.5px stroke. */
+#notes-toggle::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background: #fff;
 	border: 1.5px solid currentColor;
 	border-radius: 50%;
-	cursor: pointer;
+	transition: inset 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* 1.14× the toggle's size */
+#notes-toggle:hover::before {
+	inset: calc(var(--toggle-size) * -0.07);
 }
 
 #notes-toggle svg {
@@ -716,6 +734,12 @@ aside.notes {
 	stroke: currentColor;
 	stroke-width: 2;
 	stroke-linecap: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#notes-toggle::before {
+		transition: none;
+	}
 }
 
 /* the cards slide right, unresized, to uncover the drawer beneath them. On
