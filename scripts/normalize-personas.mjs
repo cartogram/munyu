@@ -19,7 +19,7 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg']);
+const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg', 'matthew.svg']);
 
 const NAMED = { black: '#000000', white: '#ffffff' };
 const rgb = (hex) => {
