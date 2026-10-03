@@ -48,9 +48,11 @@ same OKLCH lightness and chroma, varying only in hue. Every one passes WCAG
 AAA (7:1) on white, so any of them can carry body text. A talk about
 accessibility can't fall short of this.
 
-**Two typefaces.** Aileron (sans) for titles, body, lists and meta. Libre
-Baskerville (serif) for scene headlines and quotes. There's one italic, the
-sub-meta. `<em>` stays upright.
+**Two typefaces.** Aileron (sans) for titles, body sans (paragraphs and
+lists) and meta. Libre Baskerville (serif) for scene headlines and body
+serif (interview quotes and the Q&A questions). Body comes in just those two
+styles; there's no separate lede. There's one italic, the sub-meta. `<em>`
+stays upright.
 
 **Slide units.** Everything inside a slide is sized in `--u`, one pixel of a
 1920 × 1080 canvas scaled to the window. A slide keeps its proportions and
@@ -59,8 +61,9 @@ Phones get a fixed scale and read the deck as a column.
 
 ## Persona illustrations
 
-Each persona scene is one frame that never scrolls. Name, lede, a cut-paper
-divider and the interview quote sit centred in one half, and one
+Each persona scene is one frame that never scrolls. Name, a line of body
+sans, a cut-paper divider and the interview quote (body serif) sit centred
+in one half, and one
 illustration of that person's setup fills the other: text left by default,
 illustration left with `class="is-flipped"` on the scene. Phones stack the
 text above the illustration. A clip shows as a turning "Play video" ring in
@@ -129,6 +132,6 @@ scene in `index.html`. Prefer an existing template to a new layout. If you
 add one, point a template entry at a scene that uses it.
 
 **Side by side** is the persona layout used for anything else: the scene's
-`<h2>` and `<h4>`, then a `.persona` holding a `<p>` (in the quote's place)
+`<h2>` and a `<p>` of body sans, then a `.persona` holding a `<p>` (in the quote's place)
 and a `.portrait-ground` frame holding the media, such as a diagram. Text
 sits left and media right; `class="is-flipped"` swaps them.
