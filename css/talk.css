@@ -592,6 +592,91 @@ main section[data-scene].is-wide > svg {
 	width: min(calc(900 * var(--u)), 100%);
 }
 
+/* Today's model (index.html): one interface with its accessibility tools
+   stacked on it, an exploded isometric stack of flat panes in the act's
+   ramp, like the persona illustrations. The tools are clear sheets, so the
+   layers beneath show through them. */
+.stack-diagram {
+	width: auto;
+	max-height: calc(640 * var(--u));
+	overflow: visible;
+	--tone-ink: var(--act-color);
+	--tone-deep: color-mix(in srgb, var(--act-color) var(--ramp-deep), white);
+	--tone-accent: color-mix(in srgb, var(--act-color) var(--ramp-accent), white);
+	--tone-soft: color-mix(in srgb, var(--act-color) var(--ramp-soft), white);
+	--tone-wash: color-mix(in srgb, var(--act-color) var(--ramp-wash), white);
+}
+
+.stack-diagram .tone-ink { fill: var(--tone-ink); }
+.stack-diagram .tone-deep { fill: var(--tone-deep); }
+.stack-diagram .tone-accent { fill: var(--tone-accent); }
+.stack-diagram .tone-soft { fill: var(--tone-soft); }
+.stack-diagram .tone-wash { fill: var(--tone-wash); }
+.stack-diagram .tone-paper { fill: #fff; }
+
+/* the base pane's paper edge; a clear sheet, tinted a little and outlined */
+.stack-sheet-edge,
+.stack-clear {
+	stroke: var(--tone-soft);
+	stroke-width: 3;
+}
+
+.stack-clear {
+	fill: var(--tone-wash);
+	fill-opacity: 0.35;
+}
+
+/* dark mode's sheet: the act's ink, see-through enough to show the
+   interface it darkens */
+.stack-tint {
+	fill-opacity: 0.72;
+}
+
+/* the screen reader's focus ring, and the rings it will reach next */
+.stack-focus {
+	fill: none;
+	stroke: var(--tone-ink);
+	stroke-width: 5;
+}
+
+.stack-focus.is-queued {
+	stroke: var(--tone-deep);
+	stroke-dasharray: 12 8;
+}
+
+.stack-order {
+	fill: #fff;
+	font-size: 16px;
+	font-weight: 700;
+	text-anchor: middle;
+}
+
+/* high contrast's forced borders */
+.stack-border {
+	fill: none;
+	stroke: var(--tone-ink);
+	stroke-width: 7;
+}
+
+.stack-lens-rim {
+	fill: none;
+	stroke: var(--tone-ink);
+	stroke-width: 8;
+}
+
+.stack-leader {
+	fill: none;
+	stroke: var(--tone-soft);
+	stroke-width: 2;
+}
+
+.stack-label {
+	fill: var(--tone-ink);
+	font-family: var(--font-sans);
+	font-size: 30px;
+	font-weight: 700;
+}
+
 /* persona scenes: name, lede, a divider, the interview quote and its
    illustration, all centred in one column. One gap spaces every element,
    the divider included, so margins are zeroed and the gap does the work. */
@@ -626,7 +711,7 @@ main section[data-scene]:has(> .persona) > * {
 	mask: url('../media/persona-divider.svg') center / 100% 100% no-repeat;
 }
 
-.persona > blockquote {
+.persona > :is(blockquote, p) {
 	margin: 0 auto;
 	/* centred, so no editorial first-line indent */
 	text-indent: 0;
@@ -634,7 +719,9 @@ main section[data-scene]:has(> .persona) > * {
 
 /* a persona scene is one frame and never pages, in two columns: the text
    (name, lede, divider, quote) centred as a group in the left half, the
-   illustration filling the right half. .persona steps aside (display: contents) so its quote,
+   illustration filling the right half. Other scenes use it as the side by
+   side template: a <p> takes the quote's place and the frame can hold a
+   diagram (Today's model). .persona steps aside (display: contents) so its quote,
    divider and media join the scene's grid. The empty rows above
    and below the text centre it; the gap is a top margin on the text, not a
    row gap, so those rows cost nothing when the text fills the frame. Phones
@@ -661,12 +748,12 @@ main section[data-scene]:has(> .persona) > * {
 
 	main section[data-scene]:has(> .persona) > h4,
 	.persona::before,
-	.persona > blockquote {
+	.persona > :is(blockquote, p) {
 		margin-top: var(--persona-gap);
 	}
 	/* half the width holds fewer words a line, so the quote steps down from
 	   60 to fit the frame */
-	.persona > blockquote {
+	.persona > :is(blockquote, p) {
 		grid-area: 5 / 1;
 		font-size: calc(42 * var(--u));
 	}
@@ -693,7 +780,7 @@ main section[data-scene]:has(> .persona) > * {
 	   right */
 	main section[data-scene].is-flipped > :is(h2, h4),
 	.is-flipped .persona::before,
-	.is-flipped .persona > blockquote {
+	.is-flipped .persona > :is(blockquote, p) {
 		grid-column: 2;
 	}
 
@@ -701,9 +788,22 @@ main section[data-scene]:has(> .persona) > * {
 		grid-column: 1;
 	}
 
-	.persona .persona-portrait {
+	.persona .persona-portrait,
+	.persona > .portrait-ground > .stack-diagram {
 		height: 100%;
 	}
+}
+
+/* a diagram in the side by side frame scales to fit it, centred; its panes
+   may slip past the frame's edge on the conflict beat */
+.persona > .portrait-ground:has(> .stack-diagram) {
+	overflow: visible;
+	border-radius: 0;
+}
+
+.persona > .portrait-ground > .stack-diagram {
+	width: 100%;
+	max-height: none;
 }
 
 /* the markup sizes media for a side-by-side row; let it span the column */
