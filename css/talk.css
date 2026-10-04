@@ -501,6 +501,25 @@ main blockquote {
 	line-height: 1.2;
 }
 
+/* a headline across the full width, then two columns of body below, tops
+   aligned (a stacked column on phones) */
+.two-columns {
+	width: 100%;
+}
+
+@media (min-width: 700px) {
+	.two-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		column-gap: calc(96 * var(--u));
+		align-items: start;
+	}
+}
+
+.two-columns > :is(blockquote, p) {
+	margin: 0;
+}
+
 /* a list shown as one line whose ending rotates (js/site.js): the endings
    stack in one grid cell, so the slot is as wide as the longest and the
    line never reflows, and the slot clips them, so they slide in and out
