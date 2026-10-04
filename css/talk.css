@@ -334,7 +334,7 @@ main section[data-scene='your-ui-is-not-my-ui-title']::before {
 	--grain-tile: calc(700 * var(--u));
 	background-color: var(--act-color);
 	background-image:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.59' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3'/%3E%3CfeFuncG type='linear' slope='3'/%3E%3CfeFuncB type='linear' slope='3'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -12'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23g)' opacity='0.76'/%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.59' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3'/%3E%3CfeFuncG type='linear' slope='3'/%3E%3CfeFuncB type='linear' slope='3'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -12'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23g)' opacity='0.38'/%3E%3C/svg%3E"),
 		linear-gradient(var(--fade-angle, 20deg), var(--act-color) var(--fade-hold, 30%), color-mix(in srgb, var(--act-color) var(--fade-to, var(--ramp-accent)), white));
 	background-size: var(--grain-tile), 100% 100%;
 	background-blend-mode: soft-light, normal;
@@ -453,14 +453,15 @@ main section[data-scene] > :is(h2, p, ul, ol, blockquote, .persona) {
 	align-self: stretch;
 }
 
-/* a headline-only scene is centred; not the title slide, which is set
-   bottom-left like an act opener */
-main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ p ~ p)) {
+/* a headline-only scene is centred, including one whose only other element
+   is the corner play button; not the title slide, which is set bottom-left
+   like an act opener */
+main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, img, svg))):not(:has(> h2 ~ p ~ p)) {
 	align-items: center;
 	text-align: center;
 }
 
-main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ p ~ p)) > * {
+main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, img, svg))):not(:has(> h2 ~ p ~ p)) > * {
 	margin-left: auto;
 }
 

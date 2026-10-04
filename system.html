@@ -365,14 +365,18 @@
 				border-radius: 0;
 			}
 
-			.ts-slide .act-opener,
 			.ts-slide section[data-scene] {
 				min-height: 800px;
 			}
 
-			.ts-slide main img,
-			.ts-slide img,
-			.ts-slide video {
+			/* one-frame layouts size to the window in the deck; here they fill the
+			   800px stage, so the title and the illustration stay above the fold */
+			.ts-slide section[data-scene='your-ui-is-not-my-ui-title'],
+			.ts-slide section[data-scene]:has(> .persona) {
+				height: 800px;
+			}
+
+			.ts-slide img {
 				max-height: 560px;
 			}
 
@@ -415,6 +419,7 @@
 	<body>
 		<main>
 		<header class="ts-header">
+			<p><a href="index.html">Presentation</a></p>
 			<h1>System</h1>
 			<p>
 				<em>Your UI is not my UI</em> — React Advanced 2026. Every sample on this page is styled by the
@@ -526,31 +531,18 @@
 				</div>
 			</div>
 
-		</section>
-					</div>
-				</div>
-			</div>
-
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="small">
 					<strong>Meta</strong>
-					Authors, section labels, asides, the slide chrome and the Notes button.
+					Labels, the slide chrome and the Notes button.
 					<code>main small, .deck-chrome, #notes-toggle</code>
 					<output></output>
 				</div>
-				<div class="ts-sample act-panel" data-act="hypothesis">
+				<div class="ts-sample act-panel" data-act="launching-is-creating">
 					<div class="act-panel-inner">
 						<section data-scene="ts-meta">
-							<p><small>Simon Lenz &amp; Matthew Seccafien</small></p>
-							<p>
-								<small style="max-width: 30ch">Your UI is not my UI · React Advanced 2026 · Simon Lenz &amp; Matthew Seccafien. Real user research, a prototype, and a provocation about where UI is heading.</small>
-							</p>
+							<p><small>We replaced configuration toil with developer toil.</small></p>
 						</section>
-					</div>
-				</div>
-			</div>
-
-		</section>
 					</div>
 				</div>
 			</div>
@@ -558,7 +550,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".sub-meta">
 					<strong>Sub-meta</strong>
-					A secondary line under meta: the event's city and year, the scene kicker under the talk title, and the numbers. Title-case serif italic, the only italic.
+					A secondary line under meta: the event's city and year, and the slide number in the notes drawer. Title-case serif italic, the only italic.
 					<code>.sub-meta</code>
 					<output></output>
 				</div>
@@ -566,7 +558,6 @@
 					<div class="act-panel-inner">
 						<section data-scene="ts-sub-meta">
 							<p><small>React Advanced<span class="sub-meta"><span class="em-dash">—</span>London 2026</span></small></p>
-							<p><small>User research<span class="sub-meta"><span class="em-dash">—</span>2/8</span></small></p>
 						</section>
 					</div>
 				</div>
@@ -616,7 +607,7 @@
 		<section class="ts-section">
 			<h2>Slide templates</h2>
 			<p class="ts-note">
-				Every layout in the talk, rendered from the live slides in <code>index.html</code> at 1280×800.
+				The three layouts in the talk, rendered from the live slides in <code>index.html</code> at 1280×800.
 				Left: the labelled areas, measured from the example. Right: the slide itself, with its
 				chrome. Stepped reveals are shown fully revealed; a dashed line marks the fold on slides that
 				scroll.
@@ -807,41 +798,29 @@
 
 			// ---- Slide templates -------------------------------------------------
 			const TEMPLATES = [
-				{ name: 'Title', act: 'hypothesis', scene: 'your-ui-is-not-my-ui-title', note: 'Opens the talk.' },
-				{ name: 'Act opener', act: 'user-research', opener: true, note: 'Opens every act after the first.' },
-				{ name: 'Statement', act: 'empathy-is-our-point', scene: 'what-is-gained', note: 'A headline on its own.' },
-				{ name: 'Headline + body', act: 'hypothesis', scene: 'hypothesis' },
-				{ name: 'Headline + list', act: 'limits-of-adaptability', scene: 'one-interface-cant-fit-everyone' },
-				{ name: 'Headline + body + list', act: 'launching-is-creating', scene: 'imagine-everything-bespoke' },
-				{ name: 'Persona', act: 'user-research', scene: 'sinead', note: 'Name, body sans, divider and body serif on one side, the illustration on the other. One frame, never scrolls.' },
-				{ name: 'Headline + media', act: 'hypothesis', scene: 'ai-accessibility-today' },
-				{ name: 'Side by side', act: 'limits-of-adaptability', scene: 'todays-model', note: 'The persona layout with a diagram in the frame. Layers reveal one per ↓ on the slides.' },
-				{ name: 'Demo', act: 'personalization-over-adaptability', scene: 'demo-two-people', note: 'Avatars, a stack of boxes and the text: on the intent, each ↓ adds a box (empathy, then the UI); the avatars jump to each person.' },
-				{ name: 'Q&A', act: 'backup-qa', scene: 'doesnt-this-just-hand-more-power', note: 'Centred like a persona quote: the question in the quote serif, the divider, then the answer.' },
+				{ name: 'Content', act: 'launching-is-creating', scene: 'imagine-everything-bespoke', note: 'A headline, then body and a list as the scene needs them. A headline, or a headline and one line, is this same column, centred.' },
+				{ name: 'Title slide', act: 'hypothesis', scene: 'your-ui-is-not-my-ui-title', note: 'Opens the talk, bottom-left on the grained ground. Act openers use the same frame, with a chapter number.' },
+				{ name: 'Side by side', act: 'user-research', scene: 'sinead', note: 'Text on one side, the illustration on the other. A diagram uses the same frame. is-flipped swaps the sides.' },
 			];
 
 			// Areas to label, in priority order; an element claimed by an earlier
-			// role (e.g. a quote's paragraph) isn't labelled again by a later one.
+			// role isn't labelled again by a later one.
 			const ROLES = [
 				['.act-tab', 'Meta · act tab'],
-				['.act-title', 'Act title'],
 				["[data-scene='your-ui-is-not-my-ui-title'] h2", 'Act title'],
 				['h2', 'Scene headline'],
 				['blockquote', 'Body serif'],
-				['p:has(> small:only-child)', 'Meta'],
 				['p', 'Body sans'],
 				['ul', 'Body sans · list'],
-				['svg', 'Diagram'],
-				['img, video', 'Media'],
+				['img', 'Media'],
 			];
 
 			function buildSlide(t) {
 				const srcAct = source.querySelector(`section[data-act="${t.act}"]`);
 				const actTitle = srcAct.querySelector('.act-title')?.textContent ?? 'Hypothesis';
-				const original = t.opener ? srcAct.querySelector('.act-opener') : srcAct.querySelector(`section[data-scene="${t.scene}"]`);
+				const original = srcAct.querySelector(`section[data-scene="${t.scene}"]`);
 				const node = original.cloneNode(true);
 				node.querySelectorAll('aside.notes').forEach((n) => n.remove());
-				node.querySelectorAll('video').forEach((v) => v.setAttribute('preload', 'metadata'));
 				const kicker = actTitle;
 
 				const slide = document.createElement('div');
@@ -849,7 +828,7 @@
 				slide.innerHTML = `
 					<section class="act-panel" data-act="${t.act}">
 						<div class="act-panel-inner"></div>
-						${t.opener || t.scene === 'your-ui-is-not-my-ui-title' ? '' : `<span class="act-tab" aria-hidden="true">${kicker}</span>`}
+						${t.scene === 'your-ui-is-not-my-ui-title' ? '' : `<span class="act-tab" aria-hidden="true">${kicker}</span>`}
 					</section>`;
 				slide.querySelector('.act-panel-inner').append(node);
 				return slide;
@@ -888,7 +867,7 @@
 							height: `${r.height / scale}px`,
 						});
 						const typeEl = styleFrom ? slide.querySelector(styleFrom) : el.matches('ul') ? el.querySelector('li') : el;
-						const showSpec = !['Media', 'Diagram'].includes(label);
+						const showSpec = label !== 'Media';
 						area.innerHTML = `<b>${label}</b>${showSpec ? spec(typeEl) : ''}`;
 						schematic.append(area);
 					});
@@ -907,7 +886,9 @@
 				stages[1].append(slide);
 				document.getElementById('ts-templates').append(el);
 				const row = { stages, slide, schematic: el.querySelector('.ts-schematic') };
-				if (slide.offsetHeight > 800) {
+				// the card's 2px border makes a one-frame slide 802px; only a real
+				// overflow, more than the deck's own 16px tolerance, is a fold
+				if (slide.offsetHeight > 816) {
 					row.stages.forEach((stage) => {
 						const fold = document.createElement('div');
 						fold.className = 'ts-fold';
@@ -917,7 +898,6 @@
 				}
 				// Media changes size as it loads; re-measure when it does.
 				slide.querySelectorAll('img').forEach((img) => img.addEventListener('load', () => layoutTemplate(row)));
-				slide.querySelectorAll('video').forEach((v) => v.addEventListener('loadedmetadata', () => layoutTemplate(row)));
 				return row;
 			});
 
