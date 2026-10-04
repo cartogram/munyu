@@ -125,13 +125,19 @@ lists whatever is missing.
 
 ## Slide templates
 
-Every scene uses one of the layouts in `system.html` → *Slide templates*
-(title, act opener, statement, headline + body, headline + list, persona,
-side by side, demo, Q&A, and so on). Each entry there points at a real
-scene in `index.html`. Prefer an existing template to a new layout. If you
-add one, point a template entry at a scene that uses it.
+Every scene uses one of the three layouts in `system.html` → *Slide templates*.
+Each entry there points at a real scene in `index.html`. Prefer an existing
+template to a new layout. If you add one, point a template entry at a scene
+that uses it.
 
-**Side by side** is the persona layout used for anything else: the scene's
-`<h2>` and a `<p>` of body sans, then a `.persona` holding a `<p>` (in the quote's place)
-and a `.portrait-ground` frame holding the media, such as a diagram. Text
-sits left and media right; `class="is-flipped"` swaps them.
+- **Content.** A headline, then body sans and a list as the scene needs them.
+  A headline on its own, or a headline and one line, is this same column,
+  centred. A Q&A question uses it too: the quote, the persona divider, then
+  the answer.
+- **Title slide.** Opens the talk, the title bottom-left on the grained
+  ground. Act openers use the same frame, with a chapter number.
+- **Side by side.** Name, a line of body sans, the cut-paper divider and the
+  quote on one side, the illustration on the other. A diagram uses the same
+  frame: a `<p>` takes the quote's place and `.portrait-ground` holds the
+  media. Text sits left and media right; `class="is-flipped"` swaps them. One
+  frame, never scrolls.
