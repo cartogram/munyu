@@ -73,8 +73,11 @@ function rotatorSteps(list) {
 	const endings = [...line.querySelectorAll('.rotator-ending')];
 
 	// all but the first ending wait below the mask (or, with reduced motion,
-	// invisible in place)
+	// invisible in place). Start from a clean transform: on a rebuild Firefox
+	// hands GSAP the endings' old percent offset as pixels, which it adds to
+	// the new one, so they arrive and leave a line out of place and pile up.
 	const hidden = reduceMotion ? { opacity: 0 } : { yPercent: 110 };
+	gsap.set(endings, { clearProps: 'transform,opacity' });
 	gsap.set(endings.slice(1), hidden);
 
 	return endings.slice(1).map((incoming, i) => (tl, hold) => {
