@@ -562,6 +562,12 @@ main section[data-scene]:has(blockquote) > h2 {
 	text-align: center;
 }
 
+/* ...unless the quote sits in a column beside other text: then the headline
+   is left-aligned with the columns under it */
+main section[data-scene]:has(> .two-columns) > h2 {
+	text-align: left;
+}
+
 
 /* one meta style for authors and labels, demo panel labels, the slide
    chrome and the Notes button. rem, so it stays meta-sized inside a 40px
