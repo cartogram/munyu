@@ -64,13 +64,13 @@ function todaysModelSteps(scene) {
 	];
 }
 
-// The branching demo: one fan of phones per person, built one screen per beat
-// while the beat texts on the right take turns. A person's part starts with
-// their avatar lighting up and their profile phone arriving; then a screen for
-// each kind of context, and last the UI. Each screen slides up from below the
-// frame and stops in its place: no easing, so it moves only as the reader
-// scrolls, and sticks. The next person's fan slides in from the right as the
-// last one leaves. Reduced motion fades each piece in place.
+// The branching demo: one stack of boxes per person, built on the intent, which
+// is there from the start, one box per beat while the beat texts on the right
+// take turns. A person's part starts with their avatar lighting up; then an
+// empathy box for each kind of context, and last the UI's phone. Each box
+// slides up from below the frame and stops in its place: no easing, so it
+// moves only as the reader scrolls, and sticks. The next person's stack slides
+// in from the right as the last one leaves. Reduced motion fades each piece in place.
 const BRANCHING_PEOPLE = ['rose', 'myron'];
 const BRANCHING_SCREENS = ['screen-1', 'screen-2', 'screen-3', 'ui'];
 const AVATAR_DIM = 0.4;
@@ -80,7 +80,7 @@ function branchingSteps(scene) {
 	const avatars = Object.fromEntries([...scene.querySelectorAll('.branching-person')].map((b) => [b.dataset.person, b]));
 	const art = scene.querySelector('svg.branching-illustration');
 	const part = (name) => art?.querySelector(`[data-part="${name}"]`);
-	const fan = (person) => [...(art?.querySelectorAll(`[data-part^="${person}-"]`) ?? [])];
+	const stack = (person) => [...(art?.querySelectorAll(`[data-part^="${person}-"]`) ?? [])];
 	gsap.set(texts.slice(1), { opacity: 0 });
 	gsap.set(Object.values(avatars), { opacity: AVATAR_DIM });
 
@@ -99,22 +99,17 @@ function branchingSteps(scene) {
 	const steps = [];
 	BRANCHING_PEOPLE.forEach((person, i) => {
 		const before = BRANCHING_PEOPLE[i - 1];
-		// the person: their avatar lights up and their profile arrives, rising
-		// into the empty frame, or, after someone else's, sliding in from the
-		// right as the last fan slides out to the left
+		// the person: their avatar lights up and, after someone else's part, the
+		// last stack slides out to the left, clearing the frame for theirs
 		steps.push((tl, hold, at) => {
 			fade(tl, avatars[person], at, hold * 0.15, AVATAR_DIM, 1);
-			if (before) fade(tl, avatars[before], at, hold * 0.15, 1, AVATAR_DIM);
+			if (!before) return;
+			fade(tl, avatars[before], at, hold * 0.15, 1, AVATAR_DIM);
 			if (!art) return;
-			if (!before) return rise(tl, [part(`${person}-phone`), part(`${person}-head`)], at, hold);
-			// the fans are drawn side by side, this one a fan's width to the right
-			const width = part(`${person}-phone`).getBBox().x - part(`${before}-phone`).getBBox().x;
-			const pieces = [...fan(before), ...fan(person)];
-			if (reduceMotion) {
-				tl.fromTo(pieces, { x: -width * (i - 1) }, { x: -width * i, duration: 0 }, at);
-				return fade(tl, [part(`${person}-phone`), part(`${person}-head`)], at, hold * STEP_FADE);
-			}
-			tl.fromTo(pieces, { x: -width * (i - 1) }, { x: -width * i, duration: hold * 0.9, ease: 'none' }, at);
+			// the stacks are drawn side by side, this one a stack's width to the right
+			const width = part(`${person}-ui`).getBBox().x - part(`${before}-ui`).getBBox().x;
+			const pieces = [...stack(before), ...stack(person)];
+			tl.fromTo(pieces, { x: -width * (i - 1) }, { x: -width * i, duration: reduceMotion ? 0 : hold * 0.9, ease: 'none' }, at);
 		});
 		// then a screen per kind of context, and the UI
 		BRANCHING_SCREENS.forEach((screen) => steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-${screen}`)], at, hold)));
@@ -433,7 +428,7 @@ function restoreHash() {
 
 // The branching demo's illustration is a WebP like the others, for the page
 // without scripts and the system page; here the finished SVG takes its
-// place, inline, framed on one person's fan of phones (data-frame), so its
+// place, inline, framed on one person's stack (data-frame), so its
 // parts can move (branchingSteps). Each avatar button shows its person's head
 // from the drawing, and jumps to their part.
 const branchingArt = document.querySelector('img.branching-illustration');
@@ -448,14 +443,16 @@ if (branchingArt) {
 	const scene = svg.closest('section[data-scene]');
 	scene.querySelectorAll('.branching-person').forEach((button) => {
 		const { person } = button.dataset;
-		// the head moves with its phone, so the avatar shows a still copy of
-		// what's inside it
+		// the head is drawn hidden; the avatar shows what's inside it, measured
+		// while it's briefly shown
 		const head = svg.querySelector(`[data-part="${person}-head"]`);
 		const still = document.createElementNS(svg.namespaceURI, 'g');
 		still.id = `branching-${person}-head`;
 		still.append(...head.childNodes);
 		head.append(still);
+		head.removeAttribute('display');
 		const box = still.getBBox();
+		head.setAttribute('display', 'none');
 		const side = box.width * 0.86;
 		const avatar = document.createElementNS(svg.namespaceURI, 'svg');
 		avatar.setAttribute('viewBox', `${box.x + (box.width - side) / 2} ${box.y - side * 0.06} ${side} ${side}`);

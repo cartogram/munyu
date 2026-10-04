@@ -63,12 +63,14 @@ export function normalize(src, act, cutPaper, file) {
 	// every path, with its flattened colour and the extent of its points, and
 	// any text (a label an edit script sets on a piece), in drawing order. An
 	// edit script can name the part of the drawing a shape belongs to, so the
-	// deck can move it: data-part="card-1".
+	// deck can move it: data-part="card-1". A part can also be drawn hidden,
+	// there for the deck to copy but not shown: data-hidden.
 	const elements = [...src.matchAll(/<path\b([^>]*?)\/?>|<text\b([^>]*)>([\s\S]*?)<\/text>/g)].map(([, attrs, textAttrs, content]) => {
 		if (textAttrs !== undefined) {
 			const part = textAttrs.match(/\bdata-part="([^"]+)"/)?.[1];
 			const fill = textAttrs.match(/\bfill="([^"]+)"/)?.[1] ?? 'black';
-			return { text: true, part, step: step(rgb(fill)), attrs: textAttrs.replace(/\s*\b(fill|data-part)="[^"]*"/g, ''), content };
+			const hidden = /\bdata-hidden\b/.test(textAttrs);
+			return { text: true, part, hidden, step: step(rgb(fill)), attrs: textAttrs.replace(/\s*\b(fill|data-part)="[^"]*"|\s*\bdata-hidden\b/g, ''), content };
 		}
 		const fill = attrs.match(/\bfill="([^"]+)"/)?.[1] ?? 'black';
 		const url = fill.match(/^url\(#(.+)\)$/);
@@ -95,15 +97,17 @@ export function normalize(src, act, cutPaper, file) {
 		// that must keep its drawn weight): data-finish="edge"
 		const finish = attrs.match(/\bdata-finish="(\w+)"/)?.[1];
 		const part = attrs.match(/\bdata-part="([^"]+)"/)?.[1];
-		return { d, step: step(c), box, breadth, light, rule, finish, part };
+		const hidden = /\bdata-hidden\b/.test(attrs);
+		return { d, step: step(c), box, breadth, light, rule, finish, part, hidden };
 	});
 	const paths = elements.filter((e) => !e.text);
 	// the drawing in order, each run of one part's shapes wrapped in a
-	// <g data-part>; text takes the ramp step of its grey, like a shape
+	// <g data-part>, hidden if its shapes are; text takes the ramp step of its
+	// grey, like a shape
 	const draw = (render) => {
 		let out = '', part;
 		for (const e of elements) {
-			if (e.part !== part) out += `${part ? '</g>' : ''}${e.part ? `<g data-part="${e.part}">` : ''}`;
+			if (e.part !== part) out += `${part ? '</g>' : ''}${e.part ? `<g data-part="${e.part}"${e.hidden ? ' display="none"' : ''}>` : ''}`;
 			part = e.part;
 			out += e.text ? `<text${e.attrs} fill="${shade(e.step)}">${e.content}</text>` : render(e);
 		}

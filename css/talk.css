@@ -462,13 +462,20 @@ main li + li {
 	margin-top: 0.3em;
 }
 
-main blockquote {
+/* the quote style; the branching demo's headline takes it too */
+main blockquote,
+main .branching-text > h2 {
 	font-family: var(--font-serif);
 	font-size: calc(60 * var(--u));
 	font-weight: 400;
 	line-height: 1.2;
 	/* a big editorial first-line indent */
 	text-indent: 3em;
+}
+
+/* too short a line for the indent: it would strand a word */
+main .branching-text > h2 {
+	text-indent: 0;
 }
 
 /* a list shown as one line whose ending rotates (js/site.js): the endings
@@ -720,10 +727,9 @@ main section[data-scene]:has(> .persona) > * {
 
 /* the branching demo (demo-two-people): three columns that hold still while
    the beats play. On the left an avatar button per person, which jumps to
-   their part; in the middle the intent and the illustration
-   (media/personas/demo-two-people.svg, inline from js/site.js), a fan of
-   phones built one screen per beat; on the right the headline and the beat
-   texts, one at a time. */
+   their part; in the middle the illustration (media/personas/demo-two-people.svg,
+   inline from js/site.js), a stack of boxes on the intent, built one card per
+   beat; on the right the headline and the beat texts, one at a time. */
 main section[data-scene].branching {
 	display: grid;
 	grid-template-columns: auto auto 1fr;
@@ -779,34 +785,12 @@ main section[data-scene].branching {
 	font-weight: 700;
 }
 
-/* as wide as the phones; the intent wraps to fit */
-.branching-art {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: calc(24 * var(--u));
-	max-width: calc(560 * var(--u));
-}
-
-main .branching-intent {
-	font-family: var(--font-serif);
-	font-size: calc(44 * var(--u));
-	text-wrap: balance;
-	text-align: center;
-	margin: 0;
-}
-
-/* the "Intent" eyebrow, in the meta style, on its own line */
-.branching-intent small {
-	display: block;
-}
-
-/* one fan of phones, clipped, so the screens slide in from below its bottom
-   edge and the next fan from beside it */
+/* one stack of boxes, clipped, so the boxes slide in from below its bottom
+   edge and the next stack from beside it */
 main .branching-illustration {
 	display: block;
 	width: auto;
-	height: calc(740 * var(--u));
+	height: calc(860 * var(--u));
 	max-width: 100%;
 	max-height: none;
 	border-radius: 0;
@@ -815,6 +799,11 @@ main .branching-illustration {
 
 .branching-illustration text {
 	font-family: var(--font-sans);
+}
+
+/* the intent's quote */
+.branching-illustration text.serif {
+	font-family: var(--font-serif);
 }
 
 /* the beat texts share one grid cell; js/site.js shows one at a time */
