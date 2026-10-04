@@ -520,6 +520,29 @@ main blockquote {
 	margin: 0;
 }
 
+/* a bold term as a label above its definition */
+.two-columns strong {
+	display: block;
+	font-weight: 700;
+}
+
+/* the formula slide's headline, set as one line: the operators quiet, the
+   two terms underlined to tie them to the definitions beneath */
+main h2.formula {
+	font-size: calc(112 * var(--u));
+}
+
+.formula-op {
+	color: color-mix(in srgb, currentColor 45%, white);
+	font-weight: 400;
+}
+
+.formula-term {
+	text-decoration: underline;
+	text-decoration-thickness: 0.05em;
+	text-underline-offset: 0.12em;
+}
+
 /* a list shown as one line whose ending rotates (js/site.js): the endings
    stack in one grid cell, so the slot is as wide as the longest and the
    line never reflows, and the slot clips them, so they slide in and out
