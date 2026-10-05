@@ -64,13 +64,14 @@ function todaysModelSteps(scene) {
 	];
 }
 
-// The branching demo: one stack of boxes per person, built on the intent, which
-// is there from the start, one box per beat while the beat texts on the right
-// take turns. A person's part starts with their avatar lighting up; then an
-// empathy box for each kind of context, and last the UI's phone. Each box
-// slides up from below the frame and stops in its place: no easing, so it
-// moves only as the reader scrolls, and sticks. The next person's stack slides
-// in from the right as the last one leaves. Reduced motion fades each piece in place.
+// The branching demo: one stack of boxes per person, built on the intent, one
+// box per beat while the beat texts on the right take turns. Rose's intent is
+// there from the start. A person's part starts with their avatar lighting up;
+// then an empathy box for each kind of context, and last the UI's phone. Each
+// piece slides up from below the bottom of the card, off the screen, and stops
+// in its place: no easing, so it moves only as the reader scrolls, and sticks.
+// When the next person's part starts, the last stack slides off to the left
+// as their intent comes up. Reduced motion fades each piece in place.
 const BRANCHING_PEOPLE = ['rose', 'myron'];
 const BRANCHING_SCREENS = ['screen-1', 'screen-2', 'screen-3', 'ui'];
 const AVATAR_DIM = 0.4;
@@ -86,30 +87,58 @@ function branchingSteps(scene) {
 
 	const fade = (tl, targets, at, duration, from = 0, to = 1) =>
 		tl.fromTo(targets, { opacity: from }, { opacity: to, duration, ease: 'none' }, at);
-	// up from below the frame's bottom edge, clear of the finish's rough edges
+	// The illustration draws past its frame, so the pieces travel in from the
+	// card's edges, which clip them: px per drawing unit, and how far the
+	// frame sits from the card's bottom and left edges, in drawing units.
+	// Measured from the layout (offsets within the card), as the cards may be
+	// moved aside while the scenes are built; across, from the scene's own
+	// left edge, which sits at the card's while it plays.
+	const frame = art?.viewBox.baseVal;
+	const card = scene.closest('.act-panel');
+	const offset = (el) => {
+		let left = 0, top = 0;
+		for (; el && el !== card; el = el.offsetParent) {
+			left += el.offsetLeft;
+			top += el.offsetTop;
+		}
+		return { left, top };
+	};
+	const wrapper = art?.parentElement;
+	const scale = art ? art.getBoundingClientRect().height / frame.height : 1;
+	const toBottom = art ? (card.clientHeight - offset(wrapper).top - wrapper.offsetHeight) / scale : 0;
+	const toLeft = art ? (offset(wrapper).left - offset(scene).left) / scale : 0;
+	// up from below the card's bottom edge, clear of the finish's rough edges
 	const rise = (tl, pieces, at, hold) => {
 		if (reduceMotion) return fade(tl, pieces, at, hold * STEP_FADE);
-		const frame = art.viewBox.baseVal;
 		pieces.forEach((piece) => {
-			const below = frame.y + frame.height * 1.05 - piece.getBBox().y;
+			const below = frame.y + frame.height + toBottom + frame.height * 0.05 - piece.getBBox().y;
 			tl.fromTo(piece, { y: below }, { y: 0, duration: hold * 0.9, ease: 'none' }, at);
 		});
 	};
+	// the stacks are drawn side by side; each after the first is laid over the
+	// first's place, waiting below the card
+	const width = art ? part(`${BRANCHING_PEOPLE[1]}-ui`).getBBox().x - part(`${BRANCHING_PEOPLE[0]}-ui`).getBBox().x : 0;
+	BRANCHING_PEOPLE.slice(1).forEach((person, i) => gsap.set(stack(person), { x: -width * (i + 1) }));
 
 	const steps = [];
 	BRANCHING_PEOPLE.forEach((person, i) => {
 		const before = BRANCHING_PEOPLE[i - 1];
 		// the person: their avatar lights up and, after someone else's part, the
-		// last stack slides out to the left, clearing the frame for theirs
+		// last stack slides off to the left, past the card's edge, as their
+		// intent comes up
 		steps.push((tl, hold, at) => {
 			fade(tl, avatars[person], at, hold * 0.15, AVATAR_DIM, 1);
 			if (!before) return;
 			fade(tl, avatars[before], at, hold * 0.15, 1, AVATAR_DIM);
 			if (!art) return;
-			// the stacks are drawn side by side, this one a stack's width to the right
-			const width = part(`${person}-ui`).getBBox().x - part(`${before}-ui`).getBBox().x;
-			const pieces = [...stack(before), ...stack(person)];
-			tl.fromTo(pieces, { x: -width * (i - 1) }, { x: -width * i, duration: reduceMotion ? 0 : hold * 0.9, ease: 'none' }, at);
+			const old = stack(before);
+			if (reduceMotion) fade(tl, old, at, hold * STEP_FADE, 1, 0);
+			else {
+				const right = Math.max(...old.map((piece) => piece.getBBox().x + piece.getBBox().width));
+				const off = right - frame.x + toLeft + frame.width * 0.05;
+				tl.fromTo(old, { x: -width * (i - 1) }, { x: -width * (i - 1) - off, duration: hold * 0.9, ease: 'none' }, at);
+			}
+			rise(tl, [part(`${person}-intent`)], at, hold);
 		});
 		// then a screen per kind of context, and the UI
 		BRANCHING_SCREENS.forEach((screen) => steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-${screen}`)], at, hold)));

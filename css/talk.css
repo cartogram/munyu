@@ -785,8 +785,8 @@ main section[data-scene].branching {
 	font-weight: 700;
 }
 
-/* one stack of boxes, clipped, so the boxes slide in from below its bottom
-   edge and the next stack from beside it */
+/* one stack of boxes, framed by its viewBox but drawn past it, so the
+   pieces travel in from the card's edges, which clip them */
 main .branching-illustration {
 	display: block;
 	width: auto;
@@ -794,7 +794,7 @@ main .branching-illustration {
 	max-width: 100%;
 	max-height: none;
 	border-radius: 0;
-	overflow: hidden;
+	overflow: visible;
 }
 
 .branching-illustration text {
