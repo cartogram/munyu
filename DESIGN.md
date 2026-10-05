@@ -127,7 +127,7 @@ lists whatever is missing.
 
 Every scene uses one of the layouts in `system.html` → *Slide templates*
 (title, act opener, statement, headline + body, headline + list, persona,
-side by side, demo panels, Q&A, and so on). Each entry there points at a real
+side by side, demo, Q&A, and so on). Each entry there points at a real
 scene in `index.html`. Prefer an existing template to a new layout. If you
 add one, point a template entry at a scene that uses it.
 

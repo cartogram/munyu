@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import branchingArtSvg from '../media/personas/demo-two-people.svg?raw';
 
 gsap.registerPlugin(ScrollTrigger);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
@@ -12,7 +13,7 @@ ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilityc
 const STEPPED_SCENES = {
 	'todays-model': todaysModelSteps,
 	'your-ui-is-not-my-ui-create-specific': (scene) => rotatorSteps(scene.querySelector('ul')),
-	'demo-two-people': (scene) => [...scene.querySelectorAll('.demo-panel')].map(fadeInStep),
+	'demo-two-people': branchingSteps,
 };
 const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
 const STEP_FADE = 0.1; // share of a step spent fading its piece in
@@ -62,6 +63,99 @@ function todaysModelSteps(scene) {
 		...layers.map((layer) => arrive(layer, { y: -120 })),
 		conflict,
 	];
+}
+
+// The branching demo: one stack of boxes per person, built on the intent, one
+// box per beat while the beat texts on the right take turns. Rose's intent is
+// there from the start. A person's part starts with their avatar lighting up;
+// then an empathy box for each kind of context, and last the UI's phone. Each
+// piece slides up from below the bottom of the card, off the screen, and stops
+// in its place: no easing, so it moves only as the reader scrolls, and sticks.
+// When the next person's part starts, the last stack slides off to the left
+// as their intent comes up. Reduced motion fades each piece in place.
+const BRANCHING_PEOPLE = ['rose', 'myron'];
+const BRANCHING_SCREENS = ['screen-1', 'screen-2', 'screen-3', 'ui'];
+const AVATAR_DIM = 0.4;
+
+function branchingSteps(scene) {
+	const texts = [...scene.querySelectorAll('.branching-beats > p')];
+	const avatars = Object.fromEntries([...scene.querySelectorAll('.branching-person')].map((b) => [b.dataset.person, b]));
+	const art = scene.querySelector('svg.branching-illustration');
+	const part = (name) => art?.querySelector(`[data-part="${name}"]`);
+	const stack = (person) => [...(art?.querySelectorAll(`[data-part^="${person}-"]`) ?? [])];
+	gsap.set(texts.slice(1), { opacity: 0 });
+	gsap.set(Object.values(avatars), { opacity: AVATAR_DIM });
+
+	const fade = (tl, targets, at, duration, from = 0, to = 1) =>
+		tl.fromTo(targets, { opacity: from }, { opacity: to, duration, ease: 'none' }, at);
+	// The illustration draws past its frame, so the pieces travel in from the
+	// card's edges, which clip them: px per drawing unit, and how far the
+	// frame sits from the card's bottom and left edges, in drawing units.
+	// Measured from the layout (offsets within the card), as the cards may be
+	// moved aside while the scenes are built; across, from the scene's own
+	// left edge, which sits at the card's while it plays.
+	const frame = art?.viewBox.baseVal;
+	const card = scene.closest('.act-panel');
+	const offset = (el) => {
+		let left = 0, top = 0;
+		for (; el && el !== card; el = el.offsetParent) {
+			left += el.offsetLeft;
+			top += el.offsetTop;
+		}
+		return { left, top };
+	};
+	const wrapper = art?.parentElement;
+	const scale = art ? art.getBoundingClientRect().height / frame.height : 1;
+	const toBottom = art ? (card.clientHeight - offset(wrapper).top - wrapper.offsetHeight) / scale : 0;
+	const toLeft = art ? (offset(wrapper).left - offset(scene).left) / scale : 0;
+	// up from below the card's bottom edge, clear of the finish's rough edges
+	const rise = (tl, pieces, at, hold) => {
+		if (reduceMotion) return fade(tl, pieces, at, hold * STEP_FADE);
+		pieces.forEach((piece) => {
+			const below = frame.y + frame.height + toBottom + frame.height * 0.05 - piece.getBBox().y;
+			tl.fromTo(piece, { y: below }, { y: 0, duration: hold * 0.9, ease: 'none' }, at);
+		});
+	};
+	// the stacks are drawn side by side; each after the first is laid over the
+	// first's place, waiting below the card
+	const width = art ? part(`${BRANCHING_PEOPLE[1]}-ui`).getBBox().x - part(`${BRANCHING_PEOPLE[0]}-ui`).getBBox().x : 0;
+	BRANCHING_PEOPLE.slice(1).forEach((person, i) => gsap.set(stack(person), { x: -width * (i + 1) }));
+
+	const steps = [];
+	BRANCHING_PEOPLE.forEach((person, i) => {
+		const before = BRANCHING_PEOPLE[i - 1];
+		// the person: their avatar lights up and, after someone else's part, the
+		// last stack slides off to the left, past the card's edge, as their
+		// intent comes up
+		steps.push((tl, hold, at) => {
+			fade(tl, avatars[person], at, hold * 0.15, AVATAR_DIM, 1);
+			if (!before) return;
+			fade(tl, avatars[before], at, hold * 0.15, 1, AVATAR_DIM);
+			if (!art) return;
+			const old = stack(before);
+			if (reduceMotion) fade(tl, old, at, hold * STEP_FADE, 1, 0);
+			else {
+				const right = Math.max(...old.map((piece) => piece.getBBox().x + piece.getBBox().width));
+				const off = right - frame.x + toLeft + frame.width * 0.05;
+				tl.fromTo(old, { x: -width * (i - 1) }, { x: -width * (i - 1) - off, duration: hold * 0.9, ease: 'none' }, at);
+			}
+			rise(tl, [part(`${person}-intent`)], at, hold);
+		});
+		// then a screen per kind of context, and the UI
+		BRANCHING_SCREENS.forEach((screen) => steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-${screen}`)], at, hold)));
+	});
+
+	// each step also swaps the beat text
+	return steps.map((step, i) => (tl, hold) => {
+		const at = tl.duration();
+		tl.to(texts[i], { opacity: 0, duration: hold * 0.1, ease: 'none' }, at).fromTo(
+			texts[i + 1],
+			{ opacity: 0 },
+			{ opacity: 1, duration: hold * 0.1, ease: 'none' },
+			at + hold * 0.1,
+		);
+		step(tl, hold, at);
+	});
 }
 
 // A list whose items share their opening words, shown as one line: the shared
@@ -365,6 +459,48 @@ function rebuild() {
 function restoreHash() {
 	const beat = beatById(decodeURIComponent(window.location.hash.slice(1)));
 	if (beat) window.scrollTo(0, beatPosition(beat));
+}
+
+// The branching demo's illustration is a WebP like the others, for the page
+// without scripts and the system page; here the finished SVG takes its
+// place, inline, framed on one person's stack (data-frame), so its
+// parts can move (branchingSteps). Each avatar button shows its person's head
+// from the drawing, and jumps to their part.
+const branchingArt = document.querySelector('img.branching-illustration');
+if (branchingArt) {
+	const svg = new DOMParser().parseFromString(branchingArtSvg, 'image/svg+xml').documentElement;
+	svg.setAttribute('class', branchingArt.className);
+	svg.setAttribute('viewBox', branchingArt.dataset.frame);
+	svg.setAttribute('role', 'img');
+	svg.setAttribute('aria-label', branchingArt.alt);
+	branchingArt.replaceWith(svg);
+
+	const scene = svg.closest('section[data-scene]');
+	scene.querySelectorAll('.branching-person').forEach((button) => {
+		const { person } = button.dataset;
+		// the head is drawn hidden; the avatar shows what's inside it, measured
+		// while it's briefly shown
+		const head = svg.querySelector(`[data-part="${person}-head"]`);
+		const still = document.createElementNS(svg.namespaceURI, 'g');
+		still.id = `branching-${person}-head`;
+		still.append(...head.childNodes);
+		head.append(still);
+		head.removeAttribute('display');
+		const box = still.getBBox();
+		head.setAttribute('display', 'none');
+		const side = box.width * 0.86;
+		const avatar = document.createElementNS(svg.namespaceURI, 'svg');
+		avatar.setAttribute('viewBox', `${box.x + (box.width - side) / 2} ${box.y - side * 0.06} ${side} ${side}`);
+		avatar.setAttribute('aria-hidden', 'true');
+		const use = document.createElementNS(svg.namespaceURI, 'use');
+		use.setAttribute('href', `#${still.id}`);
+		avatar.append(use);
+		button.querySelector('.branching-avatar').append(avatar);
+		button.addEventListener('click', () => {
+			const beat = beatById(`${scene.closest('[data-act]').dataset.act}/${scene.dataset.scene}/${button.dataset.beat}`);
+			if (beat) jumpTo(beatPosition(beat));
+		});
+	});
 }
 
 history.scrollRestoration = 'manual';

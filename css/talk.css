@@ -449,7 +449,7 @@ main section[data-scene] > * {
 }
 
 /* text and layout blocks run the full width between the frame's padding */
-main section[data-scene] > :is(h2, p, ul, ol, blockquote, .persona, .demo-panels) {
+main section[data-scene] > :is(h2, p, ul, ol, blockquote, .persona) {
 	align-self: stretch;
 }
 
@@ -484,17 +484,14 @@ main ul {
 	line-height: 1.2;
 }
 
-.demo-panel p {
-	font-size: inherit;
-}
-
 main li + li {
 	margin-top: 0.3em;
 }
 
 /* body serif: interview quotes and the Q&A questions, always centred (the
-   persona and Q&A layouts) */
-main blockquote {
+   persona and Q&A layouts); the branching demo's headline takes it too */
+main blockquote,
+main .branching-text > h2 {
 	font-family: var(--font-serif);
 	font-size: calc(60 * var(--u));
 	font-weight: 400;
@@ -542,6 +539,7 @@ main h2.formula {
 	text-decoration-thickness: 0.05em;
 	text-underline-offset: 0.12em;
 }
+
 
 /* a list shown as one line whose ending rotates (js/site.js): the endings
    stack in one grid cell, so the slot is as wide as the longest and the
@@ -592,12 +590,10 @@ main section[data-scene]:has(> .two-columns) > h2 {
 }
 
 
-/* one meta style for authors and labels, demo panel labels, the slide
-   chrome and the Notes button. rem, so it stays meta-sized inside a 40px
-   paragraph. */
+/* one meta style for authors and labels, the slide chrome and the Notes
+   button. rem, so it stays meta-sized inside a 40px paragraph. */
 main small,
 .act-tab,
-.demo-panel > h4,
 .deck-chrome,
 .drawer-heading,
 .video-play {
@@ -939,15 +935,95 @@ main section[data-scene]:has(> .persona) > p {
 	object-fit: contain;
 }
 
-.demo-panels {
-	display: flex;
-	gap: calc(24 * var(--u));
-	width: 100%;
+/* the branching demo (demo-two-people): three columns that hold still while
+   the beats play. On the left an avatar button per person, which jumps to
+   their part; in the middle the illustration (media/personas/demo-two-people.svg,
+   inline from js/site.js), a stack of boxes on the intent, built one card per
+   beat; on the right the headline and the beat texts, one at a time. */
+main section[data-scene].branching {
+	display: grid;
+	grid-template-columns: auto auto 1fr;
+	align-items: center;
+	column-gap: calc(72 * var(--u));
 }
 
-.demo-panel > * {
-	max-width: none;
-	margin-inline: 0;
+.branching-people {
+	display: flex;
+	flex-direction: column;
+	gap: calc(48 * var(--u));
+}
+
+/* a round avatar over the person's name; js/site.js dims the one whose part
+   isn't playing */
+.branching-person {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: calc(12 * var(--u));
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+
+.branching-avatar {
+	display: block;
+	width: calc(150 * var(--u));
+	height: calc(150 * var(--u));
+	border: 2px solid var(--act-color);
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--act-color) var(--ramp-wash), white);
+	overflow: hidden;
+}
+
+.branching-avatar svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.branching-person:focus-visible .branching-avatar {
+	outline: 3px solid var(--act-color);
+	outline-offset: 4px;
+}
+
+/* the name, in the meta style */
+.branching-person-name {
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+/* one stack of boxes, framed by its viewBox but drawn past it, so the
+   pieces travel in from the card's edges, which clip them */
+main .branching-illustration {
+	display: block;
+	width: auto;
+	height: calc(860 * var(--u));
+	max-width: 100%;
+	max-height: none;
+	border-radius: 0;
+	overflow: visible;
+}
+
+.branching-illustration text {
+	font-family: var(--font-sans);
+}
+
+/* the intent's quote */
+.branching-illustration text.serif {
+	font-family: var(--font-serif);
+}
+
+/* the beat texts share one grid cell; js/site.js shows one at a time */
+.branching-beats {
+	display: grid;
+}
+
+.branching-beats > p {
+	grid-area: 1 / 1;
+	margin: 0;
 }
 
 /* phones read the deck as a column rather than a canvas: a fixed scale,
@@ -958,8 +1034,29 @@ main section[data-scene]:has(> .persona) > p {
 		--frame-pad-x: 1.5rem;
 	}
 
-	.demo-panels {
-		flex-direction: column;
+	/* the demo reads as a column: the text, the avatars in a row, then the
+	   illustration */
+	main section[data-scene].branching {
+		grid-template-columns: 1fr;
+		row-gap: calc(48 * var(--u));
+	}
+
+	.branching-people {
+		flex-direction: row;
+		justify-content: center;
+	}
+
+	.branching-text {
+		order: -2;
+	}
+
+	.branching-people {
+		order: -1;
+	}
+
+	main .branching-illustration {
+		width: 100%;
+		height: auto;
 	}
 }
 

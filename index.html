@@ -590,31 +590,60 @@
 				
 					</section>
 
-					<section data-scene="demo-two-people">
-						<h2>Demo: same task, two people</h2>
-						<div class="demo-panels" style="text-align: left; font-size: 1rem">
-							<div class="demo-panel demo-panel-a" style="flex: 1; border: 1px solid currentColor; padding: 0.75rem 1rem; border-radius: 6px">
-								<h4 style="margin-top: 0">Person A</h4>
-								<p>
-									Stressed by long paragraphs, prefers dark backgrounds, standing on a subway with
-									headphones on, one hand free, headache from a barometric pressure change.
-								</p>
-								<p><em>[ placeholder &mdash; calm, minimal, dark-mode UI ]</em></p>
-							</div>
-							<div class="demo-panel demo-panel-b" style="flex: 1; border: 1px solid currentColor; padding: 0.75rem 1rem; border-radius: 6px">
-								<h4 style="margin-top: 0">Person B</h4>
-								<p>
-									Has a tremor, avoids precise pointer input, prefers keyboard interactions, at home
-									in a relaxed setting writing an email to friends.
-								</p>
-								<p><em>[ placeholder &mdash; large keyboard-first targets ]</em></p>
+					<section data-scene="demo-two-people" class="branching">
+						<!-- js/site.js puts the illustration's SVG in place of the WebP, shows one
+						     person's stack at a time (data-frame), builds it one box per beat on top
+						     of the intent (branchingSteps) and draws each person's head in their button -->
+						<nav class="branching-people" aria-label="People in the demo">
+							<button type="button" class="branching-person" data-person="rose" data-beat="1">
+								<span class="branching-avatar"></span>
+								<span class="branching-person-name">Rose</span>
+							</button>
+							<button type="button" class="branching-person" data-person="myron" data-beat="6">
+								<span class="branching-avatar"></span>
+								<span class="branching-person-name">Myron</span>
+							</button>
+						</nav>
+						<div class="branching-art">
+							<img
+								class="branching-illustration"
+								src="media/personas/demo-two-people.webp"
+								data-frame="120 50 800 1252"
+								alt="Two stacks, each starting from the same intent, I'd like to translate this text. Rose's empathy: keep it dim, low glare; curtains drawn, at home; retunes her setup daily; and on top a phone with a dark, dim translator. Myron's: speaks, doesn't point; hands-free, at his desk; 23 years of voice control; and on top a phone with a translator that only listens."
+							/>
+						</div>
+						<div class="branching-text">
+							<h2>One task, many UIs</h2>
+							<div class="branching-beats">
+								<p>Everyone starts from the same intent.</p>
+								<p><strong>Rose.</strong> Light drains her energy and can make her ill.</p>
+								<p><strong>Capabilities &amp; preferences.</strong> She needs it dim, with nothing bright.</p>
+								<p><strong>User context.</strong> At home, curtains drawn.</p>
+								<p><strong>Memory &amp; history.</strong> She retunes her setup through the day.</p>
+								<p><strong>Her UI</strong> is what they add up to: a translator that&rsquo;s dark and low-glare.</p>
+								<p><strong>Myron.</strong> A spine injury, 23 years ago. He works by voice.</p>
+								<p><strong>Capabilities &amp; preferences.</strong> He speaks rather than points.</p>
+								<p><strong>User context.</strong> At his desk, hands-free.</p>
+								<p><strong>Memory &amp; history.</strong> 23 years of voice control.</p>
+								<p><strong>His UI</strong> has nothing to point at: it listens.</p>
 							</div>
 						</div>
 						<aside class="notes" hidden>
-							PLACEHOLDER SLIDE: swap these two panels for the real split-screen animation once it's
-							ready. Same underlying task (using the DeepL translation UI), generated as two
-							completely different interfaces &mdash; tailored to two humans with vastly different
-							requirements, preferences, and situational needs.
+							<p>
+								One intent, the same for everyone: &ldquo;I&rsquo;d like to translate this text.&rdquo;
+							</p>
+							<p>[Next] Start with the person, not the interface. Rose: light drains her energy.</p>
+							<p>[Next, three times] Then what we know about her, one screen at a time:</p>
+							<ul>
+								<li>capabilities and preferences: keep it dim, low glare;</li>
+								<li>user context: at home, curtains drawn;</li>
+								<li>memory and history: she retunes her setup through the day.</li>
+							</ul>
+							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator.</p>
+							<p>[Next] Same intent, another person. Myron works by voice.</p>
+							<p>[Next, three times] He speaks rather than points; he's at his desk, hands-free; and he has 23 years of voice control behind him.</p>
+							<p>[Next] His UI has nothing to point at: it listens. Same task, a different UI.</p>
+							<p>The avatars on the left jump to each person's part.</p>
 						</aside>
 					</section>
 				</div>
