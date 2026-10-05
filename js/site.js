@@ -22,44 +22,45 @@ function fadeInStep(piece) {
 	return (tl, hold) => tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
 }
 
-// Today's model: the base arrives, each adaptation drops onto the stack, then
-// they jostle until zoom shoves dark mode off the edge. Reduced motion keeps
-// the beats but fades pieces in place and skips the jostling.
+// Today's model: the base interface arrives, then each tool drops onto the
+// stack as its own pane (dark mode, screen reader, high contrast,
+// magnification). On the last beat they jostle and slide out of register,
+// none aware of the others, and the magnifier drifts off what it was
+// showing. Reduced motion keeps the beats but fades each pane in place and
+// shows the conflict without moving anything.
 function todaysModelSteps(scene) {
 	const piece = (name) => scene.querySelector(`[data-piece="${name}"]`);
-	const layers = ['screen-reader', 'voice', 'zoom', 'dark'].map(piece);
-	const [screenReader, voice, zoom, dark] = layers;
+	const layers = ['dark', 'screen-reader', 'contrast', 'magnifier'].map(piece);
+	const [dark, screenReader, contrast, magnifier] = layers;
 
 	const arrive = (target, from) => (tl, hold) => {
 		if (reduceMotion) return fadeInStep(target)(tl, hold);
-		tl.fromTo(target, { opacity: 0, ...from }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.4)' });
+		tl.fromTo(target, { opacity: 0, ...from }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.2)' });
 	};
+
+	// the conflict moves each tool's pane, not its label, so the labels stay
+	// lined up while the panes slip out of register
+	const pane = (layer) => layer.querySelector('.stack-pane');
 
 	const conflict = (tl, hold) => {
 		tl.fromTo(piece('conflict'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
-		if (!reduceMotion) {
-			tl.to(
-				layers,
-				{
-					rotation: (i) => (i % 2 ? 2.5 : -2.5),
-					transformOrigin: '50% 100%',
-					duration: hold * 0.08,
-					ease: 'sine.inOut',
-					yoyo: true,
-					repeat: 3,
-				},
-				'<',
-			);
-		}
-		tl.to(zoom, { scale: 1.15, transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' })
-			.to(dark, { x: 150, y: 40, rotation: 14, opacity: 0.35, duration: hold * 0.35, ease: 'power2.out' }, `<+=${hold * 0.02}`)
-			.to(voice, { y: -18, rotation: -5, duration: hold * 0.3, ease: 'power2.out' }, '<')
-			.to(screenReader, { x: -10, rotation: -6, duration: hold * 0.3, ease: 'power2.out' }, '<');
+		if (reduceMotion) return;
+		// a jostle, each pane nudged its own way, then each settles out of
+		// line with the interface beneath
+		tl.to(
+			layers.map(pane),
+			{ x: (i) => (i % 2 ? 6 : -6), duration: hold * 0.05, ease: 'sine.inOut', yoyo: true, repeat: 3 },
+			'<',
+		)
+			.to(pane(dark), { x: -34, y: 6, duration: hold * 0.3, ease: 'power2.out' })
+			.to(pane(screenReader), { x: 28, y: -4, duration: hold * 0.3, ease: 'power2.out' }, '<')
+			.to(pane(contrast), { x: -18, y: 10, duration: hold * 0.3, ease: 'power2.out' }, '<')
+			.to(pane(magnifier), { x: 70, y: -26, duration: hold * 0.35, ease: 'power2.out' }, '<');
 	};
 
 	return [
 		arrive(piece('base'), { y: 40 }),
-		...layers.map((layer) => arrive(layer, { y: -140 })),
+		...layers.map((layer) => arrive(layer, { y: -120 })),
 		conflict,
 	];
 }
@@ -166,8 +167,11 @@ function rotatorSteps(list) {
 	const endings = [...line.querySelectorAll('.rotator-ending')];
 
 	// all but the first ending wait below the mask (or, with reduced motion,
-	// invisible in place)
+	// invisible in place). Start from a clean transform: on a rebuild Firefox
+	// hands GSAP the endings' old percent offset as pixels, which it adds to
+	// the new one, so they arrive and leave a line out of place and pile up.
 	const hidden = reduceMotion ? { opacity: 0 } : { yPercent: 110 };
+	gsap.set(endings, { clearProps: 'transform,opacity' });
 	gsap.set(endings.slice(1), hidden);
 
 	return endings.slice(1).map((incoming, i) => (tl, hold) => {
@@ -270,7 +274,8 @@ function buildAct(panel, isLast) {
 	const tl = gsap.timeline();
 	// An act without an opener (the first, which opens on the talk title)
 	// starts directly on its first scene.
-	const actBeats = panel.querySelector('.act-opener') ? [{ id: act, scene: null, time: 0 }] : [];
+	const opener = panel.querySelector('.act-opener');
+	const actBeats = opener ? [{ id: act, scene: null, opener, time: 0 }] : [];
 	const actRanges = [];
 
 	gsap.set(panel, { '--card-width': `${panel.clientWidth}px` });
@@ -439,12 +444,13 @@ function rebuild() {
 	navTween = null;
 	closeSpotlight();
 	// Pins are measured from the cards' layout, so take off the drawer's push
-	// while they're rebuilt, then put it back (the drawer may have resized).
+	// and shrink while they're rebuilt, then put them back (the drawer may
+	// have resized).
 	drawerTl?.progress(1);
-	gsap.set(document.body, { '--drawer-push': '0px' });
+	gsap.set(document.body, { '--drawer-push': '0px', '--drawer-scale': 1 });
 	mm?.revert();
 	setup();
-	gsap.set(document.body, { '--drawer-push': `${drawerPush()}px` });
+	gsap.set(document.body, drawerVars());
 	const same = beat && beatById(beat.id);
 	if (same) window.scrollTo(0, beatPosition(same) + offset);
 	updateChrome();
@@ -655,7 +661,9 @@ function renderDrawer() {
 let currentScene;
 
 function updateCurrentScene() {
-	const scene = currentBeat()?.scene ?? null;
+	const beat = currentBeat();
+	// an act opener can carry notes of its own, like a scene
+	const scene = beat?.scene ?? beat?.opener ?? null;
 	if (scene === currentScene) return;
 	currentScene = scene;
 	currentSceneNotes = scene?.querySelector('aside.notes') ?? null;
@@ -749,9 +757,13 @@ acts.forEach((panel, k) => {
 	}
 	const scenes = document.createElement('ol');
 	panel.querySelectorAll('section[data-scene]').forEach((scene, i) => {
-		// the h2 is a scene's title; an h4 above it is only an eyebrow
-		const heading = scene.querySelector('h2') ?? scene.querySelector('h1, h3, h4');
-		const label = heading?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
+		// the h2 is a scene's title
+		const heading = scene.querySelector('h2') ?? scene.querySelector('h1, h3');
+		// read as a screen reader would: without what's hidden from one (a
+		// rotating headline's endings)
+		const read = heading?.cloneNode(true);
+		read?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
+		const label = read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
 		const id = `${act}/${scene.dataset.scene}`;
 		const entry = document.createElement('li');
 		entry.append(tocLink(id, label, 'toc-link'));
@@ -808,10 +820,16 @@ updateChrome();
 updateToc();
 
 // The drawer sits still under the deck, against the left edge; opening it
-// slides the act cards right by its width (--drawer-push, read by
-// css/talk.css) to uncover it, and closing slides them back over it.
+// shrinks the act cards into the room beside it (--drawer-scale, read by
+// css/talk.css) so the whole slide stays in view, and closing grows them back
+// over it. On a phone the drawer fills the window, so the cards slide right
+// by its width (--drawer-push) instead.
 const drawerIcon = notesToggle.querySelector('svg');
-const drawerPush = () => (notesDrawer.classList.contains('is-open') ? notesDrawer.offsetWidth : 0);
+const phone = window.matchMedia('(max-width: 699px)');
+const drawerIsOpen = () => notesDrawer.classList.contains('is-open');
+const drawerPush = () => (drawerIsOpen() && phone.matches ? notesDrawer.offsetWidth : 0);
+const drawerScale = () => (drawerIsOpen() && !phone.matches ? 1 - notesDrawer.offsetWidth / document.documentElement.clientWidth : 1);
+const drawerVars = () => ({ '--drawer-push': `${drawerPush()}px`, '--drawer-scale': drawerScale() });
 
 // A fresh timeline per toggle. The cards' push and the icon tween from
 // wherever they are, so an interrupted toggle turns around smoothly.
@@ -832,13 +850,13 @@ function setDrawerOpen(isOpen) {
 	if (isOpen) {
 		drawerTl
 			.set(notesDrawer, { visibility: 'visible' })
-			.to(document.body, { '--drawer-push': `${drawerPush()}px`, ease: 'expo.out', duration: 0.6 * speed }, 0)
+			.to(document.body, { ...drawerVars(), ease: 'expo.out', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 45, ease: 'power3.out', duration: 0.4 * speed }, 0);
 		if (activeTocLink) centreInDrawer(activeTocLink);
 	} else {
 		drawerTl
 			// eased out as well as in, so the slides settle back rather than snap
-			.to(document.body, { '--drawer-push': '0px', ease: 'power3.inOut', duration: 0.6 * speed }, 0)
+			.to(document.body, { ...drawerVars(), ease: 'power3.inOut', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 0, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
 			// hidden once covered, so its links leave the tab order
 			.set(notesDrawer, { visibility: 'hidden' });
@@ -1005,6 +1023,17 @@ window.addEventListener('scroll', () => {
 
 window.addEventListener('keydown', (event) => {
 	if (event.key === 'Escape' && spotlight) closeSpotlight();
+});
+
+// N opens and closes the notes and index, as the + does. Ignored while typing
+// in a field or playing a video, where the key means something else.
+window.addEventListener('keydown', (event) => {
+	if (event.key.toLowerCase() !== 'n' || event.repeat || event.defaultPrevented) return;
+	if (event.metaKey || event.ctrlKey || event.altKey || spotlight) return;
+	const active = document.activeElement;
+	if (active && (KEY_BLOCKING_TAGS.includes(active.tagName) || active.isContentEditable)) return;
+	event.preventDefault();
+	setDrawerOpen(!notesDrawer.classList.contains('is-open'));
 });
 
 window.addEventListener('keydown', (event) => {

@@ -133,9 +133,11 @@
 	   so each earlier card shows as a thin extra line */
 	--stack-step: 3px;
 	--inset-right: 0rem;
-	/* the notes drawer's width; opening it, js/site.js tweens --drawer-push
-	   on body to slide the act cards that far right, off the drawer */
-	--drawer-width: 60vw;
+	/* the notes drawer's width; opening it, js/site.js tweens --drawer-scale
+	   on body to shrink the act cards into the room beside it (on phones,
+	   where the drawer fills the window, --drawer-push slides them away) */
+	--drawer-width: 50vw;
+	--drawer-scale: 1;
 	--drawer-push: 0px;
 	--inset-bottom: 0rem;
 	/* the chrome sits 1.5rem inside the card (Notes button); corner tabs pad
@@ -146,8 +148,6 @@
 	--toggle-size: 28px;
 	/* the front act card's corner, and the drawer's index card */
 	--corner: 10px;
-	/* the gap between an opener's paper block and its card's edges */
-	--paper-inset: 8px;
 	/* where the talk title starts, right of the toggle; the drawer's text
 	   lines up with it */
 	--title-left: calc(var(--inset-left) + 2 * var(--tab-pad) + var(--toggle-size));
@@ -246,13 +246,12 @@ body[data-current-act='backup-qa'] { --act-color: var(--act-backup-qa); }
 	   card sits one stack step further in, so its radius is one step smaller
 	   than the card behind it: the corners share a centre and the stacked
 	   edges stay evenly spaced round the curve. The last card's is --corner.
-	   (--stacks, the number of cards, is set by js/site.js.) Its opener's
-	   paper block takes the same radius on every corner. */
+	   (--stacks, the number of cards, is set by js/site.js.) */
 	--card-corner: calc(var(--corner) + (var(--stacks, 1) - 1 - var(--stack, 0)) * var(--stack-step));
 	border-radius: var(--card-corner) 0 0 0;
 	font-weight: 400;
 	font-size: 1.5em;
-	/* no shadow: each act's leading edge is its opener's paper block */
+	/* no shadow: each act's leading edge is its opener's grained ground */
 }
 
 /* each act card is outlined in its colour; as one slides up over the last,
@@ -299,7 +298,7 @@ main section[data-scene] {
 /* act openers: a block of grained paper in the act's colour filling the
    card, with the title set bottom-left on it */
 .act-opener {
-	/* exactly the card's height, so the paper block ends at the card's foot */
+	/* exactly the card's height, so the grained ground ends at the card's foot */
 	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	justify-content: flex-end;
 	align-items: flex-start;
@@ -313,11 +312,8 @@ main section[data-scene] {
 	margin: 0;
 }
 
-/* the paper block: the whole frame in the act's colour, inset from the
-   card's edges and rounded on every corner, with the title in white on it.
-   It carries the illustrations' ink grain (the fibre in
-   scripts/normalize-personas.mjs: white mottling, at most 20% opaque) at the
-   scale of a 720u-wide illustration (1000 of its units to 720u). */
+/* the act opener's ground: the whole card in a grained gradient of the
+   act's colour, with the title in white on it */
 .act-opener,
 main section[data-scene='your-ui-is-not-my-ui-title'] {
 	position: relative;
@@ -326,14 +322,62 @@ main section[data-scene='your-ui-is-not-my-ui-title'] {
 
 .act-opener::before,
 main section[data-scene='your-ui-is-not-my-ui-title']::before {
-	--paper-tile: calc(512 * 0.72 * var(--u)); /* 512 illustration units */
 	content: '';
 	position: absolute;
-	inset: var(--paper-inset);
-	border-radius: var(--card-corner, var(--corner));
+	/* to the card's edges; the card's own clip rounds its leading corner */
+	inset: 0;
+	/* a grained gradient in the act's ramp: the ink, under the white title,
+	   held along the bottom and then fading towards the top to a lighter step,
+	   with a high-contrast grain laid over in soft-light. Each act sets its
+	   own angle, lighter step and hold (below); angles stay within 0-40deg so
+	   the dark end is always along the title's edge. */
+	--grain-tile: calc(700 * var(--u));
 	background-color: var(--act-color);
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='2' seed='13' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.4 0 0 0 -0.2'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23f)'/%3E%3C/svg%3E");
-	background-size: var(--paper-tile);
+	background-image:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.59' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3'/%3E%3CfeFuncG type='linear' slope='3'/%3E%3CfeFuncB type='linear' slope='3'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -12'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23g)' opacity='0.76'/%3E%3C/svg%3E"),
+		linear-gradient(var(--fade-angle, 20deg), var(--act-color) var(--fade-hold, 30%), color-mix(in srgb, var(--act-color) var(--fade-to, var(--ramp-accent)), white));
+	background-size: var(--grain-tile), 100% 100%;
+	background-blend-mode: soft-light, normal;
+	pointer-events: none;
+	/* its own compositor layer, one frame in size, drawn once and slid with
+	   the scene row. Left in the row's layer, it was drawn tile by tile as
+	   the row flew past, and the fine grain flickered from the blurry
+	   low-resolution tiles Chrome shows first. */
+	will-change: transform;
+}
+
+/* each act's fade: angle, the ramp step it lightens to, and how much of the
+   frame stays ink before it starts */
+.act-panel[data-act='hypothesis'] { --fade-angle: 30deg; --fade-to: var(--ramp-deep); --fade-hold: 30%; }
+.act-panel[data-act='user-research'] { --fade-angle: 8deg; --fade-to: var(--ramp-accent); --fade-hold: 40%; }
+.act-panel[data-act='limits-of-adaptability'] { --fade-angle: 38deg; --fade-to: var(--ramp-deep); --fade-hold: 25%; }
+.act-panel[data-act='personalization-over-adaptability'] { --fade-angle: 18deg; --fade-to: var(--ramp-soft); --fade-hold: 45%; }
+.act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-deep); --fade-hold: 35%; }
+.act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
+.act-panel[data-act='closing'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
+.act-panel[data-act='backup-qa'] { --fade-angle: 34deg; --fade-to: var(--ramp-accent); --fade-hold: 35%; }
+
+/* the chapter number, top right on each act opener: the act's place in the
+   talk (as in the notes drawer's index, so the first act, which opens on the
+   talk title, is 01 and the first opener 02), in the title's face */
+main {
+	counter-reset: act;
+}
+
+.act-panel {
+	counter-increment: act;
+}
+
+.act-opener::after {
+	content: counter(act, decimal-leading-zero);
+	position: absolute;
+	top: var(--frame-pad-top);
+	right: var(--frame-pad-x);
+	font-family: var(--font-sans);
+	font-size: calc(96 * var(--u));
+	font-weight: 900;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
 	pointer-events: none;
 }
 
@@ -344,15 +388,16 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 }
 
 /* act titles, and the talk title that opens the page in place of an act
-   opener: one style */
+   opener: one style, two lines each, broken by hand in index.html (a space
+   before each <br />, so the titles' text still reads as words) */
 .act-title,
 main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	font-family: var(--font-sans);
-	/* sized so the longest word, "Personalization" (7.7em wide in Aileron
+	/* sized so the longest line, "over adaptability" (8.5em wide in Aileron
 	   Black), always fits the card's width minus its padding; 222 at most */
-	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 7.9), calc(222 * var(--u)));
+	font-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 8.7), calc(222 * var(--u)));
 	font-weight: 900;
-	line-height: 0.8;
+	line-height: 0.9;
 	margin: 0 auto;
 	hyphens: auto;
 }
@@ -361,10 +406,10 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	margin: 0;
 }
 
-/* the talk's title slide is laid out like an act opener: its paper block
+/* the talk's title slide is laid out like an act opener: its grained ground
    behind, the title bottom-left (the authors are in the top band) */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
-	/* exactly the card's height (not just at least), so the paper block
+	/* exactly the card's height (not just at least), so the grained ground
 	   ends at the card's foot */
 	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 	justify-content: flex-end;
@@ -373,8 +418,9 @@ main section[data-scene='your-ui-is-not-my-ui-title'] {
 	padding-bottom: calc(var(--frame-pad-bottom) + 40 * var(--u));
 }
 
-/* editorial scene layout: serif headline, sans body, serif lede and
-   quotes. The scene line lives in each card's tab (.act-tab). */
+/* editorial scene layout: a serif headline, then body in one of two
+   styles, body sans (paragraphs and lists) and body serif (quotes, and the
+   Q&A questions). The scene line lives in each card's tab (.act-tab). */
 
 main h2 {
 	font-family: var(--font-serif);
@@ -391,26 +437,6 @@ main h3 {
 	margin: 0 auto 0.5em;
 }
 
-/* lede (formerly the standfirst): the line under a headline and the Q&A
-   questions. Its own rule: the quote's size in Aileron Regular, without the
-   quote's indent, so it can be changed or dropped on its own. */
-main h4 {
-	font-family: var(--font-sans);
-	font-size: calc(55 * var(--u));
-	font-weight: 400;
-	line-height: 1.2;
-	text-decoration: underline;
-	text-decoration-thickness: 0.05em;
-	text-underline-offset: 0.12em;
-	text-wrap: balance;
-	margin: 0 auto 0.8em;
-}
-
-/* the lede sits directly on what follows it: a Q&A answer, or a quote */
-main section[data-scene] > h4:has(+ :is(p, blockquote, .persona)) {
-	margin-bottom: 0;
-}
-
 /* scenes are left-aligned, except a headline with at most one other text
    element (a statement, or headline + one line), which stays centred */
 main section[data-scene] {
@@ -423,18 +449,18 @@ main section[data-scene] > * {
 }
 
 /* text and layout blocks run the full width between the frame's padding */
-main section[data-scene] > :is(h2, h4, p, ul, ol, blockquote, .persona) {
+main section[data-scene] > :is(h2, p, ul, ol, blockquote, .persona) {
 	align-self: stretch;
 }
 
 /* a headline-only scene is centred; not the title slide, which is set
    bottom-left like an act opener */
-main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) {
+main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ p ~ p)) {
 	align-items: center;
 	text-align: center;
 }
 
-main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ :is(p, h4) ~ :is(p, h4))) > * {
+main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, video, img, svg, .video-play))):not(:has(> h2 ~ p ~ p)) > * {
 	margin-left: auto;
 }
 
@@ -450,8 +476,8 @@ main ul {
 	list-style: disc;
 }
 
-/* body: paragraphs and lists share one style. In --u, not em, so it doesn't
-   compound inside the card's 1.5em */
+/* body sans: paragraphs and lists share one style. In --u, not em, so it
+   doesn't compound inside the card's 1.5em */
 main p,
 main ul {
 	font-size: calc(55 * var(--u));
@@ -462,21 +488,58 @@ main li + li {
 	margin-top: 0.3em;
 }
 
-/* the quote style; the branching demo's headline takes it too */
+/* body serif: interview quotes and the Q&A questions, always centred (the
+   persona and Q&A layouts); the branching demo's headline takes it too */
 main blockquote,
 main .branching-text > h2 {
 	font-family: var(--font-serif);
 	font-size: calc(60 * var(--u));
 	font-weight: 400;
 	line-height: 1.2;
-	/* a big editorial first-line indent */
-	text-indent: 3em;
 }
 
-/* too short a line for the indent: it would strand a word */
-main .branching-text > h2 {
-	text-indent: 0;
+/* a headline across the full width, then two columns of body below, tops
+   aligned (a stacked column on phones) */
+.two-columns {
+	width: 100%;
 }
+
+@media (min-width: 700px) {
+	.two-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		column-gap: calc(96 * var(--u));
+		align-items: start;
+	}
+}
+
+.two-columns > :is(blockquote, p) {
+	margin: 0;
+}
+
+/* a bold term as a label above its definition */
+.two-columns strong {
+	display: block;
+	font-weight: 700;
+}
+
+/* the formula slide's headline, set as one line: the operators quiet, the
+   two terms underlined to tie them to the definitions beneath */
+main h2.formula {
+	font-size: calc(112 * var(--u));
+}
+
+.formula-op {
+	color: color-mix(in srgb, currentColor 45%, white);
+	font-weight: 400;
+}
+
+.formula-term {
+	text-decoration: underline;
+	text-decoration-thickness: 0.05em;
+	text-underline-offset: 0.12em;
+}
+
 
 /* a list shown as one line whose ending rotates (js/site.js): the endings
    stack in one grid cell, so the slot is as wide as the longest and the
@@ -518,6 +581,12 @@ main p.rotator {
 /* interview scenes (those with a quote): only the person's name is centred */
 main section[data-scene]:has(blockquote) > h2 {
 	text-align: center;
+}
+
+/* ...unless the quote sits in a column beside other text: then the headline
+   is left-aligned with the columns under it */
+main section[data-scene]:has(> .two-columns) > h2 {
+	text-align: left;
 }
 
 
@@ -587,8 +656,93 @@ main section[data-scene].is-wide > svg {
 	width: min(calc(900 * var(--u)), 100%);
 }
 
-/* persona scenes: name, lede, a divider, the interview quote and its
-   illustration, all centred in one column. One gap spaces every element,
+/* Today's model (index.html): one interface with its accessibility tools
+   stacked on it, an exploded isometric stack of flat panes in the act's
+   ramp, like the persona illustrations. The tools are clear sheets, so the
+   layers beneath show through them. */
+.stack-diagram {
+	width: auto;
+	max-height: calc(640 * var(--u));
+	overflow: visible;
+	--tone-ink: var(--act-color);
+	--tone-deep: color-mix(in srgb, var(--act-color) var(--ramp-deep), white);
+	--tone-accent: color-mix(in srgb, var(--act-color) var(--ramp-accent), white);
+	--tone-soft: color-mix(in srgb, var(--act-color) var(--ramp-soft), white);
+	--tone-wash: color-mix(in srgb, var(--act-color) var(--ramp-wash), white);
+}
+
+.stack-diagram .tone-ink { fill: var(--tone-ink); }
+.stack-diagram .tone-deep { fill: var(--tone-deep); }
+.stack-diagram .tone-accent { fill: var(--tone-accent); }
+.stack-diagram .tone-soft { fill: var(--tone-soft); }
+.stack-diagram .tone-wash { fill: var(--tone-wash); }
+.stack-diagram .tone-paper { fill: #fff; }
+
+/* the base pane's paper edge; a clear sheet, tinted a little and outlined */
+.stack-sheet-edge,
+.stack-clear {
+	stroke: var(--tone-soft);
+	stroke-width: 3;
+}
+
+.stack-clear {
+	fill: var(--tone-wash);
+	fill-opacity: 0.35;
+}
+
+/* dark mode's sheet: the act's ink, see-through enough to show the
+   interface it darkens */
+.stack-tint {
+	fill-opacity: 0.72;
+}
+
+/* the screen reader's focus ring, and the rings it will reach next */
+.stack-focus {
+	fill: none;
+	stroke: var(--tone-ink);
+	stroke-width: 5;
+}
+
+.stack-focus.is-queued {
+	stroke: var(--tone-deep);
+	stroke-dasharray: 12 8;
+}
+
+.stack-order {
+	fill: #fff;
+	font-size: 16px;
+	font-weight: 700;
+	text-anchor: middle;
+}
+
+/* high contrast's forced borders */
+.stack-border {
+	fill: none;
+	stroke: var(--tone-ink);
+	stroke-width: 7;
+}
+
+.stack-lens-rim {
+	fill: none;
+	stroke: var(--tone-ink);
+	stroke-width: 8;
+}
+
+.stack-leader {
+	fill: none;
+	stroke: var(--tone-soft);
+	stroke-width: 2;
+}
+
+.stack-label {
+	fill: var(--tone-ink);
+	font-family: var(--font-sans);
+	font-size: 30px;
+	font-weight: 700;
+}
+
+/* persona scenes: name, a line of body sans, a divider, the interview quote
+   (body serif) and its illustration, all centred in one column. One gap spaces every element,
    the divider included, so margins are zeroed and the gap does the work. */
 main section[data-scene]:has(> .persona) {
 	--persona-gap: calc(48 * var(--u));
@@ -599,6 +753,10 @@ main section[data-scene]:has(> .persona) {
 
 main section[data-scene]:has(> .persona) > * {
 	margin: 0 auto;
+}
+
+main section[data-scene]:has(> .persona) > p {
+	text-wrap: balance;
 }
 
 .persona {
@@ -621,15 +779,51 @@ main section[data-scene]:has(> .persona) > * {
 	mask: url('../media/persona-divider.svg') center / 100% 100% no-repeat;
 }
 
-.persona > blockquote {
+.persona > :is(blockquote, p) {
 	margin: 0 auto;
-	/* centred, so no editorial first-line indent */
-	text-indent: 0;
+}
+
+/* Q&A scenes (a quoted question, then its answer): treated like a persona's
+   quote. One centred column at the persona gap: the question in body serif,
+   the persona divider, then the answer in body sans. The divider is the
+   scene's own ::after, ordered between the two. */
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) {
+	--persona-gap: calc(48 * var(--u));
+	align-items: center;
+	text-align: center;
+	gap: var(--persona-gap);
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > * {
+	margin: 0 auto;
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > blockquote {
+	order: 1;
+	max-width: calc(1400 * var(--u));
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p)::after {
+	content: '';
+	order: 2;
+	flex: none;
+	width: 20%;
+	height: calc(16 * var(--u));
+	background: currentColor;
+	mask: url('../media/persona-divider.svg') center / 100% 100% no-repeat;
+}
+
+.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > p {
+	order: 3;
+	max-width: calc(1400 * var(--u));
+	text-wrap: balance;
 }
 
 /* a persona scene is one frame and never pages, in two columns: the text
-   (name, lede, divider, quote) centred as a group in the left half, the
-   illustration filling the right half. .persona steps aside (display: contents) so its quote,
+   (name, body line, divider, quote) centred as a group in the left half, the
+   illustration filling the right half. Other scenes use it as the side by
+   side template: a <p> takes the quote's place and the frame can hold a
+   diagram (Today's model). .persona steps aside (display: contents) so its quote,
    divider and media join the scene's grid. The empty rows above
    and below the text centre it; the gap is a top margin on the text, not a
    row gap, so those rows cost nothing when the text fills the frame. Phones
@@ -651,17 +845,17 @@ main section[data-scene]:has(> .persona) > * {
 		grid-area: 2 / 1;
 		line-height: 1;
 	}
-	main section[data-scene]:has(> .persona) > h4 { grid-area: 3 / 1; }
+	main section[data-scene]:has(> .persona) > p { grid-area: 3 / 1; }
 	.persona::before { grid-area: 4 / 1; }
 
-	main section[data-scene]:has(> .persona) > h4,
+	main section[data-scene]:has(> .persona) > p,
 	.persona::before,
-	.persona > blockquote {
+	.persona > :is(blockquote, p) {
 		margin-top: var(--persona-gap);
 	}
 	/* half the width holds fewer words a line, so the quote steps down from
 	   60 to fit the frame */
-	.persona > blockquote {
+	.persona > :is(blockquote, p) {
 		grid-area: 5 / 1;
 		font-size: calc(42 * var(--u));
 	}
@@ -686,9 +880,9 @@ main section[data-scene]:has(> .persona) > * {
 
 	/* flipped (.is-flipped): the illustration on the left, the text on the
 	   right */
-	main section[data-scene].is-flipped > :is(h2, h4),
+	main section[data-scene].is-flipped > :is(h2, p),
 	.is-flipped .persona::before,
-	.is-flipped .persona > blockquote {
+	.is-flipped .persona > :is(blockquote, p) {
 		grid-column: 2;
 	}
 
@@ -696,9 +890,22 @@ main section[data-scene]:has(> .persona) > * {
 		grid-column: 1;
 	}
 
-	.persona .persona-portrait {
+	.persona .persona-portrait,
+	.persona > .portrait-ground > .stack-diagram {
 		height: 100%;
 	}
+}
+
+/* a diagram in the side by side frame scales to fit it, centred; its panes
+   may slip past the frame's edge on the conflict beat */
+.persona > .portrait-ground:has(> .stack-diagram) {
+	overflow: visible;
+	border-radius: 0;
+}
+
+.persona > .portrait-ground > .stack-diagram {
+	width: 100%;
+	max-height: none;
 }
 
 /* the markup sizes media for a side-by-side row; let it span the column */
@@ -723,6 +930,9 @@ main section[data-scene]:has(> .persona) > * {
 	display: block;
 	width: 100%;
 	height: auto;
+	/* never stretched: where its frame isn't square (a narrow column caps
+	   its width), the drawing scales to fit inside it */
+	object-fit: contain;
 }
 
 /* the branching demo (demo-two-people): three columns that hold still while
@@ -966,12 +1176,16 @@ aside.notes {
 	}
 }
 
-/* the cards slide right, unresized, to uncover the drawer beneath them. On
-   each card, not an ancestor: the cards pin with position: fixed.
-   `translate`, not transform, which GSAP owns; !important because pinning
-   writes an inline translate: none. Stacked above the drawer. */
+/* the cards shrink toward the window's top right corner, whole, to uncover
+   the drawer beneath them (the slide keeps its proportions; only its size
+   changes). On phones they slide right instead. On each card, not an
+   ancestor: the cards pin with position: fixed. `translate` and `scale`, not
+   transform, which GSAP owns; !important because pinning writes an inline
+   translate: none. Stacked above the drawer. */
 .act-panel {
 	translate: var(--drawer-push) 0 !important;
+	scale: var(--drawer-scale) !important;
+	transform-origin: 100% 0 !important;
 	z-index: 1;
 }
 
@@ -987,7 +1201,7 @@ aside.notes {
 }
 
 /* fixed under the deck, below the top band and against the left edge: the
-   cards slide off it to open it (js/site.js). The index on the left, its
+   cards shrink off it to open it (js/site.js). The index on the left, its
    text lined up with the talk title above, and the notes beside the deck;
    each column scrolls on its own. */
 #notes-drawer {
