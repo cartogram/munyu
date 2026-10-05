@@ -605,11 +605,13 @@ main small,
 }
 
 /* the font has no longer dash, so a doubled em dash is the glyph stretched
-   2×. The drawer uses a plain em dash instead — see .drawer-heading and
-   .toc-num. */
+   2× with matching side room (an em dash is about 1em wide), so it doesn't
+   run into the words either side. The drawer uses a plain em dash instead —
+   see .drawer-heading and .toc-num. */
 .em-dash {
 	display: inline-block;
 	transform: scaleX(2);
+	margin-inline: 0.5em;
 }
 
 .drawer-heading .em-dash,
