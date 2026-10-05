@@ -223,6 +223,20 @@ const acts = gsap.utils.toArray('main .act-panel');
 acts.forEach((panel, k) => panel.style.setProperty('--stack', k));
 document.documentElement.style.setProperty('--stacks', acts.length);
 
+// The next slide in speaker view. Created here, after `acts` is captured, so
+// the scroll timeline never pins it.
+const speakerNext = document.createElement('section');
+speakerNext.className = 'act-panel speaker-next';
+speakerNext.setAttribute('aria-hidden', 'true');
+document.querySelector('main').append(speakerNext);
+let speakerFrameId = null;
+let speakerWantedId = null;
+let speakerFade = null;
+let speakerFadeTo = null;
+let drawerTl = null;
+// Room for the current slide and the next one stacked beside the drawer.
+const speakerRoom = window.matchMedia('(min-width: 700px) and (min-height: 640px)');
+
 // --inset-top / --inset-bottom / --stack-step from css/talk.css, in px.
 function cardInsets() {
 	const root = getComputedStyle(document.documentElement);
@@ -718,6 +732,7 @@ function updateChrome() {
 		tab.style.setProperty('--tab-shift', `${Math.round(shift)}px`);
 	});
 	document.body.dataset.currentAct = current.trigger.trigger.dataset.act;
+	updateSpeakerNext();
 }
 
 // The drawer's index: every act and its scenes, in order. Entries link to
@@ -727,11 +742,19 @@ const tocList = document.getElementById('drawer-toc');
 const tocLinks = new Map(); // beat id → link
 const frameNames = new Map(); // beat id → { title, number }, e.g. Melody, 2.2
 
-function tocLink(id, label, className) {
+function tocLink(id, label, className, number) {
 	const link = document.createElement('a');
 	link.className = className;
 	link.href = `#${id}`;
-	link.textContent = label;
+	// The number sits left of the label, right-aligned to where the label
+	// already starts, with the same plain dash as the notes heading.
+	const num = document.createElement('span');
+	num.className = 'toc-num sub-meta';
+	const dash = document.createElement('span');
+	dash.className = 'em-dash';
+	dash.textContent = '—';
+	num.append(number, dash);
+	link.append(num, label);
 	link.addEventListener('click', (event) => {
 		event.preventDefault();
 		const beat = beatById(id);
@@ -752,7 +775,7 @@ acts.forEach((panel, k) => {
 	item.style.setProperty('--act-color', getComputedStyle(panel).getPropertyValue('--act-color'));
 	const name = actNames.get(panel);
 	if (panel.querySelector('.act-opener')) {
-		item.append(tocLink(act, name, 'toc-act toc-link'));
+		item.append(tocLink(act, name, 'toc-act toc-link', String(k + 1)));
 		frameNames.set(act, { title: name, number: `${k + 1}` });
 	}
 	const scenes = document.createElement('ol');
@@ -766,7 +789,7 @@ acts.forEach((panel, k) => {
 		const label = read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
 		const id = `${act}/${scene.dataset.scene}`;
 		const entry = document.createElement('li');
-		entry.append(tocLink(id, label, 'toc-link'));
+		entry.append(tocLink(id, label, 'toc-link', `${k + 1}.${i + 1}`));
 		scenes.append(entry);
 		frameNames.set(id, { title: label, number: `${k + 1}.${i + 1}` });
 	});
@@ -826,15 +849,136 @@ updateToc();
 // by its width (--drawer-push) instead.
 const drawerIcon = notesToggle.querySelector('svg');
 const phone = window.matchMedia('(max-width: 699px)');
-const drawerIsOpen = () => notesDrawer.classList.contains('is-open');
+function drawerIsOpen() {
+	return notesDrawer.classList.contains('is-open');
+}
 const drawerPush = () => (drawerIsOpen() && phone.matches ? notesDrawer.offsetWidth : 0);
 const drawerScale = () => (drawerIsOpen() && !phone.matches ? 1 - notesDrawer.offsetWidth / document.documentElement.clientWidth : 1);
 const drawerVars = () => ({ '--drawer-push': `${drawerPush()}px`, '--drawer-scale': drawerScale() });
 
+// Frames are the act openers and scenes, not the reveal steps inside a scene.
+function slideFrames() {
+	return beats.filter((beat) => beat.id.split('/').length < 3);
+}
+
+function nextSlideFrame() {
+	const beat = currentBeat();
+	if (!beat) return null;
+	const frames = slideFrames();
+	const id = beat.id.split('/').slice(0, 2).join('/');
+	const index = frames.findIndex((frame) => frame.id === id);
+	return index < 0 ? null : (frames[index + 1] ?? null);
+}
+
+// The preview is the full card, scaled from its top-left like the deck, and
+// parked at the current slide's visual bottom-left so the two meet.
+function placeSpeakerNext() {
+	const beat = currentBeat();
+	const panel = (beat?.scene ?? beat?.opener)?.closest('.act-panel');
+	if (!panel || panel === speakerNext) return;
+	const box = panel.getBoundingClientRect();
+	// The 2px card border sits fully below the current slide, so the slide
+	// above doesn't cover it.
+	speakerNext.style.top = `${box.bottom + 2}px`;
+	speakerNext.style.left = `${box.left}px`;
+	speakerNext.style.width = `${panel.offsetWidth}px`;
+	speakerNext.style.height = `${panel.offsetHeight}px`;
+	speakerNext.style.setProperty('--card-width', `${panel.clientWidth}px`);
+	speakerNext.style.setProperty('--stack', getComputedStyle(panel).getPropertyValue('--stack'));
+}
+
+function fillSpeakerNext(frame) {
+	const source = frame.scene ?? frame.opener;
+	const actPanel = source.closest('.act-panel');
+	speakerNext.dataset.act = actPanel.dataset.act;
+	speakerNext.style.setProperty('--speaker-act', acts.indexOf(actPanel));
+	const clone = source.cloneNode(true);
+	clone.querySelectorAll('aside.notes').forEach((note) => note.remove());
+	clone.querySelectorAll('[id]').forEach((el) => {
+		const id = `speaker-next-${el.id}`;
+		clone.querySelectorAll(`[href="#${CSS.escape(el.id)}"]`).forEach((ref) => ref.setAttribute('href', `#${id}`));
+		el.id = id;
+	});
+	const inner = document.createElement('div');
+	inner.className = 'act-panel-inner';
+	inner.append(clone);
+	speakerNext.replaceChildren(inner);
+	// The tab is on screen for a scene, and rides off the card on an opener.
+	const isOpener = !frame.scene || frame.scene.dataset.scene === 'your-ui-is-not-my-ui-title';
+	if (!isOpener) {
+		const tab = document.createElement('span');
+		tab.className = 'act-tab';
+		tab.setAttribute('aria-hidden', 'true');
+		tab.textContent = actNames.get(actPanel) ?? '';
+		speakerNext.append(tab);
+	}
+}
+
+// Fades the preview in as the drawer opens and out as it closes. A change of
+// slide fades the old one out before the new one fades in. Killed and
+// replaced when the target changes, so a quick step shows only the latest.
+function fadeSpeakerNext(opacity, duration, onComplete) {
+	// The drawer's timeline calls updateSpeakerNext on every frame. Leave a
+	// fade that's already running toward this opacity alone, or each frame
+	// would kill it before it moved.
+	if (speakerFade && speakerFadeTo === opacity && speakerFade.progress() < 1) return;
+	speakerFade?.kill();
+	speakerFadeTo = opacity;
+	const speed = reduceMotion ? 0 : 1;
+	speakerFade = gsap.to(speakerNext, {
+		opacity,
+		duration: duration * speed,
+		ease: opacity ? 'power2.out' : 'power2.in',
+		onComplete,
+	});
+}
+
+function updateSpeakerNext() {
+	const frame = drawerIsOpen() && speakerRoom.matches ? nextSlideFrame() : null;
+	if (!frame) {
+		// Already hidden, and nothing is on its way out.
+		if (speakerWantedId === null && !document.body.classList.contains('is-speaker')) return;
+		// The fade out is already running; keep the card pinned under the
+		// current slide while the drawer closes over it.
+		if (speakerWantedId === null && speakerFade?.isActive()) {
+			placeSpeakerNext();
+			return;
+		}
+		speakerWantedId = null;
+		fadeSpeakerNext(0, 0.45, () => {
+			if (speakerWantedId !== null) return;
+			document.body.classList.remove('is-speaker');
+			speakerNext.replaceChildren();
+			speakerFrameId = null;
+		});
+		return;
+	}
+
+	if (speakerWantedId !== frame.id) {
+		const incoming = frame.id;
+		speakerWantedId = incoming;
+		const reveal = () => {
+			if (speakerWantedId !== incoming) return;
+			if (speakerFrameId !== incoming) {
+				fillSpeakerNext(frame);
+				speakerFrameId = incoming;
+			}
+			// Visible before the opacity tween, which starts from 0.
+			document.body.classList.add('is-speaker');
+			placeSpeakerNext();
+			fadeSpeakerNext(1, 0.45);
+		};
+		const faded = Number(gsap.getProperty(speakerNext, 'opacity')) > 0.08;
+		if (speakerFrameId && speakerFrameId !== incoming && faded) fadeSpeakerNext(0, 0.28, reveal);
+		else reveal();
+	}
+	if (document.body.classList.contains('is-speaker')) placeSpeakerNext();
+}
+
+speakerRoom.addEventListener('change', () => updateSpeakerNext());
+
 // A fresh timeline per toggle. The cards' push and the icon tween from
 // wherever they are, so an interrupted toggle turns around smoothly.
-let drawerTl = null;
-
 function setDrawerOpen(isOpen) {
 	notesDrawer.classList.toggle('is-open', isOpen);
 	notesToggle.setAttribute('aria-expanded', String(isOpen));
@@ -846,7 +990,14 @@ function setDrawerOpen(isOpen) {
 
 	drawerTl?.kill();
 	const speed = reduceMotion ? 0 : 1;
-	drawerTl = gsap.timeline({ defaults: { duration: 0.5 * speed }, onUpdate: updateCursor });
+	drawerTl = gsap.timeline({
+		defaults: { duration: 0.5 * speed },
+		onUpdate: () => {
+			updateCursor();
+			updateSpeakerNext();
+		},
+		onComplete: () => updateSpeakerNext(),
+	});
 	if (isOpen) {
 		drawerTl
 			.set(notesDrawer, { visibility: 'visible' })
@@ -862,6 +1013,7 @@ function setDrawerOpen(isOpen) {
 			.set(notesDrawer, { visibility: 'hidden' });
 	}
 	updateCursor();
+	updateSpeakerNext();
 }
 
 notesToggle.addEventListener('click', () => {
