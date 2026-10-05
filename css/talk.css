@@ -1399,29 +1399,32 @@ body.is-speaker .speaker-next {
 	height: 100%;
 }
 
-/* phones: one column; the whole drawer scrolls */
+/* phones: the drawer fills the window, so the cards slide all the way off
+   it (js/site.js pushes them by its width) and no slide shows. One column:
+   the index takes the top third, the notes the other two, each scrolling on
+   its own; their text sits a few px in from the window's edge rather than
+   lined up with the talk title, as there's no room to spare. */
 @media (max-width: 699px) {
 	#notes-drawer {
+		width: 100vw;
 		grid-template-columns: 1fr;
-		overflow-y: auto;
+		grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
 	}
 
-	.drawer-column {
-		overflow-y: visible;
-	}
-
-	/* stacked, the index card closes at the bottom above the notes, and
-	   the notes line up with the talk title too */
+	/* stacked, the index card closes at the bottom above the notes */
 	.drawer-toc {
+		--pad-left: 0.5rem;
+		--pad-right: 0.5rem;
+		--card-inset-top: 0.75rem;
 		border-bottom: 1px solid currentColor;
 		border-radius: var(--corner);
 	}
 
 	.drawer-notes {
-		--pad-left: var(--title-left);
-		padding-top: 1.5rem;
+		--pad-left: 0.5rem;
+		--pad-right: 0.5rem;
+		padding-top: 1.25rem;
 	}
-
 }
 
 /* the pointer over the deck (js/site.js): an outlined circle like the
