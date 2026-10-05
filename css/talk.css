@@ -1422,6 +1422,14 @@ body.is-speaker .speaker-next {
 		border-radius: var(--corner);
 	}
 
+	/* that padding is too narrow to hold the numbers, so each sits in the
+	   line before its title instead */
+	.toc-num {
+		position: static;
+		width: auto;
+		text-align: left;
+	}
+
 	.drawer-notes {
 		--pad-left: 0.5rem;
 		--pad-right: 0.5rem;
