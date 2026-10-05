@@ -712,15 +712,12 @@
 							<p>
 								That's what the demo just showed, in one line. A UI is a function of two things. The
 								<em>intent</em>: what you're trying to do, the same box for everyone. And the
-								<em>empathy</em>: who you are right now, made of your capabilities and preferences, your
-								context, and your memory and history.
+								<em>empathy</em>: who you are right now, made of your capabilities, environment and situation.
 							</p>
 							<p>
-								Intent is the half that gets built today. Empathy is the half we're arguing for. Same
-								intent, different person should result in a different UI.
+								Same intent, different person should result in a different UI.
 							</p>
 						</aside>
-				
 					</section>
 
 					<section data-scene="observations-of-existing-state">
@@ -735,37 +732,42 @@
 								Generated UIs are already emerging everywhere around us. But so far they only take into account your <em>intent</em>, the query, the task.
 							</p>
 							<p>
-								That half is handled. The half that isn't, yet, is the <em>human</em>: your
-								needs, abilities, context.
-							</p>
-							<p>
-								Today's generated UI answers &ldquo;what are you trying to do?&rdquo; 
-								but not &ldquo;who is doing it?&rdquo;
+								That half is handled. The half that isn't, yet, is the <em>human</em>: your needs, abilities, context.
 							</p>
 							<p>
 								That missing half is our whole argument. We think there is lots of missed opportunity here.
 							</p>
+							[Find good screenshots, put them on the slide and remove the bullet points]
+							[candidate to cut this slide]
 						</aside>
 				
 					</section>
 
 					<section data-scene="what-is-gained">
-						<h2>What is gained?</h2>
+						<h2>UIs with empathy</h2>
 						<ul>
-							<li>The adaptation burden moves from the user to the app</li>
-							<li>No more hoping for compatible apps</li>
+							<li>Remove the adaptation burden from the user</li>
+							<li>Don't rely on apps built with accessibility in mind</li>
+							<li>Remove compatibility friction between adaptations</li>
 						</ul>
 						<aside class="notes" hidden>
+							<p>
+								What is gained?
+							</p>
 							<ul>
 								<li>Rose doesn't need a dark mode plugin nor fear that a sudden redesign of an app makes it unusable for her,</li>
 								<li>Myron doesn't need to rely on the OS's voice control grid &</li>
 								<li>Sinead doesn't need a stack of plugins fighting each other.</li>
 							</ul>
-							<p>Users are not at the mercy of apps being compatible with their adaptations anymore.</p>
+							<p>
+								Users are not at the mercy of apps being compatible with their adaptations anymore.
+							</p>
 							<p>Actually, adaptation is no longer necessary at all, instead the app is built bespoke for that user, and their specific and momentary needs.</p>
-							<p>(There is no spoon moment) Its not that we are trying to bend the UI, its that you have to remember truth, there is no UI.</p>
+
+							<p>
+								Another way of thinking about this is: What if launching an app is creating an app.
+							</p>
 						</aside>
-				
 					</section>
 				</div>
 			</section>
@@ -775,6 +777,11 @@
 					<header class="act-opener">
 						<h1 class="act-title">Launching <br />is creating</h1>
 					</header>
+
+					[ORDER OF THE CHAPTER: 
+					1. app's can't predict you
+					2. economics have changed
+					3. Imagine everything is bespoke (which combines 6.5, 6.1 and has a bullet point on 6.2)]
 
 					<section data-scene="what-if-launching-an-app-means-creating-an-app">
 						<h2>What if launching an app means creating an app?</h2>
@@ -800,6 +807,8 @@
 							<li>Generated apps compose capabilities from many vendors</li>
 						</ul>
 						<aside class="notes" hidden>
+							[if you follow the concept, then your end up with the realization that APIs are much more important…]
+							[ACTUALLY, We want to cut this slide. it can be a bullet point on the conclusion slide]
 							<p>
 								Today an app arrives finished: the vendor builds the functionality <em>and</em> the screens,
 								and ships both together.
@@ -825,6 +834,9 @@
 						</div>
 						<aside class="notes" hidden>
 							<p>
+								The problem is that apps can't predict you even if they tried.
+							</p>
+							<p>
 								This isn't a new insight. Engelbart complained in the 1960s that we design for a
 								&ldquo;statistical population&rdquo; with no attempt to fit the individual. Karger said the same
 								about how people use software.
@@ -846,9 +858,10 @@
 						</ul>
 						<aside class="notes" hidden>
 							<p>
-								Think of the app you'd actually want: one for "our family vacation to France next April". These
-								dates, this budget, my sister's low vision, the dog. Nobody will ever build it. Software was too
-								expensive to make for one trip, one family, one person. So vendors build for the statistical
+								Bespoke apps were never economically viable.
+								It wouldn't make sense to build your own software.
+
+								Your family vacation app with your dates, your budget, your sister's low vision, the dog. Nobody will ever build it. Software was too expensive to make for one trip and there was a market of one. So vendors build for the statistical
 								average, and there are two ways to do that.
 							</p>
 							<p>
@@ -876,18 +889,7 @@
 						</ul>
 						<aside class="notes" hidden>
 							<p>
-								So, what if? You open your laptop and only see bespoke apps and interfaces, everything fitted to
-								your needs. Not Google Maps' idea of the best
-								route, but a route planner that knows you get carsick and keeps you off the winding roads. Not
-								Excel, but budget planning built for your company's exact process: your teams, your approvals,
-								your numbers. Nothing generic about it.
-							</p>
-							<p>
-								And the family vacation to France next April: nobody builds that app today, but making one for
-								a single trip would finally cost next to nothing. It can also look different for each of us,
-								which is where accessibility comes in. My sister has low vision, so her view is zoomed in and in
-								high contrast (and she mostly sees the calendar, while I get the bill for the travel costs).
-								That's the accessibility case we started with, without dark mode and screen readers added on top.
+								So, what if? You open your laptop and only see bespoke apps and interfaces, everything fitted to your needs.
 							</p>
 							<p>
 								There are surely open questions around this, on topics like:
@@ -896,11 +898,12 @@
 								<li>privacy (an interface made for you, needs to know a lot about you)</li>
 								<li>stability (how do you get predictable interfaces if they are made from scratch every time?)</li>
 								<li>what happens to the common ground between humans</li>
-								<li>and others</li>
 							</ul>
 							<p>
 								But now with AI, personalized interfaces are for the first time an actual possibility. So we're in a place where we can actually think about and address those issues.
 							</p>
+
+							[we need to cut this or the last. it gets repetetive and too long]
 						</aside>
 					</section>
 				</div>
