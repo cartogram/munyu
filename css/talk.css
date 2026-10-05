@@ -605,11 +605,18 @@ main small,
 }
 
 /* the font has no longer dash, so a doubled em dash is the glyph stretched
-   2× with matching side room (an em dash is about 1em wide) */
+   2×. The drawer uses a plain em dash instead — see .drawer-heading and
+   .toc-num. */
 .em-dash {
 	display: inline-block;
 	transform: scaleX(2);
-	margin-inline: 0.5em;
+}
+
+.drawer-heading .em-dash,
+.toc-num .em-dash {
+	transform: none;
+	margin-inline: 0;
+	font-weight: 400;
 }
 
 /* sub-meta: the secondary part of a meta line, in title-case serif
@@ -1234,13 +1241,12 @@ aside.notes {
 
 /* the index is a card, like the act cards: outlined, its top corners
    rounded, open at the bottom where it runs off the window. It sits in from
-   the window's left edge (by 1px, like the first act card) and below the
-   top band, and pads its text out to line up with the talk title. */
+   the window's left edge (by 1px, like the first act card), flush with the
+   top of the drawer, and pads its text out to line up with the talk title. */
 .drawer-toc {
 	--card-inset-left: 1px;
-	--card-inset-top: 2rem;
 	--pad-left: calc(var(--title-left) - var(--card-inset-left) - 1px);
-	margin: var(--card-inset-top) 0 0 var(--card-inset-left);
+	margin: 0 0 0 var(--card-inset-left);
 	border: 1px solid currentColor;
 	border-bottom: 0;
 	border-radius: var(--corner) var(--corner) 0 0;
@@ -1250,7 +1256,7 @@ aside.notes {
    column, so the footer can sit at its very bottom */
 .drawer-notes {
 	--pad-left: 2rem;
-	padding-top: calc(2rem + 1px + 1.5rem);
+	padding-top: calc(1px + 1.5rem);
 	display: flex;
 	flex-direction: column;
 }
@@ -1263,9 +1269,28 @@ aside.notes {
 	color: #555;
 }
 
-.drawer-footer a {
+.drawer-footer p + p {
+	margin-top: 0.35rem;
+}
+
+.drawer-footer a,
+.drawer-footer a:hover {
 	color: var(--act-color, #000);
 	font-weight: 700;
+	text-decoration: none;
+}
+
+/* a diagonal arrow up and to the right, beside System */
+.drawer-footer svg {
+	width: 0.85em;
+	height: 0.85em;
+	margin-left: 0.28em;
+	vertical-align: -0.05em;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
 }
 
 .drawer-heading {
@@ -1300,6 +1325,7 @@ aside.notes {
    highlight reaches from the window's edge to the notes */
 .toc-link {
 	display: block;
+	position: relative;
 	margin-inline: calc(-1 * var(--pad-left)) calc(-1 * var(--pad-right));
 	/* text lines up with the Index heading, inside the 3px bar */
 	padding: 0.2rem var(--pad-right) 0.2rem calc(var(--pad-left) - 3px);
@@ -1308,6 +1334,19 @@ aside.notes {
 	background-origin: border-box;
 	color: var(--act-color);
 	text-decoration: none;
+}
+
+/* "1.1 —" in the label's padding, right-aligned so the dash meets the
+   text. The label's padding is unchanged, so the title stays put. */
+.toc-num {
+	position: absolute;
+	top: 0.2rem;
+	left: 0;
+	width: calc(var(--pad-left) - 3px);
+	text-align: right;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+	line-height: inherit;
 }
 
 /* highlights fade out from the left */
@@ -1319,6 +1358,45 @@ aside.notes {
 .toc-link[aria-current='true'] {
 	border-left-color: var(--act-color);
 	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 16%, white), transparent);
+	font-weight: 700;
+}
+
+.toc-link[aria-current='true'] .toc-num {
+	font-weight: 700;
+}
+
+/* speaker view: with the drawer open on a large window, the current slide
+   shrinks into the top-right and the next slide fills the space below it.
+   js/site.js builds .speaker-next and places it under the current card;
+   both share --drawer-scale, so they shrink together. Opacity is animated
+   there too: the preview fades in with the drawer and out as it closes,
+   and a change of slide fades out before the next one fades in. */
+.speaker-next {
+	position: fixed;
+	margin: 0 !important;
+	pointer-events: none;
+	visibility: hidden;
+	opacity: 0;
+	translate: none !important;
+	scale: var(--drawer-scale) !important;
+	transform-origin: 0 0 !important;
+	/* the same 2px rule as the current slide, so it thins with the drawer
+	   scale instead of staying a heavy line. Square on the left: the
+	   preview meets the slide above along a straight edge. */
+	border-radius: 0;
+	z-index: 2;
+	/* its own act count, so an opener's chapter number is that act's, and
+	   the extra card doesn't change the deck's numbering */
+	counter-reset: act var(--speaker-act, 0);
+}
+
+body.is-speaker .speaker-next {
+	visibility: visible;
+}
+
+.speaker-next .act-panel-inner {
+	width: 100%;
+	height: 100%;
 }
 
 /* phones: one column; the whole drawer scrolls */
