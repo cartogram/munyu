@@ -160,35 +160,16 @@ const PICTOGRAMS = {
 	curtains(cx, cy, s) {
 		for (const x0 of [cx - 24 * s, cx + 2 * s]) add(outlined(WHITE, rounded(x0, cy - 20 * s, 22 * s, 40 * s, 3 * s), 3 + s));
 	},
-	// a paintbrush, its bristles dipped dark
-	brush(cx, cy, s) {
-		add(path(INK, line([cx - 18 * s, cy + 18 * s], [cx + 4 * s, cy - 4 * s], 7 * s)));
-		add(outlined(WHITE, [[cx + 2 * s, cy - 10 * s], [cx + 10 * s, cy - 2 * s], [cx + 24 * s, cy - 24 * s], [cx + 18 * s, cy - 18 * s]], 3 + s));
-		add(path(INK, poly([[cx + 18 * s, cy - 18 * s], [cx + 24 * s, cy - 24 * s], [cx + 28 * s, cy - 28 * s], [cx + 22 * s, cy - 26 * s]])));
-	},
-	// a speech bubble with its tail, and three dots
-	bubble(cx, cy, s) {
-		const body = rounded(cx - 24 * s, cy - 18 * s, 48 * s, 30 * s, 10 * s);
-		add(outlined(WHITE, [...body.slice(0, 21), [cx - 6 * s, cy + 12 * s], [cx - 16 * s, cy + 22 * s], [cx - 12 * s, cy + 12 * s], ...body.slice(21)], 4 + s));
-		for (const dx of [-11, 0, 11]) add(path(INK, circle([cx + dx * s, cy - 3 * s], 3.2 * s, 16), 'edge'));
-	},
-	// the speech bubble, struck through
-	quiet(cx, cy, s) {
-		const body = rounded(cx - 24 * s, cy - 18 * s, 48 * s, 30 * s, 10 * s);
-		add(outlined(WHITE, [...body.slice(0, 21), [cx - 6 * s, cy + 12 * s], [cx - 16 * s, cy + 22 * s], [cx - 12 * s, cy + 12 * s], ...body.slice(21)], 4 + s));
-		add(path(INK, line([cx - 26 * s, cy + 20 * s], [cx + 26 * s, cy - 24 * s], 4 + s)));
-	},
+
+
+
 	// a desk, its top and two legs, ending on the right like the set's tables
 	desk(cx, cy, s) {
 		add(outlined(WHITE, rounded(cx - 26 * s, cy - 6 * s, 52 * s, 9 * s, 2 * s), 3 + s));
 		add(path(INK, line([cx - 20 * s, cy + 6 * s], [cx - 20 * s, cy + 22 * s], 3 + s)), path(INK, line([cx + 14 * s, cy + 6 * s], [cx + 14 * s, cy + 22 * s], 3 + s)));
 		add(outlined(WHITE, rounded(cx - 10 * s, cy - 26 * s, 26 * s, 16 * s, 2 * s), 3 + s));
 	},
-	// a crescent moon
-	moon(cx, cy, s) {
-		add(path(INK, circle([cx, cy], 20 * s, 48)));
-		add(path(WASH, circle([cx + 10 * s, cy - 7 * s], 17 * s, 48), 'edge'));
-	},
+
 	// the front of a train, its two windows and its lamps
 	train(cx, cy, s) {
 		add(outlined(WHITE, rounded(cx - 20 * s, cy - 24 * s, 40 * s, 44 * s, 9 * s), 4 + s));
@@ -196,6 +177,36 @@ const PICTOGRAMS = {
 		for (const dx of [-10, 10]) add(path(INK, circle([cx + dx * s, cy + 10 * s], 3 * s, 16), 'edge'));
 		add(path(INK, line([cx - 14 * s, cy + 22 * s], [cx - 20 * s, cy + 30 * s], 3 + s)), path(INK, line([cx + 14 * s, cy + 22 * s], [cx + 20 * s, cy + 30 * s], 3 + s)));
 	},
+	// a battery, half full
+	battery(cx, cy, s) {
+		add(outlined(WHITE, rounded(cx - 24 * s, cy - 14 * s, 44 * s, 28 * s, 5 * s), 4 + s));
+		add(path(INK, poly(rounded(cx + 22 * s, cy - 6 * s, 6 * s, 12 * s, 2 * s))));
+		add(path(INK, poly(rounded(cx - 19 * s, cy - 9 * s, 18 * s, 18 * s, 2 * s)), 'edge'));
+	},
+	// a wheelchair from the side: its big wheel, the seat and back, and the
+	// small front wheel
+	wheelchair(cx, cy, s) {
+		add(outlined(WHITE, points(circle([cx - 4 * s, cy + 6 * s], 16 * s, 36)), 4 + s));
+		add(path(INK, circle([cx - 4 * s, cy + 6 * s], 3 * s, 12), 'edge'));
+		add(path(INK, line([cx - 14 * s, cy - 26 * s], [cx - 10 * s, cy - 6 * s], 4 + s)), path(INK, line([cx - 10 * s, cy - 6 * s], [cx + 18 * s, cy - 6 * s], 4 + s)));
+		add(path(INK, line([cx + 16 * s, cy - 6 * s], [cx + 20 * s, cy + 16 * s], 3 + s)));
+		add(path(INK, circle([cx + 20 * s, cy + 19 * s], 4 * s, 16)));
+	},
+	// a spreadsheet: a sheet with a dark header row and a grid
+	grid(cx, cy, s) {
+		add(outlined(WHITE, rounded(cx - 22 * s, cy - 18 * s, 44 * s, 36 * s, 3 * s), 4 + s));
+		add(path(INK, poly(rounded(cx - 22 * s, cy - 18 * s, 44 * s, 9 * s, 2 * s))));
+		for (const dy of [3, 11]) add(path(INK, line([cx - 22 * s, cy + dy * s], [cx + 22 * s, cy + dy * s], 2 + s), 'edge'));
+		for (const dx of [-7, 8]) add(path(INK, line([cx + dx * s, cy - 9 * s], [cx + dx * s, cy + 18 * s], 2 + s), 'edge'));
+	},
+	// a pair of glasses: two round lenses, the bridge and the arms
+	glasses(cx, cy, s) {
+		for (const dx of [-13, 13]) add(outlined(WHITE, points(circle([cx + dx * s, cy + 2 * s], 10 * s, 36)), 3 + s));
+		add(path(INK, curve([cx - 4 * s, cy], [cx, cy - 4 * s], [cx + 4 * s, cy], 3 + s, false)));
+		add(path(INK, line([cx - 23 * s, cy], [cx - 28 * s, cy - 6 * s], 3 + s)), path(INK, line([cx + 23 * s, cy], [cx + 28 * s, cy - 6 * s], 3 + s)));
+	},
+
+
 	// a clock
 	clock(cx, cy, s) {
 		add(outlined(WHITE, points(circle([cx, cy], 20 * s, 36)), 4 + s));
@@ -278,28 +289,46 @@ const COL = BOX_W + STEP * 3, COL_GAP = 230;
 const DEVICE_GAP = 56; // the space between the tallest stack's last box and the devices' outlines
 // a box in the wash, no outline
 const box = ({ x, y, w, h }) => add(path(WASH, poly(rounded(x, y, w, h, BOX_R))));
-// words on one line if they fit in n characters, or else on two, as even as
-// they break
+// words on as few lines as keep each within about n characters, as even as
+// they break; or, where they hold a |, broken there
 const wrap = (words, n) => {
-	if (words.length <= n) return [words];
+	if (words.includes('|')) return words.split('|').map((l) => l.trim());
 	const w = words.split(' ');
-	const splits = w.slice(1).map((_, i) => [w.slice(0, i + 1).join(' '), w.slice(i + 1).join(' ')]);
-	return splits.reduce((a, b) => (Math.max(...b.map((l) => l.length)) < Math.max(...a.map((l) => l.length)) ? b : a));
+	// the most even split of w[i…] into k lines, as [lines, longest]
+	const split = (i, k) => {
+		if (k === 1) {
+			const line = w.slice(i).join(' ');
+			return [[line], line.length];
+		}
+		let best = null;
+		for (let j = i + 1; j <= w.length - k + 1; j++) {
+			const line = w.slice(i, j).join(' ');
+			const [rest, longest] = split(j, k - 1);
+			const max = Math.max(line.length, longest);
+			if (!best || max < best[1]) best = [[line, ...rest], max];
+		}
+		return best;
+	};
+	for (let k = 1; k < w.length; k++) {
+		const [lines, longest] = split(0, k);
+		if (longest <= n + 2) return lines;
+	}
+	return w;
 };
 
-const KINDS = ['Capabilities', 'Environment', 'Situation'];
+const KINDS = ['Condition', 'Environment', 'Situation'];
 const PEOPLE = [
 	{
 		name: 'rose', draw: rose, device: tablet, deviceW: 560,
-		context: [['sun', 'Prefers low light'], ['curtains', 'At home, on the couch on her iPad, curtains closed'], ['brush', 'Looking forward to an arts and craft session']],
+		context: [['sun', 'Hyperphotosensitivity'], ['curtains', 'On the couch, curtains drawn'], ['battery', 'Medium energy budget today']],
 	},
 	{
 		name: 'myron', draw: myron, device: monitor, deviceW: 560,
-		context: [['bubble', 'Prefers speech input'], ['desk', 'At his desktop computer, at his desk'], ['moon', 'Tired from a lecture']],
+		context: [['wheelchair', 'Spine injury, | steers by head'], ['desk', 'At his desk, headset on'], ['grid', 'Focused on a spreadsheet']],
 	},
 	{
 		name: 'someone', draw: someone, device: phone, deviceW: 300, subdued: true,
-		context: [['quiet', 'No speech input, only a thumb'], ['train', 'Standing in the subway, one hand free'], ['clock', 'Running late, heatwave, stressful']],
+		context: [['glasses', 'Needs reading glasses'], ['train', 'Crowded subway, one hand free'], ['clock', 'Running late, heatwave, stressful']],
 	},
 ];
 

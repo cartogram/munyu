@@ -631,8 +631,8 @@
 								<img
 									class="branching-illustration"
 									src="media/personas/demo-two-people.webp"
-									data-frame="0 -10 2317 1172"
-									alt="Three stacks side by side, each starting from the same intent, I'd like to translate this text. Rose's empathy: prefers low light; at home on the couch on her iPad, curtains closed; looking forward to an arts and craft session; and below it an iPad with a dark, dim translator. Myron's: prefers speech input; at his desktop computer, at his desk; tired from a lecture; and below it a monitor with a translator that only listens. A third, unnamed person's, drawn fainter: no speech input, only a thumb; standing in the subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge."
+									data-frame="0 -10 2317 1132"
+									alt="Three stacks side by side, each starting from the same intent, I'd like to translate this text. Rose's: condition, hyperphotosensitivity; environment, on the couch, curtains drawn; situation, a medium energy budget today; and below it an iPad with a dark, dim translator. Myron's: a spine injury, steering by head; at his desk, headset on; focused on a spreadsheet; and below it a monitor with a translator that only listens. A third, unnamed person's, drawn fainter: needs reading glasses; in a crowded subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge."
 								/>
 							</div>
 						</div>
@@ -640,22 +640,27 @@
 							<p>
 								In our previous model we started with the interface and the person had to adapt. In the new model, we start with the person.
 							</p>
-							<p>[Next] Remember Rose from our interviews: light drains her energy. She wants to translate this text.</p>
+							<p>[Next] Remember Rose from our interviews. She wants to translate this text.</p>
 							<p>[Next, three times] Then what we know about her, one box at a time:</p>
 							<ul>
-								<li>capabilities: she prefers low light;</li>
-								<li>environment: at home, on the couch on her iPad, curtains closed;</li>
-								<li>situation: looking forward to an arts and craft session.</li>
+								<li>her condition: hyperphotosensitivity. Light drains her energy and can make her sick, so nothing on screen may be bright;</li>
+								<li>her environment: on the couch, curtains drawn, so the room is dark and any glare stands out;</li>
+								<li>her situation: a medium energy budget today, so the UI should ask as little of her as it can.</li>
 							</ul>
 							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator on her iPad.</p>
 							<p>[Simon takes over] [Next] Same intent, another person: Myron.</p>
-							<p>[Next, three times] He prefers speech input; he's at his desktop computer, at his desk; and he's tired from a lecture.</p>
+							<p>[Next, three times]</p>
+							<ul>
+								<li>His condition: a spine injury, 23 years ago. He can't use his hands; he steers his wheelchair and his mouse pointer with his head;</li>
+								<li>his environment: at his desk, headset on, so his voice is always within reach;</li>
+								<li>his situation: focused on a spreadsheet, so nothing should pull his head, and his pointer, away from it.</li>
+							</ul>
 							<p>[Next] His UI has nothing to point at: it listens. Same task, a different UI, and Rose's is still there to compare.</p>
 							<p>
-								[Next] And it doesn't stop at two. Someone with no speech input, only a thumb, standing in the subway with one hand free,
+								[Next] And it doesn't stop at two. Someone who needs reading glasses, nothing you'd call a disability, in a crowded subway with one hand free,
 								running late in a heatwave. Or Rose herself, tomorrow, in a different situation.
 							</p>
-							<p>[Next] Their UI: big buttons where the thumb reaches.</p>
+							<p>[Next] Their UI: big, clear buttons where the thumb reaches, readable without the glasses they didn't bring.</p>
 							<p>[Next] And the list goes on: bespoke UIs, generated for everyone, in every situation.</p>
 							<p>The avatars jump to each person's part.</p>
 						</aside>
@@ -685,7 +690,7 @@
 							<p>
 								That's what the demo just showed, in one line. A UI is a function of two things. The
 								<em>intent</em>: what you're trying to do, the same box for everyone. And the
-								<em>empathy</em>: who you are right now, made of your capabilities, environment and situation.
+								<em>empathy</em>: who you are right now, made of your condition, environment and situation.
 							</p>
 							<p>
 								Same intent, different person should result in a different UI.
