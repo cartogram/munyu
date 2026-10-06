@@ -271,7 +271,10 @@ function phone(x, y) {
 // tall as its words, each stepped a little further right; and last the
 // device, set apart below. The devices' tops line up, below the tallest stack.
 const BOX_W = 520, BOX_R = 28, GAP = 16, STEP = 33;
-const COL = BOX_W + STEP * 3, COL_GAP = 100; // a stack's width, and the space between two
+// a stack's width, and the space between two: wide enough that the empty
+// stack past the last starts near the card's right edge, so only part of it
+// shows (the deck's avatar grid, .branching-people, uses both)
+const COL = BOX_W + STEP * 3, COL_GAP = 230;
 const DEVICE_GAP = 56; // the space between the tallest stack's last box and the devices' outlines
 // a box in the wash, no outline
 const box = ({ x, y, w, h }) => add(path(WASH, poly(rounded(x, y, w, h, BOX_R))));
@@ -342,13 +345,15 @@ PEOPLE.forEach((person, n) => {
 	person.device(n * (COL + COL_GAP) + (COL - person.deviceW) / 2, deviceTop - (subdued ? 13 : 0));
 });
 
-// ---- more: an empty stack past the last, running off the card's edge
+// ---- more: an empty stack past the last, the same shape but blank, its
+// device only an outline, running off the card's edge
 subdued = true;
 part = 'more';
 {
 	const x0 = PEOPLE.length * (COL + COL_GAP);
 	box({ x: x0, y: 0, w: BOX_W, h: 124 });
-	[0, 1, 2].forEach((i) => box({ x: x0 + STEP * (i + 1), y: 140 + i * 128, w: BOX_W, h: 112 }));
+	[0, 1, 2].forEach((i) => box({ x: x0 + STEP * (i + 1), y: 140 + i * 172, w: BOX_W, h: 156 }));
+	add(outlined(WHITE, rounded(x0 + (COL - 300) / 2, deviceTop - 13, 300, 430, 48), BASE_LINE, SOFT));
 }
 
 write(OUT, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${PEOPLE.length * (COL + COL_GAP) + COL} 1280">${shapes.join('')}</svg>\n`);

@@ -970,7 +970,7 @@ main section[data-scene].branching > h2 {
 
 .branching-people {
 	display: grid;
-	grid-template-columns: 619fr 100fr 619fr 100fr 619fr;
+	grid-template-columns: 619fr 230fr 619fr 230fr 619fr;
 }
 
 .branching-person:nth-child(2) {
