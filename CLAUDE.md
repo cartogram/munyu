@@ -27,3 +27,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Code style
 
 - Tabs for indentation, single-quoted strings in JS; match the surrounding file.
+
+## Copy
+
+- The talk's title is "Your UI is not my UI", in sentence case, everywhere: slides, `<title>`, meta tags, README, `package.json`.
+- Every heading (act titles, scene `h2`s, UI labels) is sentence case: capitalise the first word, proper names and acronyms (AI, UI, API), nothing else.
