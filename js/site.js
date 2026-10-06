@@ -719,6 +719,8 @@ function updateChrome() {
 // their frame's beat id; an act without an opener (the first, which opens on
 // the talk title) lists its scenes without an act heading.
 const tocList = document.getElementById('drawer-toc');
+const tocNav = tocList.closest('.drawer-toc');
+tocNav.addEventListener('pointerleave', () => tocNav.classList.remove('is-resting'));
 const tocLinks = new Map(); // beat id → link
 const frameNames = new Map(); // beat id → { title, number }, e.g. Melody, 2.2
 
@@ -734,28 +736,40 @@ function tocLink(id, label, className, number) {
 	dash.className = 'em-dash';
 	dash.textContent = '—';
 	num.append(number, dash);
-	link.append(num, label);
+	// the title in its own span, so the collapsed index (css/talk.css) can
+	// hide it while the number shows
+	const title = document.createElement('span');
+	title.className = 'toc-title';
+	title.textContent = label;
+	link.append(num, title);
 	link.addEventListener('click', (event) => {
 		event.preventDefault();
 		const beat = beatById(id);
 		if (beat) jumpTo(beatPosition(beat));
 		// a mouse click hands focus back to the page so the arrow keys keep
 		// navigating; keyboard activation keeps focus in the list
-		if (event.detail > 0) link.blur();
+		if (event.detail > 0) {
+			link.blur();
+			// and folds a collapsing index back to its numbers, though the
+			// pointer is still over it, until the pointer leaves
+			tocNav.classList.add('is-resting');
+		}
 	});
 	tocLinks.set(id, link);
 	return link;
 }
 
-// Acts count from 1 and scenes within an act from 1; an act opener is just
-// its act's number.
+// Acts count from 1 and scenes within an act from 1; in the index, an act
+// opener is its act's number with .0.
 acts.forEach((panel, k) => {
 	const act = panel.dataset.act;
 	const item = document.createElement('li');
 	item.style.setProperty('--act-color', getComputedStyle(panel).getPropertyValue('--act-color'));
 	const name = actNames.get(panel);
 	if (panel.querySelector('.act-opener')) {
-		item.append(tocLink(act, name, 'toc-act toc-link', String(k + 1)));
+		// "2.0": the act's own number, in the scenes' form, so the column of
+		// numbers reads as one sequence
+		item.append(tocLink(act, name, 'toc-act toc-link', `${k + 1}.0`));
 		frameNames.set(act, { title: name, number: `${k + 1}` });
 	}
 	const scenes = document.createElement('ol');
@@ -776,6 +790,28 @@ acts.forEach((panel, k) => {
 	item.append(scenes);
 	tocList.append(item);
 });
+
+// On small screens the index folds to a rail of its numbers (css/talk.css),
+// each slid from its open place to the rail's centre. Where each number's
+// centre sits, from the card's left edge, sets how far: --num-centre.
+// Measured where it shows, less whatever slide it has now, so it can be
+// measured folded, open or mid-slide.
+const railMode = window.matchMedia('(min-width: 700px) and (max-width: 1024px) and (hover: hover)');
+function measureTocNumbers() {
+	if (!railMode.matches) return;
+	const card = tocNav.getBoundingClientRect().left;
+	tocNav.querySelectorAll('.toc-num').forEach((num) => {
+		const text = document.createRange();
+		text.setStart(num, 0);
+		text.setEndBefore(num.querySelector('.em-dash'));
+		const shown = text.getBoundingClientRect();
+		const slide = parseFloat(getComputedStyle(num).translate) || 0;
+		num.style.setProperty('--num-centre', `${shown.left + shown.width / 2 - slide - card}px`);
+	});
+}
+measureTocNumbers();
+document.fonts.ready.then(measureTocNumbers);
+railMode.addEventListener('change', measureTocNumbers);
 
 let activeTocLink = null;
 

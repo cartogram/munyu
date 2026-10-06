@@ -605,11 +605,13 @@ main small,
 }
 
 /* the font has no longer dash, so a doubled em dash is the glyph stretched
-   2×. The drawer uses a plain em dash instead — see .drawer-heading and
-   .toc-num. */
+   2× with matching side room (an em dash is about 1em wide), so it doesn't
+   run into the words either side. The drawer uses a plain em dash instead —
+   see .drawer-heading and .toc-num. */
 .em-dash {
 	display: inline-block;
 	transform: scaleX(2);
+	margin-inline: 0.5em;
 }
 
 .drawer-heading .em-dash,
@@ -1420,29 +1422,134 @@ body.is-speaker .speaker-next {
 	height: 100%;
 }
 
-/* phones: one column; the whole drawer scrolls */
+/* phones: the drawer fills the window, so the cards slide all the way off
+   it (js/site.js pushes them by its width) and no slide shows. One column:
+   the index takes the top third, the notes the other two, each scrolling on
+   its own; their text sits a few px in from the window's edge rather than
+   lined up with the talk title, as there's no room to spare. */
 @media (max-width: 699px) {
 	#notes-drawer {
+		width: 100vw;
 		grid-template-columns: 1fr;
-		overflow-y: auto;
+		grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
 	}
 
-	.drawer-column {
-		overflow-y: visible;
-	}
-
-	/* stacked, the index card closes at the bottom above the notes, and
-	   the notes line up with the talk title too */
+	/* stacked, the index card closes at the bottom above the notes */
 	.drawer-toc {
+		--pad-left: 0.5rem;
+		--pad-right: 0.5rem;
+		--card-inset-top: 0.75rem;
 		border-bottom: 1px solid currentColor;
 		border-radius: var(--corner);
 	}
 
-	.drawer-notes {
-		--pad-left: var(--title-left);
-		padding-top: 1.5rem;
+	/* that padding is too narrow to hold the numbers, so each sits in the
+	   line before its title instead */
+	.toc-num {
+		position: static;
+		width: auto;
+		text-align: left;
 	}
 
+	.drawer-notes {
+		--pad-left: 0.5rem;
+		--pad-right: 0.5rem;
+		padding-top: 1.25rem;
+	}
+}
+
+/* small screens that can hover (700–1024px): the index folds to a rail of
+   its numbers, so the notes get its width, and opens over the notes, full
+   width, while the pointer or focus is on it. Its contents keep their open
+   layout throughout, so nothing re-wraps or moves as it opens; only the
+   card's width changes, and it lays over the notes rather than pushing
+   them. It opens at once and closes a moment after the pointer leaves, so
+   cutting a corner on the way to a title doesn't snap it shut; a click
+   folds it (.is-resting, js/site.js) until the pointer leaves. Touch-only
+   screens keep the full index: they couldn't open it. */
+@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) {
+	#notes-drawer {
+		/* the numbers, right-aligned in the label's padding, and a little room */
+		--toc-rail: calc(var(--title-left) + 4px);
+		--toc-open: 250px;
+		grid-template-columns: var(--toc-rail) minmax(0, 1fr);
+	}
+
+	.drawer-toc {
+		--toc-ease: cubic-bezier(0.16, 1, 0.3, 1); /* the deck's expo.out */
+		position: relative;
+		z-index: 1;
+		box-sizing: border-box;
+		width: var(--toc-rail);
+		/* no right padding: the contents' own width (below) keeps their
+		   right edge where it was, and the rail is narrower than the padding */
+		padding-right: 0;
+		background: #fff;
+		overflow-x: hidden;
+		transition: width 0.2s var(--toc-ease) 0.3s;
+	}
+
+	/* laid out at the open width, whatever the card's width */
+	.drawer-toc > .drawer-heading,
+	#drawer-toc {
+		width: calc(var(--toc-open) - var(--pad-left) - var(--pad-right) - 2px);
+	}
+
+	/* folded: the titles, the dashes and the Index heading fade. Nothing
+	   changes its layout, so nothing jumps as the index opens or closes. */
+	.drawer-toc > .drawer-heading,
+	.toc-title,
+	.toc-num .em-dash {
+		transition: opacity 0.2s var(--toc-ease) 0.3s;
+	}
+
+	/* every entry one line, its title ending in an ellipsis where it's too
+	   long for the open index, so the rows (and the rail's numbers) are
+	   evenly spaced */
+	.toc-link {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* each number keeps its open place, right-aligned to its dash and
+	   title; folded, it slides from there to the rail's centre, in step
+	   with the card's width. --num-centre is where its centre sits from
+	   the card's left edge (js/site.js measures it). */
+	.toc-num {
+		transition: translate 0.2s var(--toc-ease) 0.3s;
+	}
+
+	.drawer-toc:not(:hover, :focus-within) .toc-num,
+	.drawer-toc.is-resting .toc-num {
+		translate: calc(var(--toc-rail) / 2 - var(--num-centre, 0px)) 0;
+	}
+
+	.drawer-toc:not(:hover, :focus-within) > .drawer-heading,
+	.drawer-toc:not(:hover, :focus-within) .toc-title,
+	.drawer-toc:not(:hover, :focus-within) .toc-num .em-dash,
+	.drawer-toc.is-resting > .drawer-heading,
+	.drawer-toc.is-resting .toc-title,
+	.drawer-toc.is-resting .toc-num .em-dash {
+		opacity: 0;
+	}
+
+	/* open: at once, the full width, over the notes */
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) {
+		width: var(--toc-open);
+		transition-delay: 0s;
+	}
+
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+		transition-delay: 0s;
+	}
+}
+
+@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) and (prefers-reduced-motion: reduce) {
+	.drawer-toc,
+	.drawer-toc :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+		transition: none;
+	}
 }
 
 /* the pointer over the deck (js/site.js): an outlined circle like the
