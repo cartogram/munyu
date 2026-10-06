@@ -77,97 +77,77 @@ function todaysModelSteps(scene) {
 	return [base, ...TODAYS_MODEL_LAYERS.map((_, i) => extension(i)), conflict];
 }
 
-// The branching demo: one stack of boxes per person, built on the intent, one
-// box per beat while the beat texts on the right take turns. Rose's intent is
-// there from the start. A person's part starts with their avatar lighting up;
-// then an empathy box for each kind of context, and last the UI's phone. Each
-// piece slides up from below the bottom of the card, off the screen, and stops
-// in its place: no easing, so it moves only as the reader scrolls, and sticks.
-// When the next person's part starts, the last stack slides off to the left
-// as their intent comes up. Reduced motion fades each piece in place.
-const BRANCHING_PEOPLE = ['rose', 'myron'];
-const BRANCHING_SCREENS = ['screen-1', 'screen-2', 'screen-3', 'ui'];
-const AVATAR_DIM = 0.4;
+// The branching demo: a stack of boxes per person, side by side, built on the
+// intent one box per beat; the scene arrives with only its headline. A
+// person's part starts with their avatar and their intent; then an empathy box
+// for each kind of context, and last the UI. Each stack stays, so the next
+// person's can be compared with it. The last person stands for everyone else:
+// their stack comes up in one beat, their UI in the next, and in the last an
+// empty stack past it, running off the card's edge. Each piece slides up from below
+// the bottom of the card, off the screen, and stops in its place: no easing, so
+// it moves only as the reader scrolls, and sticks. Reduced motion fades each
+// piece in place.
+const BRANCHING_PEOPLE = ['rose', 'myron', 'someone'];
+const BRANCHING_SCREENS = ['screen-1', 'screen-2', 'screen-3'];
 
 function branchingSteps(scene) {
-	const texts = [...scene.querySelectorAll('.branching-beats > p')];
 	const avatars = Object.fromEntries([...scene.querySelectorAll('.branching-person')].map((b) => [b.dataset.person, b]));
 	const art = scene.querySelector('svg.branching-illustration');
 	const part = (name) => art?.querySelector(`[data-part="${name}"]`);
-	const stack = (person) => [...(art?.querySelectorAll(`[data-part^="${person}-"]`) ?? [])];
-	gsap.set(texts.slice(1), { opacity: 0 });
-	gsap.set(Object.values(avatars), { opacity: AVATAR_DIM });
+	gsap.set(Object.values(avatars), { autoAlpha: 0 });
 
-	const fade = (tl, targets, at, duration, from = 0, to = 1) =>
-		tl.fromTo(targets, { opacity: from }, { opacity: to, duration, ease: 'none' }, at);
+	const fade = (tl, targets, at, duration) => tl.fromTo(targets, { autoAlpha: 0 }, { autoAlpha: 1, duration, ease: 'none' }, at);
 	// The illustration draws past its frame, so the pieces travel in from the
-	// card's edges, which clip them: px per drawing unit, and how far the
-	// frame sits from the card's bottom and left edges, in drawing units.
-	// Measured from the layout (offsets within the card), as the cards may be
-	// moved aside while the scenes are built; across, from the scene's own
-	// left edge, which sits at the card's while it plays.
+	// card's bottom edge, which clips them: px per drawing unit, and how far
+	// the frame sits from the card's bottom edge, in drawing units. Measured
+	// from the layout (offsets within the card), as the cards may be moved
+	// aside while the scenes are built.
 	const frame = art?.viewBox.baseVal;
 	const card = scene.closest('.act-panel');
-	const offset = (el) => {
-		let left = 0, top = 0;
-		for (; el && el !== card; el = el.offsetParent) {
-			left += el.offsetLeft;
-			top += el.offsetTop;
-		}
-		return { left, top };
+	const offsetTop = (el) => {
+		let top = 0;
+		for (; el && el !== card; el = el.offsetParent) top += el.offsetTop;
+		return top;
 	};
 	const wrapper = art?.parentElement;
 	const scale = art ? art.getBoundingClientRect().height / frame.height : 1;
-	const toBottom = art ? (card.clientHeight - offset(wrapper).top - wrapper.offsetHeight) / scale : 0;
-	const toLeft = art ? (offset(wrapper).left - offset(scene).left) / scale : 0;
+	const toBottom = art ? (card.clientHeight - offsetTop(wrapper) - wrapper.offsetHeight) / scale : 0;
 	// up from below the card's bottom edge, clear of the finish's rough edges
-	const rise = (tl, pieces, at, hold) => {
-		if (reduceMotion) return fade(tl, pieces, at, hold * STEP_FADE);
+	const rise = (tl, pieces, at, duration) => {
+		pieces = pieces.filter(Boolean);
+		if (reduceMotion) return fade(tl, pieces, at, duration * STEP_FADE);
 		pieces.forEach((piece) => {
 			const below = frame.y + frame.height + toBottom + frame.height * 0.05 - piece.getBBox().y;
-			tl.fromTo(piece, { y: below }, { y: 0, duration: hold * 0.9, ease: 'none' }, at);
+			tl.fromTo(piece, { y: below }, { y: 0, duration, ease: 'none' }, at);
 		});
 	};
-	// the stacks are drawn side by side; each after the first is laid over the
-	// first's place, waiting below the card
-	const width = art ? part(`${BRANCHING_PEOPLE[1]}-ui`).getBBox().x - part(`${BRANCHING_PEOPLE[0]}-ui`).getBBox().x : 0;
-	BRANCHING_PEOPLE.slice(1).forEach((person, i) => gsap.set(stack(person), { x: -width * (i + 1) }));
+	// several pieces in one beat, each starting a little after the last
+	const cascade = (tl, pieces, at, hold) =>
+		pieces.forEach((piece, i) => rise(tl, [piece], at + i * hold * 0.12, hold * (0.9 - 0.12 * (pieces.length - 1))));
 
 	const steps = [];
 	BRANCHING_PEOPLE.forEach((person, i) => {
-		const before = BRANCHING_PEOPLE[i - 1];
-		// the person: their avatar lights up and, after someone else's part, the
-		// last stack slides off to the left, past the card's edge, as their
-		// intent comes up
+		const last = i === BRANCHING_PEOPLE.length - 1;
+		const intro = (tl, hold, at) => fade(tl, avatars[person], at, hold * 0.15);
+		if (last) {
+			steps.push((tl, hold, at) => {
+				intro(tl, hold, at);
+				if (art) cascade(tl, [`${person}-intent`, ...BRANCHING_SCREENS.map((s) => `${person}-${s}`)].map(part), at, hold);
+			});
+			steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-ui`)], at, hold * 0.9));
+			steps.push((tl, hold, at) => art && rise(tl, [part('more')], at, hold * 0.9));
+			return;
+		}
+		// the person, and their intent
 		steps.push((tl, hold, at) => {
-			fade(tl, avatars[person], at, hold * 0.15, AVATAR_DIM, 1);
-			if (!before) return;
-			fade(tl, avatars[before], at, hold * 0.15, 1, AVATAR_DIM);
-			if (!art) return;
-			const old = stack(before);
-			if (reduceMotion) fade(tl, old, at, hold * STEP_FADE, 1, 0);
-			else {
-				const right = Math.max(...old.map((piece) => piece.getBBox().x + piece.getBBox().width));
-				const off = right - frame.x + toLeft + frame.width * 0.05;
-				tl.fromTo(old, { x: -width * (i - 1) }, { x: -width * (i - 1) - off, duration: hold * 0.9, ease: 'none' }, at);
-			}
-			rise(tl, [part(`${person}-intent`)], at, hold);
+			intro(tl, hold, at);
+			if (art) rise(tl, [part(`${person}-intent`)], at, hold * 0.9);
 		});
-		// then a screen per kind of context, and the UI
-		BRANCHING_SCREENS.forEach((screen) => steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-${screen}`)], at, hold)));
+		// then a box per kind of context, and the UI
+		[...BRANCHING_SCREENS, 'ui'].forEach((screen) => steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-${screen}`)], at, hold * 0.9)));
 	});
 
-	// each step also swaps the beat text
-	return steps.map((step, i) => (tl, hold) => {
-		const at = tl.duration();
-		tl.to(texts[i], { opacity: 0, duration: hold * 0.1, ease: 'none' }, at).fromTo(
-			texts[i + 1],
-			{ opacity: 0 },
-			{ opacity: 1, duration: hold * 0.1, ease: 'none' },
-			at + hold * 0.1,
-		);
-		step(tl, hold, at);
-	});
+	return steps.map((step) => (tl, hold) => step(tl, hold, tl.duration()));
 }
 
 // A list whose items share their opening words, shown as one line: the shared
@@ -487,11 +467,9 @@ function restoreHash() {
 	if (beat) window.scrollTo(0, beatPosition(beat));
 }
 
-// The branching demo's illustration is a WebP like the others, for the page
-// without scripts and the system page; here the finished SVG takes its
-// place, inline, framed on one person's stack (data-frame), so its
-// parts can move (branchingSteps). Each avatar button shows its person's head
-// from the drawing, and jumps to their part.
+// An illustration that moves is a WebP like the others, for the page without
+// scripts and the system page; here the finished SVG takes its place,
+// inline, so its parts can move, framed on data-frame if the image has one.
 function inlineArt(img, source) {
 	const svg = new DOMParser().parseFromString(source, 'image/svg+xml').documentElement;
 	svg.setAttribute('class', img.className);
@@ -502,11 +480,13 @@ function inlineArt(img, source) {
 	return svg;
 }
 
-// Today's model, the same way: inline, so each extension can land on its own
-// beat (todaysModelSteps)
+// Today's model: each extension lands on its own beat (todaysModelSteps)
 const todaysModelArt = document.querySelector('img.todays-model-illustration');
 if (todaysModelArt) inlineArt(todaysModelArt, todaysModelSvg);
 
+// The branching demo, framed on the three stacks (data-frame), so its parts
+// can move (branchingSteps). Each avatar button shows its person's head from
+// the drawing, and jumps to their part.
 const branchingArt = document.querySelector('img.branching-illustration');
 if (branchingArt) {
 	const svg = inlineArt(branchingArt, branchingArtSvg);
@@ -761,6 +741,8 @@ function updateChrome() {
 // their frame's beat id; an act without an opener (the first, which opens on
 // the talk title) lists its scenes without an act heading.
 const tocList = document.getElementById('drawer-toc');
+const tocNav = tocList.closest('.drawer-toc');
+tocNav.addEventListener('pointerleave', () => tocNav.classList.remove('is-resting'));
 const tocLinks = new Map(); // beat id → link
 const frameNames = new Map(); // beat id → { title, number }, e.g. Melody, 2.2
 
@@ -776,28 +758,40 @@ function tocLink(id, label, className, number) {
 	dash.className = 'em-dash';
 	dash.textContent = '—';
 	num.append(number, dash);
-	link.append(num, label);
+	// the title in its own span, so the collapsed index (css/talk.css) can
+	// hide it while the number shows
+	const title = document.createElement('span');
+	title.className = 'toc-title';
+	title.textContent = label;
+	link.append(num, title);
 	link.addEventListener('click', (event) => {
 		event.preventDefault();
 		const beat = beatById(id);
 		if (beat) jumpTo(beatPosition(beat));
 		// a mouse click hands focus back to the page so the arrow keys keep
 		// navigating; keyboard activation keeps focus in the list
-		if (event.detail > 0) link.blur();
+		if (event.detail > 0) {
+			link.blur();
+			// and folds a collapsing index back to its numbers, though the
+			// pointer is still over it, until the pointer leaves
+			tocNav.classList.add('is-resting');
+		}
 	});
 	tocLinks.set(id, link);
 	return link;
 }
 
-// Acts count from 1 and scenes within an act from 1; an act opener is just
-// its act's number.
+// Acts count from 1 and scenes within an act from 1; in the index, an act
+// opener is its act's number with .0.
 acts.forEach((panel, k) => {
 	const act = panel.dataset.act;
 	const item = document.createElement('li');
 	item.style.setProperty('--act-color', getComputedStyle(panel).getPropertyValue('--act-color'));
 	const name = actNames.get(panel);
 	if (panel.querySelector('.act-opener')) {
-		item.append(tocLink(act, name, 'toc-act toc-link', String(k + 1)));
+		// "2.0": the act's own number, in the scenes' form, so the column of
+		// numbers reads as one sequence
+		item.append(tocLink(act, name, 'toc-act toc-link', `${k + 1}.0`));
 		frameNames.set(act, { title: name, number: `${k + 1}` });
 	}
 	const scenes = document.createElement('ol');
@@ -818,6 +812,28 @@ acts.forEach((panel, k) => {
 	item.append(scenes);
 	tocList.append(item);
 });
+
+// On small screens the index folds to a rail of its numbers (css/talk.css),
+// each slid from its open place to the rail's centre. Where each number's
+// centre sits, from the card's left edge, sets how far: --num-centre.
+// Measured where it shows, less whatever slide it has now, so it can be
+// measured folded, open or mid-slide.
+const railMode = window.matchMedia('(min-width: 700px) and (max-width: 1024px) and (hover: hover)');
+function measureTocNumbers() {
+	if (!railMode.matches) return;
+	const card = tocNav.getBoundingClientRect().left;
+	tocNav.querySelectorAll('.toc-num').forEach((num) => {
+		const text = document.createRange();
+		text.setStart(num, 0);
+		text.setEndBefore(num.querySelector('.em-dash'));
+		const shown = text.getBoundingClientRect();
+		const slide = parseFloat(getComputedStyle(num).translate) || 0;
+		num.style.setProperty('--num-centre', `${shown.left + shown.width / 2 - slide - card}px`);
+	});
+}
+measureTocNumbers();
+document.fonts.ready.then(measureTocNumbers);
+railMode.addEventListener('change', measureTocNumbers);
 
 let activeTocLink = null;
 

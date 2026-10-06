@@ -492,7 +492,7 @@ main li + li {
 /* body serif: interview quotes and the Q&A questions, always centred (the
    persona and Q&A layouts); the branching demo's headline takes it too */
 main blockquote,
-main .branching-text > h2 {
+main section[data-scene].branching > h2 {
 	font-family: var(--font-serif);
 	font-size: calc(60 * var(--u));
 	font-weight: 400;
@@ -605,11 +605,13 @@ main small,
 }
 
 /* the font has no longer dash, so a doubled em dash is the glyph stretched
-   2×. The drawer uses a plain em dash instead — see .drawer-heading and
-   .toc-num. */
+   2× with matching side room (an em dash is about 1em wide), so it doesn't
+   run into the words either side. The drawer uses a plain em dash instead —
+   see .drawer-heading and .toc-num. */
 .em-dash {
 	display: inline-block;
 	transform: scaleX(2);
+	margin-inline: 0.5em;
 }
 
 .drawer-heading .em-dash,
@@ -867,43 +869,64 @@ section[data-scene='todays-model'] .persona::before {
 	object-fit: contain;
 }
 
-/* the branching demo (demo-two-people): three columns that hold still while
-   the beats play. On the left an avatar button per person, which jumps to
-   their part; in the middle the illustration (media/personas/demo-two-people.svg,
-   inline from js/site.js), a stack of boxes on the intent, built one card per
-   beat; on the right the headline and the beat texts, one at a time. */
+/* the branching demo (demo-two-people): the headline centred at the top and,
+   under it, the illustration (media/personas/demo-two-people.svg, inline from
+   js/site.js), three stacks of boxes side by side, built one box per beat.
+   Above each stack its person's avatar button, which jumps to their part:
+   the avatars sit in a grid whose columns are the stacks' widths and the
+   space between them, in drawing units (scripts/personas/demo-two-people.mjs). */
 main section[data-scene].branching {
-	display: grid;
-	grid-template-columns: auto auto 1fr;
+	display: flex;
+	flex-direction: column;
 	align-items: center;
-	column-gap: calc(72 * var(--u));
+	justify-content: center;
+	gap: calc(28 * var(--u));
+}
+
+main section[data-scene].branching > h2 {
+	margin: 0;
+	text-align: center;
+}
+
+.branching-stage {
+	display: flex;
+	flex-direction: column;
+	gap: calc(24 * var(--u));
 }
 
 .branching-people {
-	display: flex;
-	flex-direction: column;
-	gap: calc(48 * var(--u));
+	display: grid;
+	grid-template-columns: 619fr 230fr 619fr 230fr 619fr;
 }
 
-/* a round avatar over the person's name; js/site.js dims the one whose part
-   isn't playing */
+.branching-person:nth-child(2) {
+	grid-column: 3;
+}
+
+.branching-person:nth-child(3) {
+	grid-column: 5;
+}
+
+/* a round avatar beside the person's name; js/site.js reveals each as their
+   part starts */
 .branching-person {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	gap: calc(12 * var(--u));
+	gap: calc(20 * var(--u));
 	padding: 0;
 	border: 0;
 	background: none;
 	color: inherit;
 	font: inherit;
+	text-align: left;
 	cursor: pointer;
 }
 
 .branching-avatar {
 	display: block;
-	width: calc(150 * var(--u));
-	height: calc(150 * var(--u));
+	flex: none;
+	width: calc(84 * var(--u));
+	height: calc(84 * var(--u));
 	border: 2px solid var(--act-color);
 	border-radius: 50%;
 	background: color-mix(in srgb, var(--act-color) var(--ramp-wash), white);
@@ -927,12 +950,23 @@ main section[data-scene].branching {
 	font-weight: 700;
 }
 
-/* one stack of boxes, framed by its viewBox but drawn past it, so the
-   pieces travel in from the card's edges, which clip them */
+/* the last person is no one in particular: drawn a step lighter, like their
+   stack */
+.branching-person.is-anyone .branching-avatar {
+	border-color: color-mix(in srgb, var(--act-color) var(--ramp-soft), white);
+	background: white;
+}
+
+.branching-person.is-anyone .branching-person-name {
+	color: color-mix(in srgb, var(--act-color) var(--ramp-deep), white);
+}
+
+/* the stacks, framed by the viewBox but drawn past it, so the pieces travel
+   in from the card's bottom edge, which clips them */
 main .branching-illustration {
 	display: block;
 	width: auto;
-	height: calc(860 * var(--u));
+	height: calc(640 * var(--u));
 	max-width: 100%;
 	max-height: none;
 	border-radius: 0;
@@ -948,16 +982,6 @@ main .branching-illustration {
 	font-family: var(--font-serif);
 }
 
-/* the beat texts share one grid cell; js/site.js shows one at a time */
-.branching-beats {
-	display: grid;
-}
-
-.branching-beats > p {
-	grid-area: 1 / 1;
-	margin: 0;
-}
-
 /* phones read the deck as a column rather than a canvas: a fixed scale,
    at which the scene headline is 38px */
 @media (max-width: 699px) {
@@ -966,24 +990,23 @@ main .branching-illustration {
 		--frame-pad-x: 1.5rem;
 	}
 
-	/* the demo reads as a column: the text, the avatars in a row, then the
-	   illustration */
-	main section[data-scene].branching {
-		grid-template-columns: 1fr;
-		row-gap: calc(48 * var(--u));
+	/* the demo fills the width, and the avatars go without their names,
+	   which stay for screen readers */
+	.branching-stage {
+		width: 100%;
 	}
 
-	.branching-people {
-		flex-direction: row;
+	.branching-person {
 		justify-content: center;
 	}
 
-	.branching-text {
-		order: -2;
-	}
-
-	.branching-people {
-		order: -1;
+	.branching-person-name {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 
 	main .branching-illustration {
@@ -1323,29 +1346,134 @@ body.is-speaker .speaker-next {
 	height: 100%;
 }
 
-/* phones: one column; the whole drawer scrolls */
+/* phones: the drawer fills the window, so the cards slide all the way off
+   it (js/site.js pushes them by its width) and no slide shows. One column:
+   the index takes the top third, the notes the other two, each scrolling on
+   its own; their text sits a few px in from the window's edge rather than
+   lined up with the talk title, as there's no room to spare. */
 @media (max-width: 699px) {
 	#notes-drawer {
+		width: 100vw;
 		grid-template-columns: 1fr;
-		overflow-y: auto;
+		grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
 	}
 
-	.drawer-column {
-		overflow-y: visible;
-	}
-
-	/* stacked, the index card closes at the bottom above the notes, and
-	   the notes line up with the talk title too */
+	/* stacked, the index card closes at the bottom above the notes */
 	.drawer-toc {
+		--pad-left: 0.5rem;
+		--pad-right: 0.5rem;
+		--card-inset-top: 0.75rem;
 		border-bottom: 1px solid currentColor;
 		border-radius: var(--corner);
 	}
 
-	.drawer-notes {
-		--pad-left: var(--title-left);
-		padding-top: 1.5rem;
+	/* that padding is too narrow to hold the numbers, so each sits in the
+	   line before its title instead */
+	.toc-num {
+		position: static;
+		width: auto;
+		text-align: left;
 	}
 
+	.drawer-notes {
+		--pad-left: 0.5rem;
+		--pad-right: 0.5rem;
+		padding-top: 1.25rem;
+	}
+}
+
+/* small screens that can hover (700–1024px): the index folds to a rail of
+   its numbers, so the notes get its width, and opens over the notes, full
+   width, while the pointer or focus is on it. Its contents keep their open
+   layout throughout, so nothing re-wraps or moves as it opens; only the
+   card's width changes, and it lays over the notes rather than pushing
+   them. It opens at once and closes a moment after the pointer leaves, so
+   cutting a corner on the way to a title doesn't snap it shut; a click
+   folds it (.is-resting, js/site.js) until the pointer leaves. Touch-only
+   screens keep the full index: they couldn't open it. */
+@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) {
+	#notes-drawer {
+		/* the numbers, right-aligned in the label's padding, and a little room */
+		--toc-rail: calc(var(--title-left) + 4px);
+		--toc-open: 250px;
+		grid-template-columns: var(--toc-rail) minmax(0, 1fr);
+	}
+
+	.drawer-toc {
+		--toc-ease: cubic-bezier(0.16, 1, 0.3, 1); /* the deck's expo.out */
+		position: relative;
+		z-index: 1;
+		box-sizing: border-box;
+		width: var(--toc-rail);
+		/* no right padding: the contents' own width (below) keeps their
+		   right edge where it was, and the rail is narrower than the padding */
+		padding-right: 0;
+		background: #fff;
+		overflow-x: hidden;
+		transition: width 0.2s var(--toc-ease) 0.3s;
+	}
+
+	/* laid out at the open width, whatever the card's width */
+	.drawer-toc > .drawer-heading,
+	#drawer-toc {
+		width: calc(var(--toc-open) - var(--pad-left) - var(--pad-right) - 2px);
+	}
+
+	/* folded: the titles, the dashes and the Index heading fade. Nothing
+	   changes its layout, so nothing jumps as the index opens or closes. */
+	.drawer-toc > .drawer-heading,
+	.toc-title,
+	.toc-num .em-dash {
+		transition: opacity 0.2s var(--toc-ease) 0.3s;
+	}
+
+	/* every entry one line, its title ending in an ellipsis where it's too
+	   long for the open index, so the rows (and the rail's numbers) are
+	   evenly spaced */
+	.toc-link {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* each number keeps its open place, right-aligned to its dash and
+	   title; folded, it slides from there to the rail's centre, in step
+	   with the card's width. --num-centre is where its centre sits from
+	   the card's left edge (js/site.js measures it). */
+	.toc-num {
+		transition: translate 0.2s var(--toc-ease) 0.3s;
+	}
+
+	.drawer-toc:not(:hover, :focus-within) .toc-num,
+	.drawer-toc.is-resting .toc-num {
+		translate: calc(var(--toc-rail) / 2 - var(--num-centre, 0px)) 0;
+	}
+
+	.drawer-toc:not(:hover, :focus-within) > .drawer-heading,
+	.drawer-toc:not(:hover, :focus-within) .toc-title,
+	.drawer-toc:not(:hover, :focus-within) .toc-num .em-dash,
+	.drawer-toc.is-resting > .drawer-heading,
+	.drawer-toc.is-resting .toc-title,
+	.drawer-toc.is-resting .toc-num .em-dash {
+		opacity: 0;
+	}
+
+	/* open: at once, the full width, over the notes */
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) {
+		width: var(--toc-open);
+		transition-delay: 0s;
+	}
+
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+		transition-delay: 0s;
+	}
+}
+
+@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) and (prefers-reduced-motion: reduce) {
+	.drawer-toc,
+	.drawer-toc :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+		transition: none;
+	}
 }
 
 /* the pointer over the deck (js/site.js): an outlined circle like the

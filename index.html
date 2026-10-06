@@ -26,8 +26,10 @@
 						<h2>Your UI is <br />not my UI</h2>
 						<aside class="notes" hidden>
 							<p>
-								hi everyone, my name is …
-								we work at deepl. it#s cool as it allows us an accessibility chapter.
+								Hello everyone, my name is Simon and …
+								Hi, I'm Matt …
+								
+								We work at DeepL which is an AI language company. There we have the opportunity to work in the accessibility chapter, a group of volunteers working on topics related to accessibility.
 
 								Earlier this year we had our company kick-off. There was lightning talk section. We messaged in our chapter slack and decided that we wanted to do a talk on "AI and Accessibility" (as an AI company).
 							</p>
@@ -407,8 +409,7 @@
 								incompatible settings, Allana burns her energy budget on uncooperative apps.
 							</p>
 							<p>
-								Setups are very personal, and standards have their limits: they can only cover what a
-								population has in common.
+								Setups are very personal, and standards have their limits: they can only cover what a population has in common.
 							</p>
 							<p>
 								So we want to propose a new concept&hellip;
@@ -421,14 +422,9 @@
 			<section data-act="personalization-over-adaptability" class="act-panel">
 				<div class="act-panel-inner">
 					<header class="act-opener">
-						<h1 class="act-title">Your UI <br />is not my UI</h1>
+						<h1 class="act-title">A new Concept</h1>
 						<aside class="notes" hidden>
-							<p><small>Reveal:</small>Your UI is not my UI</p>
-							<p>So… what do we mean by that?</p>
-							<small>
-								Our core proposal: AI-generated bespoke interfaces. Instead of
-								adapting one UI for everyone, generate a unique UI for each person.
-							</small>
+							
 						</aside>
 					</header>
 
@@ -444,7 +440,7 @@
 								that the interface is created personalized for you right from the get go.
 							</p>
 							<p>
-								With today's AI models, this became a possibility.
+								With today's AI models, this becomes a possibility.
 							</p>
 						</aside>
 				
@@ -480,6 +476,7 @@
 								<li><em>and</em> who you are.</li>
 							</ul>
 							<p>
+								[Here start clicking through the rotor]
 								An app for the exact same task needs to look different depending on the condition, state,
 								environment and preferences of the user. In one word, the interface needs to be <em>empathetic</em> to the person in front of it.
 							</p>
@@ -490,64 +487,78 @@
 								Where this goes: launching an app is creating an app, just for you, in that moment. 
 								Generated on the fly, instead of adapted with layered tools.
 							</p>
+							<p>
+								There is less linking your UI to my UI. Or even my UI versus my UI tomorrow.
+							</p>
 						</aside>
 				
 					</section>
 
+					<section data-scene="your-ui-is-not-my-ui">
+						<h2>
+							Your UI is not my UI
+						</h2>
+						<aside class="notes" hidden>
+						</aside>
+					</section>
+
 					<section data-scene="demo-two-people" class="branching">
-						<!-- js/site.js puts the illustration's SVG in place of the WebP, shows one
-						     person's stack at a time (data-frame), builds it one box per beat on top
-						     of the intent (branchingSteps) and draws each person's head in their button -->
-						<nav class="branching-people" aria-label="People in the demo">
-							<button type="button" class="branching-person" data-person="rose" data-beat="1">
-								<span class="branching-avatar"></span>
-								<span class="branching-person-name">Rose</span>
-							</button>
-							<button type="button" class="branching-person" data-person="myron" data-beat="6">
-								<span class="branching-avatar"></span>
-								<span class="branching-person-name">Myron</span>
-							</button>
-						</nav>
-						<div class="branching-art">
-							<img
-								class="branching-illustration"
-								src="media/personas/demo-two-people.webp"
-								data-frame="120 50 800 1252"
-								alt="Two stacks, each starting from the same intent, I'd like to translate this text. Rose's empathy: keep it dim, low glare; curtains drawn, at home; retunes her setup daily; and on top a phone with a dark, dim translator. Myron's: speaks, doesn't point; hands-free, at his desk; 23 years of voice control; and on top a phone with a translator that only listens."
-							/>
-						</div>
-						<div class="branching-text">
-							<h2>One task, many UIs</h2>
-							<div class="branching-beats">
-								<p>Everyone starts from the same intent.</p>
-								<p><strong>Rose.</strong> Light drains her energy and can make her ill.</p>
-								<p><strong>Capabilities &amp; preferences.</strong> She needs it dim, with nothing bright.</p>
-								<p><strong>User context.</strong> At home, curtains drawn.</p>
-								<p><strong>Memory &amp; history.</strong> She retunes her setup through the day.</p>
-								<p><strong>Her UI</strong> is what they add up to: a translator that&rsquo;s dark and low-glare.</p>
-								<p><strong>Myron.</strong> A spine injury, 23 years ago. He works by voice.</p>
-								<p><strong>Capabilities &amp; preferences.</strong> He speaks rather than points.</p>
-								<p><strong>User context.</strong> At his desk, hands-free.</p>
-								<p><strong>Memory &amp; history.</strong> 23 years of voice control.</p>
-								<p><strong>His UI</strong> has nothing to point at: it listens.</p>
+						<h2>One task, many UIs</h2>
+						<!-- js/site.js puts the illustration's SVG in place of the WebP, builds each
+						     person's stack one box per beat on top of the intent (branchingSteps),
+						     reveals each avatar as their part starts and draws their head in it.
+						     The avatars sit in a grid whose columns match the stacks' widths. -->
+						<div class="branching-stage">
+							<nav class="branching-people" aria-label="People in the demo">
+								<button type="button" class="branching-person" data-person="rose" data-beat="1">
+									<span class="branching-avatar"></span>
+									<span class="branching-person-name">Rose</span>
+								</button>
+								<button type="button" class="branching-person" data-person="myron" data-beat="6">
+									<span class="branching-avatar"></span>
+									<span class="branching-person-name">Myron</span>
+								</button>
+								<button type="button" class="branching-person is-anyone" data-person="someone" data-beat="11">
+									<span class="branching-avatar"></span>
+									<span class="branching-person-name">And anyone else&hellip;</span>
+								</button>
+							</nav>
+							<div class="branching-art">
+								<img
+									class="branching-illustration"
+									src="media/personas/demo-two-people.webp"
+									data-frame="0 -10 2317 1132"
+									alt="Three stacks side by side, each starting from the same intent, I'd like to translate this text. Rose's: condition, hyperphotosensitivity; environment, on the couch, curtains drawn; situation, a medium energy budget today; and below it an iPad with a dark, dim translator. Myron's: a spine injury, steering by head; at his desk, headset on; focused on a spreadsheet; and below it a monitor with a translator that only listens. A third, unnamed person's, drawn fainter: needs reading glasses; in a crowded subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge."
+								/>
 							</div>
 						</div>
 						<aside class="notes" hidden>
 							<p>
-								One intent, the same for everyone: &ldquo;I&rsquo;d like to translate this text.&rdquo;
+								In our previous model we started with the interface and the person had to adapt. In the new model, we start with the person.
 							</p>
-							<p>[Next] Start with the person, not the interface. Rose: light drains her energy.</p>
-							<p>[Next, three times] Then what we know about her, one screen at a time:</p>
+							<p>[Next] Remember Rose from our interviews. She wants to translate this text.</p>
+							<p>[Next, three times] Then what we know about her, one box at a time:</p>
 							<ul>
-								<li>capabilities and preferences: keep it dim, low glare;</li>
-								<li>user context: at home, curtains drawn;</li>
-								<li>memory and history: she retunes her setup through the day.</li>
+								<li>her condition: hyperphotosensitivity. Light drains her energy and can make her sick, so nothing on screen may be bright;</li>
+								<li>her environment: on the couch, curtains drawn, so the room is dark and any glare stands out;</li>
+								<li>her situation: a medium energy budget today, so the UI should ask as little of her as it can.</li>
 							</ul>
-							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator.</p>
-							<p>[Next] Same intent, another person. Myron works by voice.</p>
-							<p>[Next, three times] He speaks rather than points; he's at his desk, hands-free; and he has 23 years of voice control behind him.</p>
-							<p>[Next] His UI has nothing to point at: it listens. Same task, a different UI.</p>
-							<p>The avatars on the left jump to each person's part.</p>
+							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator on her iPad.</p>
+							<p>[Simon takes over] [Next] Same intent, another person: Myron.</p>
+							<p>[Next, three times]</p>
+							<ul>
+								<li>His condition: a spine injury, 23 years ago. He can't use his hands; he steers his wheelchair and his mouse pointer with his head;</li>
+								<li>his environment: at his desk, headset on, so his voice is always within reach;</li>
+								<li>his situation: focused on a spreadsheet, so nothing should pull his head, and his pointer, away from it.</li>
+							</ul>
+							<p>[Next] His UI has nothing to point at: it listens. Same task, a different UI, and Rose's is still there to compare.</p>
+							<p>
+								[Next] And it doesn't stop at two. Someone who needs reading glasses, nothing you'd call a disability, in a crowded subway with one hand free,
+								running late in a heatwave. Or Rose herself, tomorrow, in a different situation.
+							</p>
+							<p>[Next] Their UI: big, clear buttons where the thumb reaches, readable without the glasses they didn't bring.</p>
+							<p>[Next] And the list goes on: bespoke UIs, generated for everyone, in every situation.</p>
+							<p>The avatars jump to each person's part.</p>
 						</aside>
 					</section>
 				</div>
@@ -575,15 +586,12 @@
 							<p>
 								That's what the demo just showed, in one line. A UI is a function of two things. The
 								<em>intent</em>: what you're trying to do, the same box for everyone. And the
-								<em>empathy</em>: who you are right now, made of your capabilities and preferences, your
-								context, and your memory and history.
+								<em>empathy</em>: who you are right now, made of your condition, environment and situation.
 							</p>
 							<p>
-								Intent is the half that gets built today. Empathy is the half we're arguing for. Same
-								intent, different person should result in a different UI.
+								Same intent, different person should result in a different UI.
 							</p>
 						</aside>
-				
 					</section>
 
 					<section data-scene="observations-of-existing-state">
@@ -598,37 +606,42 @@
 								Generated UIs are already emerging everywhere around us. But so far they only take into account your <em>intent</em>, the query, the task.
 							</p>
 							<p>
-								That half is handled. The half that isn't, yet, is the <em>human</em>: your
-								needs, abilities, context.
-							</p>
-							<p>
-								Today's generated UI answers &ldquo;what are you trying to do?&rdquo; 
-								but not &ldquo;who is doing it?&rdquo;
+								That half is handled. The half that isn't, yet, is the <em>human</em>: your needs, abilities, context.
 							</p>
 							<p>
 								That missing half is our whole argument. We think there is lots of missed opportunity here.
 							</p>
+							[Find good screenshots, put them on the slide and remove the bullet points]
+							[candidate to cut this slide]
 						</aside>
 				
 					</section>
 
 					<section data-scene="what-is-gained">
-						<h2>What is gained?</h2>
+						<h2>UIs with empathy</h2>
 						<ul>
-							<li>The adaptation burden moves from the user to the app</li>
-							<li>No more hoping for compatible apps</li>
+							<li>Remove the adaptation burden from the user</li>
+							<li>Don't rely on apps built with accessibility in mind</li>
+							<li>Remove compatibility friction between adaptations</li>
 						</ul>
 						<aside class="notes" hidden>
+							<p>
+								What is gained?
+							</p>
 							<ul>
 								<li>Rose doesn't need a dark mode plugin nor fear that a sudden redesign of an app makes it unusable for her,</li>
 								<li>Myron doesn't need to rely on the OS's voice control grid &</li>
 								<li>Sinead doesn't need a stack of plugins fighting each other.</li>
 							</ul>
-							<p>Users are not at the mercy of apps being compatible with their adaptations anymore.</p>
+							<p>
+								Users are not at the mercy of apps being compatible with their adaptations anymore.
+							</p>
 							<p>Actually, adaptation is no longer necessary at all, instead the app is built bespoke for that user, and their specific and momentary needs.</p>
-							<p>(There is no spoon moment) Its not that we are trying to bend the UI, its that you have to remember truth, there is no UI.</p>
+
+							<p>
+								Another way of thinking about this is: What if launching an app is creating an app.
+							</p>
 						</aside>
-				
 					</section>
 				</div>
 			</section>
@@ -638,6 +651,11 @@
 					<header class="act-opener">
 						<h1 class="act-title">Launching <br />is creating</h1>
 					</header>
+
+					[ORDER OF THE CHAPTER: 
+					1. app's can't predict you
+					2. economics have changed
+					3. Imagine everything is bespoke (which combines 6.5, 6.1 and has a bullet point on 6.2)]
 
 					<section data-scene="what-if-launching-an-app-means-creating-an-app">
 						<h2>What if launching an app means creating an app?</h2>
@@ -663,6 +681,8 @@
 							<li>Generated apps compose capabilities from many vendors</li>
 						</ul>
 						<aside class="notes" hidden>
+							[if you follow the concept, then your end up with the realization that APIs are much more important…]
+							[ACTUALLY, We want to cut this slide. it can be a bullet point on the conclusion slide]
 							<p>
 								Today an app arrives finished: the vendor builds the functionality <em>and</em> the screens,
 								and ships both together.
@@ -688,6 +708,9 @@
 						</div>
 						<aside class="notes" hidden>
 							<p>
+								The problem is that apps can't predict you even if they tried.
+							</p>
+							<p>
 								This isn't a new insight. Engelbart complained in the 1960s that we design for a
 								&ldquo;statistical population&rdquo; with no attempt to fit the individual. Karger said the same
 								about how people use software.
@@ -709,9 +732,10 @@
 						</ul>
 						<aside class="notes" hidden>
 							<p>
-								Think of the app you'd actually want: one for "our family vacation to France next April". These
-								dates, this budget, my sister's low vision, the dog. Nobody will ever build it. Software was too
-								expensive to make for one trip, one family, one person. So vendors build for the statistical
+								Bespoke apps were never economically viable.
+								It wouldn't make sense to build your own software.
+
+								Your family vacation app with your dates, your budget, your sister's low vision, the dog. Nobody will ever build it. Software was too expensive to make for one trip and there was a market of one. So vendors build for the statistical
 								average, and there are two ways to do that.
 							</p>
 							<p>
@@ -739,18 +763,7 @@
 						</ul>
 						<aside class="notes" hidden>
 							<p>
-								So, what if? You open your laptop and only see bespoke apps and interfaces, everything fitted to
-								your needs. Not Google Maps' idea of the best
-								route, but a route planner that knows you get carsick and keeps you off the winding roads. Not
-								Excel, but budget planning built for your company's exact process: your teams, your approvals,
-								your numbers. Nothing generic about it.
-							</p>
-							<p>
-								And the family vacation to France next April: nobody builds that app today, but making one for
-								a single trip would finally cost next to nothing. It can also look different for each of us,
-								which is where accessibility comes in. My sister has low vision, so her view is zoomed in and in
-								high contrast (and she mostly sees the calendar, while I get the bill for the travel costs).
-								That's the accessibility case we started with, without dark mode and screen readers added on top.
+								So, what if? You open your laptop and only see bespoke apps and interfaces, everything fitted to your needs.
 							</p>
 							<p>
 								There are surely open questions around this, on topics like:
@@ -759,11 +772,12 @@
 								<li>privacy (an interface made for you, needs to know a lot about you)</li>
 								<li>stability (how do you get predictable interfaces if they are made from scratch every time?)</li>
 								<li>what happens to the common ground between humans</li>
-								<li>and others</li>
 							</ul>
 							<p>
 								But now with AI, personalized interfaces are for the first time an actual possibility. So we're in a place where we can actually think about and address those issues.
 							</p>
+
+							[we need to cut this or the last. it gets repetetive and too long]
 						</aside>
 					</section>
 				</div>
