@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import branchingArtSvg from '../media/personas/demo-two-people.svg?raw';
+import todaysModelSvg from '../media/personas/todays-model.svg?raw';
 
 gsap.registerPlugin(ScrollTrigger);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
@@ -22,47 +23,58 @@ function fadeInStep(piece) {
 	return (tl, hold) => tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
 }
 
-// Today's model: the base interface arrives, then each tool drops onto the
-// stack as its own pane (dark mode, screen reader, high contrast,
-// magnification). On the last beat they jostle and slide out of register,
-// none aware of the others, and the magnifier drifts off what it was
-// showing. Reduced motion keeps the beats but fades each pane in place and
-// shows the conflict without moving anything.
+// Today's model, as Sinead lives it: her browser arrives with the page as it
+// was built, then each of her extensions in turn: its box slides in beside
+// the browser as its layer is laid on the page (dark mode, bionic reading,
+// voice control's numbers, its number grid). On the last beat the layers
+// jostle and slip out of register with the page and with each other, none
+// aware of the rest, and the boxes go askew. Reduced motion keeps the beats
+// but fades each piece in place and shows the conflict without moving
+// anything.
+const TODAYS_MODEL_LAYERS = ['dark', 'bionic', 'numbers', 'grid'];
+
 function todaysModelSteps(scene) {
-	const piece = (name) => scene.querySelector(`[data-piece="${name}"]`);
-	const layers = ['dark', 'screen-reader', 'contrast', 'magnifier'].map(piece);
-	const [dark, screenReader, contrast, magnifier] = layers;
+	const art = scene.querySelector('svg.todays-model-illustration');
+	if (!art) return [];
+	const part = (name) => art.querySelector(`[data-part="${name}"]`);
+	const layers = TODAYS_MODEL_LAYERS.map(part);
+	const boxes = TODAYS_MODEL_LAYERS.map((name) => part(`${name}-box`));
 
-	const arrive = (target, from) => (tl, hold) => {
-		if (reduceMotion) return fadeInStep(target)(tl, hold);
-		tl.fromTo(target, { opacity: 0, ...from }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.2)' });
+	const fade = (tl, targets, hold, at) => tl.fromTo(targets, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' }, at);
+	const base = (tl, hold) => {
+		if (reduceMotion) return fade(tl, part('base'), hold);
+		tl.fromTo(part('base'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.2)' });
+	};
+	// an extension: its box slides in from the right as its layer is laid down
+	// on the page, from a little above it
+	const extension = (i) => (tl, hold) => {
+		if (reduceMotion) return fade(tl, [layers[i], boxes[i]], hold);
+		tl.fromTo(boxes[i], { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: hold * 0.4, ease: 'power2.out' });
+		tl.fromTo(layers[i], { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: hold * 0.4, ease: 'power2.out' }, '<0.05');
 	};
 
-	// the conflict moves each tool's pane, not its label, so the labels stay
-	// lined up while the panes slip out of register
-	const pane = (layer) => layer.querySelector('.stack-pane');
-
-	const conflict = (tl, hold) => {
-		tl.fromTo(piece('conflict'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
-		if (reduceMotion) return;
-		// a jostle, each pane nudged its own way, then each settles out of
-		// line with the interface beneath
-		tl.to(
-			layers.map(pane),
-			{ x: (i) => (i % 2 ? 6 : -6), duration: hold * 0.05, ease: 'sine.inOut', yoyo: true, repeat: 3 },
-			'<',
-		)
-			.to(pane(dark), { x: -34, y: 6, duration: hold * 0.3, ease: 'power2.out' })
-			.to(pane(screenReader), { x: 28, y: -4, duration: hold * 0.3, ease: 'power2.out' }, '<')
-			.to(pane(contrast), { x: -18, y: 10, duration: hold * 0.3, ease: 'power2.out' }, '<')
-			.to(pane(magnifier), { x: 70, y: -26, duration: hold * 0.35, ease: 'power2.out' }, '<');
-	};
-
-	return [
-		arrive(piece('base'), { y: 40 }),
-		...layers.map((layer) => arrive(layer, { y: -120 })),
-		conflict,
+	// where each layer settles once they've slipped, and how far each box
+	// goes askew: never so far a box lands on its neighbour
+	const SLIPS = [
+		{ x: -18, y: 8, rotation: -0.6 },
+		{ x: 10, y: -5, rotation: 0.4 },
+		{ x: 22, y: -12, rotation: 0 },
+		{ x: -14, y: 12, rotation: 1 },
 	];
+	const ASKEW = [-1.2, 1, -0.8, 1.6];
+	const conflict = (tl, hold) => {
+		tl.fromTo(scene.querySelector('[data-piece="conflict"]'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
+		if (reduceMotion) return;
+		tl.to([...layers, ...boxes], { x: (i) => (i % 2 ? 6 : -6), duration: hold * 0.05, ease: 'sine.inOut', yoyo: true, repeat: 3 }, '<');
+		layers.forEach((layer, i) =>
+			tl.to(layer, { ...SLIPS[i], transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' }, i ? '<' : undefined),
+		);
+		boxes.forEach((box, i) =>
+			tl.to(box, { x: i % 2 ? 14 : -10, rotation: ASKEW[i], transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' }, '<'),
+		);
+	};
+
+	return [base, ...TODAYS_MODEL_LAYERS.map((_, i) => extension(i)), conflict];
 }
 
 // The branching demo: a stack of boxes per person, side by side, built on the
@@ -455,19 +467,29 @@ function restoreHash() {
 	if (beat) window.scrollTo(0, beatPosition(beat));
 }
 
-// The branching demo's illustration is a WebP like the others, for the page
-// without scripts and the system page; here the finished SVG takes its
-// place, inline, framed on the three stacks (data-frame), so its parts can
-// move (branchingSteps). Each avatar button shows its person's head from the
-// drawing, and jumps to their part.
+// An illustration that moves is a WebP like the others, for the page without
+// scripts and the system page; here the finished SVG takes its place,
+// inline, so its parts can move, framed on data-frame if the image has one.
+function inlineArt(img, source) {
+	const svg = new DOMParser().parseFromString(source, 'image/svg+xml').documentElement;
+	svg.setAttribute('class', img.className);
+	if (img.dataset.frame) svg.setAttribute('viewBox', img.dataset.frame);
+	svg.setAttribute('role', 'img');
+	svg.setAttribute('aria-label', img.alt);
+	img.replaceWith(svg);
+	return svg;
+}
+
+// Today's model: each extension lands on its own beat (todaysModelSteps)
+const todaysModelArt = document.querySelector('img.todays-model-illustration');
+if (todaysModelArt) inlineArt(todaysModelArt, todaysModelSvg);
+
+// The branching demo, framed on the three stacks (data-frame), so its parts
+// can move (branchingSteps). Each avatar button shows its person's head from
+// the drawing, and jumps to their part.
 const branchingArt = document.querySelector('img.branching-illustration');
 if (branchingArt) {
-	const svg = new DOMParser().parseFromString(branchingArtSvg, 'image/svg+xml').documentElement;
-	svg.setAttribute('class', branchingArt.className);
-	svg.setAttribute('viewBox', branchingArt.dataset.frame);
-	svg.setAttribute('role', 'img');
-	svg.setAttribute('aria-label', branchingArt.alt);
-	branchingArt.replaceWith(svg);
+	const svg = inlineArt(branchingArt, branchingArtSvg);
 
 	const scene = svg.closest('section[data-scene]');
 	scene.querySelectorAll('.branching-person').forEach((button) => {

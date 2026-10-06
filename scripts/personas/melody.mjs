@@ -1,7 +1,7 @@
 // Melody's edits to her traced illustration, written to originals/melody.svg,
 // which normalize-personas.mjs then tints and finishes. The chair goes, bar a
 // back; she gets white shoes, a floor and filled nails; the table ends on the
-// right; the Be My Eyes mark sits on the phone. Coordinates are the trace's
+// right. Coordinates are the trace's
 // 1024 canvas.   node scripts/personas/melody.mjs && npm run personas
 import { readFileSync, writeFileSync } from 'fs';
 const SRC = new URL('../../media/personas/traces/melody.svg', import.meta.url);
@@ -100,16 +100,6 @@ const nails = [
 // the letter hand's closed-loop nail is a white shape of its own in the trace: fill it
 const NAIL_PATH = 53;
 
-// 6. the Be My Eyes symbol, white on the caller's dark shape, under the eyes.
-// simplified: the original's fine rays don't survive at this size, so it's
-// redrawn as a solid centre and a ring of twelve thick rays
-const CX = 737, CY = 418, K = 1.2; // K: its scale
-const rays = Array.from({ length: 12 }, (_, i) => {
-	const a = (i / 12) * 2 * Math.PI;
-	return line([CX + 10 * K * Math.cos(a), CY + 10 * K * Math.sin(a)], [CX + 17 * K * Math.cos(a), CY + 17 * K * Math.sin(a)], 3.4 * K);
-});
-const symbol = [ellipse([CX, CY, 6.5 * K, 6.5 * K]), ...rays];
-
 let svg = readFileSync(SRC, 'utf8').replace(/<metadata>.*?<\/metadata>/s, '');
 let n = -1;
 svg = svg.replace(/<path\b[^>]*?\/?>/g, (p) => {
@@ -147,7 +137,6 @@ const top = [
 	// her mouth, as Sinead's: a small upturned curve for the trace's dash
 	path('#FDEABF', poly([[404, 307.5], [420, 307.5], [420, 315], [404, 315]])),
 	path(INK, smile([406, 310], [418, 309.5], 2.6, 2.4)),
-	...symbol.map((d) => path(WHITE, d)),
 ].join('');
 svg = svg.replace(/<\/svg>\s*$/, `${top}</svg>\n`);
 writeFileSync(OUT, svg);
