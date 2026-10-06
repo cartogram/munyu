@@ -22,7 +22,7 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg', 'matthew.svg', 'user-interviews.svg', 'demo-two-people.svg']);
+const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg', 'matthew.svg', 'user-interviews.svg', 'demo-two-people.svg', 'todays-model.svg']);
 // per-illustration changes to the CUT settings: Allana's trace has finer lines
 // than the rest, so its strips are thinner and swing less
 const CUT_FOR = { 'allana.svg': { strip: 0.8, weight: { frequency: 0.006, scale: 2.5 } } };
