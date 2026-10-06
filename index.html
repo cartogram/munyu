@@ -607,84 +607,56 @@
 					</section>
 
 					<section data-scene="demo-two-people" class="branching">
-						<!-- js/site.js puts the illustration's SVG in place of the WebP, shows one
-						     person's stack at a time (data-frame), builds it one box per beat on top
-						     of the intent (branchingSteps) and draws each person's head in their button -->
-						<nav class="branching-people" aria-label="People in the demo">
-							<button type="button" class="branching-person" data-person="rose" data-beat="1">
-								<span class="branching-avatar"></span>
-								<span class="branching-person-name">Rose</span>
-							</button>
-							<button type="button" class="branching-person" data-person="myron" data-beat="6">
-								<span class="branching-avatar"></span>
-								<span class="branching-person-name">Myron</span>
-							</button>
-						</nav>
-						<div class="branching-art">
-							<img
-								class="branching-illustration"
-								src="media/personas/demo-two-people.webp"
-								data-frame="120 50 800 1252"
-								alt="Two stacks, each starting from the same intent, I'd like to translate this text. Rose's empathy: keep it dim, low glare; curtains drawn, at home; retunes her setup daily; and on top a phone with a dark, dim translator. Myron's: speaks, doesn't point; hands-free, at his desk; 23 years of voice control; and on top a phone with a translator that only listens."
-							/>
-						</div>
-						<div class="branching-text">
-							<h2>One task, many UIs</h2>
-							<div class="branching-beats">
-								<p>Everyone starts from the same intent.</p>
-								<p><strong>Rose.</strong> Light drains her energy and can make her ill.</p>
-								<p><strong>Capabilities &amp; preferences.</strong> She needs it dim, with nothing bright.</p>
-								<p><strong>User context.</strong> At home, curtains drawn.</p>
-								<p><strong>Memory &amp; history.</strong> She retunes her setup through the day.</p>
-								<p><strong>Her UI</strong> is what they add up to: a translator that&rsquo;s dark and low-glare.</p>
-								<p><strong>Myron.</strong> A spine injury, 23 years ago. He works by voice.</p>
-								<p><strong>Capabilities &amp; preferences.</strong> He speaks rather than points.</p>
-								<p><strong>User context.</strong> At his desk, hands-free.</p>
-								<p><strong>Memory &amp; history.</strong> 23 years of voice control.</p>
-								<p><strong>His UI</strong> has nothing to point at: it listens.</p>
+						<h2>One task, many UIs</h2>
+						<!-- js/site.js puts the illustration's SVG in place of the WebP, builds each
+						     person's stack one box per beat on top of the intent (branchingSteps),
+						     reveals each avatar as their part starts and draws their head in it.
+						     The avatars sit in a grid whose columns match the stacks' widths. -->
+						<div class="branching-stage">
+							<nav class="branching-people" aria-label="People in the demo">
+								<button type="button" class="branching-person" data-person="rose" data-beat="1">
+									<span class="branching-avatar"></span>
+									<span class="branching-person-name">Rose</span>
+								</button>
+								<button type="button" class="branching-person" data-person="myron" data-beat="6">
+									<span class="branching-avatar"></span>
+									<span class="branching-person-name">Myron</span>
+								</button>
+								<button type="button" class="branching-person is-anyone" data-person="someone" data-beat="11">
+									<span class="branching-avatar"></span>
+									<span class="branching-person-name">And anyone else&hellip;</span>
+								</button>
+							</nav>
+							<div class="branching-art">
+								<img
+									class="branching-illustration"
+									src="media/personas/demo-two-people.webp"
+									data-frame="0 -10 2057 1172"
+									alt="Three stacks side by side, each starting from the same intent, I'd like to translate this text. Rose's empathy: prefers low light; at home on the couch on her iPad, curtains closed; looking forward to an arts and craft session; and below it an iPad with a dark, dim translator. Myron's: prefers speech input; at his desktop computer, at his desk; tired from a lecture; and below it a monitor with a translator that only listens. A third, unnamed person's, drawn fainter: no speech input, only a thumb; standing in the subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge."
+								/>
 							</div>
 						</div>
 						<aside class="notes" hidden>
 							<p>
 								In our previous model we started with the interface and the person had to adapt. In the new model, we start with the person.
 							</p>
-							<p>
-								Remember Rose from our interviews: Light drains her energy.
-							</p>
-							<p>[Next, three times] Then what we know about her, one screen at a time:</p>
+							<p>[Next] Remember Rose from our interviews: light drains her energy. She wants to translate this text.</p>
+							<p>[Next, three times] Then what we know about her, one box at a time:</p>
 							<ul>
-								<li>capabilities and preferences: keep it dim, low glare;</li>
-								<li>user context: at home, curtains drawn;</li>
-								<li>memory and history: she retunes her setup through the day.</li>
+								<li>capabilities: she prefers low light;</li>
+								<li>environment: at home, on the couch on her iPad, curtains closed;</li>
+								<li>situation: looking forward to an arts and craft session.</li>
 							</ul>
-							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator.</p>
-							<p>[Next] Same intent, another person. Myron works by voice.</p>
-							<p>[Next, three times] He speaks rather than points; he's at his desk, hands-free; and he has 23 years of voice control behind him.</p>
-							<p>[Next] His UI has nothing to point at: it listens. Same task, a different UI.</p>
-							<p>The avatars on the left jump to each person's part.</p>
-
-							[Simon will take over Myron and do the concluding bit]
-							[myron capabilites& preferencs, change to "Prefers speech input"]
-							[myron user contex, change to "At home in a calm environment"]
-							[memory&history in myron and rose: remove and replace with environment]
-
-							try out: 
-							3 stacks layout (solitaire-like), remove right text, have "one task, many UIs" as a heading centered at the top
-							reveal them all after each other
-
-							capabilities
-								prefers low light
-								prefers speech input
-								no speech input, only thumb
-							environment
-								at home, on the couch on her ipad, curtains closed
-								at his desktop computer at his desk
-								standing in the subway, only one hand free
-							situational
-								looking forward to an arts and craft session
-								tired from a lecture
-								running late, heatwave, stressful
-							
+							<p>[Next] Only then the UI. It's the result of the intent and the person: a dark, low-glare translator on her iPad.</p>
+							<p>[Simon takes over] [Next] Same intent, another person: Myron.</p>
+							<p>[Next, three times] He prefers speech input; he's at his desktop computer, at his desk; and he's tired from a lecture.</p>
+							<p>[Next] His UI has nothing to point at: it listens. Same task, a different UI, and Rose's is still there to compare.</p>
+							<p>
+								[Next] And it doesn't stop at two. Someone with no speech input, only a thumb, standing in the subway with one hand free,
+								running late in a heatwave. Or Rose herself, tomorrow, in a different situation.
+							</p>
+							<p>[Next] Their UI: big buttons where the thumb reaches. And the list goes on: bespoke UIs, generated for everyone, in every situation.</p>
+							<p>The avatars jump to each person's part.</p>
 						</aside>
 					</section>
 				</div>

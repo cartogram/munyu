@@ -1,17 +1,18 @@
 // The branching demo's pieces, drawn from scratch and written to
 // originals/demo-two-people.svg for normalize-personas.mjs to tint and finish.
-// One stack per person, Rose's on the left half of a 2048 × 1280 canvas and
-// Myron's on the right, in the order the deck reveals them: the
-// intent, the same for both, in a box at the top; then a box for each kind of
-// context, the empathy, stepped in under it; and over them the phone with the
-// UI they add up to. The boxes are plain, in the wash, with no outline; the
-// UI's phone is outlined bold, with a phone's chrome.
+// Three stacks side by side on a 2060-wide canvas, Rose's, Myron's and an
+// unnamed someone's, in the order the deck reveals them: the intent, the same
+// for everyone, in a box at the top; then a box for each kind of context, the
+// empathy, stepped in under it; and over them the device with the UI they add
+// up to. The boxes are plain, in the wash, with no outline; the device is
+// outlined bold. The third person stands for everyone else, so their stack is
+// drawn subdued, a step lighter throughout, and past it a fourth, empty stack
+// runs off the card's edge: the list goes on.
 //
 // Each piece is a data-part the deck moves: <person>-intent, <person>-screen-1
-// to -3, <person>-ui. <person>-head, their head and shoulders, is drawn hidden,
-// for the deck's avatar buttons. The deck shows one stack at a time (data-frame
-// on the scene's image), and slides Myron's in from the right as Rose's
-// leaves. Words are text, set in Aileron by the deck.
+// to -3, <person>-ui, and more, the empty stack. <person>-head, their head and
+// shoulders, is drawn hidden, for the deck's avatar buttons. Words are text,
+// set in Aileron by the deck.
 //   node scripts/personas/demo-two-people.mjs
 import { INK, WHITE, DEEP, SOFT, WASH, LIGHT, poly, line, circle, ellipse, curve, path, write } from './draw.mjs';
 
@@ -71,7 +72,15 @@ const text = (x, y, size, words, { fill = INK, anchor = 'start', weight = 600, s
 const shapes = [];
 let part; // the data-part the next shapes belong to
 let hidden = false; // whether they're drawn hidden
-const add = (...s) => shapes.push(...s.flat().map((el) => el.replace(/^<(path|text)\b/, `<$1 data-part="${part}"${hidden ? ' data-hidden' : ''}`)));
+let subdued = false; // whether they're drawn a step lighter: ink as deep, deep as soft
+const lighter = { [INK]: DEEP, [DEEP]: SOFT };
+const add = (...s) =>
+	shapes.push(
+		...s.flat().map((el) => {
+			el = el.replace(/^<(path|text)\b/, `<$1 data-part="${part}"${hidden ? ' data-hidden' : ''}`);
+			return subdued ? el.replace(/\bfill="([^"]+)"/, (m, fill) => `fill="${lighter[fill] ?? fill}"`) : el;
+		}),
+	);
 
 // ---- the people: head and shoulders, turned to the right like Rose's
 // portrait, drawn at S times the size first sketched, about the head's centre
@@ -126,8 +135,17 @@ function myron(hx, hy, S) {
 	add(outlined(SOFT, points(circle(at(50, 54), 8 * S, 24)), 5));
 }
 
-// ---- the pictograms on the context screens, centred on cx, cy at s times
-// their size on a screen's top band
+
+// someone: no one in particular, a plain head and shoulders with no face
+function someone(hx, hy, S) {
+	const at = (dx, dy) => [hx + dx * S, hy + dy * S];
+	add(path(SOFT, poly(rounded(...at(-128, 84), 266 * S, 120 * S, 64 * S).map(([x, y]) => [x, Math.min(y, hy + 150 * S)]))));
+	add(path(SOFT, poly([at(-14, 40), at(20, 40), at(22, 98), at(-16, 98)])));
+	add(path(SOFT, ellipse([...at(4, 6), 60 * S, 64 * S])));
+}
+
+// ---- the pictograms on the context boxes, centred on cx, cy at s times
+// their first size
 
 const PICTOGRAMS = {
 	// a dimmed sun, its rays short
@@ -140,12 +158,13 @@ const PICTOGRAMS = {
 	},
 	// drawn curtains, two plain panels meeting in the middle
 	curtains(cx, cy, s) {
-		for (const x0 of [cx - 24 * s, cx + 2 * s]) add(outlined(WASH, rounded(x0, cy - 20 * s, 22 * s, 40 * s, 3 * s), 3 + s));
+		for (const x0 of [cx - 24 * s, cx + 2 * s]) add(outlined(WHITE, rounded(x0, cy - 20 * s, 22 * s, 40 * s, 3 * s), 3 + s));
 	},
-	// a clock
-	clock(cx, cy, s) {
-		add(outlined(WHITE, points(circle([cx, cy], 20 * s, 36)), 4 + s));
-		add(path(INK, line([cx, cy], [cx, cy - 12 * s], 3 + s), 'edge'), path(INK, line([cx, cy], [cx + 9 * s, cy + 5 * s], 3 + s), 'edge'));
+	// a paintbrush, its bristles dipped dark
+	brush(cx, cy, s) {
+		add(path(INK, line([cx - 18 * s, cy + 18 * s], [cx + 4 * s, cy - 4 * s], 7 * s)));
+		add(outlined(WHITE, [[cx + 2 * s, cy - 10 * s], [cx + 10 * s, cy - 2 * s], [cx + 24 * s, cy - 24 * s], [cx + 18 * s, cy - 18 * s]], 3 + s));
+		add(path(INK, poly([[cx + 18 * s, cy - 18 * s], [cx + 24 * s, cy - 24 * s], [cx + 28 * s, cy - 28 * s], [cx + 22 * s, cy - 26 * s]])));
 	},
 	// a speech bubble with its tail, and three dots
 	bubble(cx, cy, s) {
@@ -153,42 +172,109 @@ const PICTOGRAMS = {
 		add(outlined(WHITE, [...body.slice(0, 21), [cx - 6 * s, cy + 12 * s], [cx - 16 * s, cy + 22 * s], [cx - 12 * s, cy + 12 * s], ...body.slice(21)], 4 + s));
 		for (const dx of [-11, 0, 11]) add(path(INK, circle([cx + dx * s, cy - 3 * s], 3.2 * s, 16), 'edge'));
 	},
+	// the speech bubble, struck through
+	quiet(cx, cy, s) {
+		const body = rounded(cx - 24 * s, cy - 18 * s, 48 * s, 30 * s, 10 * s);
+		add(outlined(WHITE, [...body.slice(0, 21), [cx - 6 * s, cy + 12 * s], [cx - 16 * s, cy + 22 * s], [cx - 12 * s, cy + 12 * s], ...body.slice(21)], 4 + s));
+		add(path(INK, line([cx - 26 * s, cy + 20 * s], [cx + 26 * s, cy - 24 * s], 4 + s)));
+	},
 	// a desk, its top and two legs, ending on the right like the set's tables
 	desk(cx, cy, s) {
 		add(outlined(WHITE, rounded(cx - 26 * s, cy - 6 * s, 52 * s, 9 * s, 2 * s), 3 + s));
 		add(path(INK, line([cx - 20 * s, cy + 6 * s], [cx - 20 * s, cy + 22 * s], 3 + s)), path(INK, line([cx + 14 * s, cy + 6 * s], [cx + 14 * s, cy + 22 * s], 3 + s)));
 		add(outlined(WHITE, rounded(cx - 10 * s, cy - 26 * s, 26 * s, 16 * s, 2 * s), 3 + s));
 	},
-	// a calendar page with its year count
-	calendar(cx, cy, s) {
-		add(outlined(WHITE, rounded(cx - 20 * s, cy - 20 * s, 40 * s, 40 * s, 5 * s), 4 + s));
-		add(path(INK, poly(rounded(cx - 20 * s, cy - 20 * s, 40 * s, 11 * s, 3 * s))));
-		add(text(cx, cy + 15 * s, 22 * s, '23', { anchor: 'middle', weight: 700 }));
+	// a crescent moon
+	moon(cx, cy, s) {
+		add(path(INK, circle([cx, cy], 20 * s, 48)));
+		add(path(WASH, circle([cx + 10 * s, cy - 7 * s], 17 * s, 48), 'edge'));
+	},
+	// the front of a train, its two windows and its lamps
+	train(cx, cy, s) {
+		add(outlined(WHITE, rounded(cx - 20 * s, cy - 24 * s, 40 * s, 44 * s, 9 * s), 4 + s));
+		add(path(INK, poly(rounded(cx - 14 * s, cy - 17 * s, 28 * s, 16 * s, 3 * s)), 'edge'));
+		for (const dx of [-10, 10]) add(path(INK, circle([cx + dx * s, cy + 10 * s], 3 * s, 16), 'edge'));
+		add(path(INK, line([cx - 14 * s, cy + 22 * s], [cx - 20 * s, cy + 30 * s], 3 + s)), path(INK, line([cx + 14 * s, cy + 22 * s], [cx + 20 * s, cy + 30 * s], 3 + s)));
+	},
+	// a clock
+	clock(cx, cy, s) {
+		add(outlined(WHITE, points(circle([cx, cy], 20 * s, 36)), 4 + s));
+		add(path(INK, line([cx, cy], [cx, cy - 12 * s], 3 + s), 'edge'), path(INK, line([cx, cy], [cx + 9 * s, cy + 5 * s], 3 + s), 'edge'));
 	},
 };
+
+// ---- the devices, each a case outlined bold with its screen inset; x, y is
+// the case's top-left corner
+
+const BASE_LINE = 14; // the devices' outline
+function device({ x, y, w, h }, r, inset, screen) {
+	add(outlined(WASH, rounded(x, y, w, h, r), BASE_LINE));
+	const s = { x: x + inset, y: y + inset, w: w - 2 * inset, h: h - 2 * inset };
+	add(path(screen, poly(rounded(s.x, s.y, s.w, s.h, Math.max(8, r - inset))), 'edge'));
+	return s;
+}
+
+// Rose's iPad, on its side: a translator, dark and dim, nothing on it brighter
+// than the soft step, its two languages side by side
+function tablet(x, y) {
+	const s = device({ x, y, w: 560, h: 360 }, 40, 28, INK);
+	add(text(s.x + 28, s.y + 44, 22, 'Translate', { fill: SOFT }));
+	const w = (s.w - 28 * 3) / 2;
+	[['EN', [170, 130, 150]], ['DE', [180, 140, 110]]].forEach(([chip, lines], i) => {
+		const px = s.x + 28 + i * (w + 28), py = s.y + 70;
+		add(path(DEEP, poly(rounded(px, py, w, s.h - 98, 16)), 'edge'));
+		add(path(SOFT, poly(rounded(px + 18, py + 18, 60, 28, 14)), 'edge'));
+		add(text(px + 48, py + 39, 17, chip, { fill: DEEP, anchor: 'middle', weight: 700 }));
+		lines.forEach((len, j) => add(path(SOFT, line([px + 22, py + 82 + 32 * j], [px + 22 + len, py + 82 + 32 * j], 11), 'edge')));
+	});
+}
+
+// Myron's desktop monitor on its stand: voice only, a mic that's listening,
+// its rings and its waveform
+function monitor(x, y) {
+	const [w, h] = [560, 330];
+	// the stand first, so the screen's case covers its top
+	add(outlined(WASH, [[x + w / 2 - 34, y + h - 20], [x + w / 2 + 34, y + h - 20], [x + w / 2 + 44, y + h + 64], [x + w / 2 - 44, y + h + 64]], 10));
+	add(outlined(WASH, rounded(x + w / 2 - 120, y + h + 60, 240, 26, 10), 10));
+	const s = device({ x, y, w, h }, 26, 22, WHITE);
+	add(text(s.x + 28, s.y + 44, 22, 'Translate'));
+	const [cx, cy] = [s.x + 150, s.y + s.h / 2 + 18];
+	for (const r of [100, 78]) add(path(SOFT, poly(offset(points(circle([cx, cy], r, 72)), 3)), 'edge'), path(WHITE, circle([cx, cy], r - 3, 72), 'edge'));
+	add(path(LIGHT, circle([cx, cy], 54, 72)));
+	add(outlined(WHITE, rounded(cx - 14, cy - 30, 28, 46, 14), 6));
+	add(path(INK, curve([cx - 24, cy + 2], [cx, cy + 38], [cx + 24, cy + 2], 6, false)), path(INK, line([cx, cy + 20], [cx, cy + 34], 6)));
+	const wave = [[0, 0], [24, -24], [48, 22], [72, -36], [96, 30], [120, -26], [144, 18], [168, -14], [192, 8], [210, 0]];
+	const [wx, wy] = [s.x + 280, cy - 20];
+	wave.slice(1).forEach(([x1, y1], j) => {
+		const [x0, y0] = wave[j];
+		add(path(INK, curve([wx + x0, wy + y0], [wx + (x0 + x1) / 2, wy + (y0 + y1) / 2 + (j % 2 ? 12 : -12)], [wx + x1, wy + y1], 6, false)));
+	});
+	add(text(wx + 105, wy + 70, 24, 'Listening…', { anchor: 'middle' }));
+}
+
+// someone's phone, held in one hand: the text up top, and everything to
+// press in big buttons at the bottom, where a thumb reaches
+function phone(x, y) {
+	const s = device({ x, y, w: 300, h: 430 }, 48, 16, WHITE);
+	add(text(s.x + 26, s.y + 44, 22, 'Translate'));
+	add(path(WASH, poly(rounded(s.x + 22, s.y + 66, s.w - 44, 130, 16)), 'edge'));
+	[150, 110, 130].forEach((len, j) => add(path(SOFT, line([s.x + 44, s.y + 100 + 30 * j], [s.x + 44 + len, s.y + 100 + 30 * j], 11), 'edge')));
+	add(path(SOFT, poly(rounded(s.x + 22, s.y + 212, s.w - 44, 72, 36)), 'edge'));
+	add(path(SOFT, poly(rounded(s.x + 22, s.y + 296, (s.w - 58) / 2, 72, 36)), 'edge'));
+	add(path(SOFT, poly(rounded(s.x + 36 + (s.w - 58) / 2, s.y + 296, (s.w - 58) / 2, 72, 36)), 'edge'));
+	add(path(INK, line([s.x + s.w / 2 - 36, s.y + s.h - 16], [s.x + s.w / 2 + 36, s.y + s.h - 16], 6), 'edge'));
+}
 
 // ---- the stacks ----
 // Each person's stack, its left edge at ox: the intent in a box at the top;
 // below it the empathy, a box for each kind of context, the same width but as
-// tall as its words, each stepped a little further right; and last the UI's
-// phone, sliding in over the bottom of the stack. Each group's label sits to
-// the right of the stack, level with its first box.
-const BOX_W = 460, BOX_R = 28, GAP = 18, STEP = 40;
-const PHONE_W = 380, PHONE_H = 600, PHONE_X = 160, PHONE_OVER = 10; // how far the phone's outline covers the last box, in its padding
-const LABEL_X = STEP * 3 + BOX_W + 40; // past the last box, the stack's right edge
-const BASE_LINE = 14; // the outline of the UI's phone
-const top = (ox) => ({ x: ox + 150, y: 80 });
+// tall as its words, each stepped a little further right; and last the
+// device, set apart below. The devices' tops line up, below the tallest stack.
+const BOX_W = 520, BOX_R = 28, GAP = 16, STEP = 33;
+const COL = BOX_W + STEP * 3, COL_GAP = 100; // a stack's width, and the space between two
+const DEVICE_GAP = 56; // the space between the tallest stack's last box and the devices' outlines
 // a box in the wash, no outline
 const box = ({ x, y, w, h }) => add(path(WASH, poly(rounded(x, y, w, h, BOX_R))));
-// the base: a phone's case, outlined bold, and its screen in the given fill
-function handset({ x, y, w, h }, screen = WHITE) {
-	add(outlined(WASH, rounded(x, y, w, h, 54), BASE_LINE));
-	add(path(screen, poly(rounded(x + 16, y + 16, w - 32, h - 32, 40)), 'edge'));
-	// the home bar
-	add(path(screen === INK ? DEEP : INK, line([x + w / 2 - 44, y + h - 30], [x + w / 2 + 44, y + h - 30], 6), 'edge'));
-}
-// a phone's top strip, its title
-const band = ({ x, y }, words, fill = INK) => add(text(x + 40, y + 42, 23, words, { fill }));
 // words on one line if they fit in n characters, or else on two, as even as
 // they break
 const wrap = (words, n) => {
@@ -197,25 +283,27 @@ const wrap = (words, n) => {
 	const splits = w.slice(1).map((_, i) => [w.slice(0, i + 1).join(' '), w.slice(i + 1).join(' ')]);
 	return splits.reduce((a, b) => (Math.max(...b.map((l) => l.length)) < Math.max(...a.map((l) => l.length)) ? b : a));
 };
-// a group's label, outside the stack whose left edge is ox, level with the
-// top of box b, like the deck's eyebrows
-const label = (ox, { y }, words) => add(text(top(ox).x + LABEL_X, y + 46, 24, words, { weight: 700 }));
 
-const KINDS = ['Capabilities &amp; preferences', 'User context', 'Memory &amp; history'];
+const KINDS = ['Capabilities', 'Environment', 'Situation'];
 const PEOPLE = [
 	{
-		name: 'rose', ox: 0, draw: rose,
-		context: [['sun', 'Keep it dim, low glare'], ['curtains', 'Curtains drawn, at home'], ['clock', 'Retunes her setup daily']],
+		name: 'rose', draw: rose, device: tablet, deviceW: 560,
+		context: [['sun', 'Prefers low light'], ['curtains', 'At home, on the couch on her iPad, curtains closed'], ['brush', 'Looking forward to an arts and craft session']],
 	},
 	{
-		name: 'myron', ox: 1024, draw: myron,
-		context: [['bubble', 'Speaks, doesn’t point'], ['desk', 'Hands-free, at his desk'], ['calendar', '23 years of voice control']],
+		name: 'myron', draw: myron, device: monitor, deviceW: 560,
+		context: [['bubble', 'Prefers speech input'], ['desk', 'At his desktop computer, at his desk'], ['moon', 'Tired from a lecture']],
+	},
+	{
+		name: 'someone', draw: someone, device: phone, deviceW: 300, subdued: true,
+		context: [['quiet', 'No speech input, only a thumb'], ['train', 'Standing in the subway, one hand free'], ['clock', 'Running late, heatwave, stressful']],
 	},
 ];
 
-for (const person of PEOPLE) {
-	const { name, ox } = person;
-	const { x: x0, y: y0 } = top(ox);
+PEOPLE.forEach((person, n) => {
+	const { name } = person;
+	const x0 = n * (COL + COL_GAP), y0 = 0;
+	subdued = !!person.subdued;
 	// their head and shoulders, hidden, for the deck's avatar button
 	part = `${name}-head`;
 	hidden = true;
@@ -224,56 +312,43 @@ for (const person of PEOPLE) {
 
 	// 0. the intent, its quote in the serif
 	part = `${name}-intent`;
-	const intent = { x: x0, y: y0, w: BOX_W, h: 132 };
+	const intent = { x: x0, y: y0, w: BOX_W, h: 124 };
 	box(intent);
-	label(ox, intent, 'Intent');
-	add(text(x0 + 36, y0 + 58, 32, '“I’d like to', { serif: true, weight: 400 }));
-	add(text(x0 + 36, y0 + 100, 32, 'translate this text”', { serif: true, weight: 400 }));
+	add(text(x0 + 36, y0 + 54, 32, '“I’d like to', { serif: true, weight: 400 }));
+	add(text(x0 + 36, y0 + 96, 32, 'translate this text”', { serif: true, weight: 400 }));
 
 	// 1-3. the empathy: a box for each kind of context, its pictogram, its
-	// kind and its words; the group's label, beside the stack, arrives with the
-	// first
+	// kind and its words
 	let y = intent.y + intent.h + GAP;
 	person.context.forEach(([pictogram, words], i) => {
 		part = `${name}-screen-${i + 1}`;
-		const lines = wrap(words, 22);
-		const b = { x: x0 + STEP * (i + 1), y, w: BOX_W, h: 76 + 36 * lines.length };
+		const lines = wrap(words, 21);
+		const b = { x: x0 + STEP * (i + 1), y, w: BOX_W, h: 78 + 39 * lines.length };
 		box(b);
-		if (i === 0) label(ox, b, 'Empathy');
 		PICTOGRAMS[pictogram](b.x + 58, b.y + b.h / 2, 1.3);
-		add(text(b.x + 110, b.y + 46, 21, KINDS[i], { weight: 700 }));
-		lines.forEach((l, j) => add(text(b.x + 110, b.y + 86 + 36 * j, 29, l)));
+		add(text(b.x + 110, b.y + 46, 23, KINDS[i], { weight: 700 }));
+		lines.forEach((l, j) => add(text(b.x + 110, b.y + 88 + 39 * j, 32, l)));
 		y += b.h + GAP;
 	});
-	// 4. the UI they add up to
-	part = `${name}-ui`;
-	const ui = { x: x0 + PHONE_X, y: y - GAP - PHONE_OVER + BASE_LINE, w: PHONE_W, h: PHONE_H };
-	if (name === 'rose') {
-		// a translator, dark and dim: nothing on it brighter than the soft step
-		handset(ui, INK);
-		band(ui, 'Translate', SOFT);
-		for (const [top, chip, lines] of [[ui.y + 80, 'EN', [240, 190, 210]], [ui.y + 320, 'DE', [250, 200, 160]]]) {
-			add(path(DEEP, poly(rounded(ui.x + 40, top, ui.w - 80, 210, 18)), 'edge'));
-			add(path(SOFT, poly(rounded(ui.x + 62, top + 22, 64, 30, 15)), 'edge'));
-			add(text(ui.x + 94, top + 45, 18, chip, { fill: DEEP, anchor: 'middle', weight: 700 }));
-			lines.forEach((len, j) => add(path(SOFT, line([ui.x + 66, top + 90 + 34 * j], [ui.x + 66 + len, top + 90 + 34 * j], 12), 'edge')));
-		}
-	} else {
-		// voice only: a mic that's listening, its rings and its waveform
-		handset(ui);
-		band(ui, 'Translate');
-		const [cx, cy] = [ui.x + ui.w / 2, ui.y + 250];
-		for (const r of [118, 92]) add(path(SOFT, poly(offset(points(circle([cx, cy], r, 72)), 3)), 'edge'), path(WHITE, circle([cx, cy], r - 3, 72), 'edge'));
-		add(path(LIGHT, circle([cx, cy], 64, 72)));
-		add(outlined(WHITE, rounded(cx - 16, cy - 34, 32, 52, 16), 6));
-		add(path(INK, curve([cx - 28, cy + 2], [cx, cy + 44], [cx + 28, cy + 2], 6, false)), path(INK, line([cx, cy + 22], [cx, cy + 40], 6)));
-		const wave = [[-130, 0], [-100, -26], [-70, 24], [-40, -40], [-10, 34], [20, -30], [50, 22], [80, -18], [110, 10], [130, 0]];
-		wave.slice(1).forEach(([x1, y1], j) => {
-			const [x0, y0] = wave[j];
-			add(path(INK, curve([cx + x0, ui.y + 440 + y0], [cx + (x0 + x1) / 2, ui.y + 440 + (y0 + y1) / 2 + (j % 2 ? 14 : -14)], [cx + x1, ui.y + 440 + y1], 6, false)));
-		});
-		add(text(cx, ui.y + 530, 26, 'Listening…', { anchor: 'middle' }));
-	}
+	person.bottom = y - GAP;
+});
+// 4. the UI they add up to, centred under each stack, all at one height
+const deviceTop = Math.max(...PEOPLE.map((p) => p.bottom)) + DEVICE_GAP + BASE_LINE;
+PEOPLE.forEach((person, n) => {
+	part = `${person.name}-ui`;
+	subdued = !!person.subdued;
+	// the finish thickens ink outlines outwards, but not a subdued one's, so
+	// that sits higher to line up
+	person.device(n * (COL + COL_GAP) + (COL - person.deviceW) / 2, deviceTop - (subdued ? 13 : 0));
+});
+
+// ---- more: an empty stack past the last, running off the card's edge
+subdued = true;
+part = 'more';
+{
+	const x0 = PEOPLE.length * (COL + COL_GAP);
+	box({ x: x0, y: 0, w: BOX_W, h: 124 });
+	[0, 1, 2].forEach((i) => box({ x: x0 + STEP * (i + 1), y: 140 + i * 128, w: BOX_W, h: 112 }));
 }
 
-write(OUT, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 1280">${shapes.join('')}</svg>\n`);
+write(OUT, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${PEOPLE.length * (COL + COL_GAP) + COL} 1280">${shapes.join('')}</svg>\n`);

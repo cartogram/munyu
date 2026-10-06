@@ -4,7 +4,8 @@ import { mkdtempSync, writeFileSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
-const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+// CHROME overrides the path, e.g. on Linux
+const CHROME = process.env.CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export const SHOTS = new URL('./shots/', import.meta.url).pathname;
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
