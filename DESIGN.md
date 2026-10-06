@@ -66,8 +66,8 @@ sans, a cut-paper divider and the interview quote (body serif) sit centred
 in one half, and one
 illustration of that person's setup fills the other: text left by default,
 illustration left with `class="is-flipped"` on the scene. Phones stack the
-text above the illustration. A clip shows as a turning "Play video" ring in
-the slide's top-right corner. The illustrations form one set:
+text above the illustration. A clip shows as a pill-shaped "Watch (0:35)" button
+under the illustration. The illustrations form one set:
 
 - **In the act's colour, as steps of a shared ramp.** Lightness maps to a
   ramp step, from ink through to paper. Saturated colours (screens, light)

@@ -204,6 +204,13 @@
 				border: 1px solid #000;
 			}
 
+			/* in the deck the drawer sits outside main; here it's inside, so
+			   undo main p's slide size */
+			.ts-sample .drawer-footer p {
+				font-size: inherit;
+				line-height: inherit;
+			}
+
 			.ts-swatches {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
@@ -560,6 +567,36 @@
 							<p><small>React Advanced<span class="sub-meta"><span class="em-dash">—</span>London 2026</span></small></p>
 						</section>
 					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec=".video-play">
+					<strong>Button</strong>
+					A slide's video, where the video sits: a pill in the act's colour that fills on hover. The deck adds the clip's length.
+					<code>.video-play</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="user-research">
+					<div class="act-panel-inner">
+						<section data-scene="ts-button">
+							<button type="button" class="video-play">Watch (0:35)</button>
+						</section>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec="a">
+					<strong>Link</strong>
+					The notes drawer's footer: the speakers and this page, bold in the act's colour with an arrow.
+					<code>.drawer-footer a</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="hypothesis">
+					<footer class="drawer-footer">
+						<p><a href="system.html">System<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4.25 2.5H9.5v5.25" /></svg></a></p>
+					</footer>
 				</div>
 			</div>
 

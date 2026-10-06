@@ -248,27 +248,31 @@ function cardInsets() {
 	return { insetTop: px('--inset-top'), insetBottom: px('--inset-bottom'), stackStep: px('--stack-step') };
 }
 
-// Each slide's video shows as a round "Play video" button in the slide's
-// top-right corner: its label three times round a circle, turning
-// (css/talk.css).
-// Pressing it plays the video in the spotlight (openSpotlight, below). The
-// video stays inside, unseen, for its source and where it was left off.
-const RING_R = 42; // the label's circle (its baseline), in the ring's 100 × 100 viewBox
-const playRing = (id) => `<svg class="video-play-ring" viewBox="0 0 100 100" aria-hidden="true">
-	<path id="${id}" fill="none" d="M50 ${50 - RING_R}a${RING_R} ${RING_R} 0 1 1 0 ${2 * RING_R}a${RING_R} ${RING_R} 0 1 1 0 ${-2 * RING_R}" />
-	<text><textPath href="#${id}" textLength="${(2 * Math.PI * RING_R).toFixed(1)}" lengthAdjust="spacing">Play video • Play video • Play video •</textPath></text>
-</svg>`;
+// Each slide's video shows as a pill-shaped "Watch (0:35)" button where the
+// video sat (css/talk.css); the length is added once the clip's metadata
+// loads. Pressing it plays the video in the spotlight (openSpotlight, below).
+// The video stays inside, unseen, for its source and where it was left off.
+const clipLength = (seconds) => {
+	const s = Math.round(seconds);
+	return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
 
-document.querySelectorAll('main video').forEach((video, i) => {
+document.querySelectorAll('main video').forEach((video) => {
 	const button = document.createElement('button');
 	button.type = 'button';
 	button.className = 'video-play';
 	button.dataset.title = video.closest('section[data-scene]')?.querySelector('h2')?.textContent.trim() ?? '';
-	button.setAttribute('aria-label', button.dataset.title ? `Play video: ${button.dataset.title}` : 'Play video');
+	button.setAttribute('aria-label', button.dataset.title ? `Watch video: ${button.dataset.title}` : 'Watch video');
 	video.removeAttribute('controls');
 	video.replaceWith(button);
-	button.innerHTML = playRing(`video-play-ring-${i}`);
-	button.append(video);
+	const label = document.createElement('span');
+	label.textContent = 'Watch';
+	button.append(label, video);
+	const showLength = () => {
+		if (Number.isFinite(video.duration)) label.textContent = `Watch (${clipLength(video.duration)})`;
+	};
+	if (video.readyState >= 1) showLength();
+	else video.addEventListener('loadedmetadata', showLength, { once: true });
 });
 
 // Rebuilt with every setup(). A beat's scroll position is its trigger's start
