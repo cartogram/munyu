@@ -476,12 +476,24 @@ function restoreHash() {
 // inline, so its parts can move, framed on data-frame if the image has one.
 function inlineArt(img, source) {
 	const svg = new DOMParser().parseFromString(source, 'image/svg+xml').documentElement;
+	scopeIds(svg, `${img.classList[0]}-`);
 	svg.setAttribute('class', img.className);
 	if (img.dataset.frame) svg.setAttribute('viewBox', img.dataset.frame);
 	svg.setAttribute('role', 'img');
 	svg.setAttribute('aria-label', img.alt);
 	img.replaceWith(svg);
 	return svg;
+}
+
+// The drawings share their filter ids (edge, sheet…) and url(#id) resolves to
+// the first in the page, so each inline drawing prefixes its own.
+function scopeIds(svg, prefix) {
+	const ids = new Set([...svg.querySelectorAll('[id]')].map((el) => el.id));
+	const scoped = (value) => value.replace(/#([\w.:-]+)/g, (ref, id) => (ids.has(id) ? `#${prefix}${id}` : ref));
+	svg.querySelectorAll('*').forEach((el) => {
+		if (el.id) el.id = prefix + el.id;
+		for (const attr of el.attributes) if (attr.value.includes('#')) attr.value = scoped(attr.value);
+	});
 }
 
 // Today's model: each extension lands on its own beat (todaysModelSteps)
