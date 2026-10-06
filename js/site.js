@@ -70,8 +70,8 @@ function todaysModelSteps(scene) {
 // person's part starts with their avatar and their intent; then an empathy box
 // for each kind of context, and last the UI. Each stack stays, so the next
 // person's can be compared with it. The last person stands for everyone else:
-// their stack comes up in one beat, and their UI in the next, with an empty
-// stack past it running off the card's edge. Each piece slides up from below
+// their stack comes up in one beat, their UI in the next, and in the last an
+// empty stack past it, running off the card's edge. Each piece slides up from below
 // the bottom of the card, off the screen, and stops in its place: no easing, so
 // it moves only as the reader scrolls, and sticks. Reduced motion fades each
 // piece in place.
@@ -122,7 +122,8 @@ function branchingSteps(scene) {
 				intro(tl, hold, at);
 				if (art) cascade(tl, [`${person}-intent`, ...BRANCHING_SCREENS.map((s) => `${person}-${s}`)].map(part), at, hold);
 			});
-			steps.push((tl, hold, at) => art && cascade(tl, [part(`${person}-ui`), part('more')], at, hold));
+			steps.push((tl, hold, at) => art && rise(tl, [part(`${person}-ui`)], at, hold * 0.9));
+			steps.push((tl, hold, at) => art && rise(tl, [part('more')], at, hold * 0.9));
 			return;
 		}
 		// the person, and their intent
