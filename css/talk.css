@@ -454,7 +454,7 @@ main section[data-scene] > :is(h2, p, ul, ol, blockquote, .persona) {
 }
 
 /* a headline-only scene is centred, including one whose only other element
-   is the corner play button; not the title slide, which is set bottom-left
+   is a video's Watch button; not the title slide, which is set bottom-left
    like an act opener */
 main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title']):has(> h2):not(:has(> :is(ul, ol, blockquote, div, img, svg))):not(:has(> h2 ~ p ~ p)) {
 	align-items: center;
@@ -596,8 +596,7 @@ main section[data-scene]:has(> .two-columns) > h2 {
 main small,
 .act-tab,
 .deck-chrome,
-.drawer-heading,
-.video-play {
+.drawer-heading {
 	font-family: var(--font-sans);
 	font-size: 1rem; /* 16px */
 	font-weight: 700;
@@ -1545,30 +1544,45 @@ body.is-speaker .speaker-next {
 	}
 }
 
-/* a slide's video shows as a round "Play video" button (js/site.js swaps
-   it in), fixed in the slide's top-right corner, inside the frame's
-   padding: its label three times round a circle, turning slowly, with no
-   border or ground. Pressing it plays the video in the spotlight. With a
-   mouse, the cursor turns to ▶ over it. */
-main section[data-scene]:has(.video-play) {
-	position: relative;
+/* a slide's video shows as a pill-shaped "Watch (0:35)" button where the
+   video sits (js/site.js swaps it in and adds the clip's length): body serif
+   in the act's colour, with a rule in that colour round it, no ground. It
+   fills with the act's colour on hover. Pressing it plays the video in the
+   spotlight. With a mouse, the cursor turns to ▶ over it. Its height is
+   worked out here (--play-height) so a persona's illustration can make room
+   for it. Small windows get a smaller one. */
+main {
+	--play-size: calc(42 * var(--u));
+	--play-border: max(2px, calc(3 * var(--u)));
+	--play-height: calc(1.95 * var(--play-size) + 2 * var(--play-border));
 }
 
-main section[data-scene] .video-play {
-	position: absolute;
-	top: var(--frame-pad-top);
-	right: var(--frame-pad-x);
-	z-index: 1;
+@media (max-width: 1280px), (max-height: 720px) {
+	main {
+		--play-size: calc(32 * var(--u));
+	}
+}
+
+.video-play {
 	box-sizing: border-box;
-	width: calc(240 * var(--u));
-	aspect-ratio: 1;
-	margin: 0;
-	padding: 0;
+	margin: 0 auto;
+	padding: 0.35em 1.1em 0.4em;
 	background: none;
 	color: var(--act-color);
-	border: none;
-	border-radius: 50%;
+	border: var(--play-border) solid currentColor;
+	border-radius: 999px;
+	font-family: var(--font-serif);
+	font-size: var(--play-size);
+	font-weight: 400;
+	line-height: 1.2;
+	white-space: nowrap;
 	cursor: pointer;
+	transition: background-color 0.15s, color 0.15s;
+}
+
+.video-play:hover {
+	background: var(--act-color);
+	color: #fff;
 }
 
 .video-play:focus-visible {
@@ -1576,32 +1590,22 @@ main section[data-scene] .video-play {
 	outline-offset: 3px;
 }
 
-/* the label, in the meta style's face and weight, tracked capitals sized
-   in the ring's own units so it scales with the button (js/site.js spaces
-   it evenly round the circle); one turn every 20s */
-.video-play-ring {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	animation: video-play-turn 20s linear infinite;
-}
+/* in a persona scene, under the illustration: the illustration gives up
+   the button's height and half the gap at the foot of its column */
+@media (min-width: 700px) {
+	.persona > .video-play {
+		grid-column: 2;
+		grid-row: 1 / -1;
+		align-self: end;
+	}
 
-.video-play-ring text {
-	fill: currentColor;
-	font-family: var(--font-sans);
-	font-size: 11px;
-	font-weight: 700;
-	text-transform: uppercase;
-}
+	.persona:has(> .video-play) > .portrait-ground {
+		align-self: start;
+		height: calc(100% - var(--play-height) - var(--persona-gap) / 2);
+	}
 
-@keyframes video-play-turn {
-	to { transform: rotate(1turn); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.video-play-ring {
-		animation: none;
+	.is-flipped .persona > .video-play {
+		grid-column: 1;
 	}
 }
 
@@ -1639,7 +1643,8 @@ main section[data-scene] .video-play {
 	transform-origin: 0 0;
 }
 
-/* like the notes toggle, white on the dark ground */
+/* inverted on the dark ground: a white × in a white ring, the ground
+   showing through */
 .spotlight-close {
 	position: absolute;
 	top: var(--tab-pad);
@@ -1648,12 +1653,18 @@ main section[data-scene] .video-play {
 	place-items: center;
 	width: var(--toggle-size);
 	height: var(--toggle-size);
+	box-sizing: border-box;
 	padding: 0;
-	background: #fff;
-	color: var(--act-color);
-	border: 0;
+	background: transparent;
+	color: #fff;
+	border: 2px solid currentColor;
 	border-radius: 50%;
 	cursor: pointer;
+	transition: background-color 0.15s;
+}
+
+.spotlight-close:hover {
+	background: rgba(255, 255, 255, 0.12);
 }
 
 .spotlight-close svg {
