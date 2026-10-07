@@ -180,13 +180,18 @@
 				width: auto;
 			}
 
+			/* padded, so the text sits clear of the card's outline */
 			.ts-sample .act-opener,
 			.ts-sample section[data-scene] {
 				min-height: 0;
 				width: auto;
-				padding: 0;
+				padding: clamp(1.25rem, 3vw, 2.5rem);
 				align-items: flex-start;
 				text-align: left;
+			}
+
+			.ts-sample > .drawer-footer {
+				padding: clamp(1.25rem, 3vw, 2.5rem);
 			}
 
 			.ts-sample section[data-scene] > *,
@@ -195,13 +200,43 @@
 				margin-right: 0;
 			}
 
-			.ts-sample #notes-drawer {
+			.ts-sample #notes-drawer,
+			.ts-notes {
 				position: static;
 				transform: none;
-				width: min(360px, 100%);
+				width: min(30rem, 100%);
 				height: auto;
+				box-sizing: border-box;
 				padding: 1.5rem;
 				border: 1px solid #000;
+			}
+
+			/* the large size's frame, set like the drawer it stands in for */
+			.ts-notes {
+				font-family: var(--font-sans);
+				font-size: 0.9375rem;
+				line-height: 1.6;
+			}
+
+			/* the notes' own type, as #notes-drawer-content sets it in the
+			   deck; inside main here, so undo main p's slide size */
+			.ts-sample #notes-drawer :is(p, ul),
+			.ts-notes :is(p, ul) {
+				max-width: 60ch;
+				margin: 0 0 1em;
+				font-size: inherit;
+				line-height: inherit;
+			}
+
+			.ts-sample #notes-drawer ul,
+			.ts-notes ul {
+				padding-left: 1.2em;
+				list-style: disc;
+			}
+
+			.ts-sample #notes-drawer :is(em, strong),
+			.ts-notes :is(em, strong) {
+				font-weight: 700;
 			}
 
 			/* in the deck the drawer sits outside main; here it's inside, so
@@ -268,6 +303,17 @@
 				color: #fff;
 			}
 
+			/* too narrow for the steps side by side: one per row */
+			@media (max-width: 699px) {
+				.ts-ramp {
+					grid-template-columns: 1fr !important;
+				}
+
+				.ts-ramp-step {
+					height: 2.75rem;
+				}
+			}
+
 			.ts-illustrations {
 				display: grid;
 				grid-template-columns: 1fr;
@@ -281,11 +327,15 @@
 				overflow: hidden;
 			}
 
+			/* square, and no taller than the deck lets an image be (main img's
+			   max-height), so each one sits centred in its frame rather than
+			   being squashed to fit */
 			.ts-illustrations img {
 				display: block;
 				width: 100%;
 				height: auto;
 				aspect-ratio: 1;
+				object-fit: contain;
 			}
 
 			.ts-illustrations figcaption {
@@ -600,18 +650,56 @@
 				</div>
 			</div>
 
+		</section>
+
+		<section class="ts-section">
+			<h2>Notes</h2>
+			<p class="ts-note">
+				The speaker notes, read mid-talk in the drawer. Default is the drawer's size; large, for reading
+				from further away, is <code>.notes-large</code> on the notes.
+			</p>
+
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="#notes-drawer">
-					<strong>Speaker notes</strong>
-					The notes drawer, read mid-talk.
+					<strong>Default</strong>
+					The notes drawer as it opens.
 					<code>#notes-drawer</code>
 					<output></output>
 				</div>
 				<div class="ts-sample">
 					<aside id="notes-drawer">
-						Melody struggled to see and uses a collection of tools to navigate her life relatively
-						independently. Uses a screen reader at a very fast speed.
+						<p>
+							Melody struggled to see and uses a collection of tools to navigate her life relatively
+							independently. Uses a screen reader at a <em>very</em> fast speed.
+						</p>
+						<ul>
+							<li>Magnifier on every device</li>
+							<li>Speech output at 3× speed</li>
+						</ul>
 					</aside>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec=".notes-large">
+					<strong>Large</strong>
+					Light and larger, set close, for reading at a distance.
+					<code>.notes-large</code>
+					<output></output>
+				</div>
+				<div class="ts-sample">
+					<div class="ts-notes">
+						<div class="notes-large">
+							<p>
+								Melody struggled to see and uses a collection of tools to navigate her life relatively
+								independently. Uses a screen reader at a <em>very</em> fast speed.
+							</p>
+							<ul>
+								<li>Magnifier on every device</li>
+								<li>Speech output at 3× speed</li>
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
