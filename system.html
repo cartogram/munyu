@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>System — Your UI is not my UI</title>
+		<title>Design system — Your UI is not my UI</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<link rel="stylesheet" href="css/reset.css" />
@@ -18,6 +18,41 @@
 			.ts-header {
 				max-width: 60rem;
 				margin-bottom: 4rem;
+			}
+
+			/* code in the mono, at one size wherever it sits */
+			.ts-header code,
+			.ts-note code,
+			.ts-spec code,
+			.ts-icon code {
+				font-family: var(--font-mono);
+				font-size: 0.8125rem;
+			}
+
+			/* the way back to the deck, set like the drawer's footer links */
+			.ts-header .ts-back {
+				margin-bottom: 1.5rem;
+				font-size: 0.8125rem;
+			}
+
+			.ts-back a {
+				color: var(--act-hypothesis);
+				font-weight: 700;
+				text-decoration: none;
+			}
+
+			.ts-back a:hover {
+				text-decoration: underline;
+				text-decoration-thickness: 2px;
+				text-underline-offset: 0.07em;
+			}
+
+			.ts-back svg {
+				width: 0.85em;
+				height: 0.85em;
+				margin-left: 0.28em;
+				vertical-align: -0.05em;
+				stroke-width: 3;
 			}
 
 			.ts-header h1 {
@@ -120,57 +155,13 @@
 				font-variant-numeric: tabular-nums;
 			}
 
-			/* size / line-height tuner under each spec */
-			.ts-tune {
-				display: grid;
-				grid-template-columns: auto 1fr auto;
-				gap: 0.35rem 0.6rem;
-				align-items: center;
-				margin-top: 1rem;
-				padding-top: 0.75rem;
-				border-top: 1px solid var(--grey-300);
-				font-variant-numeric: tabular-nums;
-			}
-
-			.ts-tune input[type='range'] {
-				width: 100%;
-				accent-color: #000;
-			}
-
-			.ts-tune-value {
-				min-width: 7.5em;
-				text-align: right;
-			}
-
-			.ts-tune-actions {
-				grid-column: 1 / -1;
-				display: flex;
-				gap: 0.5rem;
-				margin-top: 0.25rem;
-			}
-
-			.ts-tune button {
-				font: inherit;
-				font-weight: 500;
-				background: #fff;
-				color: #000;
-				border: 1px solid #000;
-				border-radius: 6px;
-				padding: 0.2em 0.7em;
-				cursor: pointer;
-			}
-
-			.ts-row.is-tuned .ts-spec strong::after {
-				content: ' · edited';
-				font-weight: 400;
-			}
-
 			/* Neutralise the card and frame geometry so real samples can sit
 			   inline; type rules are untouched. */
 			.ts-sample.act-panel {
 				height: auto;
 				overflow: visible;
 				box-shadow: none;
+				border: 0;
 				border-radius: 0;
 				background: none;
 			}
@@ -237,6 +228,12 @@
 			.ts-sample #notes-drawer :is(em, strong),
 			.ts-notes :is(em, strong) {
 				font-weight: 700;
+			}
+
+			/* the footer as the drawer sets it: its line height, which the
+			   sample, outside the drawer, wouldn't otherwise get */
+			.ts-sample .drawer-footer {
+				line-height: 1.6;
 			}
 
 			/* in the deck the drawer sits outside main; here it's inside, so
@@ -498,8 +495,8 @@
 	<body>
 		<main>
 		<header class="ts-header">
-			<p><a href="index.html">Presentation</a></p>
-			<h1>System</h1>
+			<p class="ts-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
+			<h1>Design system</h1>
 			<p>
 				<em>Your UI is not my UI</em> — React Advanced 2026. Every sample on this page is styled by the
 				same rules as the slides (<code>css/talk.css</code>), inside a card at slide scale: 1em = the
@@ -510,6 +507,11 @@
 
 		<section class="ts-section">
 			<h2>Typefaces</h2>
+			<p class="ts-note">
+				Two families, both openly licensed and served from <code>fonts/</code>: a sans for titles, body and
+				meta, and a serif for headlines and quotes. The weights listed are the ones
+				<code>css/talk.css</code> declares.
+			</p>
 			<div class="ts-faces">
 				<div>
 					<div class="ts-face-name" style="font-family: var(--font-sans); font-weight: 500">Aileron</div>
@@ -538,6 +540,10 @@
 
 		<section class="ts-section">
 			<h2>Styles</h2>
+			<p class="ts-note">
+				Every type style in the deck, each beside the rule that sets it and its size, weight and line
+				height as the browser computes them here.
+			</p>
 
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".act-title">
@@ -563,14 +569,14 @@
 				<div class="ts-sample act-panel" data-act="empathy-is-our-point">
 					<div class="act-panel-inner">
 						<section data-scene="ts-headline">
-							<h2>Observations of existing state. The industry is already doing this</h2>
+							<h2>The industry is already doing this</h2>
 						</section>
 					</div>
 				</div>
 			</div>
 
 			<div class="ts-row">
-				<div class="ts-spec" data-spec="p" data-edit="p, ul">
+				<div class="ts-spec" data-spec="p">
 					<strong>Body sans</strong>
 					Paragraphs and lists, and the line under a persona's name.
 					<code>main p, main ul</code>
@@ -613,8 +619,8 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="small">
 					<strong>Meta</strong>
-					Labels, the slide chrome and the Notes button.
-					<code>main small, .deck-chrome, #notes-toggle</code>
+					Labels and the slide chrome.
+					<code>main small, .deck-chrome</code>
 					<output></output>
 				</div>
 				<div class="ts-sample act-panel" data-act="launching-is-creating">
@@ -629,7 +635,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".sub-meta">
 					<strong>Sub-meta</strong>
-					A secondary line under meta: the event's city and year, and the slide number in the notes drawer. Title-case serif italic, the only italic.
+					A secondary line under meta: the event's city and year, and the slide number in the notes drawer. Serif italic, the only italic.
 					<code>.sub-meta</code>
 					<output></output>
 				</div>
@@ -661,7 +667,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="a">
 					<strong>Link</strong>
-					The notes drawer's footer: the speakers and this page, bold in the act's colour with an arrow.
+					The notes drawer's footer: the speakers, this page and the source code, bold in the act's colour with an arrow.
 					<code>.drawer-footer a</code>
 					<output></output>
 				</div>
@@ -903,7 +909,7 @@
 			ramp.style.gridTemplateColumns = `repeat(${rampSteps.length}, 1fr)`;
 
 			// Every illustration the deck uses, with its scene's name and act.
-			for (const img of source.querySelectorAll('.persona-portrait')) {
+			for (const img of source.querySelectorAll('.persona-portrait, .branching-illustration')) {
 				const scene = img.closest('section[data-scene]');
 				const act = img.closest('section[data-act]').dataset.act;
 				const figure = document.createElement('figure');
@@ -913,87 +919,6 @@
 					<span>${img.getAttribute('src')} · --act-${act}</span></figcaption>`;
 				document.getElementById('ts-illustrations').append(figure);
 			}
-
-			// Per-row tuner: each row gets its own injected rule, so overrides also
-			// reach generated content (e.g. ::before) and never touch the
-			// slides' stylesheet.
-			function addTuner(row, i) {
-				const spec = row.querySelector('.ts-spec');
-				const sample = row.querySelector('.ts-sample');
-				const specTarget = () => sample.querySelector(spec.dataset.spec) ?? sample;
-				const pseudo = spec.dataset.specPseudo ?? '';
-				const editSelector = spec.dataset.edit ?? spec.dataset.spec;
-				const rule = document.createElement('style');
-				document.head.append(rule);
-				row.dataset.tsRow = i;
-
-				const tune = document.createElement('div');
-				tune.className = 'ts-tune';
-				tune.innerHTML = `
-					<label for="ts-size-${i}">Size</label>
-					<input id="ts-size-${i}" type="range" min="8" max="260" step="0.5" />
-					<span class="ts-tune-value" data-size></span>
-					<label for="ts-lh-${i}">Line height</label>
-					<input id="ts-lh-${i}" type="range" min="0.8" max="2" step="0.01" />
-					<span class="ts-tune-value" data-lh></span>
-					<label for="ts-wt-${i}">Weight</label>
-					<input id="ts-wt-${i}" type="range" min="100" max="900" step="100" />
-					<span class="ts-tune-value" data-wt></span>
-					<div class="ts-tune-actions">
-						<button type="button" data-reset>Reset</button>
-						<button type="button" data-copy>Copy CSS</button>
-					</div>`;
-				spec.append(tune);
-				const size = tune.querySelector(`#ts-size-${i}`);
-				const lh = tune.querySelector(`#ts-lh-${i}`);
-				const wt = tune.querySelector(`#ts-wt-${i}`);
-
-				const readDefaults = () => {
-					const cs = getComputedStyle(specTarget(), pseudo || null);
-					const px = parseFloat(cs.fontSize);
-					size.value = px;
-					lh.value = cs.lineHeight === 'normal' ? 1.2 : parseFloat(cs.lineHeight) / px;
-					wt.value = cs.fontWeight;
-					label();
-				};
-				const css = () => `font-size: ${(size.value / 16).toFixed(4).replace(/\.?0+$/, '')}rem; /* ${size.value}px */\nline-height: ${(+lh.value).toFixed(2)};\nfont-weight: ${wt.value};`;
-				const label = () => {
-					tune.querySelector('[data-size]').textContent = `${size.value}px · ${(size.value / 16).toFixed(3)}rem`;
-					tune.querySelector('[data-lh]').textContent = (+lh.value).toFixed(2);
-					tune.querySelector('[data-wt]').textContent = wt.value;
-				};
-				const apply = () => {
-					const targets = editSelector
-						.split(',')
-						.map((sel) => `[data-ts-row="${i}"] .ts-sample ${sel.trim()}${pseudo}`)
-						.join(',\n');
-					// !important: a preview override has to beat the slides' own,
-					// sometimes more specific, rules.
-					const declarations = css().replace(/\/\*.*?\*\//, '').replace(/;/g, ' !important;');
-					rule.textContent = `${targets} {\n${declarations}\n}`;
-					row.classList.add('is-tuned');
-					label();
-					renderSpecs();
-				};
-
-				size.addEventListener('input', apply);
-				lh.addEventListener('input', apply);
-				wt.addEventListener('input', apply);
-				tune.querySelector('[data-reset]').addEventListener('click', () => {
-					rule.textContent = '';
-					row.classList.remove('is-tuned');
-					readDefaults();
-					renderSpecs();
-				});
-				tune.querySelector('[data-copy]').addEventListener('click', async (event) => {
-					await navigator.clipboard.writeText(css());
-					event.target.textContent = 'Copied';
-					setTimeout(() => (event.target.textContent = 'Copy CSS'), 1200);
-				});
-				readDefaults();
-				return readDefaults;
-			}
-
 
 			// ---- Slide templates -------------------------------------------------
 			const TEMPLATES = [
@@ -1103,17 +1028,10 @@
 			document.fonts.ready.then(() => rows.forEach(layoutTemplate));
 			window.addEventListener('resize', () => rows.forEach(layoutTemplate));
 
-			document.fonts.ready.then(() => {
-				const resets = [...document.querySelectorAll('.ts-row')].map(addTuner);
-				renderSpecs();
-				// Untouched rows follow the viewport (e.g. mobile values below 700px).
-				window.addEventListener('resize', () => {
-					document.querySelectorAll('.ts-row').forEach((row, i) => {
-						if (!row.classList.contains('is-tuned')) resets[i]();
-					});
-					renderSpecs();
-				});
-			});
+			// The specs read the samples' computed type, so they follow the
+			// viewport (e.g. the smaller values below 700px).
+			document.fonts.ready.then(renderSpecs);
+			window.addEventListener('resize', renderSpecs);
 		</script>
 	</body>
 </html>
