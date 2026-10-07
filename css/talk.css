@@ -1147,8 +1147,10 @@ aside.notes {
    translate: none. Stacked above the drawer. As they shrink, each card
    rises out of its stack offset to the first card's top (translate applies
    after scale, so in window pixels), and the cards under the current one
-   fade (.is-under, js/site.js): their wider edges would otherwise show
-   round it. */
+   (.is-under, js/site.js) hide while the drawer is open or on its way:
+   their wider edges would otherwise show round it. Hidden, not faded:
+   fading five full-size cards at once lets Chrome briefly composite them
+   in front of the current card. */
 .act-panel {
 	translate: var(--drawer-push) calc(-1 * var(--stack, 0) * var(--stack-step) * var(--stack-collapse)) !important;
 	scale: var(--drawer-scale) !important;
@@ -1156,8 +1158,8 @@ aside.notes {
 	z-index: 1;
 }
 
-.act-panel.is-under {
-	opacity: calc(1 - var(--stack-collapse));
+body.is-collapsed .act-panel.is-under {
+	visibility: hidden;
 }
 
 /* beside the open drawer the cards' outlines turn to the light rule grey,

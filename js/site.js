@@ -1076,6 +1076,9 @@ function setDrawerOpen(isOpen) {
 
 	drawerTl?.kill();
 	const speed = reduceMotion ? 0 : 1;
+	// the cards under the current one hide at once as it opens, and show
+	// again only once the closing cards are back in their stack
+	if (isOpen) document.body.classList.add('is-collapsed');
 	drawerTl = gsap.timeline({
 		defaults: { duration: 0.5 * speed },
 		onUpdate: () => {
@@ -1098,7 +1101,8 @@ function setDrawerOpen(isOpen) {
 			.to(acts, { '--drawer-scale': (i, panel) => cardScale(panel), ease: 'power3.inOut', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 0, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
 			// hidden once covered, so its links leave the tab order
-			.set(notesDrawer, { visibility: 'hidden' });
+			.set(notesDrawer, { visibility: 'hidden' })
+			.call(() => document.body.classList.remove('is-collapsed'));
 	}
 	updateCursor();
 	updateSpeakerNext();
