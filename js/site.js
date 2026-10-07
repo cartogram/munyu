@@ -839,9 +839,10 @@ acts.forEach((panel, k) => {
 		// rotating headline's endings)
 		const read = heading?.cloneNode(true);
 		read?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
-		// a scene without a heading (the Q&A's questions) names itself in
-		// data-title; failing both, its id stands in
-		const label = read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.title || scene.dataset.scene.replace(/-/g, ' ');
+		// data-title names a scene whose heading doesn't read as one in the
+		// index (none, as on the Q&A's questions, a formula, or a rotating
+		// ending); failing both, its id stands in
+		const label = scene.dataset.title || read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
 		const id = `${act}/${scene.dataset.scene}`;
 		const entry = document.createElement('li');
 		entry.append(tocLink(id, label, 'toc-link', `${k + 1}.${i + 1}`));

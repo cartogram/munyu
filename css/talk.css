@@ -1694,13 +1694,14 @@ body.is-speaker .speaker-next {
 
 /* phones: the drawer fills the window, so the cards slide all the way off
    it (js/site.js pushes them by its width) and no slide shows. The rail is
-   the same as on other small screens; open, the index covers the window's
-   full width. The notes' text sits closer to the rail, as there's no room
+   the same as on other small screens; open, the index covers 90% of the
+   window, the notes peeking out beside it. The notes' text sits closer to the rail, as there's no room
    to spare. */
 @media (max-width: 699px) {
 	#notes-drawer {
 		width: 100vw;
-		--toc-open: calc(100vw - var(--card-inset-left, 1px));
+		/* most of the window, a strip of the notes still showing at the right */
+		--toc-open: 90vw;
 	}
 
 	.drawer-notes {
