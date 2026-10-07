@@ -1216,14 +1216,18 @@ aside.notes {
 }
 
 .drawer-footer p + p {
-	margin-top: 0.35rem;
+	margin-top: 0.75rem;
 }
 
-.drawer-footer a,
-.drawer-footer a:hover {
+.drawer-footer a {
 	color: var(--act-color, #000);
 	font-weight: 700;
 	text-decoration: none;
+}
+
+.drawer-footer a:hover {
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
 }
 
 /* a diagonal arrow up and to the right, beside System */
@@ -1327,9 +1331,14 @@ aside.notes {
 	line-height: inherit;
 }
 
-/* highlights fade out from the left */
+/* highlights fade out from the left; the title underlines */
 .toc-link:hover {
 	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 8%, white), transparent);
+}
+
+.toc-link:hover .toc-title {
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
 }
 
 /* the current scene */
@@ -1570,16 +1579,15 @@ body.is-speaker .speaker-next {
 
 @media (prefers-reduced-motion: reduce) {
 	#deck-cursor,
-	#deck-cursor svg,
-	.video-play {
+	#deck-cursor svg {
 		transition: none;
 	}
 }
 
 /* a slide's video shows as a pill-shaped "Watch (0:35)" button where the
    video sits (js/site.js swaps it in and adds the clip's length): body serif
-   in the act's colour, with a rule in that colour round it, no ground. It
-   fills with the act's colour on hover. Pressing it plays the video in the
+   in the act's colour, with a rule in that colour round it, no ground. Its
+   label underlines on hover. Pressing it plays the video in the
    spotlight. With a mouse, the cursor turns to ▶ over it. Its height is
    worked out here (--play-height) so a persona's illustration can make room
    for it. Small windows get a smaller one. */
@@ -1609,12 +1617,12 @@ main {
 	line-height: 1.2;
 	white-space: nowrap;
 	cursor: pointer;
-	transition: background-color 0.15s, color 0.15s;
 }
 
 .video-play:hover {
-	background: var(--act-color);
-	color: #fff;
+	text-decoration: underline;
+	text-decoration-thickness: max(1px, calc(2 * var(--u)));
+	text-underline-offset: 0.15em;
 }
 
 .video-play:focus-visible {
