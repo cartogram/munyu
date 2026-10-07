@@ -135,10 +135,13 @@
 	--inset-right: 0rem;
 	/* the notes drawer's width; opening it, js/site.js tweens --drawer-scale
 	   on body to shrink the act cards into the room beside it (on phones,
-	   where the drawer fills the window, --drawer-push slides them away) */
+	   where the drawer fills the window, --drawer-push slides them away).
+	   --stack-collapse, 0 to 1 with it, lifts each card out of its stack
+	   offset so the open deck shows as one card. */
 	--drawer-width: 50vw;
 	--drawer-scale: 1;
 	--drawer-push: 0px;
+	--stack-collapse: 0;
 	--inset-bottom: 0rem;
 	/* the chrome sits 1.5rem inside the card (Notes button); corner tabs pad
 	   their text equally on every side */
@@ -1135,12 +1138,20 @@ aside.notes {
    changes). On phones they slide right instead. On each card, not an
    ancestor: the cards pin with position: fixed. `translate` and `scale`, not
    transform, which GSAP owns; !important because pinning writes an inline
-   translate: none. Stacked above the drawer. */
+   translate: none. Stacked above the drawer. As they shrink, each card
+   rises out of its stack offset to the first card's top (translate applies
+   after scale, so in window pixels), and the cards under the current one
+   fade (.is-under, js/site.js): their wider edges would otherwise show
+   round it. */
 .act-panel {
-	translate: var(--drawer-push) 0 !important;
+	translate: var(--drawer-push) calc(-1 * var(--stack, 0) * var(--stack-step) * var(--stack-collapse)) !important;
 	scale: var(--drawer-scale) !important;
 	transform-origin: 100% 0 !important;
 	z-index: 1;
+}
+
+.act-panel.is-under {
+	opacity: calc(1 - var(--stack-collapse));
 }
 
 /* ScrollTrigger's pin spacers copy a card's z-index but don't slide with it,
@@ -1315,6 +1326,11 @@ aside.notes {
 	border-left: 3px solid transparent;
 	/* highlights start under the bar, not 3px in from it */
 	background-origin: border-box;
+	/* the hover highlight, drawn out from the left and back */
+	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 8%, white), transparent);
+	background-repeat: no-repeat;
+	background-size: 0% 100%;
+	transition: background-size 0.3s cubic-bezier(0.16, 1, 0.3, 1); /* the deck's expo.out */
 	color: var(--act-color);
 	text-decoration: none;
 }
@@ -1332,9 +1348,9 @@ aside.notes {
 	line-height: inherit;
 }
 
-/* highlights fade out from the left; the title underlines */
+/* highlights fade out to the right; the title underlines */
 .toc-link:hover {
-	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 8%, white), transparent);
+	background-size: 100% 100%;
 }
 
 .toc-link:hover .toc-title {
@@ -1347,6 +1363,8 @@ aside.notes {
 .toc-link[aria-current='true'] {
 	border-left-color: var(--act-color);
 	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 16%, white), transparent);
+	background-size: 100% 100%;
+	transition: none;
 	font-weight: 700;
 }
 
@@ -1424,16 +1442,21 @@ body.is-speaker .speaker-next {
 	}
 }
 
-/* small screens that can hover (700–1024px): the index folds to a rail of
-   its numbers, so the notes get its width, and opens over the notes, full
-   width, while the pointer or focus is on it. Its contents keep their open
-   layout throughout, so nothing re-wraps or moves as it opens; only the
-   card's width changes, and it lays over the notes rather than pushing
-   them. It opens at once and closes a moment after the pointer leaves, so
-   cutting a corner on the way to a title doesn't snap it shut; a click
-   folds it (.is-resting, js/site.js) until the pointer leaves. Touch-only
-   screens keep the full index: they couldn't open it. */
-@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) {
+/* small screens (700–1024px): the index folds to a rail of its numbers, so
+   the notes get its width, and opens over the notes, full width. The list
+   button at the top of the rail pins it open and folds it again (.is-pinned,
+   js/site.js); picking an entry folds it too. With a pointer it also opens
+   while the pointer or focus is on it, at once, and closes a moment after
+   the pointer leaves, so cutting a corner on the way to a title doesn't snap
+   it shut; a click folds it (.is-resting) until the pointer leaves. Its
+   contents keep their open layout throughout, so nothing re-wraps or moves
+   as it opens; only the card's width changes, and it lays over the notes
+   rather than pushing them. */
+.toc-pin {
+	display: none;
+}
+
+@media (min-width: 700px) and (max-width: 1024px) {
 	#notes-drawer {
 		/* the numbers, right-aligned in the label's padding, and a little room */
 		--toc-rail: calc(var(--title-left) + 4px);
@@ -1453,6 +1476,48 @@ body.is-speaker .speaker-next {
 		background: #fff;
 		overflow-x: hidden;
 		transition: width 0.2s var(--toc-ease) 0.3s;
+	}
+
+	/* a bulleted list on the Index heading's line, straight under the notes
+	   toggle (left of the heading's text); filled while the index is pinned
+	   open */
+	.toc-pin {
+		position: absolute;
+		top: calc(1.5rem + (1rem * 1.4 - var(--toggle-size)) / 2);
+		left: calc(var(--inset-left) + var(--tab-pad) - var(--card-inset-left) - 1px);
+		z-index: 1;
+		display: grid;
+		place-items: center;
+		width: var(--toggle-size);
+		height: var(--toggle-size);
+		padding: 0;
+		background: #fff;
+		color: inherit;
+		border: 1.5px solid currentColor;
+		border-radius: 50%;
+		cursor: pointer;
+	}
+
+	.toc-pin[aria-expanded='true'] {
+		background: currentColor;
+	}
+
+	.toc-pin svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.75;
+		stroke-linecap: round;
+	}
+
+	.toc-pin[aria-expanded='true'] svg {
+		stroke: #fff;
+	}
+
+	.toc-pin:focus-visible {
+		outline: 2px solid currentColor;
+		outline-offset: 2px;
 	}
 
 	/* laid out at the open width, whatever the card's width */
@@ -1483,27 +1548,48 @@ body.is-speaker .speaker-next {
 	   with the card's width. --num-centre is where its centre sits from
 	   the card's left edge (js/site.js measures it). */
 	.toc-num {
+		translate: calc(var(--toc-rail) / 2 - var(--num-centre, 0px)) 0;
 		transition: translate 0.2s var(--toc-ease) 0.3s;
 	}
 
-	.drawer-toc:not(:hover, :focus-within) .toc-num,
-	.drawer-toc.is-resting .toc-num {
-		translate: calc(var(--toc-rail) / 2 - var(--num-centre, 0px)) 0;
-	}
-
-	.drawer-toc:not(:hover, :focus-within) > .drawer-heading,
-	.drawer-toc:not(:hover, :focus-within) .toc-title,
-	.drawer-toc:not(:hover, :focus-within) .toc-num .em-dash,
-	.drawer-toc.is-resting > .drawer-heading,
-	.drawer-toc.is-resting .toc-title,
-	.drawer-toc.is-resting .toc-num .em-dash {
+	.drawer-toc > .drawer-heading,
+	.drawer-toc .toc-title,
+	.drawer-toc .toc-num .em-dash {
 		opacity: 0;
 	}
 
-	/* open: at once, the full width, over the notes */
+	/* open: pinned, or reached from the keyboard */
+	.drawer-toc:is(.is-pinned, :has(:focus-visible)) {
+		width: var(--toc-open);
+		transition-delay: 0s;
+	}
+
+	.drawer-toc:is(.is-pinned, :has(:focus-visible)) .toc-num {
+		translate: 0 0;
+	}
+
+	.drawer-toc:is(.is-pinned, :has(:focus-visible)) :is(.drawer-heading, .toc-title, .em-dash) {
+		opacity: 1;
+	}
+
+	.drawer-toc:is(.is-pinned, :has(:focus-visible)) :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+		transition-delay: 0s;
+	}
+}
+
+/* with a pointer, also open while it or focus is on the index */
+@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) {
 	.drawer-toc:is(:hover, :focus-within):not(.is-resting) {
 		width: var(--toc-open);
 		transition-delay: 0s;
+	}
+
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) .toc-num {
+		translate: 0 0;
+	}
+
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .em-dash) {
+		opacity: 1;
 	}
 
 	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
@@ -1511,9 +1597,15 @@ body.is-speaker .speaker-next {
 	}
 }
 
-@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) and (prefers-reduced-motion: reduce) {
+@media (min-width: 700px) and (max-width: 1024px) and (prefers-reduced-motion: reduce) {
 	.drawer-toc,
 	.drawer-toc :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+		transition: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.toc-link {
 		transition: none;
 	}
 }

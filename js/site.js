@@ -457,7 +457,7 @@ function rebuild() {
 	// and shrink while they're rebuilt, then put them back (the drawer may
 	// have resized).
 	drawerTl?.progress(1);
-	gsap.set(document.body, { '--drawer-push': '0px', '--drawer-scale': 1 });
+	gsap.set(document.body, { '--drawer-push': '0px', '--drawer-scale': 1, '--stack-collapse': 0 });
 	mm?.revert();
 	setup();
 	gsap.set(document.body, drawerVars());
@@ -749,6 +749,8 @@ function updateChrome() {
 		tab.style.setProperty('--tab-shift', `${Math.round(shift)}px`);
 	});
 	document.body.dataset.currentAct = current.trigger.trigger.dataset.act;
+	// the cards under the current one, which fade as the drawer opens
+	acts.forEach((panel, k) => panel.classList.toggle('is-under', k < currentAct));
 	updateSpeakerNext();
 }
 
@@ -758,6 +760,20 @@ function updateChrome() {
 const tocList = document.getElementById('drawer-toc');
 const tocNav = tocList.closest('.drawer-toc');
 tocNav.addEventListener('pointerleave', () => tocNav.classList.remove('is-resting'));
+
+// On small screens the list button pins the folded index open, and folds it
+// again (css/talk.css). With a pointer, folding also rests it, or the
+// pointer over it would hold it open.
+const tocPin = tocNav.querySelector('.toc-pin');
+function setTocPinned(isPinned) {
+	tocNav.classList.toggle('is-pinned', isPinned);
+	tocPin.setAttribute('aria-expanded', String(isPinned));
+	if (!isPinned) tocNav.classList.add('is-resting');
+}
+tocPin.addEventListener('click', (event) => {
+	setTocPinned(!tocNav.classList.contains('is-pinned'));
+	if (event.detail > 0) tocPin.blur();
+});
 const tocLinks = new Map(); // beat id → link
 const frameNames = new Map(); // beat id → { title, number }, e.g. Melody, 2.2
 
@@ -791,6 +807,8 @@ function tocLink(id, label, className, number) {
 			// pointer is still over it, until the pointer leaves
 			tocNav.classList.add('is-resting');
 		}
+		// a pinned index folds once an entry is picked, so the notes show
+		if (tocNav.classList.contains('is-pinned')) setTocPinned(false);
 	});
 	tocLinks.set(id, link);
 	return link;
@@ -833,7 +851,7 @@ acts.forEach((panel, k) => {
 // centre sits, from the card's left edge, sets how far: --num-centre.
 // Measured where it shows, less whatever slide it has now, so it can be
 // measured folded, open or mid-slide.
-const railMode = window.matchMedia('(min-width: 700px) and (max-width: 1024px) and (hover: hover)');
+const railMode = window.matchMedia('(min-width: 700px) and (max-width: 1024px)');
 function measureTocNumbers() {
 	if (!railMode.matches) return;
 	const card = tocNav.getBoundingClientRect().left;
@@ -907,7 +925,7 @@ function drawerIsOpen() {
 }
 const drawerPush = () => (drawerIsOpen() && phone.matches ? notesDrawer.offsetWidth : 0);
 const drawerScale = () => (drawerIsOpen() && !phone.matches ? 1 - notesDrawer.offsetWidth / document.documentElement.clientWidth : 1);
-const drawerVars = () => ({ '--drawer-push': `${drawerPush()}px`, '--drawer-scale': drawerScale() });
+const drawerVars = () => ({ '--drawer-push': `${drawerPush()}px`, '--drawer-scale': drawerScale(), '--stack-collapse': drawerIsOpen() ? 1 : 0 });
 
 // Frames are the act openers and scenes, not the reveal steps inside a scene.
 function slideFrames() {
@@ -998,7 +1016,9 @@ function updateSpeakerNext() {
 			return;
 		}
 		speakerWantedId = null;
-		fadeSpeakerNext(0, 0.45, () => {
+		// quickly as the drawer closes, before the growing card can carry it
+		// down the window
+		fadeSpeakerNext(0, drawerIsOpen() ? 0.45 : 0.15, () => {
 			if (speakerWantedId !== null) return;
 			document.body.classList.remove('is-speaker');
 			speakerNext.replaceChildren();
@@ -1006,6 +1026,11 @@ function updateSpeakerNext() {
 		});
 		return;
 	}
+
+	// As the drawer opens, the preview waits until the cards have all but
+	// settled, rather than riding up the window with them.
+	const opening = drawerTl && drawerTl.progress() < 0.5;
+	if (opening && !document.body.classList.contains('is-speaker')) return;
 
 	if (speakerWantedId !== frame.id) {
 		const incoming = frame.id;

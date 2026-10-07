@@ -973,6 +973,8 @@
 		</button>
 		<aside id="notes-drawer" aria-label="Notes and index">
 			<nav class="drawer-column drawer-toc" aria-label="Index">
+				<!-- on small screens, pins the folded index open (js/site.js) -->
+				<button class="toc-pin" type="button" aria-expanded="false" aria-controls="drawer-toc" aria-label="Index"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h.01M2.5 8h.01M2.5 12h.01M6 4h7.5M6 8h7.5M6 12h7.5" /></svg></button>
 				<h2 class="drawer-heading">Index</h2>
 				<ol id="drawer-toc"></ol>
 			</nav>
