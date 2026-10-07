@@ -167,7 +167,6 @@
 	--font-sans: 'Aileron', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 	--font-serif: 'Libre Baskerville', Baskerville, 'Times New Roman', serif;
-	--hairline: rgba(0, 0, 0, 0.14);
 
 	/* ---- theme tokens: the one place these values live. system.html and
 	   scripts/normalize-personas.mjs read them from here. ---- */
@@ -192,6 +191,13 @@
 	--ramp-soft: 28%;
 	--ramp-wash: 10%;
 	--ramp-paper: 0%;
+
+	/* greys: the neutrals beside the act colours, lightest first, named
+	   --grey-<step>. Rules are light so they frame without competing with
+	   the act colours; text greys stay ≥ 7:1 (AAA) on white. */
+	--grey-300: #d1d1d1; /* rules: the index card, the footer, the cards beside the open drawer, system.html's dividers */
+	--grey-600: #555555; /* secondary text */
+	--grey-800: #333333; /* body text in system.html */
 }
 
 body {
@@ -1154,6 +1160,12 @@ aside.notes {
 	opacity: calc(1 - var(--stack-collapse));
 }
 
+/* beside the open drawer the cards' outlines turn to the light rule grey,
+   in step with the drawer, like the index card's */
+.act-panel {
+	border-color: color-mix(in srgb, var(--grey-300) calc(var(--stack-collapse) * 100%), var(--act-color));
+}
+
 /* ScrollTrigger's pin spacers copy a card's z-index but don't slide with it,
    so on the last act one would sit over the uncovered drawer; they're only
    wrappers, so clicks go through them (the cards inside still take theirs) */
@@ -1204,7 +1216,7 @@ aside.notes {
 	--card-inset-left: 1px;
 	--pad-left: calc(var(--title-left) - var(--card-inset-left) - 1px);
 	margin: 0 0 0 var(--card-inset-left);
-	border: 1px solid currentColor;
+	border: 1px solid var(--grey-300);
 	border-bottom: 0;
 	border-radius: var(--corner) var(--corner) 0 0;
 }
@@ -1214,19 +1226,22 @@ aside.notes {
 .drawer-notes {
 	--pad-left: 2rem;
 	padding-top: calc(1px + 1.5rem);
+	/* as far below the footer as its text sits in from the side */
+	padding-bottom: var(--pad-left);
 	display: flex;
 	flex-direction: column;
 }
 
 /* the link to system.html, below the notes however long they run. A rule
    above it runs the column's full width, out through its padding, from the
-   index card's edge to the slides beside the drawer. */
+   index card's edge to the slides beside the drawer. Its text sits as far
+   below the rule as it does in from the side and up from the bottom. */
 .drawer-footer {
 	margin: auto calc(-1 * var(--pad-right)) 0 calc(-1 * var(--pad-left));
-	padding: 1.5rem var(--pad-right) 0 var(--pad-left);
-	border-top: 1px solid #000;
+	padding: var(--pad-left) var(--pad-right) 0 var(--pad-left);
+	border-top: 1px solid var(--grey-300);
 	font-size: 0.8125rem; /* 13px */
-	color: #555;
+	color: var(--grey-600);
 }
 
 .drawer-footer p + p {
@@ -1299,7 +1314,7 @@ aside.notes {
 
 #notes-drawer-content small {
 	font-size: 0.8125rem; /* 13px */
-	color: #555;
+	color: var(--grey-600);
 }
 
 #notes-drawer-content a {
@@ -1337,13 +1352,13 @@ aside.notes {
 	border-left: 3px solid transparent;
 	/* highlights start under the bar, not 3px in from it */
 	background-origin: border-box;
-	/* the hover highlight, drawn out from the left and back. Eased in and
-	   out alike: an ease-out front-loads the growth, so it would seem to
-	   snap on and only visibly animate away. */
+	/* the hover highlight, drawn out from the left and back, easing to a
+	   stop. A cubic, not the deck's expo: that front-loads the growth so
+	   much it seems to snap on. */
 	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 8%, white), transparent);
 	background-repeat: no-repeat;
 	background-size: 0% 100%;
-	transition: background-size 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+	transition: background-size 0.5s cubic-bezier(0.33, 1, 0.68, 1);
 	color: var(--act-color);
 	text-decoration: none;
 }
@@ -1436,7 +1451,7 @@ body.is-speaker .speaker-next {
 		--pad-left: 0.5rem;
 		--pad-right: 0.5rem;
 		--card-inset-top: 0.75rem;
-		border-bottom: 1px solid currentColor;
+		border-bottom: 1px solid var(--grey-300);
 		border-radius: var(--corner);
 	}
 

@@ -954,9 +954,9 @@ function placeSpeakerNext() {
 	const panel = (beat?.scene ?? beat?.opener)?.closest('.act-panel');
 	if (!panel || panel === speakerNext) return;
 	const box = panel.getBoundingClientRect();
-	// The 2px card border sits fully below the current slide, so the slide
-	// above doesn't cover it.
-	speakerNext.style.top = `${box.bottom + 2}px`;
+	// Cards have no bottom border, so its top border meets the slide's
+	// bottom edge directly: one rule between them, no gap.
+	speakerNext.style.top = `${box.bottom}px`;
 	speakerNext.style.left = `${box.left}px`;
 	speakerNext.style.width = `${panel.offsetWidth}px`;
 	speakerNext.style.height = `${panel.offsetHeight}px`;

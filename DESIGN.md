@@ -7,7 +7,7 @@ and the rest of the repo reads it from there:
 
 | What | Source of truth | Shown live in |
 |---|---|---|
-| Act colours (`--act-*`), illustration ramp (`--ramp-*`), fonts, type styles | `css/talk.css` | `system.html` |
+| Act colours (`--act-*`), greys (`--grey-*`), illustration ramp (`--ramp-*`), fonts, type styles | `css/talk.css` | `system.html` |
 | Acts, scenes, personas and which illustration each uses | `index.html` | `system.html` |
 | Persona illustrations | `media/personas/originals/` → `npm run personas` → `media/personas/` | `system.html` |
 

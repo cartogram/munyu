@@ -36,7 +36,7 @@
 				font-size: 1rem;
 				line-height: 1.5;
 				max-width: 44rem;
-				color: #333;
+				color: var(--grey-800);
 			}
 
 			.ts-section {
@@ -76,7 +76,7 @@
 			.ts-face-meta {
 				font-size: 0.8rem;
 				line-height: 1.5;
-				color: #333;
+				color: var(--grey-800);
 			}
 
 			.ts-row {
@@ -85,7 +85,7 @@
 				gap: 2rem;
 				align-items: start;
 				padding: 2rem 0;
-				border-bottom: 1px solid var(--hairline);
+				border-bottom: 1px solid var(--grey-300);
 			}
 
 			@media (max-width: 699px) {
@@ -110,7 +110,7 @@
 			.ts-spec code {
 				display: block;
 				margin-top: 0.5rem;
-				color: #333;
+				color: var(--grey-800);
 				white-space: pre-wrap;
 			}
 
@@ -128,7 +128,7 @@
 				align-items: center;
 				margin-top: 1rem;
 				padding-top: 0.75rem;
-				border-top: 1px solid var(--hairline);
+				border-top: 1px solid var(--grey-300);
 				font-variant-numeric: tabular-nums;
 			}
 
@@ -253,7 +253,7 @@
 			}
 
 			.ts-swatch {
-				border: 1px solid var(--hairline);
+				border: 1px solid var(--grey-300);
 				border-radius: 10px;
 				padding: 1.25rem;
 				color: var(--act-color);
@@ -284,7 +284,7 @@
 				overflow: hidden;
 				font-size: 0.8rem;
 				margin-bottom: 1.5rem;
-				border: 1px solid var(--hairline);
+				border: 1px solid var(--grey-300);
 				border-radius: 10px;
 			}
 
@@ -322,7 +322,7 @@
 
 			.ts-illustrations figure {
 				margin: 0;
-				border: 1px solid var(--hairline);
+				border: 1px solid var(--grey-300);
 				border-radius: 10px;
 				overflow: hidden;
 			}
@@ -348,7 +348,7 @@
 
 			.ts-illustrations figcaption span {
 				font-size: 0.8rem;
-				color: #555;
+				color: var(--grey-600);
 			}
 
 			/* slide templates: a wireframe of labelled areas beside the real slide,
@@ -358,7 +358,7 @@
 				grid-template-columns: 1fr 1fr;
 				gap: 1.5rem 2rem;
 				padding: 2rem 0 2.5rem;
-				border-bottom: 1px solid var(--hairline);
+				border-bottom: 1px solid var(--grey-300);
 			}
 
 			@media (max-width: 899px) {
@@ -388,7 +388,7 @@
 				position: relative;
 				overflow: hidden;
 				border-radius: 6px;
-				box-shadow: 0 0 0 1px var(--hairline);
+				box-shadow: 0 0 0 1px var(--grey-300);
 			}
 
 			.ts-slide,
@@ -717,6 +717,16 @@
 		</section>
 
 		<section class="ts-section">
+			<h2>Greys</h2>
+			<p class="ts-note">
+				The neutrals beside the act colours (<code>--grey-*</code>), lightest first: light ones for rules
+				(this page's dividers, the index card, the footer, the cards beside the open drawer), dark ones for
+				secondary text, which should pass AAA on white.
+			</p>
+			<div class="ts-swatches" id="ts-greys"></div>
+		</section>
+
+		<section class="ts-section">
 			<h2>Illustrations</h2>
 			<p class="ts-note">
 				Every persona illustration in the deck, each in its act's colour.
@@ -810,12 +820,32 @@
 					<div class="ts-swatch-meta">${token}<br />${ratio.toFixed(2)} : 1 · ${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
 			}
 
-			// ---- Illustrations, built from the deck ---------------------------------
-			// The ramp steps are every --ramp-* token on :root, in source order.
-			const rampSteps = [...document.styleSheets]
+			// ---- Greys: every --grey-* token on :root, in source order --------------
+			const rootTokens = (prefix) => [...document.styleSheets]
 				.flatMap((sheet) => [...sheet.cssRules])
 				.filter((rule) => rule.selectorText === ':root')
-				.flatMap((rule) => [...rule.style].filter((prop) => prop.startsWith('--ramp-')));
+				.flatMap((rule) => [...rule.style].filter((prop) => prop.startsWith(prefix)));
+			for (const prop of rootTokens('--grey-')) {
+				const value = root.getPropertyValue(prop).trim();
+				const swatch = document.createElement('div');
+				swatch.className = 'ts-swatch';
+				swatch.style.setProperty('--act-color', '#000');
+				// the grey as rgb(), for its contrast as text
+				const probe = document.createElement('span');
+				probe.style.color = value;
+				document.body.append(probe);
+				const ratio = contrastOnWhite(getComputedStyle(probe).color);
+				probe.remove();
+				swatch.innerHTML = `
+					<div class="ts-swatch-chip" style="background: var(${prop})"></div>
+					<div class="ts-swatch-name">${value}</div>
+					<div class="ts-swatch-meta">${prop}<br />${ratio.toFixed(2)} : 1${ratio >= 7 ? ' · AAA' : ratio >= 4.5 ? ' · AA' : ''}</div>`;
+				document.getElementById('ts-greys').append(swatch);
+			}
+
+			// ---- Illustrations, built from the deck ---------------------------------
+			// The ramp steps are every --ramp-* token on :root, in source order.
+			const rampSteps = rootTokens('--ramp-');
 			const firstPersonaAct = source.querySelector('.persona-portrait')?.closest('[data-act]')?.dataset.act;
 			const ramp = document.getElementById('ts-ramp');
 			ramp.style.setProperty('--act-color', `var(--act-${firstPersonaAct})`);
