@@ -675,19 +675,18 @@ window.addEventListener('popstate', () => {
 
 let currentSceneNotes = null;
 
-// One paragraph per <p> or <li> in the scene's notes (or the notes' whole text).
+// The scene's notes as written, tags and all; notes of bare text become one
+// paragraph.
 function renderDrawer() {
-	const paragraphs = currentSceneNotes
-		? [...(currentSceneNotes.querySelectorAll('p, li').length ? currentSceneNotes.querySelectorAll('p, li') : [currentSceneNotes])]
-		: [];
-	const texts = paragraphs.map((el) => el.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
-	notesDrawerContent.replaceChildren(
-		...(texts.length ? texts : ['No notes for this section.']).map((text) => {
-			const p = document.createElement('p');
-			p.textContent = text;
-			return p;
-		}),
-	);
+	const notes = currentSceneNotes;
+	const text = notes?.textContent.replace(/\s+/g, ' ').trim();
+	if (text && notes.firstElementChild) {
+		notesDrawerContent.replaceChildren(...[...notes.childNodes].map((node) => node.cloneNode(true)));
+		return;
+	}
+	const p = document.createElement('p');
+	p.textContent = text || 'No notes for this section.';
+	notesDrawerContent.replaceChildren(p);
 }
 
 let currentScene;

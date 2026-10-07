@@ -1244,9 +1244,41 @@ aside.notes {
 	color: var(--act-color, #000);
 }
 
-#notes-drawer-content p {
+#notes-drawer-content :is(p, ul, ol) {
 	max-width: 60ch;
 	margin: 0 0 1em;
+}
+
+#notes-drawer-content :is(ul, ol) {
+	padding-left: 1.2em;
+}
+
+#notes-drawer-content ul {
+	list-style: disc;
+}
+
+#notes-drawer-content ol {
+	list-style: decimal;
+}
+
+#notes-drawer-content li + li {
+	margin-top: 0.3em;
+}
+
+/* emphasis is bold: <em> stays upright (DESIGN.md) */
+#notes-drawer-content :is(em, strong) {
+	font-weight: 700;
+}
+
+#notes-drawer-content small {
+	font-size: 0.8125rem; /* 13px */
+	color: #555;
+}
+
+#notes-drawer-content a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
 }
 
 #drawer-toc,
