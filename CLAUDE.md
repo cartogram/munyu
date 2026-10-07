@@ -22,6 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `system.html`: the live specimen — type, act colours, illustrations and every layout, built from `css/talk.css` and `index.html` at runtime.
 - `DESIGN.md`: the design rules and how to add a persona, act or media file. Read it before changing the look.
 - `scripts/personas/`: each persona illustration's edits (`<scene>.mjs`), the shared drawing helpers (`draw.mjs`) and tools to inspect and render SVGs (`tools/`). Use the `persona-illustration` skill to add, change or animate an illustration.
+- `public/`: the favicon, the Apple touch icon and the share image, copied as-is to the site root. The share image is the title slide at 1200×630; regenerate it with `node scripts/cdp/og-image.mjs` (dev server on 8123) when the title slide changes.
 - `docs/plans/`: design and implementation notes for the scrollytelling build.
 
 ## Code style
