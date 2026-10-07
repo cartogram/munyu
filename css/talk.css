@@ -1465,8 +1465,9 @@ body.is-speaker .speaker-next {
 
 /* small screens (up to 1024px): the index folds to a rail of its numbers,
    so the notes get its width, and opens over the notes (on phones, the
-   window's full width). The menu button at the top of the rail opens it and
-   folds it again (.is-pinned, js/site.js); picking an entry folds it too. With a pointer it also opens
+   window's full width). The pin button at the top of the rail pins it open
+   and unpins it (.is-pinned, js/site.js); on phones, picking an entry
+   unpins it too. With a pointer it also opens
    while the pointer or focus is on it, at once, and closes a moment after
    the pointer leaves, so cutting a corner on the way to a title doesn't snap
    it shut; a click folds it (.is-resting) until the pointer leaves. Its
@@ -1478,11 +1479,10 @@ body.is-speaker .speaker-next {
 }
 
 @media (max-width: 1024px) {
-	/* the menu button, placed by each layout: just its icon, no disc. Three
-	   bars (Lucide's menu) in the rule grey, the current act's colour while
-	   hovered or pressed; they turn to × while the index is open, as the
-	   toggle's + does, and the colours swap: the act's, grey while hovered
-	   or pressed. */
+	/* the pin button, placed by each layout: just its icon, no disc. It
+	   shows what it is, and on hover (or keyboard focus) what it will do:
+	   the menu, turning to a pin; pinned, the pin, turning to the pin struck
+	   through. Always in the current act's colour; only the icon changes. */
 	.toc-pin {
 		display: grid;
 		place-items: center;
@@ -1490,41 +1490,33 @@ body.is-speaker .speaker-next {
 		height: var(--toggle-size);
 		padding: 0;
 		background: none;
-		color: var(--grey-300);
+		color: var(--act-color, #000);
 		border: 0;
 		cursor: pointer;
-		transition: color 0.2s;
 	}
 
-	.toc-pin:active,
-	.toc-pin[aria-expanded='true'] {
-		color: var(--act-color, #000);
-	}
-
-	.toc-pin[aria-expanded='true']:active {
-		color: var(--grey-300);
-	}
 
 	.toc-pin svg {
 		grid-area: 1 / 1;
 		width: 17px;
 		height: 17px;
-		transition: opacity 0.2s, rotate 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+		transition: opacity 0.2s;
 	}
 
-	/* the x, waiting as a +, as on the notes toggle */
-	.toc-pin .toc-pin-close {
-		opacity: 0;
-		rotate: 45deg;
-	}
-
-	.toc-pin[aria-expanded='true'] .toc-pin-list {
+	.toc-pin svg:not(.toc-pin-menu),
+	.toc-pin[aria-expanded='true'] .toc-pin-menu {
 		opacity: 0;
 	}
 
-	.toc-pin[aria-expanded='true'] .toc-pin-close {
+	.toc-pin[aria-expanded='true'] .toc-pin-on,
+	.toc-pin:focus-visible:not([aria-expanded='true']) .toc-pin-on,
+	.toc-pin[aria-expanded='true']:focus-visible .toc-pin-off {
 		opacity: 1;
-		rotate: 90deg;
+	}
+
+	.toc-pin:focus-visible .toc-pin-menu,
+	.toc-pin[aria-expanded='true']:focus-visible .toc-pin-on {
+		opacity: 0;
 	}
 
 	.toc-pin:focus-visible {
@@ -1653,15 +1645,18 @@ body.is-speaker .speaker-next {
 }
 
 /* with a pointer, also open while it or focus is on the index; and the
-   menu button's hover colours (not on touch, where a tap leaves :hover
-   stuck on and would grey the × as it appears) */
+   pin button's hover icons (not on touch, where a tap leaves :hover stuck
+   on, and the button would show what it will do instead of what it is) */
 @media (max-width: 1024px) and (hover: hover) {
-	.toc-pin:hover {
-		color: var(--act-color, #000);
+
+	.toc-pin:hover .toc-pin-menu,
+	.toc-pin[aria-expanded='true']:hover .toc-pin-on {
+		opacity: 0;
 	}
 
-	.toc-pin[aria-expanded='true']:hover {
-		color: var(--grey-300);
+	.toc-pin:hover:not([aria-expanded='true']) .toc-pin-on,
+	.toc-pin[aria-expanded='true']:hover .toc-pin-off {
+		opacity: 1;
 	}
 
 	.drawer-toc:is(:hover, :focus-within):not(.is-resting) {
@@ -1684,7 +1679,6 @@ body.is-speaker .speaker-next {
 
 @media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
 	.drawer-toc,
-	.toc-pin,
 	.toc-pin svg,
 	.drawer-toc > *,
 	.drawer-toc :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {

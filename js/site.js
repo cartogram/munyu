@@ -763,13 +763,14 @@ const tocList = document.getElementById('drawer-toc');
 const tocNav = tocList.closest('.drawer-toc');
 tocNav.addEventListener('pointerleave', () => tocNav.classList.remove('is-resting'));
 
-// On small screens the menu button pins the folded index open, and folds it
-// again (css/talk.css). With a pointer, folding also rests it, or the
+// On small screens the pin button pins the folded index open, and unpins it
+// (css/talk.css). With a pointer, folding also rests it, or the
 // pointer over it would hold it open.
 const tocPin = tocNav.querySelector('.toc-pin');
 function setTocPinned(isPinned, rest = true) {
 	tocNav.classList.toggle('is-pinned', isPinned);
 	tocPin.setAttribute('aria-expanded', String(isPinned));
+	tocPin.setAttribute('aria-label', isPinned ? 'Unpin the index' : 'Pin the index open');
 	if (!isPinned && rest) tocNav.classList.add('is-resting');
 }
 tocPin.addEventListener('click', (event) => {
@@ -809,8 +810,9 @@ function tocLink(id, label, className, number) {
 			// pointer is still over it, until the pointer leaves
 			tocNav.classList.add('is-resting');
 		}
-		// a pinned index folds once an entry is picked, so the notes show
-		if (tocNav.classList.contains('is-pinned')) setTocPinned(false);
+		// a pinned index stays open, except on a phone, where it covers the
+		// notes: there it folds once an entry is picked, so they show
+		if (phone.matches && tocNav.classList.contains('is-pinned')) setTocPinned(false);
 	});
 	tocLinks.set(id, link);
 	return link;
@@ -1069,8 +1071,9 @@ speakerRoom.addEventListener('change', () => updateSpeakerNext());
 // wherever they are, so an interrupted toggle turns around smoothly.
 function setDrawerOpen(isOpen) {
 	notesDrawer.classList.toggle('is-open', isOpen);
-	// the drawer reopens on the notes, the index folded
-	if (!isOpen) setTocPinned(false, false);
+	// on a phone the drawer reopens on the notes, the index folded;
+	// elsewhere a pinned index stays pinned
+	if (!isOpen && phone.matches) setTocPinned(false, false);
 	notesToggle.setAttribute('aria-expanded', String(isOpen));
 	if (isOpen) {
 		closeSpotlight();
