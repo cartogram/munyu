@@ -1530,7 +1530,9 @@ body.is-speaker .speaker-next {
 	width: 44px;
 	height: 44px;
 	box-sizing: border-box;
-	transform: translate(-50%, -50%);
+	/* centred by margin, not transform: the build folds a rule's scale into
+	   its transform, which the icon states' scale can't then undo */
+	margin: -22px 0 0 -22px;
 	background: #fff;
 	color: var(--act-color, #000);
 	border: 1.5px solid currentColor;
