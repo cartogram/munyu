@@ -1218,10 +1218,13 @@ aside.notes {
 	flex-direction: column;
 }
 
-/* the link to system.html, below the notes however long they run */
+/* the link to system.html, below the notes however long they run. A rule
+   above it runs the column's full width, out through its padding, from the
+   index card's edge to the slides beside the drawer. */
 .drawer-footer {
-	margin-top: auto;
-	padding-top: 1.5rem;
+	margin: auto calc(-1 * var(--pad-right)) 0 calc(-1 * var(--pad-left));
+	padding: 1.5rem var(--pad-right) 0 var(--pad-left);
+	border-top: 1px solid #000;
 	font-size: 0.8125rem; /* 13px */
 	color: #555;
 }
@@ -1334,11 +1337,13 @@ aside.notes {
 	border-left: 3px solid transparent;
 	/* highlights start under the bar, not 3px in from it */
 	background-origin: border-box;
-	/* the hover highlight, drawn out from the left and back */
+	/* the hover highlight, drawn out from the left and back. Eased in and
+	   out alike: an ease-out front-loads the growth, so it would seem to
+	   snap on and only visibly animate away. */
 	background-image: linear-gradient(to right, color-mix(in srgb, var(--act-color) 8%, white), transparent);
 	background-repeat: no-repeat;
 	background-size: 0% 100%;
-	transition: background-size 0.3s cubic-bezier(0.16, 1, 0.3, 1); /* the deck's expo.out */
+	transition: background-size 0.4s cubic-bezier(0.65, 0, 0.35, 1);
 	color: var(--act-color);
 	text-decoration: none;
 }
@@ -1487,8 +1492,8 @@ body.is-speaker .speaker-next {
 	}
 
 	/* a bulleted list on the Index heading's line, straight under the notes
-	   toggle (left of the heading's text); filled while the index is pinned
-	   open */
+	   toggle (left of the heading's text); on a filled disc while the index
+	   is pinned open */
 	.toc-pin {
 		position: absolute;
 		top: calc(1.5rem + (1rem * 1.4 - var(--toggle-size)) / 2);
@@ -1499,9 +1504,9 @@ body.is-speaker .speaker-next {
 		width: var(--toggle-size);
 		height: var(--toggle-size);
 		padding: 0;
-		background: #fff;
+		background: none;
 		color: inherit;
-		border: 1.5px solid currentColor;
+		border: 0;
 		border-radius: 50%;
 		cursor: pointer;
 	}
@@ -1511,8 +1516,8 @@ body.is-speaker .speaker-next {
 	}
 
 	.toc-pin svg {
-		width: 14px;
-		height: 14px;
+		width: 17.5px;
+		height: 17.5px;
 		fill: none;
 		stroke: currentColor;
 		stroke-width: 1.75;

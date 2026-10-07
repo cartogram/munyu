@@ -458,9 +458,11 @@ function rebuild() {
 	// have resized).
 	drawerTl?.progress(1);
 	gsap.set(document.body, { '--drawer-push': '0px', '--drawer-scale': 1, '--stack-collapse': 0 });
+	gsap.set(acts, { '--drawer-scale': 1 });
 	mm?.revert();
 	setup();
 	gsap.set(document.body, drawerVars());
+	gsap.set(acts, { '--drawer-scale': (i, panel) => cardScale(panel) });
 	const same = beat && beatById(beat.id);
 	if (same) window.scrollTo(0, beatPosition(same) + offset);
 	updateChrome();
@@ -926,6 +928,10 @@ function drawerIsOpen() {
 const drawerPush = () => (drawerIsOpen() && phone.matches ? notesDrawer.offsetWidth : 0);
 const drawerScale = () => (drawerIsOpen() && !phone.matches ? 1 - notesDrawer.offsetWidth / document.documentElement.clientWidth : 1);
 const drawerVars = () => ({ '--drawer-push': `${drawerPush()}px`, '--drawer-scale': drawerScale(), '--stack-collapse': drawerIsOpen() ? 1 : 0 });
+// Each card is a stack step narrower than the one before, so one scale for
+// all would leave the later cards' left edges short of the drawer. Each
+// shrinks by its own, to meet the drawer's edge exactly.
+const cardScale = (panel) => (drawerIsOpen() && !phone.matches ? (document.documentElement.clientWidth - notesDrawer.offsetWidth) / panel.offsetWidth : 1);
 
 // Frames are the act openers and scenes, not the reveal steps inside a scene.
 function slideFrames() {
@@ -956,6 +962,8 @@ function placeSpeakerNext() {
 	speakerNext.style.height = `${panel.offsetHeight}px`;
 	speakerNext.style.setProperty('--card-width', `${panel.clientWidth}px`);
 	speakerNext.style.setProperty('--stack', getComputedStyle(panel).getPropertyValue('--stack'));
+	// the card's own shrink, so the preview is exactly as wide
+	speakerNext.style.setProperty('--drawer-scale', getComputedStyle(panel).getPropertyValue('--drawer-scale'));
 }
 
 function fillSpeakerNext(frame) {
@@ -1080,12 +1088,14 @@ function setDrawerOpen(isOpen) {
 		drawerTl
 			.set(notesDrawer, { visibility: 'visible' })
 			.to(document.body, { ...drawerVars(), ease: 'expo.out', duration: 0.6 * speed }, 0)
+			.to(acts, { '--drawer-scale': (i, panel) => cardScale(panel), ease: 'expo.out', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 45, ease: 'power3.out', duration: 0.4 * speed }, 0);
 		if (activeTocLink) centreInDrawer(activeTocLink);
 	} else {
 		drawerTl
 			// eased out as well as in, so the slides settle back rather than snap
 			.to(document.body, { ...drawerVars(), ease: 'power3.inOut', duration: 0.6 * speed }, 0)
+			.to(acts, { '--drawer-scale': (i, panel) => cardScale(panel), ease: 'power3.inOut', duration: 0.6 * speed }, 0)
 			.to(drawerIcon, { rotation: 0, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
 			// hidden once covered, so its links leave the tab order
 			.set(notesDrawer, { visibility: 'hidden' });
