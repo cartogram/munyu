@@ -1227,7 +1227,8 @@ aside.notes {
 
 .drawer-footer a:hover {
 	text-decoration: underline;
-	text-underline-offset: 0.15em;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.2em;
 }
 
 /* a diagonal arrow up and to the right, beside System */
@@ -1338,7 +1339,8 @@ aside.notes {
 
 .toc-link:hover .toc-title {
 	text-decoration: underline;
-	text-underline-offset: 0.15em;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.2em;
 }
 
 /* the current scene */
@@ -1623,8 +1625,8 @@ main {
 
 .video-play:hover {
 	text-decoration: underline;
-	text-decoration-thickness: max(1px, calc(2 * var(--u)));
-	text-underline-offset: 0.15em;
+	text-decoration-thickness: max(2px, 0.08em);
+	text-underline-offset: 0.18em;
 }
 
 .video-play:focus-visible {
