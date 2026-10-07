@@ -19,6 +19,18 @@
 	</head>
 
 	<body>
+		<!-- the icon set: drawn once here, used everywhere with <use> (.icon in
+		     css/talk.css; shown in system.html), all on a 24px grid. Lucide's x,
+		     menu (its bars closer and as wide as the +) and play (filled); the two arrows are
+		     the deck's own, with a long shaft and a short head. Turned 45°, the
+		     x is the notes toggle's +. -->
+		<svg class="icon-sprite" aria-hidden="true">
+			<symbol id="icon-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></symbol>
+			<symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16M13.5 5.5 20 12l-6.5 6.5" /></symbol>
+			<symbol id="icon-arrow-up-right" viewBox="0 0 24 24"><path d="M5 19 19 5M8.5 5H19v10.5" /></symbol>
+			<symbol id="icon-menu" viewBox="0 0 24 24"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" /></symbol>
+			<symbol id="icon-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" fill="currentColor" /></symbol>
+		</svg>
 		<main>
 			<section data-act="hypothesis" class="act-panel">
 				<div class="act-panel-inner">
@@ -825,17 +837,7 @@
 						<h1 class="act-title">Q&amp;A</h1>
 					</header>
 
-					<section data-scene="backup-qa-intro">
-						<h2><small>Backup &mdash; Q&amp;A</small></h2>
-						<p>Anticipated objections</p>
-						<aside class="notes" hidden>
-							Backup slides for likely questions &mdash; not part of the main flow. Jump here if asked
-							about ownership/agency, fragmentation, adoption, privacy, screen readers and stability, or
-							whether this works today.
-						</aside>
-					</section>
-
-					<section data-scene="doesnt-this-just-hand-more-power">
+					<section data-scene="doesnt-this-just-hand-more-power" data-title="Doesn't this just hand more power?">
 						<blockquote>&ldquo;Doesn't this just hand more power to whoever owns the AI?&rdquo;</blockquote>
 						<p>A generated UI can be empathetic to <em>you</em> &mdash; or to whoever <em>owns</em> it.</p>
 						<aside class="notes" hidden>
@@ -850,7 +852,7 @@
 						</aside>
 					</section>
 
-					<section data-scene="if-everyones-ui-is-different">
+					<section data-scene="if-everyones-ui-is-different" data-title="Don't we lose common ground?">
 						<blockquote>&ldquo;If everyone's UI is different, don't we lose common ground?&rdquo;</blockquote>
 						<p>Real cost. Keep the periphery visible &mdash; personal shouldn't mean sealed.</p>
 						<aside class="notes" hidden>
@@ -865,7 +867,7 @@
 						</aside>
 					</section>
 
-					<section data-scene="will-people-actually-use-this">
+					<section data-scene="will-people-actually-use-this" data-title="Will people actually use this?">
 						<blockquote>&ldquo;Will people actually use this, or just accept the default?&rdquo;</blockquote>
 						<p>The empathy framing sidesteps it &mdash; the default already fits.</p>
 						<aside class="notes" hidden>
@@ -881,7 +883,7 @@
 						</aside>
 					</section>
 
-					<section data-scene="what-about-privacy">
+					<section data-scene="what-about-privacy" data-title="What about privacy?">
 						<blockquote>&ldquo;An interface that knows me that well &mdash; what about my privacy?&rdquo;</blockquote>
 						<p>A real risk. Local models may keep that context on your own device.</p>
 						<aside class="notes" hidden>
@@ -898,7 +900,7 @@
 						</aside>
 					</section>
 
-					<section data-scene="doesnt-a-changing-ui-break-screen-readers">
+					<section data-scene="doesnt-a-changing-ui-break-screen-readers" data-title="Doesn't a changing UI break screen readers?">
 						<blockquote>&ldquo;But a UI that keeps changing breaks screen readers.&rdquo;</blockquote>
 						<p>Right: stability is a basic trait of accessibility and of good design in general. Our answer is memory, and least surprise is actually empathy applied. So hopefully this corrects itself with empathetic interfaces.</p>
 						<aside class="notes" hidden>
@@ -921,7 +923,7 @@
 						</aside>
 					</section>
 
-					<section data-scene="does-this-work-today">
+					<section data-scene="does-this-work-today" data-title="Does this work today?">
 						<blockquote>&ldquo;Does this actually work today?&rdquo;</blockquote>
 						<p>Not quite. Models can generate working interfaces; the plumbing around them still fails.</p>
 						<aside class="notes" hidden>
@@ -967,14 +969,12 @@
 			aria-label="Notes and index"
 			title="Notes and index (N)"
 		>
-			<svg viewBox="0 0 16 16" aria-hidden="true">
-				<path d="M8 2v12M2 8h12" />
-			</svg>
+			<svg class="icon" aria-hidden="true"><use href="#icon-x" /></svg>
 		</button>
 		<aside id="notes-drawer" aria-label="Notes and index">
 			<nav class="drawer-column drawer-toc" aria-label="Index">
 				<!-- on small screens, pins the folded index open (js/site.js) -->
-				<button class="toc-pin" type="button" aria-expanded="false" aria-controls="drawer-toc" aria-label="Index"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h.01M2.5 8h.01M2.5 12h.01M6 4h7.5M6 8h7.5M6 12h7.5" /></svg></button>
+				<button class="toc-pin" type="button" aria-expanded="false" aria-controls="drawer-toc" aria-label="Index"><svg class="icon toc-pin-list" aria-hidden="true"><use href="#icon-menu" /></svg><svg class="icon toc-pin-close" aria-hidden="true"><use href="#icon-x" /></svg></button>
 				<h2 class="drawer-heading">Index</h2>
 				<ol id="drawer-toc"></ol>
 			</nav>
@@ -983,8 +983,8 @@
 				<h2 class="drawer-heading" id="drawer-slide">Notes</h2>
 				<div id="notes-drawer-content"></div>
 				<footer class="drawer-footer">
-					<p>A talk by <a href="https://www.simon-lenz.de/">Simon Lenz<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4.25 2.5H9.5v5.25" /></svg></a><br>&amp; <a href="https://www.cartogram.ca/">Matthew Seccafien<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4.25 2.5H9.5v5.25" /></svg></a></p>
-					<p><a href="system.html">System<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4.25 2.5H9.5v5.25" /></svg></a></p>
+					<p>A talk by <a href="https://www.simon-lenz.de/">Simon Lenz<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a><br>&amp; <a href="https://www.cartogram.ca/">Matthew Seccafien<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
+					<p><a href="system.html">System<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
 				</footer>
 			</section>
 		</aside>
@@ -993,9 +993,9 @@
 		     video, × over
 		     the cards while the drawer or a video is open -->
 		<div id="deck-cursor" aria-hidden="true">
-			<svg class="cursor-next" viewBox="0 0 16 16"><path d="M2 8h12M9 3l5 5-5 5" /></svg>
-			<svg class="cursor-close" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" /></svg>
-			<svg class="cursor-play" viewBox="0 0 16 16"><path d="M5 2.5v11l9-5.5z" /></svg>
+			<svg class="icon cursor-next"><use href="#icon-arrow-right" /></svg>
+			<svg class="icon cursor-close"><use href="#icon-x" /></svg>
+			<svg class="icon cursor-play"><use href="#icon-play" /></svg>
 		</div>
 
 		<script type="module" src="/js/site.js"></script>

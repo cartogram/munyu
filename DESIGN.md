@@ -9,6 +9,7 @@ and the rest of the repo reads it from there:
 |---|---|---|
 | Act colours (`--act-*`), greys (`--grey-*`), illustration ramp (`--ramp-*`), fonts, type styles | `css/talk.css` | `system.html` |
 | Acts, scenes, personas and which illustration each uses | `index.html` | `system.html` |
+| Icons (the `#icon-*` sprite) | `index.html` | `system.html` |
 | Persona illustrations | `media/personas/originals/` → `npm run personas` → `media/personas/` | `system.html` |
 
 `system.html` is the specimen. It styles every sample with the deck's own CSS

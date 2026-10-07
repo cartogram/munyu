@@ -763,14 +763,14 @@ const tocList = document.getElementById('drawer-toc');
 const tocNav = tocList.closest('.drawer-toc');
 tocNav.addEventListener('pointerleave', () => tocNav.classList.remove('is-resting'));
 
-// On small screens the list button pins the folded index open, and folds it
+// On small screens the menu button pins the folded index open, and folds it
 // again (css/talk.css). With a pointer, folding also rests it, or the
 // pointer over it would hold it open.
 const tocPin = tocNav.querySelector('.toc-pin');
-function setTocPinned(isPinned) {
+function setTocPinned(isPinned, rest = true) {
 	tocNav.classList.toggle('is-pinned', isPinned);
 	tocPin.setAttribute('aria-expanded', String(isPinned));
-	if (!isPinned) tocNav.classList.add('is-resting');
+	if (!isPinned && rest) tocNav.classList.add('is-resting');
 }
 tocPin.addEventListener('click', (event) => {
 	setTocPinned(!tocNav.classList.contains('is-pinned'));
@@ -837,7 +837,9 @@ acts.forEach((panel, k) => {
 		// rotating headline's endings)
 		const read = heading?.cloneNode(true);
 		read?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
-		const label = read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
+		// a scene without a heading (the Q&A's questions) names itself in
+		// data-title; failing both, its id stands in
+		const label = read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.title || scene.dataset.scene.replace(/-/g, ' ');
 		const id = `${act}/${scene.dataset.scene}`;
 		const entry = document.createElement('li');
 		entry.append(tocLink(id, label, 'toc-link', `${k + 1}.${i + 1}`));
@@ -853,7 +855,7 @@ acts.forEach((panel, k) => {
 // centre sits, from the card's left edge, sets how far: --num-centre.
 // Measured where it shows, less whatever slide it has now, so it can be
 // measured folded, open or mid-slide.
-const railMode = window.matchMedia('(min-width: 700px) and (max-width: 1024px)');
+const railMode = window.matchMedia('(max-width: 1024px)');
 function measureTocNumbers() {
 	if (!railMode.matches) return;
 	const card = tocNav.getBoundingClientRect().left;
@@ -1067,6 +1069,8 @@ speakerRoom.addEventListener('change', () => updateSpeakerNext());
 // wherever they are, so an interrupted toggle turns around smoothly.
 function setDrawerOpen(isOpen) {
 	notesDrawer.classList.toggle('is-open', isOpen);
+	// the drawer reopens on the notes, the index folded
+	if (!isOpen) setTocPinned(false, false);
 	notesToggle.setAttribute('aria-expanded', String(isOpen));
 	if (isOpen) {
 		closeSpotlight();
@@ -1092,14 +1096,14 @@ function setDrawerOpen(isOpen) {
 			.set(notesDrawer, { visibility: 'visible' })
 			.to(document.body, { ...drawerVars(), ease: 'expo.out', duration: 0.6 * speed }, 0)
 			.to(acts, { '--drawer-scale': (i, panel) => cardScale(panel), ease: 'expo.out', duration: 0.6 * speed }, 0)
-			.to(drawerIcon, { rotation: 45, ease: 'power3.out', duration: 0.4 * speed }, 0);
+			.to(drawerIcon, { rotation: 90, ease: 'power3.out', duration: 0.4 * speed }, 0);
 		if (activeTocLink) centreInDrawer(activeTocLink);
 	} else {
 		drawerTl
 			// eased out as well as in, so the slides settle back rather than snap
 			.to(document.body, { ...drawerVars(), ease: 'power3.inOut', duration: 0.6 * speed }, 0)
 			.to(acts, { '--drawer-scale': (i, panel) => cardScale(panel), ease: 'power3.inOut', duration: 0.6 * speed }, 0)
-			.to(drawerIcon, { rotation: 0, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
+			.to(drawerIcon, { rotation: 45, ease: 'power2.inOut', duration: 0.3 * speed }, 0)
 			// hidden once covered, so its links leave the tab order
 			.set(notesDrawer, { visibility: 'hidden' })
 			.call(() => document.body.classList.remove('is-collapsed'));
@@ -1215,7 +1219,7 @@ function openSpotlight(panel, fromKeyboard) {
 	close.type = 'button';
 	close.className = 'spotlight-close';
 	close.setAttribute('aria-label', 'Close video');
-	close.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" /></svg>';
+	close.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#icon-x" /></svg>';
 	close.addEventListener('click', closeSpotlight);
 	el.append(backdrop, video, close);
 	panel.closest('.act-panel').append(el);

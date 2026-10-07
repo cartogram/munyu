@@ -1089,6 +1089,23 @@ aside.notes {
 
 /* an outlined + in the top band's left-hand corner; turns into a × while
    the drawer is open. Under the pointer the outline grows, the + doesn't. */
+/* the icon set (the sprite at the top of index.html): one stroke for every
+   icon, in the text colour; each use sets only its size */
+.icon {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.icon-sprite {
+	position: absolute;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
 #notes-toggle {
 	position: fixed;
 	top: calc((var(--inset-top) - var(--toggle-size)) / 2);
@@ -1124,13 +1141,12 @@ aside.notes {
 	inset: calc(var(--toggle-size) * -0.07);
 }
 
+/* the x, turned to a +; js/site.js turns it on to 90°, × again, as the
+   drawer opens (GSAP takes this 45° over as its own rotation) */
 #notes-toggle svg {
-	width: 14px;
-	height: 14px;
-	fill: none;
-	stroke: currentColor;
-	stroke-width: 2;
-	stroke-linecap: round;
+	width: 17px;
+	height: 17px;
+	rotate: 45deg;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1268,11 +1284,9 @@ body.is-collapsed .act-panel.is-under {
 	height: 0.85em;
 	margin-left: 0.28em;
 	vertical-align: -0.05em;
-	fill: none;
-	stroke: currentColor;
-	stroke-width: 1.5;
-	stroke-linecap: round;
-	stroke-linejoin: round;
+	/* drawn this small, the set's stroke would thin out; 3 on the 24 grid
+	   keeps it the weight of the text beside it */
+	stroke-width: 3;
 }
 
 .drawer-heading {
@@ -1436,46 +1450,10 @@ body.is-speaker .speaker-next {
 	height: 100%;
 }
 
-/* phones: the drawer fills the window, so the cards slide all the way off
-   it (js/site.js pushes them by its width) and no slide shows. One column:
-   the index takes the top third, the notes the other two, each scrolling on
-   its own; their text sits a few px in from the window's edge rather than
-   lined up with the talk title, as there's no room to spare. */
-@media (max-width: 699px) {
-	#notes-drawer {
-		width: 100vw;
-		grid-template-columns: 1fr;
-		grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
-	}
-
-	/* stacked, the index card closes at the bottom above the notes */
-	.drawer-toc {
-		--pad-left: 0.5rem;
-		--pad-right: 0.5rem;
-		--card-inset-top: 0.75rem;
-		border-bottom: 1px solid var(--grey-300);
-		border-radius: var(--corner);
-	}
-
-	/* that padding is too narrow to hold the numbers, so each sits in the
-	   line before its title instead */
-	.toc-num {
-		position: static;
-		width: auto;
-		text-align: left;
-	}
-
-	.drawer-notes {
-		--pad-left: 0.5rem;
-		--pad-right: 0.5rem;
-		padding-top: 1.25rem;
-	}
-}
-
-/* small screens (700–1024px): the index folds to a rail of its numbers, so
-   the notes get its width, and opens over the notes, full width. The list
-   button at the top of the rail pins it open and folds it again (.is-pinned,
-   js/site.js); picking an entry folds it too. With a pointer it also opens
+/* small screens (up to 1024px): the index folds to a rail of its numbers,
+   so the notes get its width, and opens over the notes (on phones, the
+   window's full width). The menu button at the top of the rail opens it and
+   folds it again (.is-pinned, js/site.js); picking an entry folds it too. With a pointer it also opens
    while the pointer or focus is on it, at once, and closes a moment after
    the pointer leaves, so cutting a corner on the way to a title doesn't snap
    it shut; a click folds it (.is-resting) until the pointer leaves. Its
@@ -1486,10 +1464,70 @@ body.is-speaker .speaker-next {
 	display: none;
 }
 
-@media (min-width: 700px) and (max-width: 1024px) {
+@media (max-width: 1024px) {
+	/* the menu button, placed by each layout: just its icon, no disc. Three
+	   bars (Lucide's menu) in the rule grey, the current act's colour while
+	   hovered or pressed; they turn to × while the index is open, as the
+	   toggle's + does, and the colours swap: the act's, grey while hovered
+	   or pressed. */
+	.toc-pin {
+		display: grid;
+		place-items: center;
+		width: var(--toggle-size);
+		height: var(--toggle-size);
+		padding: 0;
+		background: none;
+		color: var(--grey-300);
+		border: 0;
+		cursor: pointer;
+		transition: color 0.2s;
+	}
+
+	.toc-pin:active,
+	.toc-pin[aria-expanded='true'] {
+		color: var(--act-color, #000);
+	}
+
+	.toc-pin[aria-expanded='true']:active {
+		color: var(--grey-300);
+	}
+
+	.toc-pin svg {
+		grid-area: 1 / 1;
+		width: 17px;
+		height: 17px;
+		transition: opacity 0.2s, rotate 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+	}
+
+	/* the x, waiting as a +, as on the notes toggle */
+	.toc-pin .toc-pin-close {
+		opacity: 0;
+		rotate: 45deg;
+	}
+
+	.toc-pin[aria-expanded='true'] .toc-pin-list {
+		opacity: 0;
+	}
+
+	.toc-pin[aria-expanded='true'] .toc-pin-close {
+		opacity: 1;
+		rotate: 90deg;
+	}
+
+	.toc-pin:focus-visible {
+		outline: 2px solid var(--act-color, #000);
+		outline-offset: 2px;
+		border-radius: 50%;
+	}
+}
+
+@media (max-width: 1024px) {
 	#notes-drawer {
-		/* the numbers, right-aligned in the label's padding, and a little room */
-		--toc-rail: calc(var(--title-left) + 4px);
+		/* centred under the notes toggle (the card starts 1px in, as the
+		   toggle's inset does), so the toggle, the menu icon and the rail's
+		   numbers share one centre line, with the icon as far from each side
+		   as from the top */
+		--toc-rail: calc(2 * (var(--tab-pad) + var(--toggle-size) / 2));
 		--toc-open: 250px;
 		grid-template-columns: var(--toc-rail) minmax(0, 1fr);
 	}
@@ -1500,59 +1538,53 @@ body.is-speaker .speaker-next {
 		z-index: 1;
 		box-sizing: border-box;
 		width: var(--toc-rail);
-		/* no right padding: the contents' own width (below) keeps their
-		   right edge where it was, and the rail is narrower than the padding */
+		/* no side padding: the contents' own width and inset (below) keep
+		   them where they were, and the rail is narrower than the padding */
 		padding-right: 0;
+		padding-left: 0;
+		/* the menu icon sits as far below the card's top as it does in from
+		   its left edge; the notes start level with it (below) */
+		padding-top: 0.75rem;
 		background: #fff;
 		overflow-x: hidden;
 		transition: width 0.2s var(--toc-ease) 0.3s;
 	}
 
-	/* a bulleted list on the Index heading's line, straight under the notes
-	   toggle (left of the heading's text); on a filled disc while the index
-	   is pinned open */
+	/* on the Index heading's line, straight under the notes toggle, left
+	   of the heading's text */
 	.toc-pin {
 		position: absolute;
-		top: calc(1.5rem + (1rem * 1.4 - var(--toggle-size)) / 2);
+		top: calc(0.75rem + (1rem * 1.4 - var(--toggle-size)) / 2);
 		left: calc(var(--inset-left) + var(--tab-pad) - var(--card-inset-left) - 1px);
 		z-index: 1;
-		display: grid;
-		place-items: center;
-		width: var(--toggle-size);
-		height: var(--toggle-size);
-		padding: 0;
-		background: none;
-		color: inherit;
-		border: 0;
-		border-radius: 50%;
-		cursor: pointer;
 	}
 
-	.toc-pin[aria-expanded='true'] {
-		background: currentColor;
+	/* the notes' heading on the Index heading's line, so their baselines
+	   (and the menu icon) line up; 1px for the index card's top border */
+	.drawer-notes {
+		padding-top: calc(1px + 0.75rem);
 	}
 
-	.toc-pin svg {
-		width: 17.5px;
-		height: 17.5px;
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 1.75;
-		stroke-linecap: round;
+	/* the same space again, about 18px of white between the text, under
+	   the Index heading, between the index's acts, and under the notes'
+	   heading (each margin less the leading and padding around its text) */
+	.drawer-toc > .drawer-heading {
+		margin-bottom: 9.5px;
 	}
 
-	.toc-pin[aria-expanded='true'] svg {
-		stroke: #fff;
+	#drawer-toc > li + li {
+		margin-top: 4.5px;
 	}
 
-	.toc-pin:focus-visible {
-		outline: 2px solid currentColor;
-		outline-offset: 2px;
+	.drawer-notes > .drawer-heading {
+		margin-bottom: 12.5px;
 	}
 
-	/* laid out at the open width, whatever the card's width */
+	/* laid out at the open width, whatever the card's width, and inset as
+	   the padding would have */
 	.drawer-toc > .drawer-heading,
 	#drawer-toc {
+		margin-left: var(--pad-left);
 		width: calc(var(--toc-open) - var(--pad-left) - var(--pad-right) - 2px);
 	}
 
@@ -1607,8 +1639,18 @@ body.is-speaker .speaker-next {
 	}
 }
 
-/* with a pointer, also open while it or focus is on the index */
-@media (min-width: 700px) and (max-width: 1024px) and (hover: hover) {
+/* with a pointer, also open while it or focus is on the index; and the
+   menu button's hover colours (not on touch, where a tap leaves :hover
+   stuck on and would grey the × as it appears) */
+@media (max-width: 1024px) and (hover: hover) {
+	.toc-pin:hover {
+		color: var(--act-color, #000);
+	}
+
+	.toc-pin[aria-expanded='true']:hover {
+		color: var(--grey-300);
+	}
+
 	.drawer-toc:is(:hover, :focus-within):not(.is-resting) {
 		width: var(--toc-open);
 		transition-delay: 0s;
@@ -1627,8 +1669,11 @@ body.is-speaker .speaker-next {
 	}
 }
 
-@media (min-width: 700px) and (max-width: 1024px) and (prefers-reduced-motion: reduce) {
+@media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
 	.drawer-toc,
+	.toc-pin,
+	.toc-pin svg,
+	.drawer-toc > *,
 	.drawer-toc :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
 		transition: none;
 	}
@@ -1637,6 +1682,23 @@ body.is-speaker .speaker-next {
 @media (prefers-reduced-motion: reduce) {
 	.toc-link {
 		transition: none;
+	}
+}
+
+/* phones: the drawer fills the window, so the cards slide all the way off
+   it (js/site.js pushes them by its width) and no slide shows. The rail is
+   the same as on other small screens; open, the index covers the window's
+   full width. The notes' text sits closer to the rail, as there's no room
+   to spare. */
+@media (max-width: 699px) {
+	#notes-drawer {
+		width: 100vw;
+		--toc-open: calc(100vw - var(--card-inset-left, 1px));
+	}
+
+	.drawer-notes {
+		--pad-left: 1rem;
+		--pad-right: 1rem;
 	}
 }
 
@@ -1676,13 +1738,8 @@ body.is-speaker .speaker-next {
 
 #deck-cursor svg {
 	grid-area: 1 / 1;
-	width: 18px;
-	height: 18px;
-	fill: none;
-	stroke: currentColor;
-	stroke-width: 2;
-	stroke-linecap: round;
-	stroke-linejoin: round;
+	width: 24px;
+	height: 24px;
 	opacity: 0;
 	transition: opacity 0.15s;
 }
@@ -1691,11 +1748,6 @@ body.is-speaker .speaker-next {
 #deck-cursor[data-icon='close'] .cursor-close,
 #deck-cursor[data-icon='play'] .cursor-play {
 	opacity: 1;
-}
-
-/* ▶ is the one filled icon */
-#deck-cursor .cursor-play {
-	fill: currentColor;
 }
 
 .has-deck-cursor,
@@ -1834,10 +1886,6 @@ main {
 }
 
 .spotlight-close svg {
-	width: 14px;
-	height: 14px;
-	fill: none;
-	stroke: currentColor;
-	stroke-width: 2;
-	stroke-linecap: round;
+	width: 17px;
+	height: 17px;
 }

@@ -246,6 +246,28 @@
 				line-height: inherit;
 			}
 
+			.ts-icons {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+				gap: 1rem;
+			}
+
+			.ts-icon {
+				display: grid;
+				justify-items: start;
+				gap: 0.75rem;
+				padding: 1.25rem;
+				border: 1px solid var(--grey-300);
+				border-radius: 10px;
+				font-size: 0.8rem;
+				line-height: 1.5;
+			}
+
+			.ts-icon svg {
+				width: 24px;
+				height: 24px;
+			}
+
 			.ts-swatches {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
@@ -645,7 +667,7 @@
 				</div>
 				<div class="ts-sample act-panel" data-act="hypothesis">
 					<footer class="drawer-footer">
-						<p><a href="system.html">System<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4.25 2.5H9.5v5.25" /></svg></a></p>
+						<p><a href="system.html">System<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
 					</footer>
 				</div>
 			</div>
@@ -724,6 +746,16 @@
 				secondary text, which should pass AAA on white.
 			</p>
 			<div class="ts-swatches" id="ts-greys"></div>
+		</section>
+
+		<section class="ts-section">
+			<h2>Icons</h2>
+			<p class="ts-note">
+				The deck's icon set: the sprite at the top of <code>index.html</code>, used with
+				<code>&lt;use href="#icon-…"&gt;</code> and styled by <code>.icon</code>, one 2.5 stroke on a 24px
+				grid. Lucide's x, menu and play (filled), and the deck's own two arrows, long in the shaft and short in the head. Turned 45°, the x is the notes toggle's +.
+			</p>
+			<div class="ts-icons" id="ts-icons"></div>
 		</section>
 
 		<section class="ts-section">
@@ -841,6 +873,18 @@
 					<div class="ts-swatch-name">${value}</div>
 					<div class="ts-swatch-meta">${prop}<br />${ratio.toFixed(2)} : 1${ratio >= 7 ? ' · AAA' : ratio >= 4.5 ? ' · AA' : ''}</div>`;
 				document.getElementById('ts-greys').append(swatch);
+			}
+
+			// ---- Icons: the deck's sprite, brought over, and each of its symbols ----
+			const sprite = source.querySelector('.icon-sprite');
+			if (sprite) {
+				document.body.prepend(document.importNode(sprite, true));
+				for (const symbol of sprite.querySelectorAll('symbol')) {
+					const tile = document.createElement('div');
+					tile.className = 'ts-icon';
+					tile.innerHTML = `<svg class="icon" aria-hidden="true"><use href="#${symbol.id}" /></svg><code>#${symbol.id}</code>`;
+					document.getElementById('ts-icons').append(tile);
+				}
 			}
 
 			// ---- Illustrations, built from the deck ---------------------------------
