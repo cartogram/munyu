@@ -1260,10 +1260,23 @@ body.is-collapsed .act-panel.is-under {
 	border-top: 1px solid var(--grey-300);
 	font-size: 0.8125rem; /* 13px */
 	color: var(--grey-600);
+	/* the speakers and the links side by side where they fit, stacked
+	   where they don't */
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 0.75rem 2.5rem;
 }
 
-.drawer-footer p + p {
-	margin-top: 0.75rem;
+.drawer-footer p {
+	margin: 0;
+}
+
+/* two equal columns where they fit (never narrower than their text, so
+   they stack rather than wrap their lines) */
+.drawer-footer p {
+	flex: 1 1 0;
+	min-width: max-content;
 }
 
 .drawer-footer a {
