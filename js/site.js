@@ -780,7 +780,14 @@ tocPin.addEventListener('click', (event) => {
 const tocLinks = new Map(); // beat id → link
 const frameNames = new Map(); // beat id → { title, number }, e.g. Melody, 2.2
 
-function tocLink(id, label, className, number) {
+// Who speaks in a scene, in order, from the badges in its notes: Simon, or
+// Simon then Matt where the other takes over mid-scene.
+function sceneSpeakers(scene) {
+	const names = [...(scene?.querySelectorAll(':scope > aside.notes .speaker') ?? [])].map((badge) => badge.textContent.trim());
+	return names.filter((name, i) => name !== names[i - 1]);
+}
+
+function tocLink(id, label, className, number, speakers = []) {
 	const link = document.createElement('a');
 	link.className = className;
 	link.href = `#${id}`;
@@ -797,7 +804,22 @@ function tocLink(id, label, className, number) {
 	const title = document.createElement('span');
 	title.className = 'toc-title';
 	title.textContent = label;
-	link.append(num, title);
+	// the speakers as initials at the entry's end, floated so a long title
+	// ellipsizes before them; the full name for a screen reader
+	const who = document.createElement('span');
+	who.className = 'toc-speakers';
+	speakers.forEach((name) => {
+		const initial = document.createElement('span');
+		initial.className = 'toc-speaker';
+		initial.title = name;
+		initial.setAttribute('aria-hidden', 'true');
+		initial.textContent = name[0];
+		const read = document.createElement('span');
+		read.className = 'visually-hidden';
+		read.textContent = `, ${name}`;
+		who.append(initial, read);
+	});
+	link.append(num, ...(speakers.length ? [who] : []), title);
 	link.addEventListener('click', (event) => {
 		event.preventDefault();
 		const beat = beatById(id);
@@ -828,7 +850,7 @@ acts.forEach((panel, k) => {
 	if (panel.querySelector('.act-opener')) {
 		// "2.0": the act's own number, in the scenes' form, so the column of
 		// numbers reads as one sequence
-		item.append(tocLink(act, name, 'toc-act toc-link', `${k + 1}.0`));
+		item.append(tocLink(act, name, 'toc-act toc-link', `${k + 1}.0`, sceneSpeakers(panel.querySelector('.act-opener'))));
 		frameNames.set(act, { title: name, number: `${k + 1}` });
 	}
 	const scenes = document.createElement('ol');
@@ -845,7 +867,7 @@ acts.forEach((panel, k) => {
 		const label = scene.dataset.title || read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');
 		const id = `${act}/${scene.dataset.scene}`;
 		const entry = document.createElement('li');
-		entry.append(tocLink(id, label, 'toc-link', `${k + 1}.${i + 1}`));
+		entry.append(tocLink(id, label, 'toc-link', `${k + 1}.${i + 1}`, sceneSpeakers(scene)));
 		scenes.append(entry);
 		frameNames.set(id, { title: label, number: `${k + 1}.${i + 1}` });
 	});

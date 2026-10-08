@@ -1352,6 +1352,26 @@ body.is-collapsed .act-panel.is-under {
 	text-underline-offset: 0.15em;
 }
 
+/* who speaks from here on: a pill in the act's colour at the start of a
+   scene's notes, or where the other speaker takes over mid-scene. Notes
+   only: the asides never show on the slides. The index shows the same
+   speakers as initials (.toc-speaker). */
+#notes-drawer-content .speaker {
+	display: table;
+	margin: 0 0 0.75em;
+	padding: 0.1em 0.75em;
+	border: 2px solid var(--act-color, #000);
+	border-radius: 999px;
+	color: var(--act-color, #000);
+	font-size: 0.875rem; /* 14px */
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+#notes-drawer-content * + .speaker {
+	margin-top: 1.5em;
+}
+
 #drawer-toc,
 #drawer-toc ol {
 	list-style: none;
@@ -1403,6 +1423,28 @@ body.is-collapsed .act-panel.is-under {
 	white-space: nowrap;
 	font-variant-numeric: tabular-nums;
 	line-height: inherit;
+}
+
+/* who speaks the scene, as the notes' badges in short: an outlined initial
+   each, in the act's colour, at the entry's end */
+.toc-speakers {
+	float: right;
+	display: flex;
+	gap: 0.2rem;
+	margin: 0.15rem 0 0 0.5rem;
+}
+
+.toc-speaker {
+	display: grid;
+	place-items: center;
+	width: 1.1rem;
+	height: 1.1rem;
+	border: 1.5px solid currentColor;
+	border-radius: 50%;
+	box-sizing: border-box;
+	font-size: 0.625rem; /* 10px */
+	font-weight: 700;
+	line-height: 1;
 }
 
 /* highlights fade out to the right; the title underlines */
@@ -1597,6 +1639,7 @@ body.is-speaker .speaker-next {
 	   changes its layout, so nothing jumps as the index opens or closes. */
 	.drawer-toc > .drawer-heading,
 	.toc-title,
+	.toc-speakers,
 	.toc-num .em-dash {
 		transition: opacity 0.2s var(--toc-ease) 0.3s;
 	}
@@ -1621,6 +1664,7 @@ body.is-speaker .speaker-next {
 
 	.drawer-toc > .drawer-heading,
 	.drawer-toc .toc-title,
+	.drawer-toc .toc-speakers,
 	.drawer-toc .toc-num .em-dash {
 		opacity: 0;
 	}
@@ -1635,11 +1679,11 @@ body.is-speaker .speaker-next {
 		translate: 0 0;
 	}
 
-	.drawer-toc:is(.is-pinned, :has(:focus-visible)) :is(.drawer-heading, .toc-title, .em-dash) {
+	.drawer-toc:is(.is-pinned, :has(:focus-visible)) :is(.drawer-heading, .toc-title, .toc-speakers, .em-dash) {
 		opacity: 1;
 	}
 
-	.drawer-toc:is(.is-pinned, :has(:focus-visible)) :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+	.drawer-toc:is(.is-pinned, :has(:focus-visible)) :is(.drawer-heading, .toc-title, .toc-speakers, .em-dash, .toc-num) {
 		transition-delay: 0s;
 	}
 }
@@ -1668,11 +1712,11 @@ body.is-speaker .speaker-next {
 		translate: 0 0;
 	}
 
-	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .em-dash) {
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .toc-speakers, .em-dash) {
 		opacity: 1;
 	}
 
-	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+	.drawer-toc:is(:hover, :focus-within):not(.is-resting) :is(.drawer-heading, .toc-title, .toc-speakers, .em-dash, .toc-num) {
 		transition-delay: 0s;
 	}
 }
@@ -1681,7 +1725,7 @@ body.is-speaker .speaker-next {
 	.drawer-toc,
 	.toc-pin svg,
 	.drawer-toc > *,
-	.drawer-toc :is(.drawer-heading, .toc-title, .em-dash, .toc-num) {
+	.drawer-toc :is(.drawer-heading, .toc-title, .toc-speakers, .em-dash, .toc-num) {
 		transition: none;
 	}
 }
