@@ -332,6 +332,8 @@
 				border-radius: 10px;
 			}
 
+			/* ramp labels are pure black so they pass WCAG AA on every tint
+			   below ink (which gets white text) */
 			.ts-ramp-step {
 				height: 4rem;
 				display: flex;
@@ -340,10 +342,10 @@
 				gap: 0.5rem;
 				padding: 0.5rem 0.75rem;
 				background: color-mix(in srgb, var(--act-color) var(--mix), white);
-				color: var(--act-color);
+				color: #000;
 			}
 
-			.ts-ramp-step:nth-child(-n + 3) {
+			.ts-ramp-step:first-child {
 				color: #fff;
 			}
 
@@ -799,11 +801,11 @@
 			<h2>Speakers</h2>
 			<ul class="title-speakers" style="--act-color: var(--act-hypothesis)" aria-label="Speakers">
 				<li>
-					<img src="media/your-ui-is-not-my-ui-title-simon.webp" alt="" />
+					<img src="media/your-ui-is-not-my-ui-title-simon.webp" alt="" width="480" height="480" />
 					<span class="title-speaker"><strong>Simon Lenz</strong><br />Staff Developer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
 				</li>
 				<li>
-					<img src="media/your-ui-is-not-my-ui-title-matt.webp" alt="" />
+					<img src="media/your-ui-is-not-my-ui-title-matt.webp" alt="" width="480" height="480" />
 					<span class="title-speaker"><strong>Matt Seccafien</strong><br />Design Engineer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
 				</li>
 			</ul>
