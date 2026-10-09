@@ -491,6 +491,23 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
 	grid-row: 5;
 }
 
+/* gathered: each word already on its own row, the pairs drawn in to meet
+   in the middle of the frame, before they spread out to its edges
+   (js/site.js) */
+main [data-scene='your-ui-is-not-my-ui-title'] .title-words.is-gathered {
+	grid-template-columns: auto auto;
+	justify-content: center;
+	column-gap: 0.25em;
+}
+
+.title-words.is-gathered > span:nth-child(odd) {
+	justify-self: end;
+}
+
+.title-words.is-gathered > span:nth-child(even) {
+	justify-self: start;
+}
+
 /* the information: the abstract in the second row, the speakers in the
    fourth, each centred in its row */
 main [data-scene='your-ui-is-not-my-ui-title'] .title-centre {

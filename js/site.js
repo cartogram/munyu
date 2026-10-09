@@ -1,9 +1,10 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Flip } from 'gsap/Flip';
 import branchingArtSvg from '../media/personas/demo-two-people.svg?raw';
 import todaysModelSvg from '../media/personas/todays-model.svg?raw';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Flip);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
 // beat; ScrollTrigger's own resize refresh would shift positions first.
 ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
@@ -670,6 +671,27 @@ function jumpTo(y) {
 	if (here) history.replaceState(null, '', `#${here.id}`);
 	if (there && there !== here) history.pushState(null, '', `#${there.id}`);
 	moveTo(y);
+}
+
+// The talk title opens gathered in the middle of the frame, its three
+// lines centred (index.html sets it so), then its words spread out to the
+// frame's edges, and the abstract and speakers come in between them. Flip measures
+// both layouts and moves each word from one to the other. Reduced motion
+// shows the spread title straight away.
+const titleWords = document.querySelector('.title-words.is-gathered');
+const titleInfo = titleWords ? [...titleWords.parentElement.querySelectorAll('.title-centre > *')] : [];
+if (titleWords && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+	gsap.set(titleInfo, { autoAlpha: 0 });
+	// after the fonts, so both layouts are measured in the title's face
+	document.fonts.ready.then(() => {
+		const gathered = Flip.getState(titleWords.children);
+		titleWords.classList.remove('is-gathered');
+		gsap.timeline({ delay: 0.6 })
+			.add(Flip.from(gathered, { duration: 1.4, ease: 'expo.inOut', stagger: 0.04 }))
+			.fromTo(titleInfo, { y: 24 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out', stagger: 0.15 }, '-=0.4');
+	});
+} else {
+	titleWords?.classList.remove('is-gathered');
 }
 
 // The talk title in the top band goes back to the title slide, as Home does.
