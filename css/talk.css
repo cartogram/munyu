@@ -755,22 +755,22 @@ main section[data-scene]:has(> .persona) > p {
 	width: 100%;
 }
 
-/* a persona's quote reads as a pull quote: italic, with large cut-paper
-   quote marks in the act's ink at its top-left and bottom-right.
+/* a persona's quote reads as a pull quote: italic, with cut-paper quote
+   marks in the act's ink at its top-left and bottom-right.
    media/persona-quote.svg is the opening pair of drops; the closing one
    is the same shape rotated 180°. Today's model has no quote. */
 .persona blockquote {
 	position: relative;
 	font-style: italic;
-	padding: calc(80 * var(--u)) calc(96 * var(--u));
+	padding: calc(32 * var(--u)) calc(44 * var(--u));
 }
 
 .persona blockquote::before,
 .persona blockquote::after {
 	content: '';
 	position: absolute;
-	width: calc(140 * var(--u));
-	height: calc(112 * var(--u));
+	width: calc(68 * var(--u));
+	height: calc(54 * var(--u));
 	background: currentColor;
 	mask: url('../media/persona-quote.svg') center / 100% 100% no-repeat;
 }
