@@ -323,31 +323,23 @@ main section[data-scene] {
 
 /* the act opener's ground: the whole card in a grained gradient of the
    act's colour, with the title in white on it */
-.act-opener,
-main section[data-scene='your-ui-is-not-my-ui-title'] {
+.act-opener {
 	position: relative;
 	color: #fff;
 }
 
-.act-opener::before,
-main section[data-scene='your-ui-is-not-my-ui-title']::before {
+.act-opener::before {
 	content: '';
 	position: absolute;
 	/* to the card's edges; the card's own clip rounds its leading corner */
 	inset: 0;
-	/* a grained gradient in the act's ramp: the ink, under the white title,
-	   held along the bottom and then fading towards the top to a lighter step,
-	   with a high-contrast grain laid over in soft-light. Each act sets its
-	   own angle, lighter step and hold (below); angles stay within 0-40deg so
-	   the dark end is always along the title's edge. */
+	/* a grained gradient (below): a high-contrast grain laid in soft-light
+	   over the act's colours. Each act sets its own angle, lighter step and
+	   hold; angles stay within 0-40deg so the dark end is always along the
+	   title's edge. */
 	--grain-tile: calc(700 * var(--u));
 	--grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.59' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3'/%3E%3CfeFuncG type='linear' slope='3'/%3E%3CfeFuncB type='linear' slope='3'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -12'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23g)' opacity='0.38'/%3E%3C/svg%3E");
 	background-color: var(--act-color);
-	background-image:
-		var(--grain),
-		linear-gradient(var(--fade-angle, 20deg), var(--act-color) var(--fade-hold, 30%), color-mix(in srgb, var(--act-color) var(--fade-to, var(--ramp-accent)), white));
-	background-size: var(--grain-tile), 100% 100%;
-	background-blend-mode: soft-light, normal;
 	pointer-events: none;
 	/* its own compositor layer, one frame in size, drawn once and slid with
 	   the scene row. Left in the row's layer, it was drawn tile by tile as
@@ -372,8 +364,7 @@ main section[data-scene='your-ui-is-not-my-ui-title']::before {
    colour at the top (where the talk has just come from), with a soft band
    between them: a lighter step of the act's own colour, half see-through,
    straight across the upper third and tilted down to the left, so it never
-   reaches the title. Mixed in oklab, so two hues meet without going muddy.
-   The talk title, with no act before it, keeps the two-step fade above. */
+   reaches the title. Mixed in oklab, so two hues meet without going muddy. */
 .act-opener::before {
 	background-image:
 		var(--grain),
@@ -441,16 +432,140 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
 	margin: 0;
 }
 
-/* the talk's title slide is laid out like an act opener: its grained ground
-   behind, the title bottom-left (the authors are in the top band) */
+/* the talk's title slide: on the card's white, in the act's colour, the
+   title's words around the frame and the abstract and speakers between */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
+	position: relative;
 	/* exactly the card's height (not just at least), so the grained ground
 	   ends at the card's foot */
 	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
-	justify-content: flex-end;
-	align-items: flex-start;
+	justify-content: center;
+	align-items: center;
 	text-align: left;
 	padding-bottom: calc(var(--frame-pad-bottom) + 40 * var(--u));
+}
+
+/* the title slide as five rows: the title's words in the first, third and
+   fifth, each a line of the title tall, and its abstract and speakers
+   centred in the two between. Two grids laid one over the other with the
+   same rows, so the title stays one heading: the words' grid, and the
+   information's. */
+main section[data-scene='your-ui-is-not-my-ui-title'] {
+	--title-rows: calc(var(--title-size) * 0.9) 1fr calc(var(--title-size) * 0.9) 1fr calc(var(--title-size) * 0.9);
+	--title-size: min(calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2 * var(--frame-pad-x) - 2px) / 8.7), calc(222 * var(--u)));
+}
+
+main [data-scene='your-ui-is-not-my-ui-title'] :is(.title-words, .title-centre) {
+	position: absolute;
+	inset: var(--frame-pad-top) var(--frame-pad-x) calc(var(--frame-pad-bottom) + 40 * var(--u));
+	display: grid;
+	grid-template-rows: var(--title-rows);
+	margin: 0;
+}
+
+/* the words: Your and UI along the top, is and not across the middle, my
+   and UI along the bottom, the left-hand words set left and the right-hand
+   ones right */
+main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
+	grid-template-columns: 1fr 1fr;
+	font-size: var(--title-size);
+}
+
+.title-words > span:nth-child(odd) {
+	justify-self: start;
+}
+
+.title-words > span:nth-child(even) {
+	justify-self: end;
+}
+
+.title-words > span:nth-child(-n + 2) {
+	grid-row: 1;
+}
+
+.title-words > span:nth-child(n + 3):nth-child(-n + 4) {
+	grid-row: 3;
+}
+
+.title-words > span:nth-child(n + 5) {
+	grid-row: 5;
+}
+
+/* the information: the abstract in the second row, the speakers in the
+   fourth, each centred in its row */
+main [data-scene='your-ui-is-not-my-ui-title'] .title-centre {
+	justify-items: center;
+	align-items: center;
+	text-align: center;
+}
+
+main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > .title-abstract {
+	grid-row: 2;
+}
+
+main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > .title-speakers {
+	grid-row: 4;
+}
+
+/* the abstract: one sentence in the body serif, set open, justified, its
+   last line centred under the rest */
+main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
+	max-width: calc(1120 * var(--u));
+	margin: 0;
+	font-family: var(--font-serif);
+	text-align: justify;
+	text-align-last: center;
+	hyphens: auto;
+	font-size: calc(26 * var(--u));
+	font-weight: 400;
+	line-height: 1.6;
+}
+
+/* the speakers: a round photo each, in greys so they sit in the act's one
+   colour, ringed in it, beside two lines like the notes drawer's footer:
+   the name in bold, then the role, a dash and DeepL in the serif italic */
+/* side by side, to fit their row */
+.title-speakers {
+	display: flex;
+	gap: calc(72 * var(--u));
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.title-speakers li {
+	display: flex;
+	align-items: center;
+	gap: calc(24 * var(--u));
+}
+
+.title-speakers img {
+	flex: none;
+	width: calc(96 * var(--u));
+	height: calc(96 * var(--u));
+	border: calc(4 * var(--u)) solid var(--act-color);
+	border-radius: 50%;
+	object-fit: cover;
+	filter: grayscale(1) contrast(1.1);
+}
+
+.title-speaker {
+	font-family: var(--font-sans);
+	font-size: calc(26 * var(--u));
+	font-weight: 400;
+	line-height: 1.4;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.title-speaker strong {
+	font-weight: 700;
+}
+
+/* the company in the serif italic, as the chrome's sub-meta */
+.title-speaker-company {
+	font-family: var(--font-serif);
+	font-style: italic;
 }
 
 /* editorial scene layout: a serif headline, then body in one of two
@@ -1047,6 +1162,48 @@ main .branching-illustration {
 		width: 100%;
 		height: auto;
 	}
+
+	/* the title slide's speakers at a readable size, free to wrap */
+	.title-speaker {
+		font-size: 0.75rem;
+		white-space: normal;
+	}
+
+	/* the words run as a block at the top, two to a line, and the abstract
+	   and speakers follow under them; the slide grows to fit */
+	main section[data-scene='your-ui-is-not-my-ui-title'] {
+		height: auto;
+		justify-content: flex-start;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] :is(.title-words, .title-centre) {
+		position: relative;
+		inset: auto;
+		align-self: stretch;
+		grid-template-rows: none;
+		gap: 1.5rem;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
+		margin-bottom: 2rem;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > span:nth-child(n) {
+		grid-row: auto;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > * {
+		grid-row: auto;
+	}
+
+	.title-speakers {
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
+		font-size: 0.875rem;
+	}
 }
 
 /* slide chrome: talk, event, authors and slide number in the corners,
@@ -1073,6 +1230,20 @@ main .branching-illustration {
 /* leaves the band's left-hand corner to the notes toggle */
 .chrome-talk {
 	left: var(--title-left);
+}
+
+/* the talk title takes you back to the title slide (js/site.js) */
+.chrome-home {
+	pointer-events: auto;
+	color: inherit;
+	text-decoration: none;
+}
+
+/* underlined on hover as the index's entries are */
+.chrome-home:hover {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.07em;
 }
 
 .chrome-event {

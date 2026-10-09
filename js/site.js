@@ -672,6 +672,13 @@ function jumpTo(y) {
 	moveTo(y);
 }
 
+// The talk title in the top band goes back to the title slide, as Home does.
+document.querySelector('.chrome-home').addEventListener('click', (event) => {
+	event.preventDefault();
+	jumpTo(nextStop(0, 'first'));
+	event.currentTarget.blur();
+});
+
 // Back and Forward glide to the beat their entry names.
 window.addEventListener('popstate', () => {
 	const beat = beatById(decodeURIComponent(window.location.hash.slice(1)));

@@ -63,7 +63,24 @@
 			<section data-act="hypothesis" class="act-panel">
 				<div class="act-panel-inner">
 					<section data-scene="your-ui-is-not-my-ui-title">
-						<h2>Your UI is <br />not my UI</h2>
+						<h2 class="title-words"><span>Your</span> <span>UI</span> <span>is</span> <span>not</span> <span>my</span> <span>UI</span></h2>
+						<div class="title-centre">
+							<p class="title-abstract">
+								Six interviews with people with disabilities showed us the hard limits of adapting one
+								interface for everyone, so we explore what AI makes possible when every UI is generated on the
+								fly for the person using it.
+							</p>
+							<ul class="title-speakers" aria-label="Speakers">
+								<li>
+									<img src="media/your-ui-is-not-my-ui-title-simon.webp" alt="" />
+									<span class="title-speaker"><strong>Simon Lenz</strong><br />Developer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
+								</li>
+								<li>
+									<img src="media/your-ui-is-not-my-ui-title-matt.webp" alt="" />
+									<span class="title-speaker"><strong>Matthew Seccafien</strong><br />Design Engineer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
+								</li>
+							</ul>
+						</div>
 						<aside class="notes" hidden>
 							<p class="speaker" data-speaker="simon">Simon</p>
 
@@ -887,10 +904,18 @@
 						<p>
 							No fighting plugins. No setup that collapses when she opens a lecture.
 						</p>
-						<p>
-							Just an interface that already fits her.
-						</p>
-						[we could add a positive illustration referencing the earlier slide]
+						<div class="persona">
+							<p>
+								Just an interface that already fits her.
+							</p>
+							<div class="portrait-ground">
+								<img
+									class="persona-portrait"
+									src="media/personas/back-to-sinead.webp"
+									alt="Illustration of the same woman typing at her laptop with both hands, the sun and a rainbow out in the window and one calm page of large text on her screen"
+								/>
+							</div>
+						</div>
 						<aside class="notes" hidden>
 							<p class="speaker" data-speaker="simon">Simon</p>
 							<p>
@@ -1033,9 +1058,11 @@
 			</section>
 		</main>
 
-		<!-- repeated on every slide, so hidden from screen readers -->
+		<!-- repeated on every slide, so hidden from screen readers; the talk
+		     title links back to the title slide for the pointer, as Home does
+		     for the keyboard -->
 		<div class="deck-chrome" aria-hidden="true">
-			<span class="chrome-bar chrome-talk">Your UI is not my UI<span class="sub-meta"><span class="em-dash">—</span>Simon Lenz &amp; Matthew Seccafien</span></span>
+			<span class="chrome-bar chrome-talk"><a class="chrome-home" href="#hypothesis/your-ui-is-not-my-ui-title" tabindex="-1">Your UI is not my UI</a><span class="sub-meta"><span class="em-dash">—</span>Simon Lenz &amp; Matthew Seccafien</span></span>
 			<span class="chrome-bar chrome-event">React Advanced<span class="sub-meta"><span class="em-dash">—</span>London 2026</span></span>
 		</div>
 
