@@ -341,9 +341,10 @@ main section[data-scene='your-ui-is-not-my-ui-title']::before {
 	   own angle, lighter step and hold (below); angles stay within 0-40deg so
 	   the dark end is always along the title's edge. */
 	--grain-tile: calc(700 * var(--u));
+	--grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.59' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3'/%3E%3CfeFuncG type='linear' slope='3'/%3E%3CfeFuncB type='linear' slope='3'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -12'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23g)' opacity='0.38'/%3E%3C/svg%3E");
 	background-color: var(--act-color);
 	background-image:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.59' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3'/%3E%3CfeFuncG type='linear' slope='3'/%3E%3CfeFuncB type='linear' slope='3'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -12'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23g)' opacity='0.38'/%3E%3C/svg%3E"),
+		var(--grain),
 		linear-gradient(var(--fade-angle, 20deg), var(--act-color) var(--fade-hold, 30%), color-mix(in srgb, var(--act-color) var(--fade-to, var(--ramp-accent)), white));
 	background-size: var(--grain-tile), 100% 100%;
 	background-blend-mode: soft-light, normal;
@@ -365,6 +366,30 @@ main section[data-scene='your-ui-is-not-my-ui-title']::before {
 .act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
 .act-panel[data-act='closing'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
 .act-panel[data-act='backup-qa'] { --fade-angle: 34deg; --fade-to: var(--ramp-accent); --fade-hold: 35%; }
+
+/* act openers blend three colours, as gggrain's grounds do: the act's ink
+   held along the bottom under the title, fading up to the previous act's
+   colour at the top (where the talk has just come from), with a pale glow
+   of the act's own colour between them, high on the left. Mixed in oklab,
+   so two hues meet without going muddy. The talk title, with no act
+   before it, keeps the two-step fade above. */
+.act-opener::before {
+	background-image:
+		var(--grain),
+		radial-gradient(55% 45% at 12% 28%, color-mix(in srgb, var(--act-color) var(--ramp-soft), white), transparent),
+		linear-gradient(in oklab var(--fade-angle, 20deg), var(--act-color) var(--fade-hold, 30%), color-mix(in srgb, var(--act-prev, var(--act-color)) var(--fade-to, var(--ramp-accent)), white));
+	background-size: var(--grain-tile), 100% 100%, 100% 100%;
+	background-blend-mode: soft-light, normal, normal;
+}
+
+/* the act before each opener's, for the top of its ground */
+.act-panel[data-act='user-research'] { --act-prev: var(--act-hypothesis); }
+.act-panel[data-act='limits-of-adaptability'] { --act-prev: var(--act-user-research); }
+.act-panel[data-act='personalization-over-adaptability'] { --act-prev: var(--act-limits-of-adaptability); }
+.act-panel[data-act='empathy-is-our-point'] { --act-prev: var(--act-personalization-over-adaptability); }
+.act-panel[data-act='launching-is-creating'] { --act-prev: var(--act-empathy-is-our-point); }
+.act-panel[data-act='closing'] { --act-prev: var(--act-launching-is-creating); }
+.act-panel[data-act='backup-qa'] { --act-prev: var(--act-closing); }
 
 /* the chapter number, top right on each act opener: the act's place in the
    talk (as in the notes drawer's index, so the first act, which opens on the
