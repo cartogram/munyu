@@ -833,6 +833,14 @@ main small,
 	line-height: 1.4;
 }
 
+/* a thin em-dash separator between parts of a meta line: the deck's
+   persona meta, the sub-meta, the specimen's typeface, swatch and
+   illustration meta. Usage: <span class="sep">—</span> */
+.sep {
+	margin-inline: 0.5em;
+	font-weight: 400;
+}
+
 /* the font has no longer dash, so a doubled em dash is the glyph stretched
    2× with matching side room (an em dash is about 1em wide), so it doesn't
    run into the words either side. The drawer uses a plain em dash instead —

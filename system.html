@@ -536,7 +536,7 @@
 						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
 					</div>
 					<div class="ts-face-meta">
-						Sora Sagano · public domain (CC0)<br />
+						Sora Sagano<span class="sep">—</span>public domain (CC0)<br />
 						<span data-weights="Aileron"></span>
 					</div>
 				</div>
@@ -546,7 +546,7 @@
 						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
 					</div>
 					<div class="ts-face-meta">
-						Impallari Type · SIL OFL 1.1<br />
+						Impallari Type<span class="sep">—</span>SIL OFL 1.1<br />
 						<span data-weights="Libre Baskerville"></span>
 					</div>
 				</div>
@@ -804,6 +804,8 @@
 		<script type="module">
 			const round = (n) => Math.round(n * 10) / 10;
 
+			const SEP = '<span class="sep">—</span>';
+
 			function describe(el, pseudo) {
 				const cs = getComputedStyle(el, pseudo);
 				const size = parseFloat(cs.fontSize);
@@ -815,7 +817,7 @@
 				];
 				if (cs.letterSpacing !== 'normal' && parseFloat(cs.letterSpacing) !== 0) parts.push(`tracking ${cs.letterSpacing}`);
 				if (cs.textTransform !== 'none') parts.push(cs.textTransform);
-				return parts.join(' · ');
+				return parts.join(SEP);
 			}
 
 			function renderSpecs() {
@@ -823,7 +825,7 @@
 					const spec = row.querySelector('.ts-spec');
 					const sample = row.querySelector('.ts-sample');
 					const target = sample.querySelector(spec.dataset.spec) ?? sample;
-					spec.querySelector('output').textContent = describe(target, spec.dataset.specPseudo);
+					spec.querySelector('output').innerHTML = describe(target, spec.dataset.specPseudo);
 				});
 			}
 
@@ -842,7 +844,7 @@
 					.filter((f) => f.family.replace(/["']/g, '') === el.dataset.weights)
 					.sort((a, b) => (a.style !== 'normal') - (b.style !== 'normal') || parseInt(a.weight) - parseInt(b.weight));
 				el.textContent = faces.length
-					? faces.map((f) => `${f.weight.replace(' ', '–')}${f.style === 'normal' ? '' : ` ${f.style}`}`).join(' · ')
+					? faces.map((f) => `${f.weight.replace(' ', '–')}${f.style === 'normal' ? '' : ` ${f.style}`}`).join(SEP)
 					: 'no @font-face in css/talk.css';
 			});
 
@@ -867,7 +869,7 @@
 				swatch.innerHTML = `
 					<div class="ts-swatch-chip"></div>
 					<div class="ts-swatch-name">${value}</div>
-					<div class="ts-swatch-meta">${token}<br />${ratio.toFixed(2)} : 1 · ${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
+					<div class="ts-swatch-meta">${token}<br />${ratio.toFixed(2)} : 1${SEP}${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
 			}
 
 			// ---- Greys: every --grey-* token on :root, in source order --------------
@@ -889,7 +891,7 @@
 				swatch.innerHTML = `
 					<div class="ts-swatch-chip" style="background: var(${prop})"></div>
 					<div class="ts-swatch-name">${value}</div>
-					<div class="ts-swatch-meta">${prop}<br />${ratio.toFixed(2)} : 1${ratio >= 7 ? ' · AAA' : ratio >= 4.5 ? ' · AA' : ''}</div>`;
+					<div class="ts-swatch-meta">${prop}<br />${ratio.toFixed(2)} : 1${ratio >= 7 ? `${SEP}AAA` : ratio >= 4.5 ? `${SEP}AA` : ''}</div>`;
 				document.getElementById('ts-greys').append(swatch);
 			}
 
@@ -929,7 +931,7 @@
 				figure.innerHTML = `
 					<img src="${img.getAttribute('src')}" alt="${img.getAttribute('alt') ?? ''}" />
 					<figcaption><strong>${scene.querySelector('h2')?.textContent ?? scene.dataset.scene}</strong>
-					<span>${img.getAttribute('src')} · --act-${act}</span></figcaption>`;
+					<span>${img.getAttribute('src')}${SEP}--act-${act}</span></figcaption>`;
 				document.getElementById('ts-illustrations').append(figure);
 			}
 
@@ -943,12 +945,12 @@
 			// Areas to label, in priority order; an element claimed by an earlier
 			// role isn't labelled again by a later one.
 			const ROLES = [
-				['.act-tab', 'Meta · act tab'],
+				['.act-tab', `Meta${SEP}act tab`],
 				["[data-scene='your-ui-is-not-my-ui-title'] h2", 'Act title'],
 				['h2', 'Scene headline'],
 				['blockquote', 'Body serif'],
 				['p', 'Body sans'],
-				['ul', 'Body sans · list'],
+				['ul', `Body sans${SEP}list`],
 				['img', 'Media'],
 			];
 
