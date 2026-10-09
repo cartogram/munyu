@@ -60,7 +60,7 @@ mode is secondary.
   | Body (paragraphs and lists) | Aileron 400 | 55 / 66 |
   | Quote (incl. persona quotes) | Libre Baskerville 400 | 60 / 72 |
   | Meta (kickers, authors, labels, chrome, Notes button) | Aileron 700 | 16 / 22.4 |
-  | Sub-meta (the secondary part of a meta line: "—London 2026", "—Simon Lenz & Matthew Seccafien", the numbers in "User research—3/8 07/42") | Libre Baskerville 400 italic, title case — the one italic | 14 |
+  | Sub-meta (the secondary part of a meta line: "—London 2026", "—Simon Lenz & Matt Seccafien", the numbers in "User research—3/8 07/42") | Libre Baskerville 400 italic, title case — the one italic | 14 |
   | Speaker notes | Aileron 400 | 15 / 24 |
 
 - **Editorial scene layout**: a kicker above every scene heading ("Act name •

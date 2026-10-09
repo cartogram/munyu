@@ -2,7 +2,7 @@
 	"name": "your-ui-is-not-my-ui",
 	"private": true,
 	"version": "1.0.0",
-	"description": "Your UI is not my UI — a scrolling talk by Simon Lenz & Matthew Seccafien",
+	"description": "Your UI is not my UI — a scrolling talk by Simon Lenz & Matt Seccafien",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",

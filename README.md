@@ -1,6 +1,6 @@
 # Your UI is not my UI
 
-A talk by Simon Lenz & Matthew Seccafien, built as a single scrolling page.
+A talk by Simon Lenz & Matt Seccafien, built as a single scrolling page.
 
 ```sh
 npm install
