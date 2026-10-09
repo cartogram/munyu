@@ -456,51 +456,44 @@ main section[data-scene='your-ui-is-not-my-ui-title'] {
    same rows, so the title stays one heading: the words' grid, and the
    information's. */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
-	/* nearly twice an act title, but never so big that the longest line,
-	   is not your once the words have traded places (4.8em), runs off the
-	   card by more than its bleed */
-	--title-size: min(calc(390 * var(--u)), calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2px) / 4.8));
+	/* nearly twice an act title, but never so big that the longest line
+	   (Your UI, or your UI once the words have traded places, 3.4em) runs
+	   off the card */
+	--title-size: min(calc(340 * var(--u)), calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2px) / 3.6));
 	/* a word row is a little under the words' cap height, so they sit tight
 	   in it and leave the information as much room as they can */
 	--title-row: calc(var(--title-size) * 0.66);
 	--title-rows: var(--title-row) 1fr var(--title-row) 1fr var(--title-row);
 }
 
-/* the words bleed out past the card's edges on every side (below) */
+/* the words bleed out past the card's top and right; at the foot, just
+   the tail of the y in my runs off, and on the left they stop at the edge,
+   so the stem of My (once the words have traded places) stays whole. The
+   information's grid has the same edges, so its rows match the words'. */
 main [data-scene='your-ui-is-not-my-ui-title'] :is(.title-words, .title-centre) {
 	position: absolute;
-	inset: 0;
+	inset: calc(var(--title-size) * -0.12) calc(var(--title-size) * -0.12) calc(var(--title-size) * 0.08) 0;
 	display: grid;
 	grid-template-rows: var(--title-rows);
 	margin: 0;
 }
 
-/* the lines: Your UI at the top left, is not my set right across the
-   middle, and UI along the bottom, under the first UI. Your, my and the
-   UIs are words of their own, so each can move on its own (js/site.js);
-   is not my is a line of two, is not and my. */
+/* the lines: Your UI at the top left, is not set right across the middle,
+   and my UI at the bottom left. Each word is a word of its own, so each
+   can move on its own (js/site.js); each UI starts just after the word
+   before it, at --ui-1 and --ui-2. */
 main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
-	/* past the card's edges, so the lines run off them */
-	inset: calc(var(--title-size) * -0.12);
-	/* where the UIs start, after Your and its space in Aileron Black; after
-	   My once the words trade places (js/site.js sets it then) */
-	--under-ui: 2.42em;
+	/* after Your and after my, with a space, in Aileron Black; js/site.js
+	   measures them, and moves them when the words trade places */
+	--ui-1: 2.42em;
+	--ui-2: 1.6em;
 	font-size: var(--title-size);
 	line-height: 0.66;
 	white-space: nowrap;
 }
 
-.title-words > :nth-child(1) {
+.title-words > :nth-child(-n + 2) {
 	grid-row: 1;
-	grid-column: 1;
-	justify-self: start;
-}
-
-.title-words > :nth-child(2) {
-	grid-row: 1;
-	grid-column: 1;
-	justify-self: start;
-	margin-left: var(--under-ui);
 }
 
 .title-words > :nth-child(3) {
@@ -508,15 +501,21 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
 	justify-self: end;
 }
 
-.title-words > :nth-child(4) {
+.title-words > :nth-child(n + 4) {
 	grid-row: 5;
-	justify-self: start;
-	margin-left: var(--under-ui);
 }
 
-.title-line {
-	display: flex;
-	column-gap: 0.25em;
+.title-words > :is(:nth-child(1), :nth-child(2), :nth-child(4), :nth-child(5)) {
+	grid-column: 1;
+	justify-self: start;
+}
+
+.title-words > :nth-child(2) {
+	margin-left: var(--ui-1);
+}
+
+.title-words > :nth-child(5) {
+	margin-left: var(--ui-2);
 }
 
 /* filled with one grained gradient that runs on across the whole title, in
@@ -537,13 +536,14 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
 }
 
 /* the words until js/site.js splits them, then their letters */
-.title-words span:not(.title-line):not(:has(.title-char)),
+.title-words > span:not(:has(.title-char)),
 .title-words .title-char {
 	color: transparent;
 	background-image:
 		var(--grain),
 		linear-gradient(in oklab 155deg, var(--act-color) 15%, color-mix(in srgb, var(--act-user-research) 85%, white) 55%, color-mix(in srgb, var(--act-color) 70%, white));
-	background-size: var(--grain-tile), 100cqw 100cqh;
+	/* a little taller than the title, for the descenders below its foot */
+	background-size: var(--grain-tile), 100cqw calc(100cqh + 0.4em);
 	background-position: calc(-1 * var(--bx, 0px)) calc(-1 * var(--by, 0px));
 	background-blend-mode: soft-light, normal;
 	-webkit-background-clip: text;
@@ -564,9 +564,12 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-centre {
 	text-align: center;
 }
 
-/* each centred in its row, between the lines above and below */
+/* each centred in its row, between the lines above and below; the
+   abstract set a little to the right, clear of the tail of the y in My,
+   which drops into its row once the words have traded places */
 main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > .title-abstract {
 	grid-row: 2;
+	translate: calc(var(--title-size) * 0.4) 0;
 }
 
 main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > .title-speakers {
@@ -1257,7 +1260,7 @@ main .branching-illustration {
 		container-type: normal;
 	}
 
-	.title-words span:not(.title-line):not(:has(.title-char)),
+	.title-words > span:not(:has(.title-char)),
 	.title-words .title-char {
 		background-size: var(--grain-tile), 100cqw 100cqh;
 	}
@@ -1268,15 +1271,11 @@ main .branching-illustration {
 
 	/* the lines one after another, no rows between: Your and the first UI
 	   share the first */
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > :nth-child(-n + 2) {
-		grid-row: 1;
-	}
-
 	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > :nth-child(3) {
 		grid-row: 2;
 	}
 
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > :nth-child(4) {
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > :nth-child(n + 4) {
 		grid-row: 3;
 	}
 

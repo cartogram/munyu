@@ -674,16 +674,16 @@ function jumpTo(y) {
 }
 
 // The talk title's words come in from off the card, one after another, to
-// their places: Your from the left, the first UI from the top, is not my
-// from the right and the last UI from the bottom. Each word is split into
-// its letters; the UIs' follow one another in, a moment apart. The abstract
-// and speakers fade in between them as they come. Then, every few seconds,
-// Your and my trade places: Your slides off to the left and comes back as
-// My, while my slides off to the right and comes back as your, and back
-// again (swapTitle). Reduced motion shows the title in place, and still.
+// their places: Your from the left, the first UI from the top, is not from
+// the right, my from the left and the last UI from the bottom. Each word is
+// split into its letters; the UIs' follow one another in, a moment apart.
+// The abstract and speakers fade in between them as they come. Then, every
+// few seconds, Your and my trade places: each slides off to the left and
+// comes back as the other, My and your, and back again (swapTitle).
+// Reduced motion shows the title in place, and still.
 const titleWords = document.querySelector('.title-words');
 const titleInfo = titleWords ? [...titleWords.parentElement.querySelectorAll('.title-centre > *')] : [];
-const titleLeaves = titleWords ? [...titleWords.querySelectorAll('span:not(.title-line)')] : [];
+const titleLeaves = titleWords ? [...titleWords.children] : [];
 const titleSplits = new Map(); // each word → its SplitText
 // splits a word into its letters, first giving it new text if there's one.
 // Set apart, the letters lose the font's kerning (Yo, most), so each is
@@ -717,6 +717,7 @@ const placeOf = (el) => {
 	}
 	return { left: r.left - x, right: r.right - x, top: r.top - y, bottom: r.bottom - y };
 };
+const widthOf = (el) => placeOf(el).right - placeOf(el).left;
 // each letter's background set back by its place in the title, so the
 // gradient runs on from letter to letter (css/talk.css); before the split,
 // each word's
@@ -729,47 +730,52 @@ function alignTitleGradient() {
 		el.style.setProperty('--by', `${p.top - box.top}px`);
 	});
 }
+// where each UI starts: just after the word before it, with a space
+const titleEm = () => parseFloat(getComputedStyle(titleWords).fontSize);
+let titleSpace = 0; // the space, measured from the stylesheet's start for the first UI
+const uiAfter = (width) => `${(width + titleSpace) / titleEm()}em`;
 // how far a word must move to sit just off the card on the side it comes
-// from: the first from the left, the first UI from the top, is not my from
-// the right, the last UI from the bottom
+// from
 const offLeft = (el) => ({ x: -placeOf(el).right - 40, y: 0 });
 const offRight = (el) => ({ x: innerWidth - placeOf(el).left + 40, y: 0 });
 const offTop = (el) => ({ x: 0, y: -placeOf(el).bottom - 40 });
 const offBottom = (el) => ({ x: 0, y: innerHeight - placeOf(el).top + 40 });
-const TITLE_SIDES = [offLeft, offTop, offRight, offBottom];
+const TITLE_SIDES = [offLeft, offTop, offRight, offLeft, offBottom];
 // the words that come down or up (the UIs) let their letters follow one
 // another in, a moment apart, from the end nearest their place; the words
 // that slide sideways keep their letters together
-const TITLE_STAGGERS = [0, { each: 0.035, from: 'end' }, 0, { each: 0.035, from: 'start' }];
+const TITLE_STAGGERS = [0, { each: 0.035, from: 'end' }, 0, 0, { each: 0.035, from: 'start' }];
 if (titleWords) {
-	document.fonts.ready.then(alignTitleGradient);
+	document.fonts.ready.then(() => {
+		const [first, , , third] = titleLeaves;
+		titleSpace = parseFloat(getComputedStyle(titleWords).getPropertyValue('--ui-1')) * titleEm() - widthOf(first);
+		titleWords.style.setProperty('--ui-2', uiAfter(widthOf(third)));
+		alignTitleGradient();
+	});
 	window.addEventListener('resize', () => requestAnimationFrame(alignTitleGradient));
 }
 if (titleWords && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 	gsap.set(titleInfo, { autoAlpha: 0 });
-	[...titleWords.children].forEach((word, k) => gsap.set(word, TITLE_SIDES[k](word)));
+	titleLeaves.forEach((word, k) => gsap.set(word, TITLE_SIDES[k](word)));
 	// after the fonts, so the words are split and measured in the title's face
 	document.fonts.ready.then(() => {
-		const words = [...titleWords.children];
-		gsap.set(words, { x: 0, y: 0 });
+		gsap.set(titleLeaves, { x: 0, y: 0 });
 		titleLeaves.forEach((leaf) => splitWord(leaf));
 		alignTitleGradient();
 		const intro = gsap.timeline({ onComplete: () => gsap.delayedCall(2.5, swapTitle) });
 		intro.to(titleInfo, { autoAlpha: 1, duration: 0.4, ease: 'power1.inOut' }, 0.3);
-		words.forEach((word, k) => {
+		titleLeaves.forEach((word, k) => {
 			const letters = lettersOf(word);
 			gsap.set(letters, TITLE_SIDES[k](word));
-			intro.to(letters, { x: 0, y: 0, duration: 1.1, ease: 'power4.out', stagger: TITLE_STAGGERS[k] }, 0.3 + k * 0.12);
+			intro.to(letters, { x: 0, y: 0, duration: 1.1, ease: 'power4.out', stagger: TITLE_STAGGERS[k] }, 0.3 + k * 0.1);
 		});
 	});
 }
 
-// Your and my trade places: each slides off its own side, takes the
-// other's word, and slides back. is not, set right with my, moves over to
-// make room for the longer word, or close up after the shorter; the UIs
-// move to start just after the first word, as they start after Your. Both
-// set off a little before the words are gone, measured ahead on copies of
-// the words.
+// Your and my trade places: each slides off to the left, takes the
+// other's word, and slides back. Each UI moves to start just after its new
+// word, setting off a little before the words are gone, measured ahead on
+// copies of them.
 let titleSwap = null;
 // the width a word would have with other text, from a hidden copy
 const widthAs = (leaf, text) => {
@@ -781,39 +787,25 @@ const widthAs = (leaf, text) => {
 	copy.remove();
 	return width;
 };
-const widthOf = (el) => placeOf(el).right - placeOf(el).left;
 function swapTitle() {
-	const [first, , line] = titleWords.children;
-	const [isNot, last] = line.children;
+	const [first, , , third] = titleLeaves;
 	const swapped = first.textContent === 'Your';
-	const [nextFirst, nextLast] = swapped ? ['My', 'your'] : ['Your', 'my'];
-	const em = parseFloat(getComputedStyle(titleWords).fontSize);
-	// the space between the first word and UI, from where UI starts now
-	const space = parseFloat(getComputedStyle(titleWords).getPropertyValue('--under-ui')) * em - widthOf(first);
-	const under = `${(widthAs(first, nextFirst) + space) / em}em`;
-	// how far is not moves over: by the difference the new last word makes
-	const shift = widthOf(last) - widthAs(last, nextLast);
+	const [nextFirst, nextThird] = swapped ? ['My', 'your'] : ['Your', 'my'];
 	const ease = 'power3.inOut', OUT = 0.6, AHEAD = 0.3, MOVE = 1.1;
-	// is not's move, which the new last word, once in, makes part of itself
-	const move = { x: 0 };
-	let placed = 0;
 	const tl = (titleSwap = gsap.timeline({ onComplete: () => gsap.delayedCall(3, swapTitle) }));
 	tl.to(lettersOf(first), { ...offLeft(first), duration: OUT, ease: 'power2.in' })
-		.to(lettersOf(last), { ...offRight(last), duration: OUT, ease: 'power2.in' }, 0)
-		.to(move, { x: shift, duration: MOVE, ease, onUpdate: () => gsap.set(isNot, { x: move.x - placed }) }, OUT - AHEAD)
-		.to(titleWords, { '--under-ui': under, duration: MOVE, ease, onUpdate: alignTitleGradient }, OUT - AHEAD)
+		.to(lettersOf(third), { ...offLeft(third), duration: OUT, ease: 'power2.in' }, 0.08)
+		.to(titleWords, { '--ui-1': uiAfter(widthAs(first, nextFirst)), '--ui-2': uiAfter(widthAs(third, nextThird)), duration: MOVE, ease, onUpdate: alignTitleGradient }, OUT - AHEAD)
 		// the words gone, they take each other's place
 		.add(() => {
 			splitWord(first, nextFirst);
-			splitWord(last, nextLast);
-			placed = shift;
-			gsap.set(isNot, { x: move.x - placed });
+			splitWord(third, nextThird);
 			gsap.set(lettersOf(first), offLeft(first));
-			gsap.set(lettersOf(last), offRight(last));
+			gsap.set(lettersOf(third), offLeft(third));
 			alignTitleGradient();
-			tl.to(lettersOf(first), { x: 0, duration: 1, ease: 'power4.out' }, OUT);
-			tl.to(lettersOf(last), { x: 0, duration: 1, ease: 'power4.out' }, OUT);
-		}, OUT);
+			tl.to(lettersOf(first), { x: 0, duration: 1, ease: 'power4.out' }, OUT + 0.08);
+			tl.to(lettersOf(third), { x: 0, duration: 1, ease: 'power4.out' }, OUT + 0.16);
+		}, OUT + 0.08);
 	if (!titleInView) tl.pause();
 }
 
