@@ -1,9 +1,10 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
 import branchingArtSvg from '../media/personas/demo-two-people.svg?raw';
 import todaysModelSvg from '../media/personas/todays-model.svg?raw';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
 // beat; ScrollTrigger's own resize refresh would shift positions first.
 ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
@@ -674,84 +675,146 @@ function jumpTo(y) {
 
 // The talk title's words come in from off the card, one after another, to
 // their places: Your from the left, the first UI from the top, is not my
-// from the right and the last UI from the bottom. The abstract and speakers
-// fade in between them as they come. Then, every few seconds, Your and my
-// trade places: Your slides off to the left and comes back as My, while my
-// slides off to the right and comes back as your, and back again (swapTitle).
-// Reduced motion shows the title in place, and still.
+// from the right and the last UI from the bottom. Each word is split into
+// its letters; the UIs' follow one another in, a moment apart. The abstract
+// and speakers fade in between them as they come. Then, every few seconds,
+// Your and my trade places: Your slides off to the left and comes back as
+// My, while my slides off to the right and comes back as your, and back
+// again (swapTitle). Reduced motion shows the title in place, and still.
 const titleWords = document.querySelector('.title-words');
 const titleInfo = titleWords ? [...titleWords.parentElement.querySelectorAll('.title-centre > *')] : [];
 const titleLeaves = titleWords ? [...titleWords.querySelectorAll('span:not(.title-line)')] : [];
-// a word's place, less any move it has
+const titleSplits = new Map(); // each word → its SplitText
+// splits a word into its letters, first giving it new text if there's one.
+// Set apart, the letters lose the font's kerning (Yo, most), so each is
+// nudged back to where it sat in the whole word.
+const splitWord = (leaf, text) => {
+	titleSplits.get(leaf)?.revert();
+	if (text) leaf.textContent = text;
+	const node = leaf.firstChild, range = document.createRange();
+	// (SplitText makes no letter of a space, so neither do these)
+	const kerned = [...leaf.textContent].flatMap((ch, i) => {
+		if (/\s/.test(ch)) return [];
+		range.setStart(node, i);
+		range.setEnd(node, i + 1);
+		return [range.getBoundingClientRect().left];
+	});
+	const split = new SplitText(leaf, { type: 'chars', tag: 'span', charsClass: 'title-char', aria: 'none' });
+	split.chars.forEach((char, i) => {
+		const drift = char.getBoundingClientRect().left - gsap.getProperty(char, 'x') - kerned[i];
+		if (Math.abs(drift) > 0.5) char.style.marginLeft = `${-drift}px`;
+	});
+	titleSplits.set(leaf, split);
+};
+const lettersOf = (el) => [...el.querySelectorAll('.title-char')];
+// an element's place, less any move it or the words around it have
 const placeOf = (el) => {
-	const r = el.getBoundingClientRect(), x = gsap.getProperty(el, 'x'), y = gsap.getProperty(el, 'y');
+	const r = el.getBoundingClientRect();
+	let x = 0, y = 0;
+	for (let e = el; e && e !== titleWords; e = e.parentElement) {
+		x += gsap.getProperty(e, 'x');
+		y += gsap.getProperty(e, 'y');
+	}
 	return { left: r.left - x, right: r.right - x, top: r.top - y, bottom: r.bottom - y };
 };
-// each word's background set back by its place in the title, so the
-// gradient runs on from word to word (css/talk.css)
+// each letter's background set back by its place in the title, so the
+// gradient runs on from letter to letter (css/talk.css); before the split,
+// each word's
 function alignTitleGradient() {
 	const box = titleWords.getBoundingClientRect();
-	titleLeaves.forEach((leaf) => {
-		const p = placeOf(leaf);
-		leaf.style.setProperty('--bx', `${p.left - box.left}px`);
-		leaf.style.setProperty('--by', `${p.top - box.top}px`);
+	const painted = titleWords.querySelectorAll('.title-char').length ? titleWords.querySelectorAll('.title-char') : titleLeaves;
+	painted.forEach((el) => {
+		const p = placeOf(el);
+		el.style.setProperty('--bx', `${p.left - box.left}px`);
+		el.style.setProperty('--by', `${p.top - box.top}px`);
 	});
 }
-// the side each word comes in from, and how far it must move to sit just
-// off the card there
+// how far a word must move to sit just off the card on the side it comes
+// from: the first from the left, the first UI from the top, is not my from
+// the right, the last UI from the bottom
 const offLeft = (el) => ({ x: -placeOf(el).right - 40, y: 0 });
 const offRight = (el) => ({ x: innerWidth - placeOf(el).left + 40, y: 0 });
-const offCard = (word, k) => [offLeft(word), { x: 0, y: -placeOf(word).bottom - 40 }, offRight(word), { x: 0, y: innerHeight - placeOf(word).top + 40 }][k];
-const setOffCard = () => [...titleWords.children].forEach((word, k) => gsap.set(word, offCard(word, k)));
+const offTop = (el) => ({ x: 0, y: -placeOf(el).bottom - 40 });
+const offBottom = (el) => ({ x: 0, y: innerHeight - placeOf(el).top + 40 });
+const TITLE_SIDES = [offLeft, offTop, offRight, offBottom];
+// the words that come down or up (the UIs) let their letters follow one
+// another in, a moment apart, from the end nearest their place; the words
+// that slide sideways keep their letters together
+const TITLE_STAGGERS = [0, { each: 0.035, from: 'end' }, 0, { each: 0.035, from: 'start' }];
 if (titleWords) {
 	document.fonts.ready.then(alignTitleGradient);
 	window.addEventListener('resize', () => requestAnimationFrame(alignTitleGradient));
 }
 if (titleWords && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 	gsap.set(titleInfo, { autoAlpha: 0 });
-	setOffCard();
-	// after the fonts, so the words are measured in the title's face
+	[...titleWords.children].forEach((word, k) => gsap.set(word, TITLE_SIDES[k](word)));
+	// after the fonts, so the words are split and measured in the title's face
 	document.fonts.ready.then(() => {
-		setOffCard();
-		gsap.timeline({ onComplete: () => gsap.delayedCall(2.5, swapTitle) })
-			.to(titleInfo, { autoAlpha: 1, duration: 0.4, ease: 'power1.inOut' }, 0.3)
-			.to(titleWords.children, { x: 0, y: 0, duration: 0.9, ease: 'power2.inOut', stagger: 0.12 }, 0.3);
+		const words = [...titleWords.children];
+		gsap.set(words, { x: 0, y: 0 });
+		titleLeaves.forEach((leaf) => splitWord(leaf));
+		alignTitleGradient();
+		const intro = gsap.timeline({ onComplete: () => gsap.delayedCall(2.5, swapTitle) });
+		intro.to(titleInfo, { autoAlpha: 1, duration: 0.4, ease: 'power1.inOut' }, 0.3);
+		words.forEach((word, k) => {
+			const letters = lettersOf(word);
+			gsap.set(letters, TITLE_SIDES[k](word));
+			intro.to(letters, { x: 0, y: 0, duration: 1.1, ease: 'power4.out', stagger: TITLE_STAGGERS[k] }, 0.3 + k * 0.12);
+		});
 	});
 }
 
 // Your and my trade places: each slides off its own side, takes the
 // other's word, and slides back. is not, set right with my, moves over to
 // make room for the longer word, or close up after the shorter; the UIs
-// move to start just after the first word, as they start after Your.
+// move to start just after the first word, as they start after Your. Both
+// set off a little before the words are gone, measured ahead on copies of
+// the words.
 let titleSwap = null;
+// the width a word would have with other text, from a hidden copy
+const widthAs = (leaf, text) => {
+	const copy = document.createElement('span');
+	copy.textContent = text;
+	copy.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap';
+	leaf.parentElement.append(copy);
+	const width = copy.getBoundingClientRect().width;
+	copy.remove();
+	return width;
+};
+const widthOf = (el) => placeOf(el).right - placeOf(el).left;
 function swapTitle() {
 	const [first, , line] = titleWords.children;
 	const [isNot, last] = line.children;
-	const ease = 'power2.inOut';
+	const swapped = first.textContent === 'Your';
+	const [nextFirst, nextLast] = swapped ? ['My', 'your'] : ['Your', 'my'];
 	const em = parseFloat(getComputedStyle(titleWords).fontSize);
 	// the space between the first word and UI, from where UI starts now
-	const space = parseFloat(getComputedStyle(titleWords).getPropertyValue('--under-ui')) * em - (placeOf(first).right - placeOf(first).left);
-	let under = null; // where the UIs start after the new first word, set once it's in
-	titleSwap = gsap
-		.timeline({ onComplete: () => gsap.delayedCall(3, swapTitle) })
-		.to(first, { ...offLeft(first), duration: 0.6, ease: 'power2.in' })
-		.to(last, { ...offRight(last), duration: 0.6, ease: 'power2.in' }, 0)
+	const space = parseFloat(getComputedStyle(titleWords).getPropertyValue('--under-ui')) * em - widthOf(first);
+	const under = `${(widthAs(first, nextFirst) + space) / em}em`;
+	// how far is not moves over: by the difference the new last word makes
+	const shift = widthOf(last) - widthAs(last, nextLast);
+	const ease = 'power3.inOut', OUT = 0.6, AHEAD = 0.3, MOVE = 1.1;
+	// is not's move, which the new last word, once in, makes part of itself
+	const move = { x: 0 };
+	let placed = 0;
+	const tl = (titleSwap = gsap.timeline({ onComplete: () => gsap.delayedCall(3, swapTitle) }));
+	tl.to(lettersOf(first), { ...offLeft(first), duration: OUT, ease: 'power2.in' })
+		.to(lettersOf(last), { ...offRight(last), duration: OUT, ease: 'power2.in' }, 0)
+		.to(move, { x: shift, duration: MOVE, ease, onUpdate: () => gsap.set(isNot, { x: move.x - placed }) }, OUT - AHEAD)
+		.to(titleWords, { '--under-ui': under, duration: MOVE, ease, onUpdate: alignTitleGradient }, OUT - AHEAD)
+		// the words gone, they take each other's place
 		.add(() => {
-			const before = placeOf(isNot).left;
-			const swapped = first.textContent === 'Your';
-			first.textContent = swapped ? 'My' : 'Your';
-			last.textContent = swapped ? 'your' : 'my';
-			// back off their sides from their new places
-			gsap.set(first, offLeft(first));
-			gsap.set(last, offRight(last));
-			gsap.set(isNot, { x: before - placeOf(isNot).left });
+			splitWord(first, nextFirst);
+			splitWord(last, nextLast);
+			placed = shift;
+			gsap.set(isNot, { x: move.x - placed });
+			gsap.set(lettersOf(first), offLeft(first));
+			gsap.set(lettersOf(last), offRight(last));
 			alignTitleGradient();
-			under = `${(placeOf(first).right - placeOf(first).left + space) / em}em`;
-		})
-		.to([first, last], { x: 0, duration: 0.7, ease: 'power2.out' })
-		.to(isNot, { x: 0, duration: 0.7, ease }, '<')
-		.to(titleWords, { '--under-ui': () => under, duration: 0.7, ease, onUpdate: alignTitleGradient }, '<');
-	if (!titleInView) titleSwap.pause();
+			tl.to(lettersOf(first), { x: 0, duration: 1, ease: 'power4.out' }, OUT);
+			tl.to(lettersOf(last), { x: 0, duration: 1, ease: 'power4.out' }, OUT);
+		}, OUT);
+	if (!titleInView) tl.pause();
 }
 
 // the swap pauses while the title slide is out of view
