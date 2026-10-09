@@ -234,6 +234,12 @@
 				line-height: 1.6;
 			}
 
+			/* the notes' text is black, as in the drawer, inside the act's colour
+			   that the badge and cue samples take theirs from */
+			.ts-notes .notes-content {
+				color: #000;
+			}
+
 			/* the notes' own type, as #notes-drawer-content sets it in the
 			   deck; inside main here, so undo main p's slide size */
 			.ts-sample #notes-drawer :is(p, ul),
@@ -737,6 +743,51 @@
 							<li>Speech output at 3× speed</li>
 						</ul>
 					</aside>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec=".speaker">
+					<strong>Badge</strong>
+					Who speaks from here on: a pill at the start of a scene’s notes, or where the other speaker takes over, a step under the footer, on a rule across the notes. At the rule’s end, in the sub-meta’s italic, roughly where the talk should be by then (data-time).
+					<code>.notes-content .speaker</code>
+					<output></output>
+				</div>
+				<div class="ts-sample ts-notes act-panel" data-act="hypothesis">
+					<div class="notes-content">
+						<p class="speaker" data-speaker="simon" data-time="0:00">Simon</p>
+						<p>Hello everyone, my name is Simon.</p>
+						<p class="speaker" data-speaker="matt" data-time="0:15">Matt</p>
+						<p>Hi, I’m Matt …</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec=".toc-speaker">
+					<strong>Initials</strong>
+					Who speaks a scene, at the end of its entry in the index: the badges in short, the same size and outline.
+					<code>.toc-speaker</code>
+					<output></output>
+				</div>
+				<div class="ts-sample act-panel" data-act="hypothesis">
+					<span class="toc-speakers" style="float: none"><span class="toc-speaker">S</span><span class="toc-speaker">M</span></span>
+				</div>
+			</div>
+
+			<div class="ts-row">
+				<div class="ts-spec" data-spec=".cue">
+					<strong>Cue</strong>
+					What to do on stage, bold in the act’s colour in square brackets: on its own line as a paragraph, or inline, where it happens in the sentence.
+					<code>.notes-content .cue</code>
+					<output></output>
+				</div>
+				<div class="ts-sample ts-notes act-panel" data-act="hypothesis">
+					<div class="notes-content">
+						<p>Let’s start with a short video.</p>
+						<p class="cue">Play video</p>
+						<p><span class="cue">Next</span> Remember Rose from our interviews.</p>
+					</div>
 				</div>
 			</div>
 

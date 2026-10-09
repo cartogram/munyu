@@ -1436,10 +1436,10 @@ body.is-collapsed .act-panel.is-under {
 	visibility: hidden;
 }
 
-/* beside the open drawer the cards' outlines turn to the light rule grey,
-   in step with the drawer, like the index card's */
+/* beside the open drawer the cards keep their outlines in their act's
+   colour, as the drawer's rules take the current act's */
 .act-panel {
-	border-color: color-mix(in srgb, var(--grey-300) calc(var(--stack-collapse) * 100%), var(--act-color));
+	border-color: var(--act-color);
 }
 
 /* ScrollTrigger's pin spacers copy a card's z-index but don't slide with it,
@@ -1492,7 +1492,7 @@ body.is-collapsed .act-panel.is-under {
 	--card-inset-left: 1px;
 	--pad-left: calc(var(--title-left) - var(--card-inset-left) - 1px);
 	margin: 0 0 0 var(--card-inset-left);
-	border: 1px solid var(--grey-300);
+	border: 1px solid var(--act-color, #000);
 	border-bottom: 0;
 	border-radius: var(--corner) var(--corner) 0 0;
 }
@@ -1515,7 +1515,7 @@ body.is-collapsed .act-panel.is-under {
 .drawer-footer {
 	margin: auto calc(-1 * var(--pad-right)) 0 calc(-1 * var(--pad-left));
 	padding: var(--pad-left) var(--pad-right) 0 var(--pad-left);
-	border-top: 1px solid var(--grey-300);
+	border-top: 1px solid var(--act-color, #000);
 	font-size: 0.8125rem; /* 13px */
 	color: var(--grey-600);
 	/* the speakers and the links side by side where they fit, stacked
@@ -1610,40 +1610,89 @@ body.is-collapsed .act-panel.is-under {
 	text-underline-offset: 0.15em;
 }
 
-/* who speaks from here on: a pill in the act's colour at the start of a
+/* who speaks from here on: a pill outlined like the drawer's rules, its
+   name bold in the act's colour, at the start of a
    scene's notes, or where the other speaker takes over mid-scene. Notes
    only: the asides never show on the slides. The index shows the same
    speakers as initials (.toc-speaker). */
-#notes-drawer-content .speaker {
+/* the notes measure the rule across them by their own width */
+.notes-content {
+	container-type: inline-size;
+}
+
+.notes-content .speaker {
 	display: table;
-	margin: 0 0 0.75em;
+	position: relative;
+	/* drawn back by its padding and border (below), so the name lines up
+	   with the text of the notes */
 	padding: 0.1em 0.75em;
-	border: 2px solid var(--act-color, #000);
+	border: 1px solid var(--act-color, #000);
 	border-radius: 999px;
+	background: #fff;
 	color: var(--act-color, #000);
-	font-size: 0.875rem; /* 14px */
+	font-size: 0.75rem; /* 12px, the badge size (system.html) */
 	font-weight: 700;
 	line-height: 1.4;
 }
 
-#notes-drawer-content * + .speaker {
-	margin-top: 1.5em;
+/* a rule across the notes from the column's left edge (its padding too)
+   to the end of their text, behind the badge: below the badge's own
+   white, which it passes under. Where there's a time, the rule stops
+   just short of it (below). */
+.notes-content .speaker::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	top: 50%;
+	left: calc(0.75em - var(--pad-left, 0px));
+	width: calc(100cqw + var(--pad-left, 0px));
+	border-top: 1px solid var(--act-color, #000);
+}
+
+/* roughly where the talk should be by here (data-time, m:ss), at the end
+   of the rule in the sub-meta's serif italic: the rule stops short of it,
+   as the meta's dash stops short of its words */
+.notes-content .speaker[data-time]::after {
+	content: attr(data-time);
+	position: absolute;
+	top: 50%;
+	left: calc(0.75em + 100cqw);
+	translate: -100% -50%;
+	padding-left: 0.5rem;
+	background: #fff;
+	font-family: var(--font-serif);
+	font-size: 0.875rem;
+	font-style: italic;
+	font-weight: 400;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+/* as specific as the notes' paragraph margins, which it sets for itself:
+   about as much room below the rule as above it, where the paragraph's
+   own margin sets the space */
+:is(#notes-drawer-content, .notes-content) .speaker {
+	margin: 0 0 1.1em calc(-0.75em - 1px);
+}
+
+:is(#notes-drawer-content, .notes-content) * + .speaker {
+	margin-top: 1.25em;
 }
 
 /* what to do on stage (play the video, advance the slide): bold, in the
    act's colour, in square brackets. A <p class="cue"> sits on its own
    line; a <span class="cue"> runs inline, at the point in the sentence
    where it happens. */
-#notes-drawer-content .cue {
+.notes-content .cue {
 	color: var(--act-color, #000);
 	font-weight: 700;
 }
 
-#notes-drawer-content .cue::before {
+.notes-content .cue::before {
 	content: '[ ';
 }
 
-#notes-drawer-content .cue::after {
+.notes-content .cue::after {
 	content: ' ]';
 }
 
@@ -1700,24 +1749,26 @@ body.is-collapsed .act-panel.is-under {
 	line-height: inherit;
 }
 
-/* who speaks the scene, as the notes' badges in short: an outlined initial
-   each, in the act's colour, at the entry's end */
+/* who speaks the scene, as the notes' badges in short: an initial each,
+   outlined as they are, at the entry's end. Badges and initials share one
+   size, 12px, a step under the footer's 13px. */
 .toc-speakers {
 	float: right;
 	display: flex;
 	gap: 0.2rem;
-	margin: 0.15rem 0 0 0.5rem;
+	/* out into the gutter on the right, half the entry's padding */
+	margin: 0.15rem calc(-0.5 * var(--pad-right)) 0 0.5rem;
 }
 
 .toc-speaker {
 	display: grid;
 	place-items: center;
-	width: 1.1rem;
-	height: 1.1rem;
-	border: 1.5px solid currentColor;
+	width: 1.4rem;
+	height: 1.4rem;
+	border: 1px solid currentColor;
 	border-radius: 50%;
 	box-sizing: border-box;
-	font-size: 0.625rem; /* 10px */
+	font-size: 0.75rem; /* 12px, the badge size, as the notes' badges */
 	font-weight: 700;
 	line-height: 1;
 }
