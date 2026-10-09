@@ -369,14 +369,15 @@ main section[data-scene='your-ui-is-not-my-ui-title']::before {
 
 /* act openers blend three colours, as gggrain's grounds do: the act's ink
    held along the bottom under the title, fading up to the previous act's
-   colour at the top (where the talk has just come from), with a pale glow
-   of the act's own colour between them, high on the left. Mixed in oklab,
-   so two hues meet without going muddy. The talk title, with no act
-   before it, keeps the two-step fade above. */
+   colour at the top (where the talk has just come from), with a soft band
+   between them: a lighter step of the act's own colour, half see-through,
+   straight across the upper third and tilted down to the left, so it never
+   reaches the title. Mixed in oklab, so two hues meet without going muddy.
+   The talk title, with no act before it, keeps the two-step fade above. */
 .act-opener::before {
 	background-image:
 		var(--grain),
-		radial-gradient(55% 45% at 12% 28%, color-mix(in srgb, var(--act-color) var(--ramp-soft), white), transparent),
+		linear-gradient(in oklab calc(160deg + var(--fade-angle, 20deg) / 2), transparent, color-mix(in srgb, color-mix(in srgb, var(--act-color) var(--ramp-accent), white) 55%, transparent) 24%, transparent 50%),
 		linear-gradient(in oklab var(--fade-angle, 20deg), var(--act-color) var(--fade-hold, 30%), color-mix(in srgb, var(--act-prev, var(--act-color)) var(--fade-to, var(--ramp-accent)), white));
 	background-size: var(--grain-tile), 100% 100%, 100% 100%;
 	background-blend-mode: soft-light, normal, normal;
