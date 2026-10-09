@@ -193,11 +193,12 @@
 	--ramp-paper: 0%;
 
 	/* greys: the neutrals beside the act colours, lightest first, named
-	   --grey-<step>. Rules are light so they frame without competing with
-	   the act colours; text greys stay ≥ 7:1 (AAA) on white. */
-	--grey-300: #d1d1d1; /* rules: the index card, the footer, the cards beside the open drawer, system.html's dividers */
+	   --grey-<step>. The deck's rules and outlines are in the act colour;
+	   the light grey is left for system.html's own frames, so they don't
+	   read as part of the deck. Text greys stay ≥ 7:1 (AAA) on white. */
+	--grey-300: #d1d1d1; /* system.html's dividers and sample frames */
 	--grey-600: #555555; /* secondary text */
-	--grey-800: #333333; /* body text in system.html */
+	--grey-800: #333333; /* body text in system.html; the title slide's speakers */
 }
 
 body {

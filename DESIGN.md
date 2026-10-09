@@ -44,7 +44,10 @@ clicker. Reading it as a scrolling page comes second. Every scene is a frame
 of at least one viewport.
 
 **One colour per act.** All of an act's text, rules, diagram strokes and
-illustrations use its one colour on white. The colours are one family: the
+illustrations use its one colour on white. So do the notes drawer's
+borders, its speaker rules and badges, and the cards' outlines beside it,
+in the current act's colour; the greys are for text, and for the frames of
+`system.html` itself. The colours are one family: the
 same OKLCH lightness and chroma, varying only in hue. Every one passes WCAG
 AAA (7:1) on white, so any of them can carry body text. A talk about
 accessibility can't fall short of this.
