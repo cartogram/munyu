@@ -459,7 +459,7 @@ main section[data-scene='your-ui-is-not-my-ui-title'] {
 	/* nearly twice an act title, but never so big that the longest line,
 	   is not your once the words have traded places (4.8em), runs off the
 	   card by more than its bleed */
-	--title-size: min(calc(390 * var(--u)), calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2px) / 4.8));
+	--title-size: min(calc(360 * var(--u)), calc((100vw - var(--card-left, var(--inset-left)) - var(--inset-right) - 2px) / 4.8));
 	/* a word row is a little under the words' cap height, so they sit tight
 	   in it and leave the information as much room as they can */
 	--title-row: calc(var(--title-size) * 0.66);
@@ -564,27 +564,33 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-centre {
 	text-align: center;
 }
 
-/* each centred in its row, between the lines above and below */
+/* each centred in its row, between the lines above and below; the
+   abstract on the column's middle even when its unwrapped lines are wider
+   than the column */
 main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > .title-abstract {
 	grid-row: 2;
+	justify-self: center;
+	/* a grid item would shrink to the column; this one keeps its lines'
+	   width, and the auto margins centre it even past the column's sides */
+	width: max-content;
+	margin-inline: -100vw;
 }
 
 main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > .title-speakers {
 	grid-row: 4;
 }
 
-/* the abstract: one sentence in the body serif, set open, justified, its
-   last line centred under the rest */
+/* the abstract, in the body serif, centred, in five lines broken by hand
+   (index.html) and never wrapped further, so it keeps its shape at any
+   size */
 main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
-	max-width: calc(1120 * var(--u));
 	margin: 0;
 	font-family: var(--font-serif);
-	text-align: justify;
-	text-align-last: center;
-	hyphens: auto;
-	font-size: calc(26 * var(--u));
+	text-align: center;
+	white-space: nowrap;
+	font-size: calc(25 * var(--u));
 	font-weight: 400;
-	line-height: 1.5;
+	line-height: 1.4;
 }
 
 /* the speakers: a round photo each, in greys so they sit in the act's one
@@ -616,6 +622,7 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
 }
 
 .title-speaker {
+	color: var(--grey-800);
 	font-family: var(--font-sans);
 	font-size: calc(26 * var(--u));
 	font-weight: 400;
@@ -851,8 +858,9 @@ main small {
 	display: inline-block;
 }
 
+/* emphasis is italic (reset.css takes away the browser's own) */
 main em {
-	font-style: normal;
+	font-style: italic;
 }
 
 main a {
@@ -1229,64 +1237,27 @@ main .branching-illustration {
 		height: auto;
 	}
 
-	/* the title slide's speakers at a readable size, free to wrap */
+	/* the title slide keeps its five rows; its information is set at a
+	   readable size, and the speakers stack */
 	.title-speaker {
 		font-size: 0.75rem;
 		white-space: normal;
 	}
 
-	/* the words run as a block at the top, two to a line, and the abstract
-	   and speakers follow under them; the slide grows to fit */
-	main section[data-scene='your-ui-is-not-my-ui-title'] {
-		height: auto;
-		justify-content: flex-start;
-	}
-
-	main [data-scene='your-ui-is-not-my-ui-title'] :is(.title-words, .title-centre) {
-		position: relative;
-		inset: auto;
-		align-self: stretch;
-		grid-template-rows: none;
-		gap: 1.5rem;
-	}
-
-	/* as a block in the flow, the words' container has no height of its
-	   own to size the gradient by: each word takes it whole instead */
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
-		margin-bottom: 2rem;
-		container-type: normal;
-	}
-
-	.title-words span:not(.title-line):not(:has(.title-char)),
-	.title-words .title-char {
-		background-size: var(--grain-tile), 100cqw 100cqh;
-	}
-
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
-		white-space: normal;
-	}
-
-	/* the lines one after another, no rows between: Your and the first UI
-	   share the first */
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > :nth-child(-n + 2) {
-		grid-row: 1;
-	}
-
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > :nth-child(3) {
-		grid-row: 2;
-	}
-
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > :nth-child(4) {
-		grid-row: 3;
-	}
-
-	main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > * {
-		grid-row: auto;
+	.title-speakers img {
+		width: 2.5rem;
+		height: 2.5rem;
 	}
 
 	.title-speakers {
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.75rem;
+	}
+
+	/* the abstract's longest line, never wrapped, is about 27em: as big as that
+	   lets it be across the screen, and no bigger than the notes */
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
+		font-size: min(0.875rem, calc((100vw - 4rem) / 29));
 	}
 
 	main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
@@ -1621,7 +1592,7 @@ body.is-collapsed .act-panel.is-under {
 	margin-top: 0.3em;
 }
 
-/* emphasis is bold: <em> stays upright (DESIGN.md) */
+/* emphasis in the notes is bold */
 #notes-drawer-content :is(em, strong) {
 	font-weight: 700;
 }

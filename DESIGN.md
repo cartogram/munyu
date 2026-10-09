@@ -52,8 +52,8 @@ accessibility can't fall short of this.
 **Two typefaces.** Aileron (sans) for titles, body sans (paragraphs and
 lists) and meta. Libre Baskerville (serif) for scene headlines and body
 serif (interview quotes and the Q&A questions). Body comes in just those two
-styles; there's no separate lede. There's one italic, the sub-meta. `<em>`
-stays upright.
+styles; there's no separate lede. Italic is for the sub-meta and for
+`<em>`.
 
 **Slide units.** Everything inside a slide is sized in `--u`, one pixel of a
 1920 × 1080 canvas scaled to the window. A slide keeps its proportions and
