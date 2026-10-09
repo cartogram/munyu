@@ -1,205 +1,23 @@
 /* Talk theme: GreenSock "Slides Pinning" pen structure — white 100vh act
    cards, one AAA named colour per act. Shared by index.html and
-   system.html. See docs/plans/2026-09-29-pen-cards-design.md */
+   system.html. See docs/plans/2026-09-29-pen-cards-design.md
 
-/* Ronzino and Necto Mono by Collletttivo, SIL Open Font License 1.1
-   (licences in fonts/ronzino and fonts/necto-mono); Libre Baskerville by
-   Impallari Type, OFL 1.1 (fonts/libre-baskerville, variable, Latin subset);
-   Aileron by Sora Sagano, public domain (CC0; fonts/aileron, Latin subset).
-   Aileron has no Medium, so its SemiBold also answers 500. Black comes from
-   the designer's own release (dotcolon.net), as Fontsource stops at 800. */
-/* Light comes from the designer's release: Fontsource's "300" file is
-   actually Aileron UltraLight */
-@font-face {
-	font-family: 'Aileron';
-	src: url('../fonts/aileron/Aileron-Light.otf') format('opentype');
-	font-weight: 300;
-	font-style: normal;
-	font-display: swap;
-}
+   Sections, in order:
+   - tokens.css (imported): @font-face, :root tokens, per-act --act-color
+   - body + main globals
+   - act panels, scenes and their frames
+   - act openers: grain, gradient fades, chapter numbers
+   - act and talk titles, title slide, title speakers
+   - scene editorial type (headings, body, blockquote, lists, meta,
+     sub-meta, em-dash, .sep, headings--N utilities)
+   - persona scenes, their pull-quote marks, Q&A dividers
+   - branching demo, today's model
+   - mobile responsive canvas
+   - slide chrome: chrome bar, act tab, notes toggle, pointer, video
+   - notes drawer: TOC, notes, footer, speaker badges, cues, footnotes
+   - responsive drawer, spotlight */
 
-@font-face {
-	font-family: 'Aileron';
-	src: url('../fonts/aileron/Aileron-Black.otf') format('opentype');
-	font-weight: 900;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Aileron';
-	src: url('../fonts/aileron/aileron-latin-400-normal.woff2') format('woff2');
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Aileron';
-	src: url('../fonts/aileron/aileron-latin-600-normal.woff2') format('woff2');
-	font-weight: 500 600;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Aileron';
-	src: url('../fonts/aileron/aileron-latin-700-normal.woff2') format('woff2');
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Libre Baskerville';
-	src: url('../fonts/libre-baskerville/LibreBaskerville-latin.woff2') format('woff2');
-	font-weight: 400 700;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Libre Baskerville';
-	src: url('../fonts/libre-baskerville/LibreBaskerville-Italic-latin.woff2') format('woff2');
-	font-weight: 400 700;
-	font-style: italic;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Ronzino';
-	src: url('../fonts/ronzino/Ronzino-Regular.woff2') format('woff2');
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Ronzino';
-	src: url('../fonts/ronzino/Ronzino-Oblique.woff2') format('woff2');
-	font-weight: 400;
-	font-style: italic;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Ronzino';
-	src: url('../fonts/ronzino/Ronzino-Medium.woff2') format('woff2');
-	font-weight: 500;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Ronzino';
-	src: url('../fonts/ronzino/Ronzino-MediumOblique.woff2') format('woff2');
-	font-weight: 500;
-	font-style: italic;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Ronzino';
-	src: url('../fonts/ronzino/Ronzino-Bold.woff2') format('woff2');
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Ronzino';
-	src: url('../fonts/ronzino/Ronzino-BoldOblique.woff2') format('woff2');
-	font-weight: 700;
-	font-style: italic;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Necto Mono';
-	src: url('../fonts/necto-mono/NectoMono-Regular.woff2') format('woff2');
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
-:root {
-	/* how far the act cards sit in from each window edge (js/site.js reads
-	   the top and bottom values for the scroll maths) */
-	/* the first card sits below a band for the talk title and event, 1px in
-	   from the left edge; literal px because js/site.js reads them */
-	--inset-top: 42px;
-	--inset-left: 1px;
-	/* each act card sits this much further in (top and left) than the last,
-	   so each earlier card shows as a thin extra line */
-	--stack-step: 3px;
-	--inset-right: 0rem;
-	/* the notes drawer's width; opening it, js/site.js tweens --drawer-scale
-	   on body to shrink the act cards into the room beside it (on phones,
-	   where the drawer fills the window, --drawer-push slides them away).
-	   --stack-collapse, 0 to 1 with it, lifts each card out of its stack
-	   offset so the open deck shows as one card. */
-	--drawer-width: 50vw;
-	--drawer-scale: 1;
-	--drawer-push: 0px;
-	--stack-collapse: 0;
-	--inset-bottom: 0rem;
-	/* the chrome sits 1.5rem inside the card (Notes button); corner tabs pad
-	   their text equally on every side */
-	--chrome-pad: 1.5rem;
-	--tab-pad: 0.75rem;
-	/* the notes toggle: a + in the top band's left-hand corner */
-	--toggle-size: 28px;
-	/* the front act card's corner, and the drawer's index card */
-	--corner: 10px;
-	/* where the talk title starts, right of the toggle; the drawer's text
-	   lines up with it */
-	--title-left: calc(var(--inset-left) + 2 * var(--tab-pad) + var(--toggle-size));
-	/* slide units: everything inside a slide is sized in --u, one px of a
-	   1920 × 1080 reference window, scaled to fit the real one (like a
-	   presentation canvas). Type, padding and media keep the same proportions
-	   and line breaks at any window size; the chrome and the notes drawer stay
-	   in rem. */
-	--u: min(100vw / 1920, 100vh / 1080);
-	/* frames' padding: content runs full width between the sides */
-	--frame-pad-x: calc(96 * var(--u));
-	--frame-pad-top: max(3.5rem, calc(96 * var(--u))); /* clears the card's tab */
-	--frame-pad-bottom: max(3rem, calc(72 * var(--u)));
-	--font-sans: 'Aileron', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-	--font-serif: 'Libre Baskerville', Baskerville, 'Times New Roman', serif;
-
-	/* ---- theme tokens: the one place these values live. system.html and
-	   scripts/normalize-personas.mjs read them from here. ---- */
-
-	/* one colour per act: a single family at the same OKLCH lightness (0.43)
-	   and chroma (0.10, 0.035 for the two neutrals), varying only in hue; each
-	   ≥ 7:1 (WCAG AAA) on white. Named --act-<data-act>. */
-	--act-hypothesis: #265085;
-	--act-user-research: #6e396a;
-	--act-limits-of-adaptability: #7e3633;
-	--act-personalization-over-adaptability: #265e2b;
-	--act-empathy-is-our-point: #006061;
-	--act-launching-is-creating: #764002;
-	--act-closing: #4a4f63;
-	--act-backup-qa: #3a555d;
-
-	/* the illustration ramp: how much of the act colour each step keeps
-	   (the rest is white), as in color-mix(in srgb, act N%, white) */
-	--ramp-ink: 100%;
-	--ramp-deep: 70%;
-	--ramp-accent: 50%;
-	--ramp-soft: 28%;
-	--ramp-wash: 10%;
-	--ramp-paper: 0%;
-
-	/* greys: the neutrals beside the act colours, lightest first, named
-	   --grey-<step>. The deck's rules and outlines are in the act colour;
-	   the light grey is left for system.html's own frames, so they don't
-	   read as part of the deck. Text greys stay ≥ 7:1 (AAA) on white. */
-	--grey-300: #d1d1d1; /* system.html's dividers and sample frames */
-	--grey-600: #555555; /* secondary text */
-	--grey-800: #333333; /* body text in system.html; the title slide's speakers */
-}
+@import 'tokens.css';
 
 body {
 	background: #fff;
@@ -212,24 +30,6 @@ body {
 main {
 	padding: var(--inset-top) 0 var(--inset-bottom);
 }
-
-/* each act's card, and the chrome while it is current, take its token */
-.act-panel[data-act='hypothesis'],
-body[data-current-act='hypothesis'] { --act-color: var(--act-hypothesis); }
-.act-panel[data-act='user-research'],
-body[data-current-act='user-research'] { --act-color: var(--act-user-research); }
-.act-panel[data-act='limits-of-adaptability'],
-body[data-current-act='limits-of-adaptability'] { --act-color: var(--act-limits-of-adaptability); }
-.act-panel[data-act='personalization-over-adaptability'],
-body[data-current-act='personalization-over-adaptability'] { --act-color: var(--act-personalization-over-adaptability); }
-.act-panel[data-act='empathy-is-our-point'],
-body[data-current-act='empathy-is-our-point'] { --act-color: var(--act-empathy-is-our-point); }
-.act-panel[data-act='launching-is-creating'],
-body[data-current-act='launching-is-creating'] { --act-color: var(--act-launching-is-creating); }
-.act-panel[data-act='closing'],
-body[data-current-act='closing'] { --act-color: var(--act-closing); }
-.act-panel[data-act='backup-qa'],
-body[data-current-act='backup-qa'] { --act-color: var(--act-backup-qa); }
 
 .act-panel {
 	/* the grain laid over the act openers' grounds and the title's words: a
@@ -652,7 +452,11 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
    styles, body sans (paragraphs and lists) and body serif (quotes, and the
    Q&A questions). The scene line lives in each card's tab (.act-tab). */
 
-main h2 {
+/* each type level pairs its native tag with a .heading--N class, so any
+   element can take the level's style (<div class="heading--2"> reads as
+   a scene headline). Fondfolio-style naming. */
+main h2,
+.heading--2 {
 	font-family: var(--font-serif);
 	font-size: calc(150 * var(--u));
 	font-weight: 900; /* Libre Baskerville tops out at 700 */
@@ -661,7 +465,8 @@ main h2 {
 	margin: 0 auto 0.5em;
 }
 
-main h3 {
+main h3,
+.heading--3 {
 	font-size: 1.25em;
 	font-weight: 700;
 	margin: 0 auto 0.5em;
@@ -710,7 +515,8 @@ main ul {
 /* body sans: paragraphs and lists share one style. In --u, not em, so it
    doesn't compound inside the card's 1.5em */
 main p,
-main ul {
+main ul,
+.paragraph {
 	font-size: calc(55 * var(--u));
 	line-height: 1.2;
 }
@@ -722,7 +528,8 @@ main li + li {
 /* body serif: interview quotes and the Q&A questions, always centred (the
    persona and Q&A layouts); the branching demo's headline takes it too */
 main blockquote,
-main section[data-scene].branching > h2 {
+main section[data-scene].branching > h2,
+.blockquote {
 	font-family: var(--font-serif);
 	font-size: calc(60 * var(--u));
 	font-weight: 400;
@@ -824,6 +631,7 @@ main section[data-scene]:has(> .two-columns) > h2 {
 /* one meta style for authors and labels, the slide chrome and the Notes
    button. rem, so it stays meta-sized inside a 40px paragraph. */
 main small,
+.small,
 .act-tab,
 .deck-chrome,
 .drawer-heading {

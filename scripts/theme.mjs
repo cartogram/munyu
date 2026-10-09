@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
 export function tokens() {
-	const css = read('css/talk.css');
+	const css = read('css/tokens.css') + read('css/talk.css');
 	const acts = Object.fromEntries([...css.matchAll(/--act-([a-z-]+):\s*(#[0-9a-f]{6})\s*;/gi)].map((m) => [m[1], m[2]]));
 	const ramp = Object.fromEntries([...css.matchAll(/--ramp-([a-z]+):\s*([\d.]+)%\s*;/g)].map((m) => [m[1], +m[2] / 100]));
 	return { acts, ramp };

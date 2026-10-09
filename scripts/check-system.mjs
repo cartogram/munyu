@@ -5,7 +5,7 @@ import { execFileSync } from 'child_process';
 import { acts, media, personas, tokens } from './theme.mjs';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
-const css = read('css/talk.css');
+const css = read('css/tokens.css') + read('css/talk.css');
 const system = read('system.html');
 const { acts: actTokens, ramp } = tokens();
 const deck = acts();
