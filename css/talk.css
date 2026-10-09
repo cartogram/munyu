@@ -1372,6 +1372,23 @@ body.is-collapsed .act-panel.is-under {
 	margin-top: 1.5em;
 }
 
+/* what to do on stage (play the video, advance the slide): bold, in the
+   act's colour, in square brackets. A <p class="cue"> sits on its own
+   line; a <span class="cue"> runs inline, at the point in the sentence
+   where it happens. */
+#notes-drawer-content .cue {
+	color: var(--act-color, #000);
+	font-weight: 700;
+}
+
+#notes-drawer-content .cue::before {
+	content: '[ ';
+}
+
+#notes-drawer-content .cue::after {
+	content: ' ]';
+}
+
 #drawer-toc,
 #drawer-toc ol {
 	list-style: none;
