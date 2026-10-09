@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Design system — Your UI is not my UI</title>
-		<!-- sharing: search results, link previews (Open Graph) and X's card; the
+		<!-- sharing: search results, link previews (Open Graph) and X’s card; the
 		     image is the title slide at 1200×630 (public/og-image.jpg) -->
 		<link rel="canonical" href="https://your-ui-is-not-my-ui.cartogram.ca/system.html" />
 		<meta name="description" content="The design system behind the talk Your UI is not my UI: its type, act colours, greys, icons, illustrations and slide layouts, each rendered live from the deck’s own CSS." />
@@ -532,7 +532,7 @@
 			<p>
 				<em>Your UI is not my UI</em> — React Advanced 2026. Every sample on this page is styled by the
 				same rules as the slides (<code>css/talk.css</code>), inside a card at slide scale: 1em = the
-				card's 1.5em body size. The specs beside each sample are read live from the browser, so resize
+				card’s 1.5em body size. The specs beside each sample are read live from the browser, so resize
 				below 700px to see the mobile values.
 			</p>
 		</header>
@@ -610,7 +610,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="p">
 					<strong>Body sans</strong>
-					Paragraphs and lists, and the line under a persona's name.
+					Paragraphs and lists, and the line under a persona’s name.
 					<code>main p, main ul</code>
 					<output></output>
 				</div>
@@ -631,7 +631,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="blockquote">
 					<strong>Body serif</strong>
-					Interview quotes and the Q&amp;A questions; centred where they're used.
+					Interview quotes and the Q&amp;A questions; centred where they’re used.
 					<code>main blockquote</code>
 					<output></output>
 				</div>
@@ -640,7 +640,7 @@
 						<section data-scene="ts-quote">
 							<blockquote>
 								&ldquo;[&hellip;] you have to put your name to things. If it went ahead, did a bunch of
-								tasks, emailed people, and I couldn't really take it back &mdash; that feels &hellip;
+								tasks, emailed people, and I couldn’t really take it back &mdash; that feels &hellip;
 								uncomfortable.&rdquo;
 							</blockquote>
 						</section>
@@ -667,7 +667,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".sub-meta">
 					<strong>Sub-meta</strong>
-					A secondary line under meta: the event's city and year, and the slide number in the notes drawer. Serif italic, the only italic.
+					A secondary line under meta: the event’s city and year, and the slide number in the notes drawer. Serif italic, the only italic.
 					<code>.sub-meta</code>
 					<output></output>
 				</div>
@@ -683,7 +683,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".video-play">
 					<strong>Button</strong>
-					A slide's video, where the video sits: a pill in the act's colour whose label underlines on hover. The deck adds the clip's length.
+					A slide’s video, where the video sits: a pill in the act’s colour whose label underlines on hover. The deck adds the clip’s length.
 					<code>.video-play</code>
 					<output></output>
 				</div>
@@ -699,7 +699,7 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="a">
 					<strong>Link</strong>
-					The notes drawer's footer: the speakers, this page and the source code, bold in the act's colour with an arrow.
+					The notes drawer’s footer: the speakers, this page and the source code, bold in the act’s colour with an arrow.
 					<code>.drawer-footer a</code>
 					<output></output>
 				</div>
@@ -715,7 +715,7 @@
 		<section class="ts-section">
 			<h2>Notes</h2>
 			<p class="ts-note">
-				The speaker notes, read mid-talk in the drawer. Default is the drawer's size; large, for reading
+				The speaker notes, read mid-talk in the drawer. Default is the drawer’s size; large, for reading
 				from further away, is <code>.notes-large</code> on the notes.
 			</p>
 
@@ -770,8 +770,8 @@
 		<section class="ts-section">
 			<h2>Act colours</h2>
 			<p class="ts-note">
-				One named colour per act (<code>--act-*</code>), used for all of that act's text, rules and diagram
-				strokes, in deck order. Each should pass WCAG AAA (≥ 7:1) on white; any that doesn't is flagged.
+				One named colour per act (<code>--act-*</code>), used for all of that act’s text, rules and diagram
+				strokes, in deck order. Each should pass WCAG AAA (≥ 7:1) on white; any that doesn’t is flagged.
 			</p>
 			<div class="ts-swatches" id="ts-swatches"></div>
 		</section>
@@ -780,7 +780,7 @@
 			<h2>Greys</h2>
 			<p class="ts-note">
 				The neutrals beside the act colours (<code>--grey-*</code>), lightest first: light ones for rules
-				(this page's dividers, the index card, the footer, the cards beside the open drawer), dark ones for
+				(this page’s dividers, the index card, the footer, the cards beside the open drawer), dark ones for
 				secondary text, which should pass AAA on white.
 			</p>
 			<div class="ts-swatches" id="ts-greys"></div>
@@ -789,9 +789,9 @@
 		<section class="ts-section">
 			<h2>Icons</h2>
 			<p class="ts-note">
-				The deck's icon set: the sprite at the top of <code>index.html</code>, used with
+				The deck’s icon set: the sprite at the top of <code>index.html</code>, used with
 				<code>&lt;use href="#icon-…"&gt;</code> and styled by <code>.icon</code>, one 2.5 stroke on a 24px
-				grid. Lucide's x, menu, pin, pin-off and play (filled), and the deck's own two arrows, long in the shaft and short in the head. Turned 45°, the x is the notes toggle's +.
+				grid. Lucide’s x, menu, pin, pin-off and play (filled), and the deck’s own two arrows, long in the shaft and short in the head. Turned 45°, the x is the notes toggle’s +.
 			</p>
 			<div class="ts-icons" id="ts-icons"></div>
 		</section>
@@ -799,7 +799,7 @@
 		<section class="ts-section">
 			<h2>Illustrations</h2>
 			<p class="ts-note">
-				Every persona illustration in the deck, each in its act's colour.
+				Every persona illustration in the deck, each in its act’s colour.
 				<code>scripts/normalize-personas.mjs</code> builds them from the traced originals in
 				<code>media/personas/originals/</code>: every colour snaps to the ramp below (<code>--ramp-*</code>),
 				and each drawing is cropped to a square with the same padding and its floor on the bottom edge, so
