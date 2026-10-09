@@ -1,10 +1,9 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Flip } from 'gsap/Flip';
 import branchingArtSvg from '../media/personas/demo-two-people.svg?raw';
 import todaysModelSvg from '../media/personas/todays-model.svg?raw';
 
-gsap.registerPlugin(ScrollTrigger, Flip);
+gsap.registerPlugin(ScrollTrigger);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
 // beat; ScrollTrigger's own resize refresh would shift positions first.
 ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
@@ -673,25 +672,96 @@ function jumpTo(y) {
 	moveTo(y);
 }
 
-// The talk title opens gathered in the middle of the frame, its three
-// lines centred (index.html sets it so), then its words spread out to the
-// frame's edges, and the abstract and speakers come in between them. Flip measures
-// both layouts and moves each word from one to the other. Reduced motion
-// shows the spread title straight away.
-const titleWords = document.querySelector('.title-words.is-gathered');
+// The talk title's words come in from off the card, one after another, to
+// their places: Your from the left, the first UI from the top, is not my
+// from the right and the last UI from the bottom. The abstract and speakers
+// fade in between them as they come. Then, every few seconds, Your and my
+// trade places: Your slides off to the left and comes back as My, while my
+// slides off to the right and comes back as your, and back again (swapTitle).
+// Reduced motion shows the title in place, and still.
+const titleWords = document.querySelector('.title-words');
 const titleInfo = titleWords ? [...titleWords.parentElement.querySelectorAll('.title-centre > *')] : [];
+const titleLeaves = titleWords ? [...titleWords.querySelectorAll('span:not(.title-line)')] : [];
+// a word's place, less any move it has
+const placeOf = (el) => {
+	const r = el.getBoundingClientRect(), x = gsap.getProperty(el, 'x'), y = gsap.getProperty(el, 'y');
+	return { left: r.left - x, right: r.right - x, top: r.top - y, bottom: r.bottom - y };
+};
+// each word's background set back by its place in the title, so the
+// gradient runs on from word to word (css/talk.css)
+function alignTitleGradient() {
+	const box = titleWords.getBoundingClientRect();
+	titleLeaves.forEach((leaf) => {
+		const p = placeOf(leaf);
+		leaf.style.setProperty('--bx', `${p.left - box.left}px`);
+		leaf.style.setProperty('--by', `${p.top - box.top}px`);
+	});
+}
+// the side each word comes in from, and how far it must move to sit just
+// off the card there
+const offLeft = (el) => ({ x: -placeOf(el).right - 40, y: 0 });
+const offRight = (el) => ({ x: innerWidth - placeOf(el).left + 40, y: 0 });
+const offCard = (word, k) => [offLeft(word), { x: 0, y: -placeOf(word).bottom - 40 }, offRight(word), { x: 0, y: innerHeight - placeOf(word).top + 40 }][k];
+const setOffCard = () => [...titleWords.children].forEach((word, k) => gsap.set(word, offCard(word, k)));
+if (titleWords) {
+	document.fonts.ready.then(alignTitleGradient);
+	window.addEventListener('resize', () => requestAnimationFrame(alignTitleGradient));
+}
 if (titleWords && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 	gsap.set(titleInfo, { autoAlpha: 0 });
-	// after the fonts, so both layouts are measured in the title's face
+	setOffCard();
+	// after the fonts, so the words are measured in the title's face
 	document.fonts.ready.then(() => {
-		const gathered = Flip.getState(titleWords.children);
-		titleWords.classList.remove('is-gathered');
-		gsap.timeline({ delay: 0.6 })
-			.add(Flip.from(gathered, { duration: 1.4, ease: 'expo.inOut', stagger: 0.04 }))
-			.fromTo(titleInfo, { y: 24 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out', stagger: 0.15 }, '-=0.4');
+		setOffCard();
+		gsap.timeline({ onComplete: () => gsap.delayedCall(2.5, swapTitle) })
+			.to(titleInfo, { autoAlpha: 1, duration: 0.4, ease: 'power1.inOut' }, 0.3)
+			.to(titleWords.children, { x: 0, y: 0, duration: 0.9, ease: 'power2.inOut', stagger: 0.12 }, 0.3);
 	});
-} else {
-	titleWords?.classList.remove('is-gathered');
+}
+
+// Your and my trade places: each slides off its own side, takes the
+// other's word, and slides back. is not, set right with my, moves over to
+// make room for the longer word, or close up after the shorter; the UIs
+// move to start just after the first word, as they start after Your.
+let titleSwap = null;
+function swapTitle() {
+	const [first, , line] = titleWords.children;
+	const [isNot, last] = line.children;
+	const ease = 'power2.inOut';
+	const em = parseFloat(getComputedStyle(titleWords).fontSize);
+	// the space between the first word and UI, from where UI starts now
+	const space = parseFloat(getComputedStyle(titleWords).getPropertyValue('--under-ui')) * em - (placeOf(first).right - placeOf(first).left);
+	let under = null; // where the UIs start after the new first word, set once it's in
+	titleSwap = gsap
+		.timeline({ onComplete: () => gsap.delayedCall(3, swapTitle) })
+		.to(first, { ...offLeft(first), duration: 0.6, ease: 'power2.in' })
+		.to(last, { ...offRight(last), duration: 0.6, ease: 'power2.in' }, 0)
+		.add(() => {
+			const before = placeOf(isNot).left;
+			const swapped = first.textContent === 'Your';
+			first.textContent = swapped ? 'My' : 'Your';
+			last.textContent = swapped ? 'your' : 'my';
+			// back off their sides from their new places
+			gsap.set(first, offLeft(first));
+			gsap.set(last, offRight(last));
+			gsap.set(isNot, { x: before - placeOf(isNot).left });
+			alignTitleGradient();
+			under = `${(placeOf(first).right - placeOf(first).left + space) / em}em`;
+		})
+		.to([first, last], { x: 0, duration: 0.7, ease: 'power2.out' })
+		.to(isNot, { x: 0, duration: 0.7, ease }, '<')
+		.to(titleWords, { '--under-ui': () => under, duration: 0.7, ease, onUpdate: alignTitleGradient }, '<');
+	if (!titleInView) titleSwap.pause();
+}
+
+// the swap pauses while the title slide is out of view
+let titleInView = true;
+if (titleWords) {
+	new IntersectionObserver(([entry]) => {
+		titleInView = entry.isIntersecting;
+		if (titleInView) titleSwap?.resume();
+		else titleSwap?.pause();
+	}).observe(titleWords);
 }
 
 // The talk title in the top band goes back to the title slide, as Home does.
