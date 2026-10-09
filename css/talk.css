@@ -939,21 +939,32 @@ main section[data-scene]:has(> .persona) > p {
 	width: 100%;
 }
 
-/* the divider: a strip of cut paper a fifth of the column wide, above the
-   quote, cut like the illustrations' line work (its weight swells and thins,
-   its edges are rough). media/persona-divider.svg is its shape, filled with
-   the act's ink. */
-.persona::before {
-	content: '';
-	width: 20%;
-	height: calc(16 * var(--u));
-	background: currentColor;
-	mask: url('../media/persona-divider.svg') center / 100% 100% no-repeat;
+/* a persona's quote reads as a pull quote: italic, with large cut-paper
+   quote marks in the act's ink at its top-left and bottom-right.
+   media/persona-quote.svg is the opening pair of drops; the closing one
+   is the same shape rotated 180°. Today's model has no quote. */
+.persona blockquote {
+	position: relative;
+	font-style: italic;
+	padding: calc(80 * var(--u)) calc(96 * var(--u));
 }
 
-/* Today's model has no quote to set apart */
-section[data-scene='todays-model'] .persona::before {
-	content: none;
+.persona blockquote::before,
+.persona blockquote::after {
+	content: '';
+	position: absolute;
+	width: calc(140 * var(--u));
+	height: calc(112 * var(--u));
+	background: currentColor;
+	mask: url('../media/persona-quote.svg') center / 100% 100% no-repeat;
+}
+
+.persona blockquote::before { top: 0; left: 0; }
+
+.persona blockquote::after {
+	bottom: 0;
+	right: 0;
+	transform: rotate(180deg);
 }
 
 .persona > :is(blockquote, p) {
@@ -1010,7 +1021,7 @@ section[data-scene='todays-model'] .persona::before {
 		height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		grid-template-rows: 1fr repeat(4, auto) 1fr;
+		grid-template-rows: 1fr repeat(3, auto) 1fr;
 		column-gap: calc(2 * var(--persona-gap));
 		row-gap: 0;
 		align-items: center;
@@ -1023,17 +1034,15 @@ section[data-scene='todays-model'] .persona::before {
 		line-height: 1;
 	}
 	main section[data-scene]:has(> .persona) > p { grid-area: 3 / 1; }
-	.persona::before { grid-area: 4 / 1; }
 
 	main section[data-scene]:has(> .persona) > p,
-	.persona::before,
 	.persona > :is(blockquote, p) {
 		margin-top: var(--persona-gap);
 	}
 	/* half the width holds fewer words a line, so the quote steps down from
 	   60 to fit the frame */
 	.persona > :is(blockquote, p) {
-		grid-area: 5 / 1;
+		grid-area: 4 / 1;
 		font-size: calc(42 * var(--u));
 	}
 
@@ -1058,7 +1067,6 @@ section[data-scene='todays-model'] .persona::before {
 	/* flipped (.is-flipped): the illustration on the left, the text on the
 	   right */
 	main section[data-scene].is-flipped > :is(h2, p),
-	.is-flipped .persona::before,
 	.is-flipped .persona > :is(blockquote, p) {
 		grid-column: 2;
 	}
@@ -1566,9 +1574,8 @@ body.is-collapsed .act-panel.is-under {
 	color: var(--act-color, #000);
 }
 
-/* the large notes size (system.html), for reading from further away:
-   light, larger and set close */
-.notes-large {
+/* a lead paragraph: light and larger, set close */
+.lead {
 	font-size: 1.625rem; /* 26px */
 	font-weight: 300;
 	line-height: 1.3;
@@ -1682,19 +1689,20 @@ body.is-collapsed .act-panel.is-under {
 
 /* what to do on stage (play the video, advance the slide): bold, in the
    act's colour, in square brackets. A <p class="cue"> sits on its own
-   line; a <span class="cue"> runs inline, at the point in the sentence
-   where it happens. */
-.notes-content .cue {
+   line; a <span class="cue"> runs inline. */
+.cue {
 	color: var(--act-color, #000);
 	font-weight: 700;
 }
 
-.notes-content .cue::before {
-	content: '[ ';
-}
+.cue::before { content: '[ '; }
+.cue::after { content: ' ]'; }
 
-.notes-content .cue::after {
-	content: ' ]';
+/* a footnote at the bottom of the notes (above the drawer footer): a
+   reference or an aside, bold in the act's colour */
+.notes-content small {
+	color: var(--act-color, #000);
+	font-weight: 700;
 }
 
 #drawer-toc,
