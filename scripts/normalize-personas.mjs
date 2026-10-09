@@ -26,6 +26,11 @@ const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg',
 // per-illustration changes to the CUT settings: Allana's trace has finer lines
 // than the rest, so its strips are thinner and swing less
 const CUT_FOR = { 'allana.svg': { strip: 0.8, weight: { frequency: 0.006, scale: 2.5 } } };
+// shapes drawn alike in several places, finished alike too: the finish's noise
+// sits in the page, so each copy would come out rough in its own way. Each
+// target part's shapes are the source part's, moved onto them, in their own
+// colour. Source and targets must be drawn with the same shapes in the same order.
+const REUSE = { 'demo-two-people.svg': { 'myron-bracket': ['rose-bracket', 'someone-bracket', 'more-bracket'] } };
 
 const NAMED = { black: '#000000', white: '#ffffff' };
 const rgb = (hex) => {
@@ -160,7 +165,16 @@ export function normalize(src, act, cutPaper, file) {
 						? 'sheet'
 						: 'piece'
 					: 'edge';
-	const body = draw((p) => `<path fill="${shade(p.step)}"${p.rule} filter="url(#${filter(p)})" d="${p.d}"/>`);
+	const twin = new Map(); // a target shape → the source shape that stands in for it
+	for (const [from, targets] of Object.entries(REUSE[file] ?? {})) {
+		const source = paths.filter((p) => p.part === from);
+		targets.forEach((to) => paths.filter((p) => p.part === to).forEach((p, i) => twin.set(p, source[i])));
+	}
+	const body = draw((p) => {
+		const s = twin.get(p);
+		if (s) return `<path fill="${shade(p.step)}"${s.rule} filter="url(#${filter(s)})" transform="translate(${+(p.box[0] - s.box[0]).toFixed(2)} ${+(p.box[1] - s.box[1]).toFixed(2)})" d="${s.d}"/>`;
+		return `<path fill="${shade(p.step)}"${p.rule} filter="url(#${filter(p)})" d="${p.d}"/>`;
+	});
 	// The wash: the lighter coloured pieces again, a little out of register,
 	// spread and bled, like a watercolour layer printed off the cut paper. Each
 	// piece's own area is cut out of it, so only the spill is left, and that is

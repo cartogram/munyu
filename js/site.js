@@ -95,6 +95,9 @@ function branchingSteps(scene) {
 	const art = scene.querySelector('svg.branching-illustration');
 	const part = (name) => art?.querySelector(`[data-part="${name}"]`);
 	gsap.set(Object.values(avatars), { autoAlpha: 0 });
+	// each bracket is drawn as a part of its own, so the finish can make them
+	// all alike; it comes up with the UI under it, as one piece
+	if (art) [...BRANCHING_PEOPLE.map((person) => `${person}-ui`), 'more'].forEach((name) => part(name).prepend(part(`${name.replace(/-ui$/, '')}-bracket`)));
 
 	const fade = (tl, targets, at, duration) => tl.fromTo(targets, { autoAlpha: 0 }, { autoAlpha: 1, duration, ease: 'none' }, at);
 	// The illustration draws past its frame, so the pieces travel in from the

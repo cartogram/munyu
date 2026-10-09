@@ -974,7 +974,7 @@ main section[data-scene].branching > h2 {
 main .branching-illustration {
 	display: block;
 	width: auto;
-	height: calc(640 * var(--u));
+	height: calc(680 * var(--u));
 	max-width: 100%;
 	max-height: none;
 	border-radius: 0;

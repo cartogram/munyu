@@ -10,7 +10,9 @@
 // runs off the card's edge: the list goes on.
 //
 // Each piece is a data-part the deck moves: <person>-intent, <person>-screen-1
-// to -3, <person>-ui, and more, the empty stack. <person>-head, their head and
+// to -3, <person>-bracket, gathering the stack into the device, <person>-ui,
+// the device with its UI, and more, the empty stack, with more-bracket. The
+// finish gives every bracket Myron's (REUSE in normalize-personas.mjs). <person>-head, their head and
 // shoulders, is drawn hidden, for the deck's avatar buttons. Words are text,
 // set in Aileron by the deck.
 //   node scripts/personas/demo-two-people.mjs
@@ -286,7 +288,8 @@ const BOX_W = 520, BOX_R = 28, GAP = 16, STEP = 33;
 // stack past the last starts near the card's right edge, so only part of it
 // shows (the deck's avatar grid, .branching-people, uses both)
 const COL = BOX_W + STEP * 3, COL_GAP = 230;
-const DEVICE_GAP = 56; // the space between the tallest stack's last box and the devices' outlines
+const DEVICE_GAP = 126; // the space between the tallest stack's last box and the devices' outlines, room for the bracket
+const BRACKET_GAP = 24, BRACKET_H = 44; // the bracket's space under the tallest stack, and its depth
 // a box in the wash, no outline
 const box = ({ x, y, w, h }) => add(path(WASH, poly(rounded(x, y, w, h, BOX_R))));
 // words on as few lines as keep each within about n characters, as even as
@@ -364,11 +367,28 @@ PEOPLE.forEach((person, n) => {
 	});
 	person.bottom = y - GAP;
 });
-// 4. the UI they add up to, centred under each stack, all at one height
-const deviceTop = Math.max(...PEOPLE.map((p) => p.bottom)) + DEVICE_GAP + BASE_LINE;
+// 4. the UI they add up to, centred under each stack, all at one height,
+// and over it a bracket under the stack, gathering it to an arrow down into
+// the device: the boxes are the input, the device what's made of them
+const stacksBottom = Math.max(...PEOPLE.map((p) => p.bottom));
+const deviceTop = stacksBottom + DEVICE_GAP + BASE_LINE;
+function bracket(x0, name, ink = INK) {
+	part = `${name}-bracket`;
+	const [l, r, c] = [x0 + 40, x0 + COL - 40, x0 + COL / 2];
+	const [top, mid, tip] = [stacksBottom + BRACKET_GAP, stacksBottom + BRACKET_GAP + BRACKET_H / 2, stacksBottom + BRACKET_GAP + BRACKET_H];
+	const [w, hook] = [LINE - 1, 30];
+	// a brace on its back: hooked ends up under the stack, a point down the middle
+	add(path(ink, curve([l, top], [l, mid], [l + hook, mid], w, false)), path(ink, line([l + hook, mid], [c - hook, mid], w)));
+	add(path(ink, curve([c - hook, mid], [c, mid], [c, tip], w, false)), path(ink, curve([c, tip], [c, mid], [c + hook, mid], w, false)));
+	add(path(ink, line([c + hook, mid], [r - hook, mid], w)), path(ink, curve([r - hook, mid], [r, mid], [r, top], w, false)));
+	// the arrow, from the point down to the device's outline
+	const head = deviceTop - BASE_LINE - 14;
+	add(path(ink, line([c, tip], [c, head - 22], w)), path(ink, poly([[c - 20, head - 28], [c + 20, head - 28], [c, head]])));
+}
 PEOPLE.forEach((person, n) => {
-	part = `${person.name}-ui`;
 	subdued = !!person.subdued;
+	bracket(n * (COL + COL_GAP), person.name);
+	part = `${person.name}-ui`;
 	// the finish thickens ink outlines outwards, but not a subdued one's, so
 	// that sits higher to line up
 	person.device(n * (COL + COL_GAP) + (COL - person.deviceW) / 2, deviceTop - (subdued ? 13 : 0));
@@ -382,6 +402,8 @@ part = 'more';
 	const x0 = PEOPLE.length * (COL + COL_GAP);
 	box({ x: x0, y: 0, w: BOX_W, h: 124 });
 	[0, 1, 2].forEach((i) => box({ x: x0 + STEP * (i + 1), y: 140 + i * 172, w: BOX_W, h: 156 }));
+	bracket(x0, 'more', SOFT);
+	part = 'more';
 	add(outlined(WHITE, rounded(x0 + (COL - 300) / 2, deviceTop - 13, 300, 430, 48), BASE_LINE, SOFT));
 }
 
