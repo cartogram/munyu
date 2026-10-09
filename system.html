@@ -110,7 +110,7 @@
 				line-height: 1.5;
 				max-width: none;
 				padding-bottom: 0.75rem;
-				border-bottom: 1px solid #000;
+				border-bottom: 1px solid var(--grey-800);
 				margin: 0 0 2rem;
 			}
 
@@ -206,8 +206,14 @@
 				text-align: left;
 			}
 
+			/* the Link sample stands in for .drawer-footer a's own styles; strip
+			   the footer's own frame (border, padding, flex) so only the link
+			   type and hover show through */
 			.ts-sample > .drawer-footer {
-				padding: clamp(1.25rem, 3vw, 2.5rem);
+				display: block;
+				margin: 0;
+				padding: 0;
+				border: 0;
 			}
 
 			.ts-sample section[data-scene] > *,
@@ -224,7 +230,7 @@
 				height: auto;
 				box-sizing: border-box;
 				padding: 1.5rem;
-				border: 1px solid #000;
+				border: 1px solid var(--grey-800);
 			}
 
 			/* the large size's frame, set like the drawer it stands in for */
@@ -535,21 +541,10 @@
 		<header class="ts-header">
 			<p class="ts-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
 			<h1>Design system</h1>
-			<p>
-				<em>Your UI is not my UI</em> — React Advanced 2026. Every sample on this page is styled by the
-				same rules as the slides (<code>css/talk.css</code>), inside a card at slide scale: 1em = the
-				card’s 1.5em body size. The specs beside each sample are read live from the browser, so resize
-				below 700px to see the mobile values.
-			</p>
 		</header>
 
 		<section class="ts-section">
 			<h2>Typefaces</h2>
-			<p class="ts-note">
-				Two families, both openly licensed and served from <code>fonts/</code>: a sans for titles, body and
-				meta, and a serif for headlines and quotes. The weights listed are the ones
-				<code>css/talk.css</code> declares.
-			</p>
 			<div class="ts-faces">
 				<div>
 					<div class="ts-face-name" style="font-family: var(--font-sans); font-weight: 500">Aileron</div>
@@ -558,8 +553,7 @@
 					</div>
 					<div class="ts-face-meta">
 						Sora Sagano · public domain (CC0)<br />
-						<span data-weights="Aileron"></span><br />
-						Act and talk titles, body, lists, meta
+						<span data-weights="Aileron"></span>
 					</div>
 				</div>
 				<div>
@@ -569,8 +563,7 @@
 					</div>
 					<div class="ts-face-meta">
 						Impallari Type · SIL OFL 1.1<br />
-						<span data-weights="Libre Baskerville"></span><br />
-						Scene headlines and quotes
+						<span data-weights="Libre Baskerville"></span>
 					</div>
 				</div>
 			</div>
@@ -578,15 +571,10 @@
 
 		<section class="ts-section">
 			<h2>Styles</h2>
-			<p class="ts-note">
-				Every type style in the deck, each beside the rule that sets it and its size, weight and line
-				height as the browser computes them here.
-			</p>
 
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".act-title">
 					<strong>Act title</strong>
-					Opens every act; the first act opens on the talk title instead.
 					<code>.act-title, [data-scene='your-ui-is-not-my-ui-title'] h2</code>
 					<output></output>
 				</div>
@@ -600,7 +588,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="h2">
 					<strong>Scene headline</strong>
-					One per scene; lines balanced.
 					<code>main h2</code>
 					<output></output>
 				</div>
@@ -616,7 +603,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="p">
 					<strong>Body sans</strong>
-					Paragraphs and lists, and the line under a persona’s name.
 					<code>main p, main ul</code>
 					<output></output>
 				</div>
@@ -637,7 +623,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="blockquote">
 					<strong>Body serif</strong>
-					Interview quotes and the Q&amp;A questions; centred where they’re used.
 					<code>main blockquote</code>
 					<output></output>
 				</div>
@@ -657,7 +642,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="small">
 					<strong>Meta</strong>
-					Labels and the slide chrome.
 					<code>main small, .deck-chrome</code>
 					<output></output>
 				</div>
@@ -673,7 +657,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".sub-meta">
 					<strong>Sub-meta</strong>
-					A secondary line under meta: the event’s city and year, and the slide number in the notes drawer. Serif italic, the only italic.
 					<code>.sub-meta</code>
 					<output></output>
 				</div>
@@ -689,7 +672,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".video-play">
 					<strong>Button</strong>
-					A slide’s video, where the video sits: a pill in the act’s colour whose label underlines on hover. The deck adds the clip’s length.
 					<code>.video-play</code>
 					<output></output>
 				</div>
@@ -705,7 +687,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="a">
 					<strong>Link</strong>
-					The notes drawer’s footer: the speakers, this page and the source code, bold in the act’s colour with an arrow.
 					<code>.drawer-footer a</code>
 					<output></output>
 				</div>
@@ -720,15 +701,10 @@
 
 		<section class="ts-section">
 			<h2>Notes</h2>
-			<p class="ts-note">
-				The speaker notes, read mid-talk in the drawer. Default is the drawer’s size; large, for reading
-				from further away, is <code>.notes-large</code> on the notes.
-			</p>
 
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="#notes-drawer">
 					<strong>Default</strong>
-					The notes drawer as it opens.
 					<code>#notes-drawer</code>
 					<output></output>
 				</div>
@@ -749,7 +725,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".speaker">
 					<strong>Badge</strong>
-					Who speaks from here on: a pill at the start of a scene’s notes, or where the other speaker takes over, a step under the footer, on a rule across the notes. At the rule’s end, in the sub-meta’s italic, roughly where the talk should be by then (data-time).
 					<code>.notes-content .speaker</code>
 					<output></output>
 				</div>
@@ -766,7 +741,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".toc-speaker">
 					<strong>Initials</strong>
-					Who speaks a scene, at the end of its entry in the index: the badges in short, the same size and outline.
 					<code>.toc-speaker</code>
 					<output></output>
 				</div>
@@ -778,7 +752,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".cue">
 					<strong>Cue</strong>
-					What to do on stage, bold in the act’s colour in square brackets: on its own line as a paragraph, or inline, where it happens in the sentence.
 					<code>.notes-content .cue</code>
 					<output></output>
 				</div>
@@ -794,7 +767,6 @@
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".notes-large">
 					<strong>Large</strong>
-					Light and larger, set close, for reading at a distance.
 					<code>.notes-large</code>
 					<output></output>
 				</div>
@@ -820,54 +792,27 @@
 		     from the tokens at the top of css/talk.css. -->
 		<section class="ts-section">
 			<h2>Act colours</h2>
-			<p class="ts-note">
-				One named colour per act (<code>--act-*</code>), used for all of that act’s text, rules and diagram
-				strokes, in deck order. Each should pass WCAG AAA (≥ 7:1) on white; any that doesn’t is flagged.
-			</p>
 			<div class="ts-swatches" id="ts-swatches"></div>
 		</section>
 
 		<section class="ts-section">
 			<h2>Greys</h2>
-			<p class="ts-note">
-				The neutrals beside the act colours (<code>--grey-*</code>), lightest first: light ones for rules
-				(this page’s dividers, the index card, the footer, the cards beside the open drawer), dark ones for
-				secondary text, which should pass AAA on white.
-			</p>
 			<div class="ts-swatches" id="ts-greys"></div>
 		</section>
 
 		<section class="ts-section">
 			<h2>Icons</h2>
-			<p class="ts-note">
-				The deck’s icon set: the sprite at the top of <code>index.html</code>, used with
-				<code>&lt;use href="#icon-…"&gt;</code> and styled by <code>.icon</code>, one 2.5 stroke on a 24px
-				grid. Lucide’s x, menu, pin, pin-off and play (filled), and the deck’s own two arrows, long in the shaft and short in the head. Turned 45°, the x is the notes toggle’s +.
-			</p>
 			<div class="ts-icons" id="ts-icons"></div>
 		</section>
 
 		<section class="ts-section">
 			<h2>Illustrations</h2>
-			<p class="ts-note">
-				Every persona illustration in the deck, each in its act’s colour.
-				<code>scripts/normalize-personas.mjs</code> builds them from the traced originals in
-				<code>media/personas/originals/</code>: every colour snaps to the ramp below (<code>--ramp-*</code>),
-				and each drawing is cropped to a square with the same padding and its floor on the bottom edge, so
-				the figures share a scale.
-			</p>
 			<div class="ts-ramp" id="ts-ramp"></div>
 			<div class="ts-illustrations" id="ts-illustrations"></div>
 		</section>
 
 		<section class="ts-section">
 			<h2>Slide templates</h2>
-			<p class="ts-note">
-				The three layouts in the talk, rendered from the live slides in <code>index.html</code> at 1280×800.
-				Left: the labelled areas, measured from the example. Right: the slide itself, with its
-				chrome. Stepped reveals are shown fully revealed; a dashed line marks the fold on slides that
-				scroll.
-			</p>
 			<div id="ts-templates"></div>
 		</section>
 		</main>
@@ -1005,9 +950,9 @@
 
 			// ---- Slide templates -------------------------------------------------
 			const TEMPLATES = [
-				{ name: 'Content', act: 'launching-is-creating', scene: 'imagine-everything-bespoke', note: 'A headline, then body and a list as the scene needs them. A headline, or a headline and one line, is this same column, centred.' },
-				{ name: 'Title slide', act: 'hypothesis', scene: 'your-ui-is-not-my-ui-title', note: 'Opens the talk, bottom-left on the grained ground. Act openers use the same frame, with a chapter number.' },
-				{ name: 'Side by side', act: 'user-research', scene: 'sinead', note: 'Text on one side, the illustration on the other. A diagram uses the same frame. is-flipped swaps the sides.' },
+				{ name: 'Content', act: 'launching-is-creating', scene: 'imagine-everything-bespoke' },
+				{ name: 'Title slide', act: 'hypothesis', scene: 'your-ui-is-not-my-ui-title' },
+				{ name: 'Side by side', act: 'user-research', scene: 'sinead' },
 			];
 
 			// Areas to label, in priority order; an element claimed by an earlier
@@ -1085,7 +1030,7 @@
 				const el = document.createElement('div');
 				el.className = 'ts-template';
 				el.innerHTML = `
-					<div class="ts-template-head"><strong><span class="ts-template-number">${String(i + 1).padStart(2, '0')}</span>${t.name}</strong>${t.note ?? ''}</div>
+					<div class="ts-template-head"><strong><span class="ts-template-number">${String(i + 1).padStart(2, '0')}</span>${t.name}</strong></div>
 					<div class="ts-stage"><div class="ts-schematic" aria-hidden="true"></div></div>
 					<div class="ts-stage"></div>`;
 				const stages = [...el.querySelectorAll('.ts-stage')];
