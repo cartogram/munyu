@@ -755,10 +755,11 @@ main section[data-scene]:has(> .persona) > p {
 	width: 100%;
 }
 
-/* a persona's quote reads as a pull quote: italic, with cut-paper quote
-   marks in the act's ink at its top-left and bottom-right.
-   media/persona-quote.svg is the opening pair of drops; the closing one
-   is the same shape rotated 180°. Today's model has no quote. */
+/* a persona's quote reads as a pull quote: italic, with a pair of circular
+   quote marks in a lighter shade of the act's ink (the ramp's accent step)
+   at its top-left and bottom-right. media/persona-quote.svg is the pair of
+   discs; the closing side is the same shape rotated 180°. Today's model
+   has no quote. */
 .persona blockquote {
 	position: relative;
 	font-style: italic;
@@ -770,8 +771,8 @@ main section[data-scene]:has(> .persona) > p {
 	content: '';
 	position: absolute;
 	width: calc(68 * var(--u));
-	height: calc(54 * var(--u));
-	background: currentColor;
+	height: calc(34 * var(--u));
+	background: color-mix(in srgb, var(--act-color) var(--ramp-accent), white);
 	mask: url('../media/persona-quote.svg') center / 100% 100% no-repeat;
 }
 
