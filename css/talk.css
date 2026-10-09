@@ -438,6 +438,9 @@ main [data-scene='your-ui-is-not-my-ui-title'] h2 {
    title's words around the frame and the abstract and speakers between */
 main section[data-scene='your-ui-is-not-my-ui-title'] {
 	position: relative;
+	/* the title's words bleed off the slide and fly in from beyond it:
+	   clipped at its edges, so none of it shows on the next slide */
+	overflow: clip;
 	/* exactly the card's height (not just at least), so the grained ground
 	   ends at the card's foot */
 	height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
