@@ -911,8 +911,13 @@ function updateChrome() {
 		// Not on an act's first slide (the title, or the opener): the tab rides
 		// in with the second slide as it slides in from the right, then sticks
 		// at the card's centre while the later slides pass beneath it.
+		// Measured on screen, where the open drawer shrinks the card, so it's
+		// scaled back to the card's own pixels, which the tab moves in;
+		// unscaled, the tab peeked in at the card's edge on its first slide.
 		const second = own[1].frame.scene;
-		const shift = Math.max(0, second.getBoundingClientRect().left - panel.getBoundingClientRect().left);
+		const box = panel.getBoundingClientRect();
+		const scale = box.width / panel.offsetWidth || 1;
+		const shift = Math.max(0, (second.getBoundingClientRect().left - box.left) / scale);
 		tab.style.setProperty('--tab-shift', `${Math.round(shift)}px`);
 	});
 	document.body.dataset.currentAct = current.trigger.trigger.dataset.act;
