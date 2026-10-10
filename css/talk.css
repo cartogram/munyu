@@ -1760,7 +1760,15 @@ body.is-speaker .speaker-next {
 		padding-top: 0.75rem;
 		background: #fff;
 		overflow-x: hidden;
+		/* folded, no scrollbar: where the system always shows one, it would
+		   fill half the rail. It still scrolls by wheel, touch and focus;
+		   open, it gets a thin one back (below). */
+		scrollbar-width: none;
 		transition: width 0.2s var(--toc-ease) 0.3s;
+	}
+
+	.drawer-toc::-webkit-scrollbar {
+		display: none;
 	}
 
 	/* on the Index heading's line, straight under the notes toggle, left
@@ -1838,6 +1846,7 @@ body.is-speaker .speaker-next {
 	/* open: pinned, or reached from the keyboard */
 	.drawer-toc:is(.is-pinned, :has(:focus-visible)) {
 		width: var(--toc-open);
+		scrollbar-width: thin;
 		transition-delay: 0s;
 	}
 
@@ -1871,6 +1880,7 @@ body.is-speaker .speaker-next {
 
 	.drawer-toc:is(:hover, :focus-within):not(.is-resting) {
 		width: var(--toc-open);
+		scrollbar-width: thin;
 		transition-delay: 0s;
 	}
 
