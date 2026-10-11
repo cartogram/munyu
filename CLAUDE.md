@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build`: `npm run check`, then a static build of `index.html` and `system.html` into `dist/`
 - `npm run check`: fails if the deck, the theme tokens, the media names and the persona illustrations disagree (also runs in CI, `.github/workflows/system.yml`)
 - `npm run personas`: regenerate `media/personas/*.svg` from `media/personas/originals/`
-- `scripts/cdp/*.mjs`: headless-Chrome verification scripts (beat navigation, cards, ranges, resize, mobile). They expect a dev server on port 8123 (`npx vite --port 8123`), e.g. `node scripts/cdp/nav-verify.mjs`.
+- `scripts/cdp/*.mjs`: headless-Chrome verification scripts (beat navigation, cards, ranges, resize, mobile, print). They expect a dev server on port 8123 (`npx vite --port 8123`), e.g. `node scripts/cdp/nav-verify.mjs`.
 
 ## Structure
 

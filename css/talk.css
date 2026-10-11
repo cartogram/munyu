@@ -15,7 +15,8 @@
    - mobile responsive canvas
    - slide chrome: chrome bar, act tab, notes toggle, pointer, video
    - notes drawer: TOC, notes, footer, speaker badges, cues, footnotes
-   - responsive drawer, spotlight */
+   - responsive drawer, spotlight
+   - print: the speaker script */
 
 @import 'tokens.css';
 
@@ -2115,4 +2116,350 @@ main {
 .spotlight-close svg {
 	width: 17px;
 	height: 17px;
+}
+
+/* ---- print: the speaker script ----
+   Printed, or saved as a PDF, the page is a script to rehearse or present
+   from: portrait, each scene its slide shrunk into a box 150mm wide, with
+   its notes flowing under it. Every act starts a new page under a header
+   of its number and title; the Q&A follows as an appendix of
+   questions and answers. Act colours stay for type, rules and the
+   illustrations, without the openers' grounds or any other fill. Videos
+   are left out, the notes' cues say where they play. js/site.js takes the
+   scroll choreography off first, so every build prints whole, and moves
+   each scene's notes out after it, leaving the scene as just its slide.
+
+   The side margins keep the page at least 700px wide, on A4 and Letter
+   alike, so the slides keep their wide-screen layouts (persona columns),
+   not the phones'. */
+@page {
+	margin: 16mm 12mm 14mm;
+
+	@top-left {
+		content: 'Your UI is not my UI';
+		font-family: var(--font-sans);
+		font-size: 8pt;
+		color: var(--grey-600);
+	}
+
+	@bottom-right {
+		content: counter(page) ' / ' counter(pages);
+		font-family: var(--font-sans);
+		font-size: 8pt;
+		color: var(--grey-600);
+	}
+}
+
+/* the title slide names the talk already */
+@page :first {
+	@top-left {
+		content: none;
+	}
+}
+
+@media print {
+	:root {
+		/* the slide's 1920 units across 150mm, so a slide is 84mm tall and
+		   two scenes with their notes often share a page */
+		--u: calc(150mm / 1920);
+		--frame-pad-top: calc(96 * var(--u));
+		--frame-pad-bottom: calc(72 * var(--u));
+	}
+
+	body {
+		background: none;
+		overflow: visible;
+	}
+
+	/* the deck's chrome, the drawer and the pointer don't print */
+	.deck-chrome,
+	.act-tab,
+	#notes-toggle,
+	#notes-drawer,
+	#deck-cursor,
+	.speaker-next,
+	.video-spotlight,
+	.video-play,
+	main video {
+		display: none !important;
+	}
+
+	main {
+		padding: 0;
+	}
+
+	/* the cards, and the pin spacers round them, lie flat in the flow */
+	.pin-spacer {
+		position: static !important;
+		inset: auto !important;
+		width: auto !important;
+		height: auto !important;
+		max-width: none !important;
+		max-height: none !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+
+	main .act-panel {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		margin: 0 !important;
+		border: none;
+		border-radius: 0;
+		overflow: visible;
+		translate: none !important;
+		scale: none !important;
+		transform: none !important;
+		visibility: visible !important;
+		font-size: 1.5em;
+	}
+
+	main .act-panel + .act-panel {
+		break-before: page;
+	}
+
+	main .act-panel-inner {
+		display: block;
+		width: auto;
+		transform: none !important;
+		will-change: auto;
+	}
+
+	/* act openers: a header across the top of the act's first page, its
+	   title on one line and its number at the right, over a rule */
+	main .act-opener {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: baseline;
+		width: auto;
+		height: auto;
+		min-height: 0;
+		padding: 0 0 3mm;
+		margin-bottom: 6mm;
+		border-bottom: 1.5pt solid var(--act-color);
+		color: var(--act-color);
+		break-after: avoid;
+	}
+
+	main .act-opener::before {
+		display: none;
+	}
+
+	main .act-opener::after {
+		position: static;
+		order: 1;
+		font-size: 24pt;
+	}
+
+	main .act-opener > .act-title {
+		font-size: 24pt;
+		line-height: 1.1;
+	}
+
+	.act-title br {
+		display: none;
+	}
+
+	/* each scene: its slide, the page's width and 16:9 (taller only where
+	   the slide scrolls on screen), outlined in the act's colour */
+	main section[data-scene] {
+		flex: none;
+		width: calc(1920 * var(--u)) !important;
+		height: auto;
+		min-height: calc(1080 * var(--u));
+		border: 0.75pt solid var(--act-color);
+		border-radius: calc(16 * var(--u));
+		break-inside: avoid;
+		break-after: avoid;
+	}
+
+	main section[data-scene]:has(> .persona),
+	main section[data-scene='your-ui-is-not-my-ui-title'] {
+		height: calc(1080 * var(--u));
+	}
+
+	main img,
+	main video {
+		max-height: none;
+	}
+
+	/* the title slide: the title in one solid colour (the grained fill is a
+	   background, which doesn't print), and whole, however far its words
+	   have flown or traded places on screen */
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-words > * {
+		display: none;
+	}
+
+	main section[data-scene='your-ui-is-not-my-ui-title'] {
+		justify-content: center;
+		align-items: flex-start;
+		padding-bottom: var(--frame-pad-bottom);
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] :is(.title-words, .title-centre) {
+		position: static;
+		display: block;
+		inset: auto;
+	}
+
+	/* not a size container (for the fill), which would give it no height */
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-words {
+		container-type: normal;
+		font-size: calc(250 * var(--u));
+		line-height: 0.9;
+		white-space: normal;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-words::before {
+		content: attr(aria-label);
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-centre {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: calc(56 * var(--u));
+		margin-top: calc(72 * var(--u));
+		padding: 0;
+		visibility: visible !important;
+		opacity: 1 !important;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-title'] .title-centre > :is(.title-abstract, .title-speakers) {
+		width: auto;
+		margin: 0;
+		text-align: left;
+	}
+
+	/* the rotator's last beat: the headline with its first ending, the
+	   rest listed under it */
+	main [data-scene='your-ui-is-not-my-ui-create-specific'] .rotator-slot {
+		display: none;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-create-specific'] .visually-hidden {
+		position: static !important;
+		width: auto;
+		height: auto;
+		margin: 0 0 0.8em;
+		padding-left: 1.2em;
+		overflow: visible;
+		clip-path: none;
+		white-space: normal;
+	}
+
+	main [data-scene='your-ui-is-not-my-ui-create-specific'] h2 .visually-hidden {
+		padding: 0;
+	}
+
+	/* the notes: the script under each slide */
+	main aside.notes {
+		display: block;
+		margin: 5mm 0 9mm;
+		color: #000;
+		font-family: var(--font-sans);
+		font-size: 10pt;
+		line-height: 1.45;
+	}
+
+	main aside.notes:not(:has(*)) {
+		display: none;
+	}
+
+	main aside.notes :is(p, ul) {
+		margin: 0 0 0.6em;
+		font-size: inherit;
+		line-height: inherit;
+		orphans: 3;
+		widows: 3;
+	}
+
+	main aside.notes li + li {
+		margin-top: 0.2em;
+	}
+
+	/* who speaks, and roughly when: Simon · 0:30, in the act's colour over
+	   a rule, kept with what they say */
+	main aside.notes .speaker {
+		margin: 1.1em 0 0.4em;
+		padding-top: 0.3em;
+		border-top: 0.75pt solid var(--act-color);
+		color: var(--act-color);
+		font-size: 8.5pt;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		break-after: avoid;
+	}
+
+	main aside.notes .speaker:first-child {
+		margin-top: 0;
+	}
+
+	main aside.notes .speaker[data-time]::after {
+		content: ' \00B7  ' attr(data-time);
+		font-weight: 400;
+	}
+
+	/* cues set apart: italic, bracketed, in the act's colour */
+	main aside.notes .cue {
+		color: var(--act-color);
+		font-style: italic;
+		font-weight: 600;
+	}
+
+	main aside.notes small {
+		display: inline;
+		color: var(--grey-600);
+		font-size: 8.5pt;
+	}
+
+	/* where a link goes, which paper can't follow */
+	main a[href^='http']::after {
+		content: ' (' attr(href) ')';
+		font-size: 0.85em;
+		word-break: break-all;
+	}
+
+	/* the Q&A, an appendix: each question and its short answer as text, no
+	   slide round them, then the notes' fuller answer */
+	main .act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p),
+	main .act-panel[data-act='backup-qa'] section[data-scene] {
+		display: block;
+		min-height: 0;
+		height: auto;
+		padding: 0;
+		border: none;
+		border-radius: 0;
+		text-align: left;
+	}
+
+	main .act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p)::after {
+		display: none;
+	}
+
+	main .act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > *,
+	main .act-panel[data-act='backup-qa'] section[data-scene] > * {
+		max-width: none;
+		margin: 0 0 0.4em;
+		text-wrap: pretty;
+	}
+
+	main .act-panel[data-act='backup-qa'] section[data-scene] > blockquote {
+		font-family: var(--font-serif);
+		font-size: 13pt;
+		font-weight: 700;
+		line-height: 1.3;
+	}
+
+	main .act-panel[data-act='backup-qa'] section[data-scene] > :is(p, ul, h2) {
+		font-size: 11pt;
+		font-weight: 600;
+		line-height: 1.4;
+	}
+
+	main .act-panel[data-act='backup-qa'] aside.notes {
+		margin: 2mm 0 7mm;
+	}
 }

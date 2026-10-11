@@ -450,10 +450,14 @@ function setup() {
 	});
 }
 
-// Rebuild everything from current layout, keeping the reader on the same beat.
-function rebuild() {
+// The reader's place: the current beat, and how far past it they've scrolled.
+function currentPlace() {
 	const beat = currentBeat();
-	const offset = beat ? window.scrollY - beatPosition(beat) : 0;
+	return { beat, offset: beat ? window.scrollY - beatPosition(beat) : 0 };
+}
+
+// Rebuild everything from current layout, keeping the reader on the same beat.
+function rebuild({ beat, offset } = currentPlace()) {
 	navTween?.kill();
 	navTween = null;
 	closeSpotlight();
@@ -551,12 +555,47 @@ window.addEventListener('load', () => {
 	restoreHash();
 });
 
+// Printed, the page is a speaker script (css/talk.css, @media print): every
+// scene in the page's flow, a slide with its notes under it. So the scroll
+// choreography comes off first, taking its pins, offsets and half-played
+// builds with it (every build prints whole), and each scene's notes step out
+// after it, leaving the scene as just the slide. Afterwards both go back, on
+// the same beat.
+let printedFrom = null;
+let movedNotes = [];
+function beforePrint() {
+	if (printedFrom) return;
+	printedFrom = currentPlace();
+	navTween?.kill();
+	navTween = null;
+	closeSpotlight();
+	mm?.revert();
+	movedNotes = [...document.querySelectorAll('main :is(section[data-scene], .act-opener) > aside.notes')].map((notes) => {
+		const place = { notes, parent: notes.parentElement, next: notes.nextSibling };
+		place.parent.after(notes);
+		return place;
+	});
+}
+function afterPrint() {
+	if (!printedFrom) return;
+	movedNotes.forEach(({ notes, parent, next }) => parent.insertBefore(notes, next));
+	movedNotes = [];
+	const place = printedFrom;
+	printedFrom = null;
+	rebuild(place);
+}
+window.addEventListener('beforeprint', beforePrint);
+window.addEventListener('afterprint', afterPrint);
+// Some browsers only tell the page through the print media query
+window.matchMedia('print').addEventListener('change', (e) => (e.matches ? beforePrint() : afterPrint()));
+
 let lastWidth = window.innerWidth;
 let lastHeight = window.innerHeight;
 let resizeTimer = null;
 window.addEventListener('resize', () => {
 	clearTimeout(resizeTimer);
 	resizeTimer = setTimeout(() => {
+		if (printedFrom) return;
 		const widthChanged = window.innerWidth !== lastWidth;
 		const heightChanged = Math.abs(window.innerHeight - lastHeight) > 120;
 		if (!widthChanged && !heightChanged) return;
