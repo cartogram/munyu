@@ -1020,11 +1020,18 @@ main section[data-scene].branching > h2 {
 }
 
 /* the stacks, framed by the viewBox but drawn past it, so the pieces travel
-   in from the card's bottom edge, which clips them */
+   in from the card's bottom edge, which clips them. In a wide window the
+   card loses more of its height to the top band, so the drawing takes no
+   more than what the card has left under the padding, the headline (72),
+   the avatars (84, and their 2px border) and the gaps (28 + 24): the scene
+   never overflows into a scroll of its own. */
 main .branching-illustration {
 	display: block;
 	width: auto;
-	height: calc(680 * var(--u));
+	height: min(
+		calc(680 * var(--u)),
+		calc(100vh - var(--card-top) - var(--inset-bottom) - 2px - var(--frame-pad-top) - var(--frame-pad-bottom) - 208 * var(--u) - 4px)
+	);
 	max-width: 100%;
 	max-height: none;
 	border-radius: 0;

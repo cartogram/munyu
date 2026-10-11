@@ -397,13 +397,13 @@ PEOPLE.forEach((person, n) => {
 // ---- more: an empty stack past the last, the same shape but blank, its
 // device only an outline, running off the card's edge
 subdued = true;
-part = 'more';
 {
 	const x0 = PEOPLE.length * (COL + COL_GAP);
-	box({ x: x0, y: 0, w: BOX_W, h: 124 });
-	[0, 1, 2].forEach((i) => box({ x: x0 + STEP * (i + 1), y: 140 + i * 172, w: BOX_W, h: 156 }));
+	// the bracket first, so the stack and its device stay one part
 	bracket(x0, 'more', SOFT);
 	part = 'more';
+	box({ x: x0, y: 0, w: BOX_W, h: 124 });
+	[0, 1, 2].forEach((i) => box({ x: x0 + STEP * (i + 1), y: 140 + i * 172, w: BOX_W, h: 156 }));
 	add(outlined(WHITE, rounded(x0 + (COL - 300) / 2, deviceTop - 13, 300, 430, 48), BASE_LINE, SOFT));
 }
 
