@@ -403,7 +403,12 @@ subdued = true;
 	bracket(x0, 'more', SOFT);
 	part = 'more';
 	box({ x: x0, y: 0, w: BOX_W, h: 124 });
-	[0, 1, 2].forEach((i) => box({ x: x0 + STEP * (i + 1), y: 140 + i * 172, w: BOX_W, h: 156 }));
+	// two lines, two lines, one line, so it ends where the others do
+	let y = 124 + GAP;
+	[156, 156, 117].forEach((h, i) => {
+		box({ x: x0 + STEP * (i + 1), y, w: BOX_W, h });
+		y += h + GAP;
+	});
 	add(outlined(WHITE, rounded(x0 + (COL - 300) / 2, deviceTop - 13, 300, 430, 48), BASE_LINE, SOFT));
 }
 
