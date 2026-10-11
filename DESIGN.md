@@ -63,6 +63,12 @@ styles; there's no separate lede. Italic is for the sub-meta and for
 line breaks at any size. The chrome and the notes drawer stay in `rem`.
 Phones get a fixed scale and read the deck as a column.
 
+**The lite deck.** Phones (under 700px wide, or a touch screen under 500px
+tall) get `.is-lite` on `<html>`, set in `index.html`'s head: the cards lie
+in the page's flow and scroll natively, with no pins, scrubbed builds,
+snapping, title intro or grain. Each build shows whole, its illustration a
+still WebP. `?motion=lite` or `?motion=full` forces either on any screen.
+
 ## Persona illustrations
 
 Each persona scene is one frame that never scrolls. Name, a line of body
@@ -105,7 +111,13 @@ under the illustration. The illustrations form one set:
 2. In the persona's scene in `index.html`, inside `.persona`, add:
    ```html
    <div class="portrait-ground">
-   	<img class="persona-portrait" src="media/personas/<name>.webp" alt="…" />
+   	<img
+   		class="persona-portrait"
+   		src="media/personas/<name>.webp"
+   		srcset="media/personas/<name>-768.webp 768w, media/personas/<name>-1280.webp 1280w, media/personas/<name>.webp 2048w"
+   		sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+   		alt="…" width="2048" height="2048"
+   	/>
    </div>
    ```
 3. Run `npm run personas`. It writes `media/personas/<name>.svg` in the
@@ -113,6 +125,8 @@ under the illustration. The illustrations form one set:
    `media/personas/<name>.webp` in headless Chrome
    (`scripts/personas/render.mjs`). The deck shows the WebP: the cut-paper
    finish is SVG filters that are too slow to run while the slides scroll.
+   It also scales down `<name>-768.webp` and `<name>-1280.webp` for the
+   `srcset`, so phones decode a quarter of the pixels or less.
    `media/personas/rendered.json` records which SVG each WebP came from, so
    the check catches a stale one.
 4. Run `npm run check`. The illustration then shows up in `system.html` on

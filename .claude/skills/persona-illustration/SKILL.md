@@ -20,6 +20,7 @@ media/personas/traces/<scene>.svg      untouched source (a trace, or a drawing y
            → media/personas/<scene>.svg     the finished drawing
               └ scripts/personas/render.mjs  rendered once in headless Chrome
                  → media/personas/<scene>.webp   what index.html uses
+                 → <scene>-768.webp, <scene>-1280.webp   its srcset's smaller copies
 ```
 
 The deck shows the WebP, not the SVG: the cut-paper filters are too slow to
@@ -99,7 +100,13 @@ These are the conventions the set has settled on. Match them:
    `.persona` (wrapping the quote if the scene has none):
    ```html
    <div class="portrait-ground">
-   	<img class="persona-portrait" src="media/personas/<scene>.webp" alt="…" />
+   	<img
+   		class="persona-portrait"
+   		src="media/personas/<scene>.webp"
+   		srcset="media/personas/<scene>-768.webp 768w, media/personas/<scene>-1280.webp 1280w, media/personas/<scene>.webp 2048w"
+   		sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+   		alt="…" width="2048" height="2048"
+   	/>
    </div>
    ```
    The `alt` says what the person is doing, not what the drawing looks like.

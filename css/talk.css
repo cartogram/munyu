@@ -1371,20 +1371,30 @@ body.is-collapsed .act-panel.is-under {
 	margin: 0;
 }
 
-/* two equal columns where they fit (never narrower than their text, so
-   they stack rather than wrap their lines) */
+/* as many equal columns as fit, up to three (never narrower than their
+   text, so they stack rather than wrap their lines) */
 .drawer-footer p {
 	flex: 1 1 0;
 	min-width: max-content;
 }
 
-.drawer-footer a {
+/* the links, and Print, a button dressed as one */
+.drawer-footer :is(a, button) {
 	color: var(--act-color, #000);
 	font-weight: 700;
 	text-decoration: none;
 }
 
-.drawer-footer a:is(:hover, :focus-visible) {
+.drawer-footer button {
+	padding: 0;
+	background: none;
+	border: 0;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.drawer-footer :is(a, button):is(:hover, :focus-visible) {
 	text-decoration: underline;
 	text-decoration-thickness: 2px;
 	text-underline-offset: 0.07em;
@@ -2148,6 +2158,73 @@ main {
 		font-size: 8pt;
 		color: var(--grey-600);
 	}
+}
+
+/* the lite deck, for phones (.is-lite, set in index.html's head): the act
+   cards lie one under another in the page's flow and the page scrolls
+   natively, each act's scenes stacked down its card rather than slid across
+   it (js/site.js builds no pins or scrubbed timelines). Every frame is still
+   at least a window tall, so a slide reads as a slide. Nothing is promoted
+   to a layer of its own, the grounds go without their grain, and the
+   illustrations stay still WebPs, so the branching demo's avatars, which
+   are drawn from its SVG, step out. */
+:root.is-lite {
+	--stack-step: 0px;
+}
+
+.is-lite main .act-panel {
+	--grain: none;
+}
+
+/* the cards scroll under the top band, so it gets a ground of its own */
+.is-lite .deck-chrome::before {
+	content: '';
+	position: absolute;
+	inset: 0 0 auto;
+	height: var(--inset-top);
+	background: #fff;
+}
+
+.is-lite main .act-panel {
+	height: auto;
+	border-radius: 0;
+	translate: var(--drawer-push, 0) 0 !important;
+	scale: none !important;
+}
+
+.is-lite main .act-panel + .act-panel {
+	margin-top: var(--inset-bottom);
+}
+
+.is-lite main .act-panel-inner {
+	display: block;
+	width: auto;
+	will-change: auto;
+}
+
+.is-lite main :is(.act-opener, section[data-scene]) {
+	width: auto;
+	min-height: calc(100svh - var(--inset-top) - var(--inset-bottom) - 2px);
+}
+
+.is-lite main :is(.act-opener, section[data-scene='your-ui-is-not-my-ui-title']) {
+	height: calc(100svh - var(--inset-top) - var(--inset-bottom) - 2px);
+}
+
+.is-lite main .act-opener::before {
+	will-change: auto;
+}
+
+.is-lite .act-tab,
+.is-lite .branching-people {
+	display: none;
+}
+
+/* a card is the whole act here, so the spotlight covers the window below
+   the top band instead */
+.is-lite .video-spotlight {
+	position: fixed;
+	inset: var(--inset-top) 0 0;
 }
 
 /* the title slide names the talk already */

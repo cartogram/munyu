@@ -9,6 +9,12 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 // beat; ScrollTrigger's own resize refresh would shift positions first.
 ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
 
+// Phones get the lite deck (set in index.html's head): the cards lie one
+// under another in the page's flow and scroll natively, with no pins, scrubbed
+// builds, snapping or title intro. Each build shows whole, its illustration a
+// still WebP. The beats, index, notes, keys and hash all work as before.
+const lite = document.documentElement.classList.contains('is-lite');
+
 // Scenes that hold while they play one step per beat. Each step adds its
 // tweens to the act timeline within `hold` px of scroll; the beat lands once
 // they've finished.
@@ -379,6 +385,31 @@ function buildAct(panel, isLast) {
 	actRanges.forEach((range) => freeRanges.push({ ...range, trigger }));
 }
 
+// The lite deck's beats: where each act opener and scene starts in the page,
+// less the top band, with a free range through any scene taller than the
+// window. Offsets, not boxes, so the open drawer's push doesn't move them.
+function buildFlow() {
+	const { insetTop } = cardInsets();
+	const room = document.documentElement.clientHeight - insetTop;
+	const pageTop = (el) => {
+		let top = 0;
+		for (; el; el = el.offsetParent) top += el.offsetTop;
+		return top - insetTop;
+	};
+	acts.forEach((panel) => {
+		const act = panel.dataset.act;
+		const trigger = { trigger: panel, start: 0 };
+		const opener = panel.querySelector('.act-opener');
+		if (opener) beats.push({ id: act, scene: null, opener, trigger, time: pageTop(opener) });
+		panel.querySelectorAll('section[data-scene]').forEach((scene) => {
+			const time = pageTop(scene);
+			beats.push({ id: `${act}/${scene.dataset.scene}`, scene, trigger, time });
+			const overflow = scene.offsetHeight - room;
+			if (overflow > 16) freeRanges.push({ trigger, from: time, to: time + overflow });
+		});
+	});
+}
+
 const beatPosition = (beat) => beat.trigger.start + beat.time;
 const beatById = (id) => beats.find((beat) => beat.id === id);
 const freeRangePositions = () =>
@@ -439,6 +470,12 @@ let reduceMotion = false;
 function setup() {
 	beats = [];
 	freeRanges = [];
+	if (lite) {
+		// nothing moves on its own, as with reduced motion
+		reduceMotion = true;
+		buildFlow();
+		return;
+	}
 	mm = gsap.matchMedia();
 	mm.add({ always: '(min-width: 0px)', reduceMotion: '(prefers-reduced-motion: reduce)' }, (context) => {
 		reduceMotion = context.conditions.reduceMotion;
@@ -508,13 +545,13 @@ function scopeIds(svg, prefix) {
 
 // Today's model: each extension lands on its own beat (todaysModelSteps)
 const todaysModelArt = document.querySelector('img.todays-model-illustration');
-if (todaysModelArt) inlineArt(todaysModelArt, todaysModelSvg);
+if (todaysModelArt && !lite) inlineArt(todaysModelArt, todaysModelSvg);
 
 // The branching demo, framed on the three stacks (data-frame), so its parts
 // can move (branchingSteps). Each avatar button shows its person's head from
 // the drawing, and jumps to their part.
 const branchingArt = document.querySelector('img.branching-illustration');
-if (branchingArt) {
+if (branchingArt && !lite) {
 	const svg = inlineArt(branchingArt, branchingArtSvg);
 
 	const scene = svg.closest('section[data-scene]');
@@ -554,6 +591,9 @@ window.addEventListener('load', () => {
 	rebuild();
 	restoreHash();
 });
+// In the lite deck anything that changes the page's height (fonts, a late
+// image) moves the beats under it, so they're measured again.
+if (lite) new ResizeObserver(() => setup()).observe(document.querySelector('main'));
 
 // Printed, the page is a speaker script (css/talk.css, @media print): every
 // scene in the page's flow, a slide with its notes under it. So the scroll
@@ -585,6 +625,8 @@ function afterPrint() {
 	rebuild(place);
 }
 window.addEventListener('beforeprint', beforePrint);
+// the notes drawer's Print button
+document.getElementById('print-deck').addEventListener('click', () => window.print());
 window.addEventListener('afterprint', afterPrint);
 // Some browsers only tell the page through the print media query
 window.matchMedia('print').addEventListener('change', (e) => (e.matches ? beforePrint() : afterPrint()));
@@ -608,11 +650,20 @@ window.addEventListener('resize', () => {
 // The hash names the current beat, so a reload during rehearsal lands on it.
 // Stepping and scrolling only keep the current history entry's hash up to
 // date; deliberate jumps (jumpTo, below) add entries of their own.
-ScrollTrigger.addEventListener('scrollEnd', () => {
+function syncHash() {
 	const beat = currentBeat();
 	const hash = beat ? `#${beat.id}` : '';
 	if (beat && window.location.hash !== hash) history.replaceState(null, '', hash);
-});
+}
+// The lite deck has no triggers for ScrollTrigger to watch, so it waits for
+// the scroll to settle itself.
+if (lite) {
+	let hashTimer = null;
+	window.addEventListener('scroll', () => {
+		clearTimeout(hashTimer);
+		hashTimer = setTimeout(syncHash, 150);
+	}, { passive: true });
+} else ScrollTrigger.addEventListener('scrollEnd', syncHash);
 
 // Next stop in a direction. Inside a tall scene, page through it one
 // viewport at a time before moving on.
@@ -634,7 +685,9 @@ function moveTo(y) {
 	navTween?.kill();
 	if (reduceMotion) {
 		navTween = null;
-		window.scrollTo(0, target);
+		// the lite deck glides there natively, unless motion is reduced
+		const glide = lite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		window.scrollTo({ top: target, behavior: glide ? 'smooth' : 'instant' });
 		return;
 	}
 	navTarget = target;
@@ -784,7 +837,7 @@ if (titleWords) {
 	document.fonts.ready.then(alignTitleGradient);
 	window.addEventListener('resize', () => requestAnimationFrame(alignTitleGradient));
 }
-if (titleWords && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (titleWords && !lite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 	gsap.set(titleInfo, { autoAlpha: 0 });
 	[...titleWords.children].forEach((word, k) => gsap.set(word, TITLE_SIDES[k](word)));
 	// after the fonts, so the words are split and measured in the title's face
@@ -937,7 +990,8 @@ function updateChrome() {
 	const current = frames[index];
 	if (!current) return;
 	const currentAct = acts.indexOf(current.trigger.trigger);
-	acts.forEach((panel, k) => {
+	// the lite deck has no tabs (css/talk.css), so it skips measuring them
+	if (!lite) acts.forEach((panel, k) => {
 		const own = frames.map((frame, i) => ({ frame, i })).filter(({ frame }) => frame.trigger.trigger === panel);
 		if (own.length < 2) return;
 		let pick = k === currentAct ? { frame: current, i: index } : k < currentAct ? own.at(-1) : own[0];
