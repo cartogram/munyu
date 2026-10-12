@@ -20,73 +20,17 @@
 		<link rel="stylesheet" href="css/reset.css" />
 		<link rel="stylesheet" href="css/talk.css" />
 
-		<!-- One list, set like system.html's header: each entry has a stable id
-		     that the speaker notes in index.html link to (sources.html#<id>),
-		     and links back to the slides it supports (index.html#<act>/<scene>). -->
+		<!-- One list, in the reading pages' type from css/talk.css (shared
+		     with system.html). Each entry has a stable id that the speaker
+		     notes in index.html link to (sources.html#<id>), and links back
+		     to the slides it supports (index.html#<act>/<scene>). -->
 		<style>
-			body {
-				padding: 4rem clamp(1.5rem, 5vw, 5rem) 6rem;
-				color: var(--act-hypothesis);
-			}
-
 			.sources {
 				max-width: 44rem;
 			}
 
-			.sources-back {
-				margin: 0 0 1.5rem;
-				font-size: 0.8125rem;
-			}
-
-			.sources a {
-				color: var(--act-hypothesis);
-				font-weight: 700;
-				text-decoration: none;
-			}
-
-			.sources a:is(:hover, :focus-visible) {
-				text-decoration: underline;
-				text-decoration-thickness: 2px;
-				text-underline-offset: 0.07em;
-			}
-
-			.sources svg {
-				width: 0.85em;
-				height: 0.85em;
-				margin-left: 0.28em;
-				vertical-align: -0.05em;
-				stroke-width: 3;
-			}
-
-			.sources h1 {
-				font-family: var(--font-serif);
-				font-size: clamp(2.5rem, 6vw, 4.5rem);
-				font-weight: 400;
-				line-height: 1.05;
-				margin: 0 0 1rem;
-			}
-
-			.sources h2 {
-				margin: 3rem 0 1rem;
-				padding-top: 0.75rem;
-				border-top: 1px solid currentColor;
-				font-family: var(--font-sans);
-				font-size: 0.8125rem;
-				font-weight: 700;
-				letter-spacing: 0.04em;
-				text-transform: uppercase;
-			}
-
-			.sources p,
-			.sources li {
-				font-family: var(--font-sans);
-				font-size: 1rem;
-				line-height: 1.5;
-			}
-
-			.sources-intro {
-				margin: 0;
-				color: var(--grey-600);
+			.sources .page-heading:not(:first-of-type) {
+				margin-top: 5rem;
 			}
 
 			.sources ol {
@@ -106,119 +50,115 @@
 				border-radius: 2px;
 			}
 
-			.source-cite {
+			.sources li .page-text {
 				margin: 0;
 			}
 
-			.source-cite cite {
-				font-family: var(--font-serif);
-				font-style: italic;
+			/* a work's title in the weight system.html gives a spec's name */
+			.sources cite {
+				font-style: normal;
+				font-weight: 500;
 			}
 
-			/* what the source backs up, and on which slides, in the meta style */
-			.source-use {
+			.sources .page-meta {
 				margin: 0.35rem 0 0;
-				color: var(--grey-600);
-				font-size: 0.875rem !important;
-			}
-
-			.source-use a {
-				font-weight: 600;
 			}
 		</style>
 	</head>
-	<body>
+	<body class="page">
 		<svg class="icon-sprite" aria-hidden="true">
 			<symbol id="icon-arrow-up-right" viewBox="0 0 24 24"><path d="M5 19 19 5M8.5 5H19v10.5" /></symbol>
 		</svg>
 
 		<article class="sources">
-			<p class="sources-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
-			<h1>Sources</h1>
-			<p class="sources-intro">What the talk cites, and the tools our interviewees told us about. Each entry links to the slides it supports. The six interviews are our own research.</p>
+			<header class="page-header">
+				<p class="page-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
+				<h1 class="page-title">Sources</h1>
+				<p class="page-text">What the talk cites, and the tools our interviewees told us about. Each entry links to the slides it supports. The six interviews are our own research.</p>
+			</header>
 
-			<h2>Cited in the talk</h2>
+			<h2 class="page-heading">Cited in the talk</h2>
 			<ol>
 				<li id="leviathan-2026">
-					<p class="source-cite">
+					<p class="page-text">
 						Leviathan, Y., Valevski, D., Kalman, M., Lumen, D., et al. (2026).
 						<cite>Generative UI: LLMs are Effective UI Generators.</cite>
 						Google Research, arXiv preprint 2604.09577.
 						<a href="https://arxiv.org/abs/2604.09577">Paper<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 						&middot; <a href="https://generativeui.github.io/">Project page<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use">
+					<p class="page-meta">
 						The quote on <a href="index.html#launching-is-creating/the-economics-just-changed">The economics changed</a> (from its conclusion), and generating interfaces as an emergent capability of newer models (section 3.1, tables 3 and 4) in <a href="index.html#backup-qa/does-this-work-today">Does this work today?</a>
 					</p>
 				</li>
 				<li id="leviathan-2025">
-					<p class="source-cite">
+					<p class="page-text">
 						Leviathan, Y., Valevski, D., Natchu, V., &amp; Matias, Y. (2025, November 18).
 						<cite>Generative UI: A rich, custom, visual interactive user experience for any prompt.</cite>
 						Google Research blog.
 						<a href="https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/">Post<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use">
+					<p class="page-meta">
 						Google Search’s AI Mode building a custom interface for each query, on <a href="index.html#empathy-is-our-point/ui-equals-f-intent">UI = f(intent, …)</a>
 					</p>
 				</li>
 				<li id="karger-2005">
-					<p class="source-cite">
+					<p class="page-text">
 						Karger, D. R., Bakshi, K., Huynh, D., Quan, D., &amp; Sinha, V. (2005).
 						<cite>Haystack: A Customizable General-Purpose Information Management Tool for End Users of Semistructured Data.</cite>
 						Conference on Innovative Data Systems Research (CIDR 2005).
 						<a href="https://www.cidrdb.org/cidr2005/papers/P02.pdf">Paper (PDF)<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use">
+					<p class="page-meta">
 						David Karger’s quote on <a href="index.html#launching-is-creating/apps-cant-predict-you">Apps can’t predict you</a>
 					</p>
 				</li>
 				<li id="watson-2024">
-					<p class="source-cite">
+					<p class="page-text">
 						Watson, L. (2024, November 8).
 						<cite>AI and Accessibility: the Good, the Bad, and the Bollocks.</cite>
 						Talk at FFConf 2024, Brighton.
 						<a href="https://www.youtube.com/watch?v=Ij-GLix2QUQ&amp;t=675">Video, from 11:15<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 						&middot; <a href="https://ffconf.org/talks/2024_l%C3%A9onie">Talk page<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use">
+					<p class="page-meta">
 						The clip we play on <a href="index.html#hypothesis/ai-accessibility-today">AI &amp; accessibility today</a>
 					</p>
 				</li>
 				<li id="apple-live-recognition">
-					<p class="source-cite">
+					<p class="page-text">
 						Apple.
 						<cite>Accessibility: Vision</cite> (VoiceOver and Live Recognition).
 						<a href="https://www.apple.com/accessibility/vision/">Page<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use">
+					<p class="page-meta">
 						Narrated descriptions of the camera’s view, to try with VoiceOver, on <a href="index.html#hypothesis/ai-accessibility-today">AI &amp; accessibility today</a>
 					</p>
 				</li>
 			</ol>
 
-			<h2>Tools our interviewees use</h2>
+			<h2 class="page-heading">Tools our interviewees use</h2>
 			<ol>
 				<li id="be-my-eyes">
-					<p class="source-cite">
+					<p class="page-text">
 						<cite>Be My Eyes</cite>: sighted volunteers and AI describe what the phone’s camera sees.
 						<a href="https://www.bemyeyes.com/">Site<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use"><a href="index.html#user-research/molly">Molly</a></p>
+					<p class="page-meta"><a href="index.html#user-research/molly">Molly</a></p>
 				</li>
 				<li id="dragon">
-					<p class="source-cite">
+					<p class="page-text">
 						<cite>Dragon NaturallySpeaking</cite>: speech recognition and voice control for Windows, by Nuance.
 						<a href="https://en.wikipedia.org/wiki/Dragon_NaturallySpeaking">Wikipedia<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use"><a href="index.html#user-research/myron">Myron</a></p>
+					<p class="page-meta"><a href="index.html#user-research/myron">Myron</a></p>
 				</li>
 				<li id="ravelry">
-					<p class="source-cite">
+					<p class="page-text">
 						<cite>Ravelry</cite>: a community site for knitters and crocheters, whose redesign put Rose in bed for three days.
 						<a href="https://www.ravelry.com/">Site<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a>
 					</p>
-					<p class="source-use"><a href="index.html#user-research/rose">Rose</a> &middot; <a href="index.html#backup-qa/doesnt-a-changing-ui-break-screen-readers">Doesn’t a changing UI break screen readers?</a></p>
+					<p class="page-meta"><a href="index.html#user-research/rose">Rose</a> &middot; <a href="index.html#backup-qa/doesnt-a-changing-ui-break-screen-readers">Doesn’t a changing UI break screen readers?</a></p>
 				</li>
 			</ol>
 		</article>

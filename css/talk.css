@@ -16,6 +16,7 @@
    - slide chrome: chrome bar, act tab, notes toggle, pointer, video
    - notes drawer: TOC, notes, footer, speaker badges, cues, footnotes
    - responsive drawer, spotlight
+   - the reading pages (system.html, sources.html)
    - print: the speaker script */
 
 @import 'tokens.css';
@@ -899,17 +900,23 @@ main section[data-scene]:has(> .persona) > p {
 	width: 100%;
 }
 
-/* a persona's quote reads as a pull quote: italic, framed by the serif's
-   own “ ” glyphs set oversized in the act colour's accent step (a lighter
-   shade of the ink). Today's model has no quote. */
-.persona blockquote {
+/* a persona's quote reads as a pull quote, as do the quotes marked
+   .pull-quote (Karger, Google Research): framed by the serif's own “ ”
+   glyphs set oversized in the act colour's accent step (a lighter shade of
+   the ink). They stand in for the text's own marks, which stay in the
+   markup, visually hidden, for screen readers and copying; the drawn
+   ones are left out of the accessible text so the marks aren't read twice.
+   Today's model has no quote. */
+.persona blockquote,
+blockquote.pull-quote {
 	position: relative;
-	font-style: italic;
 	padding: calc(28 * var(--u)) calc(50 * var(--u));
 }
 
 .persona blockquote::before,
-.persona blockquote::after {
+.persona blockquote::after,
+blockquote.pull-quote::before,
+blockquote.pull-quote::after {
 	position: absolute;
 	font-family: var(--font-serif);
 	font-style: normal;
@@ -919,14 +926,16 @@ main section[data-scene]:has(> .persona) > p {
 	color: color-mix(in srgb, var(--act-color) var(--ramp-accent), white);
 }
 
-.persona blockquote::before {
-	content: '\201C';
+.persona blockquote::before,
+blockquote.pull-quote::before {
+	content: '\201C' / '';
 	top: 0;
 	left: 0;
 }
 
-.persona blockquote::after {
-	content: '\201D';
+.persona blockquote::after,
+blockquote.pull-quote::after {
+	content: '\201D' / '';
 	bottom: calc(-60 * var(--u));
 	right: 0;
 }
@@ -2275,6 +2284,80 @@ main {
 .spotlight-close svg {
 	width: 17px;
 	height: 17px;
+}
+
+/* ---- the reading pages: system.html and sources.html ----
+   One set of type for both, in rem like the drawer. The selectors outrank
+   `main p` and `main h2`, which system.html sits inside. */
+.page {
+	padding: 4rem clamp(1.5rem, 5vw, 5rem) 6rem;
+}
+
+.page-header {
+	max-width: 60rem;
+	margin-bottom: 4rem;
+}
+
+/* the way back to the deck; its links, and those in text and meta, set
+   like the drawer's footer links */
+.page-back {
+	margin: 0 0 1.5rem;
+	font-size: 0.8125rem;
+	line-height: 1.5;
+}
+
+.page :is(.page-back, .page-text, .page-meta) a {
+	color: var(--act-hypothesis);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.page :is(.page-back, .page-text, .page-meta) a:is(:hover, :focus-visible) {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.07em;
+}
+
+.page :is(.page-back, .page-text, .page-meta) a svg {
+	width: 0.85em;
+	height: 0.85em;
+	margin-left: 0.28em;
+	vertical-align: -0.05em;
+	stroke-width: 3;
+}
+
+.page-title {
+	font-family: var(--font-serif);
+	font-size: clamp(2.5rem, 6vw, 4.5rem);
+	font-weight: 400;
+	line-height: 1.05;
+	margin: 0 0 0.5rem;
+}
+
+.page-text {
+	margin: 0 0 1rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: var(--grey-800);
+}
+
+.page-heading {
+	max-width: none;
+	margin: 0 0 2rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--grey-800);
+	font-family: var(--font-sans);
+	font-size: 0.8rem;
+	font-weight: 700;
+	line-height: 1.5;
+}
+
+/* meta beside a sample or an entry: small, in the act's colour (grey where
+   there's no act); regular, so the bold links in it stand out */
+.page-meta {
+	font-size: 0.8rem;
+	line-height: 1.5;
+	color: var(--act-color, var(--grey-800));
 }
 
 /* ---- print: the speaker script ----

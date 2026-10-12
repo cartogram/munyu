@@ -36,82 +36,19 @@
 		<!-- Specimen layout only. Every sample below is styled by the real rules
 		     in css/talk.css; the specs beside them are read live from the browser. -->
 		<style>
-			body {
-				padding: 4rem clamp(1.5rem, 5vw, 5rem) 6rem;
-			}
-
-			.ts-header {
-				max-width: 60rem;
-				margin-bottom: 4rem;
-			}
+			/* the page type (header, sections, meta) is css/talk.css's reading
+			   pages section, shared with sources.html */
 
 			/* code in the mono, at one size wherever it sits */
-			.ts-header code,
-			.ts-note code,
+			.page-header code,
 			.ts-spec code,
 			.ts-icon code {
 				font-family: var(--font-mono);
 				font-size: 0.8125rem;
 			}
 
-			/* the way back to the deck, set like the drawer's footer links */
-			.ts-header .ts-back {
-				margin-bottom: 1.5rem;
-				font-size: 0.8125rem;
-			}
-
-			.ts-back a {
-				color: var(--act-hypothesis);
-				font-weight: 700;
-				text-decoration: none;
-			}
-
-			.ts-back a:is(:hover, :focus-visible) {
-				text-decoration: underline;
-				text-decoration-thickness: 2px;
-				text-underline-offset: 0.07em;
-			}
-
-			.ts-back svg {
-				width: 0.85em;
-				height: 0.85em;
-				margin-left: 0.28em;
-				vertical-align: -0.05em;
-				stroke-width: 3;
-			}
-
-			.ts-header h1 {
-				font-family: var(--font-serif);
-				font-size: clamp(2.5rem, 6vw, 4.5rem);
-				font-weight: 400;
-				line-height: 1.05;
-				margin: 0 0 0.5rem;
-			}
-
-			.ts-header p,
-			.ts-note {
-				width: auto;
-				margin: 0 0 1rem;
-				text-align: left;
-				font-size: 1rem;
-				line-height: 1.5;
-				max-width: 44rem;
-				color: var(--grey-800);
-			}
-
 			.ts-section {
 				margin-bottom: 5rem;
-			}
-
-			.ts-section > h2 {
-				font-family: var(--font-sans);
-				font-size: 0.8rem;
-				font-weight: 500;
-				line-height: 1.5;
-				max-width: none;
-				padding-bottom: 0.75rem;
-				border-bottom: 1px solid var(--grey-800);
-				margin: 0 0 2rem;
 			}
 
 			.ts-faces {
@@ -131,18 +68,6 @@
 				line-height: 1.4;
 				overflow-wrap: anywhere;
 				margin-bottom: 0.75rem;
-			}
-
-			/* meta beside a sample (typeface, swatch, illustration): small,
-			   bold, in the act's colour (grey where there's no act) — the same
-			   treatment as the deck's footnotes */
-			.ts-face-meta,
-			.ts-swatch-meta,
-			.ts-illustrations figcaption span {
-				font-size: 0.8rem;
-				line-height: 1.5;
-				font-weight: 700;
-				color: var(--act-color, var(--grey-800));
 			}
 
 			.ts-swatch-meta {
@@ -522,22 +447,22 @@
 		</style>
 	</head>
 
-	<body>
+	<body class="page">
 		<main>
-		<header class="ts-header">
-			<p class="ts-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
-			<h1>Design system</h1>
+		<header class="page-header">
+			<p class="page-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
+			<h1 class="page-title">Design system</h1>
 		</header>
 
 		<section class="ts-section">
-			<h2>Typefaces</h2>
+			<h2 class="page-heading">Typefaces</h2>
 			<div class="ts-faces">
 				<div style="--act-color: var(--act-hypothesis)">
 					<div class="ts-face-name" style="font-family: var(--font-sans); font-weight: 500">Aileron</div>
 					<div class="ts-face-glyphs" style="font-family: var(--font-sans)">
 						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
 					</div>
-					<div class="ts-face-meta">
+					<div class="page-meta">
 						Sora Sagano<span class="sep">—</span>public domain (CC0)<br />
 						<span data-weights="Aileron"></span>
 					</div>
@@ -547,7 +472,7 @@
 					<div class="ts-face-glyphs" style="font-family: var(--font-serif)">
 						Aa Bb Cc Gg Qq Rr 0123456789 &amp; ? ! — “ ”
 					</div>
-					<div class="ts-face-meta">
+					<div class="page-meta">
 						Impallari Type<span class="sep">—</span>SIL OFL 1.1<br />
 						<span data-weights="Libre Baskerville"></span>
 					</div>
@@ -556,7 +481,7 @@
 		</section>
 
 		<section class="ts-section">
-			<h2>Styles</h2>
+			<h2 class="page-heading">Styles</h2>
 
 			<div class="ts-row">
 				<div class="ts-spec" data-spec=".act-title">
@@ -686,7 +611,7 @@
 		</section>
 
 		<section class="ts-section">
-			<h2>Notes</h2>
+			<h2 class="page-heading">Notes</h2>
 
 			<div class="ts-row">
 				<div class="ts-spec" data-spec="p">
@@ -777,28 +702,28 @@
 		     persona illustrations from index.html, the colours and ramp steps
 		     from the tokens at the top of css/talk.css. -->
 		<section class="ts-section">
-			<h2>Act colours</h2>
+			<h2 class="page-heading">Act colours</h2>
 			<div class="ts-swatches" id="ts-swatches"></div>
 		</section>
 
 		<section class="ts-section">
-			<h2>Greys</h2>
+			<h2 class="page-heading">Greys</h2>
 			<div class="ts-swatches" id="ts-greys"></div>
 		</section>
 
 		<section class="ts-section">
-			<h2>Icons</h2>
+			<h2 class="page-heading">Icons</h2>
 			<div class="ts-icons" id="ts-icons"></div>
 		</section>
 
 		<section class="ts-section">
-			<h2>Illustrations</h2>
+			<h2 class="page-heading">Illustrations</h2>
 			<div class="ts-ramp" id="ts-ramp"></div>
 			<div class="ts-illustrations" id="ts-illustrations"></div>
 		</section>
 
 		<section class="ts-section">
-			<h2>Speakers</h2>
+			<h2 class="page-heading">Speakers</h2>
 			<ul class="title-speakers" style="--act-color: var(--act-hypothesis)" aria-label="Speakers">
 				<li>
 					<img src="media/your-ui-is-not-my-ui-title-simon.webp" alt="" width="480" height="480" />
@@ -812,7 +737,7 @@
 		</section>
 
 		<section class="ts-section">
-			<h2>Slide templates</h2>
+			<h2 class="page-heading">Slide templates</h2>
 			<div id="ts-templates"></div>
 		</section>
 		</main>
@@ -878,14 +803,14 @@
 				swatch.style.setProperty('--act-color', value || 'transparent');
 				document.getElementById('ts-swatches').append(swatch);
 				if (!value) {
-					swatch.innerHTML = `<div class="ts-swatch-name">missing</div><div class="ts-swatch-meta">${act}<br />no ${token} in css/talk.css</div>`;
+					swatch.innerHTML = `<div class="ts-swatch-name">missing</div><div class="page-meta ts-swatch-meta">${act}<br />no ${token} in css/talk.css</div>`;
 					continue;
 				}
 				const ratio = contrastOnWhite(getComputedStyle(swatch).color);
 				swatch.innerHTML = `
 					<div class="ts-swatch-chip"></div>
 					<div class="ts-swatch-name">${value}</div>
-					<div class="ts-swatch-meta">${token}<br />${ratio.toFixed(2)} : 1${SEP}${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
+					<div class="page-meta ts-swatch-meta">${token}<br />${ratio.toFixed(2)} : 1${SEP}${ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : 'fails AA'}</div>`;
 			}
 
 			// ---- Greys: every --grey-* token on :root, in source order --------------
@@ -907,7 +832,7 @@
 				swatch.innerHTML = `
 					<div class="ts-swatch-chip" style="background: var(${prop})"></div>
 					<div class="ts-swatch-name">${value}</div>
-					<div class="ts-swatch-meta">${prop}<br />${ratio.toFixed(2)} : 1${ratio >= 7 ? `${SEP}AAA` : ratio >= 4.5 ? `${SEP}AA` : ''}</div>`;
+					<div class="page-meta ts-swatch-meta">${prop}<br />${ratio.toFixed(2)} : 1${ratio >= 7 ? `${SEP}AAA` : ratio >= 4.5 ? `${SEP}AA` : ''}</div>`;
 				document.getElementById('ts-greys').append(swatch);
 			}
 
@@ -947,7 +872,7 @@
 				figure.innerHTML = `
 					<img src="${img.getAttribute('src')}" alt="${img.getAttribute('alt') ?? ''}" />
 					<figcaption><strong>${scene.querySelector('h2')?.textContent ?? scene.dataset.scene}</strong>
-					<span>${img.getAttribute('src')}${SEP}--act-${act}</span></figcaption>`;
+					<span class="page-meta">${img.getAttribute('src')}${SEP}--act-${act}</span></figcaption>`;
 				document.getElementById('ts-illustrations').append(figure);
 			}
 
