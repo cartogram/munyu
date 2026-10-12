@@ -556,6 +556,11 @@ main section[data-scene].branching > h2,
 	margin: 0;
 }
 
+/* the key takeaway: one argument in three steps, each led by its step in bold */
+main section[data-scene='key-takeaways'] strong {
+	font-weight: 700;
+}
+
 /* a bold term as a label above its definition */
 .two-columns strong {
 	display: block;
