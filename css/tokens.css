@@ -81,8 +81,8 @@
 	   from the left edge; literal px because js/site.js reads them */
 	--inset-top: 42px;
 	--inset-left: 1px;
-	/* each act card sits this much further in (top and left) than the last,
-	   so each earlier card shows as a thin extra line */
+	/* each act card sits this much lower than the last, so each earlier
+	   card shows as a thin extra line along the top */
 	--stack-step: 3px;
 	--inset-right: 0rem;
 	/* the notes drawer's width; opening it, js/site.js tweens --drawer-scale
@@ -101,7 +101,7 @@
 	--tab-pad: 0.75rem;
 	/* the notes toggle: a + in the top band's left-hand corner */
 	--toggle-size: 28px;
-	/* the front act card's corner, and the drawer's index card */
+	/* every act card's corner, and the drawer's index card */
 	--corner: 10px;
 	/* where the talk title starts, right of the toggle; the drawer's text
 	   lines up with it */

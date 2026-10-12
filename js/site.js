@@ -219,11 +219,9 @@ function buildRotator(list) {
 
 const acts = gsap.utils.toArray('main .act-panel');
 
-// Cards stack: act k sits k × --stack-step further in from the top and left
-// than the first, so earlier cards' corners show behind the current one.
-// --stacks lets css/talk.css size each card's corner to nest with the rest.
+// Cards stack: act k sits k × --stack-step lower than the first, so earlier
+// cards' top edges show above the current one.
 acts.forEach((panel, k) => panel.style.setProperty('--stack', k));
-document.documentElement.style.setProperty('--stacks', acts.length);
 
 // The next slide in speaker view. Created here, after `acts` is captured, so
 // the scroll timeline never pins it.
@@ -338,7 +336,7 @@ function buildAct(panel, isLast) {
 		}
 	});
 
-	// Cards sit in from the window edges (--inset-*), one stack step further
+	// Cards sit in from the window edges (--inset-*), one stack step lower
 	// per act: each pins at its own top offset, and the next card arrives at
 	// its own (one step lower).
 	const { insetTop, insetBottom, stackStep } = cardInsets();
@@ -1219,9 +1217,8 @@ function drawerIsOpen() {
 const drawerPush = () => (drawerIsOpen() && phone.matches ? notesDrawer.offsetWidth : 0);
 const drawerScale = () => (drawerIsOpen() && !phone.matches ? 1 - notesDrawer.offsetWidth / document.documentElement.clientWidth : 1);
 const drawerVars = () => ({ '--drawer-push': `${drawerPush()}px`, '--drawer-scale': drawerScale(), '--stack-collapse': drawerIsOpen() ? 1 : 0 });
-// Each card is a stack step narrower than the one before, so one scale for
-// all would leave the later cards' left edges short of the drawer. Each
-// shrinks by its own, to meet the drawer's edge exactly.
+// Each card shrinks by its own measured width, so its left edge meets the
+// drawer's exactly.
 const cardScale = (panel) => (drawerIsOpen() && !phone.matches ? (document.documentElement.clientWidth - notesDrawer.offsetWidth) / panel.offsetWidth : 1);
 
 // Frames are the act openers and scenes, not the reveal steps inside a scene.

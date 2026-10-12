@@ -44,10 +44,11 @@ main {
 	--muted-color: var(--act-color);
 
 	position: relative;
-	/* this card's offsets: the base inset plus its place in the stack
-	   (--stack is set per act by js/site.js) */
+	/* this card's offsets: the base inset, and down by its place in the
+	   stack (--stack is set per act by js/site.js). The cards stack straight
+	   down, so their left edges line up. */
 	--card-top: calc(var(--inset-top) + var(--stack, 0) * var(--stack-step));
-	--card-left: calc(var(--inset-left) + var(--stack, 0) * var(--stack-step));
+	--card-left: var(--inset-left);
 	width: calc(100% - var(--card-left) - var(--inset-right));
 	height: calc(100vh - var(--card-top) - var(--inset-bottom));
 	margin-left: var(--card-left);
@@ -57,13 +58,9 @@ main {
 	overflow: clip;
 	background: #fff;
 	color: var(--act-color);
-	/* the leading corner of each card, as it slides up over the last. Each
-	   card sits one stack step further in, so its radius is one step smaller
-	   than the card behind it: the corners share a centre and the stacked
-	   edges stay evenly spaced round the curve. The last card's is --corner.
-	   (--stacks, the number of cards, is set by js/site.js.) */
-	--card-corner: calc(var(--corner) + (var(--stacks, 1) - 1 - var(--stack, 0)) * var(--stack-step));
-	border-radius: var(--card-corner) 0 0 0;
+	/* the leading corner of each card, as it slides up over the last: the
+	   same --corner as the drawer's index card */
+	border-radius: var(--corner) 0 0 0;
 	font-weight: 400;
 	font-size: 1.5em;
 	/* no shadow: each act's leading edge is its opener's grained ground */
