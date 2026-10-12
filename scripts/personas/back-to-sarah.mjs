@@ -8,6 +8,7 @@
 //   node scripts/personas/back-to-sarah.mjs && npm run personas
 import { INK, WHITE, LIGHT, DEEP, SOFT, WASH, poly, line, circle, curve, path, under, over, eachPath, write } from './draw.mjs';
 import { sarah } from './sarah.mjs';
+import { smooth } from './busts.mjs';
 
 const OUT = new URL('../../media/personas/originals/back-to-sarah.svg', import.meta.url);
 
@@ -68,13 +69,30 @@ const rays = Array.from({ length: 8 }, (_, k) => {
 
 // 4. the raised arm comes down. White patches over the old line between her
 // face and hand (wide, as the finish thickens and shifts it), and over the
-// raised forearm. Its elbow, the round lower part of the old sleeve, stays as
-// her far upper arm, as full as in her first illustration; the patch's lower
-// edge is the arm's new top, curving down from her collar to it.
+// raised forearm and its elbow, the round lower part of the old sleeve,
+// which as her upper arm stood out far in front of her chest. Her far arm
+// is drawn anew in one curve, like her near arm: down from her shoulder (the
+// patch's lower edge rounds over it from her collar), bending at the elbow
+// and on to her hand on the keyboard (5), with a thin line of white between
+// it and her chest.
 const jawLine = poly([[400, 384], [424, 384], [402, 424], [407, 428], [410, 458], [388, 461], [379, 428], [381, 420]]);
 // the arm's new top, from her collar to the old sleeve's outer edge
-const ARM_TOP = [[390, 452], [408, 462], [428, 472], [446, 484], [458, 494], [464, 505]];
+const ARM_TOP = [[390, 452], [402, 458], [413, 466], [422, 476], [428, 488]];
+// the upper arm's front, from the shoulder down to the elbow
+const ARM_FRONT = [[428, 488], [434, 504], [440, 522], [446, 538], [452, 547]];
 const sleeve = poly([[388, 446], [391, 437], [398, 432], [420, 417], [436, 414], [450, 422], [463, 452], [472, 480], [476, 505], [470, 512], ...ARM_TOP.slice().reverse()]);
+const elbow = poly([...ARM_FRONT, [472, 546], [478, 520], [478, 500], [470, 484], [444, 470]]);
+// the far arm, round its outline from the shoulder: the front down to the
+// elbow and along the forearm's top to the wrist, then back under the
+// forearm, round the elbow and up the arm's back
+const farArm = poly(smooth([
+	[410, 468], [424, 480], [434, 498], [441, 520], [448, 540], [460, 556], [478, 572], [494, 582], [503, 590],
+	[503, 604], [482, 603], [460, 596], [440, 586], [422, 576], [408, 562],
+	[400, 544], [396, 522], [396, 500], [400, 482],
+], 4));
+// the white behind it, a little wider than its back, joining the gap
+// under it, so it stands apart from her chest as her near arm does
+const armpit = poly([[398, 480], [394, 500], [394, 522], [396, 542], [388, 560], [380, 574], [400, 582], [430, 586], [450, 560], [430, 500], [415, 478]]);
 // her chin, in profile under the nose: one round curve, as soft as her
 // cheek in her first illustration, and the jaw back to her collar; and a
 // small, thin smile where her mouth was
@@ -95,7 +113,7 @@ const zigzag = poly([[357, 433], [363, 415], [382, 418], [382, 431], [362, 442]]
 const jaw = [curve([377, 423.6], [366, 429], [355, 438.5], J, false), circle([355, 438.5], J / 2, 12)];
 // one piece, so the finish treats it like the sweater it joins
 const collar = poly([
-	[316, 422], [346, 450], [362, 451], [380, 447], ...ARM_TOP, [440, 515], [410, 515],
+	[316, 422], [346, 450], [362, 451], [380, 447], ...ARM_TOP, [434, 515], [410, 515],
 	[396, 505], [379, 487], [360, 472], [330, 448], [311, 444], [310, 429],
 ]);
 
@@ -107,7 +125,6 @@ const shift = (p) => {
 	let k = 0;
 	return p.replace(/\bd="([^"]+)"/, (_, d) => `d="${d.replace(/-?\d*\.?\d+/g, (v) => +(+v + HAND_SHIFT[k++ % 2]).toFixed(2))}"`);
 };
-const farSleeve = poly([[436, 548], [456, 542], [470, 556], [486, 574], [500, 585], [502, 604], [480, 602], [458, 594], [440, 582], [428, 566]]);
 
 // 6. the laptop's base, dark like its lid, with white between the two
 const laptopBase = poly([[505, 647], [717, 647], [715, 655], [709, 663], [703, 665], [510, 665], [504, 661], [503, 651]]);
@@ -138,8 +155,10 @@ svg = over(svg, [
 	...rays,
 	path(WHITE, jawLine, 'edge'),
 	path(WHITE, sleeve, 'edge'),
+	path(WHITE, elbow, 'edge'),
 	// over the patches, which reach into where they lie
-	path(INK, farSleeve),
+	path(WHITE, armpit, 'edge'),
+	path(INK, farArm),
 	path(WHITE, zigzag, 'edge'),
 	path(INK, collar),
 	...chin.map((d) => path(INK, d, 'edge')),
