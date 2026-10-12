@@ -1013,6 +1013,12 @@ main section[data-scene]:has(> .persona) > p {
 		font-size: calc(42 * var(--u));
 	}
 
+	/* ...but Back to Sarah has no quote: its two lines are one statement,
+	   short enough for the column, so the second keeps the body size */
+	main section[data-scene='back-to-sarah'] .persona > p {
+		font-size: calc(55 * var(--u));
+	}
+
 	.persona {
 		display: contents;
 	}
