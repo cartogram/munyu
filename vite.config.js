@@ -23,6 +23,7 @@ export default defineConfig({
 			input: {
 				index: resolve(import.meta.dirname, 'index.html'),
 				system: resolve(import.meta.dirname, 'system.html'),
+				sources: resolve(import.meta.dirname, 'sources.html'),
 			},
 		},
 	},
