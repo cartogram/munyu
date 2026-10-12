@@ -96,7 +96,7 @@ under the illustration. The illustrations form one set:
   isn't paper, so it shows no outline. Small details keep thin lines. The `CUT`
   table holds every setting. Run `npm run personas:watch` alongside
   `npm start` to see changes as you save.
-- **Edited traces.** When a drawing needs changing, as Melody's did, the
+- **Edited traces.** When a drawing needs changing, as Molly's did, the
   untouched trace sits in `media/personas/traces/` and
   `scripts/personas/<name>.mjs` applies the edits to it, writing
   `originals/<name>.svg`. The drawing helpers for those scripts are in

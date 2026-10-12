@@ -1,11 +1,11 @@
-// Melody's edits to her traced illustration, written to originals/melody.svg,
+// Molly's edits to her traced illustration, written to originals/molly.svg,
 // which normalize-personas.mjs then tints and finishes. The chair goes, bar a
 // back; she gets white shoes, a floor and filled nails; the table ends on the
 // right. Coordinates are the trace's
-// 1024 canvas.   node scripts/personas/melody.mjs && npm run personas
+// 1024 canvas.   node scripts/personas/molly.mjs && npm run personas
 import { readFileSync, writeFileSync } from 'fs';
-const SRC = new URL('../../media/personas/traces/melody.svg', import.meta.url);
-const OUT = new URL('../../media/personas/originals/melody.svg', import.meta.url);
+const SRC = new URL('../../media/personas/traces/molly.svg', import.meta.url);
+const OUT = new URL('../../media/personas/originals/molly.svg', import.meta.url);
 const INK = '#000000', WHITE = '#FEFEFE', FLOOR = '#C8C7C8';
 const CHAIR = '#DCDBDD'; // faded: the pale wash step, so it's clean, with no grain or spill
 
@@ -27,7 +27,7 @@ const clearBack =
 	back.map(([y, x]) => `L${x - 1} ${y}`).join('') +
 	'L100 632Z';
 
-// 1b. in its place just a chair back, like Allana's: dark, rounded at the top,
+// 1b. in its place just a chair back, like Amelia's: dark, rounded at the top,
 // standing behind her down to the desk, with white between it and her sweater
 // so the two read apart. Nothing of the chair below the desk.
 const GAP = 13;
@@ -134,7 +134,7 @@ const top = [
 	path(WHITE, tableRight),
 	...tableLegs.map((d) => path(WHITE, d)),	...SHOES.flatMap(([h, a, t]) => [path(INK, shoe(h, a, t, 2.5)), path(WHITE, shoe(h, a, t))]),
 	...nails.map((e) => path(INK, ellipse(e))),
-	// her mouth, as Sinead's: a small upturned curve for the trace's dash
+	// her mouth, as Sarah's: a small upturned curve for the trace's dash
 	path('#FDEABF', poly([[404, 307.5], [420, 307.5], [420, 315], [404, 315]])),
 	path(INK, smile([406, 310], [418, 309.5], 2.6, 2.4)),
 ].join('');

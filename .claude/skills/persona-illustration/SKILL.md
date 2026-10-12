@@ -59,7 +59,7 @@ catch a stale one.
   - **Fine lines:** small details and fine linework (eyes, numbers, grids)
     take `data-finish="edge"` to keep their drawn weight.
 - **Per-illustration settings.** `CUT_FOR` overrides the `CUT` settings for
-  one illustration. Allana's finer trace uses thinner strips, for example.
+  one illustration. Amelia's finer trace uses thinner strips, for example.
 
 ## The visual language
 
@@ -71,7 +71,7 @@ These are the conventions the set has settled on. Match them:
 | Hands | white, outlined; fingers as one zigzag line of rounded loops; a slimmer loop along the top for the thumb |
 | Feet | trousers end at a clean hem; white outlined shoes, a pointed toe, a small heel |
 | Floor | a grey strip under everything that stands (`floor()` in `draw.mjs`); none for top-down views |
-| Furniture | tables end on the right, with no right-hand edge or leg; chairs are a dark or faded back, like Allana's |
+| Furniture | tables end on the right, with no right-hand edge or leg; chairs are a dark or faded back, like Amelia's |
 | Weather, screens | clouds as separate cut pieces in different tones, overlapping with a white edge; screens and beams as light |
 | Pattern | prints as dots of a lighter tone straight on the dark (Rose's scarf), never a mid-tone base |
 | Contrast | dark against dark always gets a white gap (leg against seat, sweater against chair) |

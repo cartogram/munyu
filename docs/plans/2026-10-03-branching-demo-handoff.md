@@ -112,9 +112,9 @@ right; the current one has two.
 ## Open questions to settle with the user first
 
 1. **Personas:** keep Rose and Myron, or use the scene's Person A/B? The
-   personas in the deck (`user-research` act) are Melody, Matthew, Sinead,
-   Allana, Rose and Myron. A *(stressed, dark backgrounds, subway, one hand,
-   barometric headache)* reads like Sinead plus Rose, and B *(tremor,
+   personas in the deck (`user-research` act) are Molly, Michael, Sarah,
+   Amelia, Rose and Myron. A *(stressed, dark backgrounds, subway, one hand,
+   barometric headache)* reads like Sarah plus Rose, and B *(tremor,
    keyboard-first)* like none of them exactly.
 2. **The UIs on the plates:** the DeepL task is translation. Keep a
    translator and a voice UI, or design two UIs that fit the chosen personas

@@ -1,4 +1,4 @@
-// Today's model, as Sinead lives it: drawn from scratch like the branching
+// Today's model, as Sarah lives it: drawn from scratch like the branching
 // demo and written to originals/todays-model.svg for normalize-personas.mjs to
 // tint and finish. Her avatar at the top; her browser, outlined bold like the
 // demo's phones, with a lecture page on it, the interface built for the
@@ -10,7 +10,7 @@
 // on dark.
 //
 // Each piece is a data-part the deck moves: base, then dark, bionic, numbers
-// and grid, each with its box, <layer>-box. sinead, her avatar and name,
+// and grid, each with its box, <layer>-box. sarah, her avatar and name,
 // holds still throughout. Words are text, set in Aileron by the deck.
 //   node scripts/personas/todays-model.mjs && npm run personas
 import { INK, WHITE, DEEP, SOFT, WASH, poly, line, circle, ellipse, curve, path, write } from './draw.mjs';
@@ -70,11 +70,11 @@ const shapes = [];
 let part; // the data-part the next shapes belong to
 const add = (...s) => shapes.push(...s.flat().map((el) => el.replace(/^<(path|text)\b/, `<$1 data-part="${part}"`)));
 
-// ---- Sinead: head and shoulders in a round frame, turned to the right like
+// ---- Sarah: head and shoulders in a round frame, turned to the right like
 // her portrait, at S times the size first sketched, about the head's centre.
 // Her dark sweater, cut to the frame (inside), her hair pulled back into a
 // bun, a dot of an eye.
-function sinead(hx, hy, S, inside) {
+function sarah(hx, hy, S, inside) {
 	const at = (dx, dy) => [hx + dx * S, hy + dy * S];
 	add(path(INK, poly(inside(rounded(...at(-128, 84), 266 * S, 120 * S, 64 * S)))));
 	add(outlined(WHITE, [at(-14, 40), at(20, 40), at(22, 98), at(-16, 98)]));
@@ -142,13 +142,13 @@ function drawPage({ ground, title, bars, heading, video, play, button, label }) 
 	}
 }
 
-// 0. Sinead, above it all: her avatar, and her name
-part = 'sinead';
+// 0. Sarah, above it all: her avatar, and her name
+part = 'sarah';
 const AV = [ui.x + 84, 150], AV_R = 84;
 add(path(WASH, circle(AV, AV_R + 2, 72), 'edge'));
-sinead(AV[0] + 4, AV[1] - 6, 0.62, within(AV, AV_R));
+sarah(AV[0] + 4, AV[1] - 6, 0.62, within(AV, AV_R));
 rim(AV, AV_R);
-add(text(AV[0] + AV_R + 36, AV[1] + 12, 34, 'Sinead’s setup'));
+add(text(AV[0] + AV_R + 36, AV[1] + 12, 34, 'Sarah’s setup'));
 
 // 1. her browser, with the lecture page on it, as it was built
 part = 'base';

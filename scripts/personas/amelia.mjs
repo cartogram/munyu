@@ -1,11 +1,11 @@
-// Allana's edits to her traced illustration, written to originals/allana.svg,
+// Amelia's edits to her traced illustration, written to originals/amelia.svg,
 // which normalize-personas.mjs then tints and finishes: the face on her call
-// drawn like Sinead's, two dots of eyes and a small mouth (still glum).
+// drawn like Sarah's, two dots of eyes and a small mouth (still glum).
 // Coordinates are the trace's 1024 canvas.
-//   node scripts/personas/allana.mjs && npm run personas
+//   node scripts/personas/amelia.mjs && npm run personas
 import { readFileSync, writeFileSync } from 'fs';
-const SRC = new URL('../../media/personas/traces/allana.svg', import.meta.url);
-const OUT = new URL('../../media/personas/originals/allana.svg', import.meta.url);
+const SRC = new URL('../../media/personas/traces/amelia.svg', import.meta.url);
+const OUT = new URL('../../media/personas/originals/amelia.svg', import.meta.url);
 const INK = '#000000', WHITE = '#FEFEFE';
 const f = (v) => +v.toFixed(1);
 const poly = (pts) => 'M' + pts.map(([x, y]) => `${f(x)} ${f(y)}`).join('L') + 'Z';

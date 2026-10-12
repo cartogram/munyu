@@ -170,7 +170,7 @@ Structure:
 			<!-- scenes for: Your UI is not my UI (title), AI & Accessibility today, Hypothesis -->
 		</section>
 		<section data-act="user-research">
-			<!-- scenes for: User Interviews, Melody, Matthew, Sinead, No Revolution, Allana, Rose, Myron -->
+			<!-- scenes for: User Interviews, Molly, Michael, Sarah, No Revolution, Amelia, Rose, Myron -->
 		</section>
 		<section data-act="limits-of-adaptability">
 			<!-- scenes for: Today's model, Opportunities -->
@@ -182,7 +182,7 @@ Structure:
 			<!-- scenes for: [UI]=f([Intent],[Empathy]), Observations of existing state, What is gained? -->
 		</section>
 		<section data-act="launching-is-creating">
-			<!-- scenes for: What if launching an app..., Focus shifts from UI to API, Applications are no longer a commodity, Revisiting: 8 months later, Is Rose's failure..., Whose context is it?, "But a UI that keeps changing...", Key takeaways, Back to Sinead -->
+			<!-- scenes for: What if launching an app..., Focus shifts from UI to API, Applications are no longer a commodity, Revisiting: 8 months later, Is Rose's failure..., Whose context is it?, "But a UI that keeps changing...", Key takeaways, Back to Sarah -->
 		</section>
 		<section data-act="closing">
 			<!-- scene for: Thank you! -->
@@ -207,7 +207,7 @@ Exact `data-act` slugs above match the act boundaries currently marked by HTML c
 
 **Step 4: Convert each `<section>` to `<section data-scene>` with notes as real (hidden) DOM**
 
-For every one of the 35 current sections: change `<section>` to `<section data-scene>` (scene name not load-bearing for logic — index-based tracking is enough, but add a short kebab-case `data-scene="melody"`-style value per section for readability/debugging, derived from its first heading). Keep heading/body/media exactly as-is. Change `<aside class="notes">` to `<aside class="notes" hidden>` — content unchanged, just add the `hidden` attribute so it's real DOM (readable by the notes drawer) but not visually rendered inline.
+For every one of the 35 current sections: change `<section>` to `<section data-scene>` (scene name not load-bearing for logic — index-based tracking is enough, but add a short kebab-case `data-scene="molly"`-style value per section for readability/debugging, derived from its first heading). Keep heading/body/media exactly as-is. Change `<aside class="notes">` to `<aside class="notes" hidden>` — content unchanged, just add the `hidden` attribute so it's real DOM (readable by the notes drawer) but not visually rendered inline.
 
 Do **not** touch the "Today's model" SVG or the "Demo: same task, two people" panel markup in this task — copy them over verbatim. Their animation-specific markup changes (if any) happen in Tasks 6 and 7.
 

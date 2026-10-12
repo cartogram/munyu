@@ -30,7 +30,7 @@ function fadeInStep(piece) {
 	return (tl, hold) => tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
 }
 
-// Today's model, as Sinead lives it: her browser arrives with the page as it
+// Today's model, as Sarah lives it: her browser arrives with the page as it
 // was built, then each of her extensions in turn: its box slides in beside
 // the browser as its layer is laid on the page (dark mode, bionic reading,
 // voice control's numbers, its number grid). On the last beat the layers
@@ -1041,7 +1041,7 @@ tocPin.addEventListener('click', (event) => {
 	if (event.detail > 0) tocPin.blur();
 });
 const tocLinks = new Map(); // beat id → link
-const frameNames = new Map(); // beat id → { title, number }, e.g. Melody, 2.2
+const frameNames = new Map(); // beat id → { title, number }, e.g. Molly, 2.2
 
 // Who speaks in a scene, in order, from the badges in its notes: Simon, or
 // Simon then Matt where the other takes over mid-scene.
@@ -1178,7 +1178,7 @@ let drawerSlideId = null;
 
 // Marks the current frame (act opener or scene, not a reveal step) in the
 // index, and names it over the notes in the chrome's meta style:
-// "Melody—2.2".
+// "Molly—2.2".
 function updateToc() {
 	const id = currentBeat()?.id.split('/').slice(0, 2).join('/');
 	const frame = frameNames.get(id);

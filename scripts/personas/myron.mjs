@@ -139,7 +139,7 @@ const frame =
 const selection = poly([[223, 359], [311, 359], [311, 412], [249, 412], [249, 462], [223, 462]]);
 
 // 8. the spreadsheet spills out of the screen, like the windows popping out of
-// Sinead's laptop: more rows above it and more columns to its left, white
+// Sarah's laptop: more rows above it and more columns to its left, white
 // cells ruled in thin lines over the frame and past it
 const block = (xs, ys) => {
 	const [x0, x1, y0, y1] = [xs[0], xs.at(-1), ys[0], ys.at(-1)];
@@ -198,7 +198,7 @@ const under = [sheet[1], lowerBack].map((d) => path(WHEEL, d)).join('');
 svg = svg.replace(/<path\b/, `${under}<path`);
 svg = svg.replace(/<\/svg>\s*$/, `${path(WHEEL, circle([399, 935], 27))}</svg>\n`);
 
-// 10. a face like Sinead's: a dot of an eye (his profile already has its
+// 10. a face like Sarah's: a dot of an eye (his profile already has its
 // nose; the mic's boom crosses where his mouth would be)
 svg = svg.replace(/<\/svg>\s*$/, `${path(INK, circle([518, 353], 3.9)).replace('<path', '<path data-finish="edge"')}</svg>\n`);
 writeFileSync(OUT, svg);

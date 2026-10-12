@@ -22,10 +22,10 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['melody.svg', 'allana.svg', 'sinead.svg', 'rose.svg', 'myron.svg', 'matthew.svg', 'user-interviews.svg', 'demo-two-people.svg', 'todays-model.svg', 'back-to-sinead.svg']);
-// per-illustration changes to the CUT settings: Allana's trace has finer lines
+const CUT_PAPER = new Set(['molly.svg', 'amelia.svg', 'sarah.svg', 'rose.svg', 'myron.svg', 'michael.svg', 'user-interviews.svg', 'demo-two-people.svg', 'todays-model.svg', 'back-to-sarah.svg']);
+// per-illustration changes to the CUT settings: Amelia's trace has finer lines
 // than the rest, so its strips are thinner and swing less
-const CUT_FOR = { 'allana.svg': { strip: 0.8, weight: { frequency: 0.006, scale: 2.5 } } };
+const CUT_FOR = { 'amelia.svg': { strip: 0.8, weight: { frequency: 0.006, scale: 2.5 } } };
 // shapes drawn alike in several places, finished alike too: the finish's noise
 // sits in the page, so each copy would come out rough in its own way. Each
 // target part's shapes are the source part's, moved onto them, in their own

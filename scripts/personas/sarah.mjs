@@ -1,18 +1,18 @@
-// Sinead's edits to her traced illustration, written to originals/sinead.svg,
+// Sarah's edits to her traced illustration, written to originals/sarah.svg,
 // which normalize-personas.mjs then tints and finishes: dark hair, a face, a
 // cloud treated like light, no left frame or right table leg, and a floor like
-// Melody's and Allana's. Coordinates are the trace's 1024 canvas.
-// back-to-sinead.mjs builds on these edits, without the storm.
-//   node scripts/personas/sinead.mjs && npm run personas
+// Molly's and Amelia's. Coordinates are the trace's 1024 canvas.
+// back-to-sarah.mjs builds on these edits, without the storm.
+//   node scripts/personas/sarah.mjs && npm run personas
 import { readFileSync, writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
-const SRC = new URL('../../media/personas/traces/sinead.svg', import.meta.url);
-const OUT = new URL('../../media/personas/originals/sinead.svg', import.meta.url);
+const SRC = new URL('../../media/personas/traces/sarah.svg', import.meta.url);
+const OUT = new URL('../../media/personas/originals/sarah.svg', import.meta.url);
 const INK = '#000000', FLOOR = '#C8C7C8';
 const path = (fill, d) => `<path fill="${fill}" d="${d}"/>`;
 
-/** Sinead's illustration as an SVG string; storm: false leaves out the clouds and bolt. */
-export function sinead({ storm = true } = {}) {
+/** Sarah's illustration as an SVG string; storm: false leaves out the clouds and bolt. */
+export function sarah({ storm = true } = {}) {
 	let svg = readFileSync(SRC, 'utf8').replace(/<metadata>.*?<\/metadata>/s, '');
 
 	// 1. changes by path index in the trace, made in one pass:
@@ -92,7 +92,7 @@ export function sinead({ storm = true } = {}) {
 	// 4. the storm: a cartoon cloud, flat underneath and bumped on top, coming in
 	// from the frame's right edge (which draws over it), with a bolt of lightning
 	// in the empty right-hand panel, clear of the windows. The cloud is in the
-	// beam's colour from Melody's illustration, so it's treated as light: pale,
+	// beam's colour from Molly's illustration, so it's treated as light: pale,
 	// grained, no outline. The bolt is the originals' saturated yellow, so it's
 	// light too, at the accent step.
 	// the bolt is bold: the deep step, darker than the clouds and screens
@@ -125,7 +125,7 @@ export function sinead({ storm = true } = {}) {
 	const bolt = 'M796 252L740 334L782 334L726 432L846 300L800 300L842 252Z';
 	svg = svg.replace('<path data-cloud/>', clouds.map((c) => edge(c.d) + path(c.tone, c.d)).join('') + path(BOLT, bolt));
 
-	// 5. a chair like Allana's: a dark rounded back standing behind her, white
+	// 5. a chair like Amelia's: a dark rounded back standing behind her, white
 	// between it and her sweater so they read apart, running into a dark seat
 	// under her; the seat's top is her hip's curve, which the old seat drew. Two
 	// slanted legs to the floor.
@@ -162,7 +162,7 @@ export function sinead({ storm = true } = {}) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-	const svg = sinead();
+	const svg = sarah();
 	writeFileSync(OUT, svg);
 	console.log('wrote', OUT.pathname, (svg.match(/<path\b/g) || []).length, 'paths');
 }

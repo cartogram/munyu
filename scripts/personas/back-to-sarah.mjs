@@ -1,15 +1,15 @@
-// Sinead again, for the talk's close: her illustration (sinead.mjs) without
+// Sarah again, for the talk's close: her illustration (sarah.mjs) without
 // the storm or the stack of fighting overlays. A sun in the window, on her
 // laptop one calm page with a few large lines of text, the interface that
 // already fits her, and both her hands on it: the hand at her cheek comes
-// down to the keyboard. Written to originals/back-to-sinead.svg for
+// down to the keyboard. Written to originals/back-to-sarah.svg for
 // normalize-personas.mjs to tint and finish. Coordinates are the trace's
 // 1024 canvas.
-//   node scripts/personas/back-to-sinead.mjs && npm run personas
+//   node scripts/personas/back-to-sarah.mjs && npm run personas
 import { INK, WHITE, LIGHT, DEEP, SOFT, WASH, poly, line, circle, curve, path, under, over, eachPath, write } from './draw.mjs';
-import { sinead } from './sinead.mjs';
+import { sarah } from './sarah.mjs';
 
-const OUT = new URL('../../media/personas/originals/back-to-sinead.svg', import.meta.url);
+const OUT = new URL('../../media/personas/originals/back-to-sarah.svg', import.meta.url);
 
 // a path's box, from every coordinate in its d (the trace's are absolute)
 const box = (p) => {
@@ -28,8 +28,8 @@ const LAPTOP = 2, SILL = 31, SCREEN = 33;
 const FINGERS = 72, WRIST = 73;
 // her near hand: its outline and finger lines, copied for the far hand (4)
 const NEAR_HAND = [65, 66, 67, 92, 105];
-const base = sinead({ storm: false });
-// her face, the last six paths of sinead.mjs: nose, eye, mouth. The nose and
+const base = sarah({ storm: false });
+// her face, the last six paths of sarah.mjs: nose, eye, mouth. The nose and
 // eye are put back on top of the patches (4); the mouth goes.
 const MOUTH = (base.match(/<path\b/g) || []).length - 1;
 const face = base.match(/(?:<path\b[^>]*\/>){6}(?=<\/svg>)/)[0].replace(/<path\b[^>]*\/>$/, '');

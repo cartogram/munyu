@@ -22,7 +22,7 @@ const check = (ok, what) => {
 };
 
 // a beat partway into the talk, to come back to
-await b.eval(`location.hash = '#user-research/sinead'`);
+await b.eval(`location.hash = '#user-research/sarah'`);
 await sleep(1500);
 const before = await b.eval('({ y: Math.round(scrollY), hash: location.hash })');
 

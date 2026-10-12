@@ -63,7 +63,7 @@
   {
     "index": 4,
     "headings": [
-      "Melody",
+      "Molly",
       "AI as an Accessibility “Assistant,” not a Replacement"
     ],
     "paragraphs": [],
@@ -72,17 +72,17 @@
       "“I do use AI, but only as an assistant for what I'm looking for. Not to do the searching from scratch.”"
     ],
     "notes": [
-      "Melody struggled to see and uses a collection of tools to navigate her life relatively independently. Uses a screen reader at a very fast speed, and a tool called Be My Eyes when necessary. Likes AI for specific things, not for the whole task — she felt she was faster and better herself, and preferred that sense of autonomy. She felt AI wins on speed, humans win on trust."
+      "Molly struggled to see and uses a collection of tools to navigate her life relatively independently. Uses a screen reader at a very fast speed, and a tool called Be My Eyes when necessary. Likes AI for specific things, not for the whole task — she felt she was faster and better herself, and preferred that sense of autonomy. She felt AI wins on speed, humans win on trust."
     ],
     "media": [
-      "media/melody-portrait.jpg",
-      "media/melody-be-my-eyes-logo.svg"
+      "media/molly-portrait.jpg",
+      "media/molly-be-my-eyes-logo.svg"
     ]
   },
   {
     "index": 5,
     "headings": [
-      "Matthew",
+      "Michael",
       "Accessibility AI should be like training wheels, not autopilot"
     ],
     "paragraphs": [],
@@ -91,14 +91,14 @@
       "“[…] you have to put your name to things. If it went ahead, did a bunch of tasks, emailed people, and I couldn't really take it back — that feels … uncomfortable, giving it that much autonomy.”"
     ],
     "notes": [
-      "Matthew is autistic, has ADHD, and struggles with active listening due to tinnitus. He was very specific about what he wanted, and it changed by situation — granular control for anything law-related, fine with AI elsewhere. Not lazy: he'd choose 20 complicated clicks over an unpredictable prompt, as long as it was reliable and deterministic."
+      "Michael is autistic, has ADHD, and struggles with active listening due to tinnitus. He was very specific about what he wanted, and it changed by situation — granular control for anything law-related, fine with AI elsewhere. Not lazy: he'd choose 20 complicated clicks over an unpredictable prompt, as long as it was reliable and deterministic."
     ],
     "media": []
   },
   {
     "index": 6,
     "headings": [
-      "Sinead",
+      "Sarah",
       "AI can explain the cause, not just adapt the interface"
     ],
     "paragraphs": [],
@@ -107,7 +107,7 @@
       "“I was really struggling one day … but then, interestingly, it came up with a really insightful reason: it was the drop in barometric pressure. The change had been so fast. And it said that's really common with people with brain injuries.”"
     ],
     "notes": [
-      "Sinead had a brain injury five years ago — came to disability later in life. Screen time is hard; reading a lot in one day is hard. Her setup is a stack of fighting extensions: a plugin that bolds half of each word breaks the one that overlays numbers for voice control; the number-grid alternative is invisible under her dark-mode plugin. It doesn't work in Safari, and it collapses the moment she also wants to watch a lecture. She has strong preferences (she likes Gwyneth Paltrow's voice in her screen reader) — but can't get these tools to work together. AI providing information in an interface that is highly compatible and tailored for the user — not just adapting a layout, but making sense of what's happening to them."
+      "Sarah had a brain injury five years ago — came to disability later in life. Screen time is hard; reading a lot in one day is hard. Her setup is a stack of fighting extensions: a plugin that bolds half of each word breaks the one that overlays numbers for voice control; the number-grid alternative is invisible under her dark-mode plugin. It doesn't work in Safari, and it collapses the moment she also wants to watch a lecture. She has strong preferences (she likes Gwyneth Paltrow's voice in her screen reader) — but can't get these tools to work together. AI providing information in an interface that is highly compatible and tailored for the user — not just adapting a layout, but making sense of what's happening to them."
     ],
     "media": [
       "media/image36.png"
@@ -134,7 +134,7 @@
   {
     "index": 8,
     "headings": [
-      "Allana",
+      "Amelia",
       "AI should only remove the tax that a disability imposes on everyday tasks"
     ],
     "paragraphs": [],
@@ -143,7 +143,7 @@
       "“Part of the enjoyable thing in life is struggling through things. Having everything taken care of for you takes away a bit of the fun.”"
     ],
     "notes": [
-      "Allana studies law in the UK. Her issues are reading and writing; she struggles with high contrast and bright interfaces — her setup is large font and forced dark mode. Energy budget is the big theme: a lot of hers is spent fighting apps that don't cooperate with her setup and behave unpredictably. She wouldn't want everything taken care of for her — she just wants AI to remove that extra tax."
+      "Amelia studies law in the UK. Her issues are reading and writing; she struggles with high contrast and bright interfaces — her setup is large font and forced dark mode. Energy budget is the big theme: a lot of hers is spent fighting apps that don't cooperate with her setup and behave unpredictably. She wouldn't want everything taken care of for her — she just wants AI to remove that extra tax."
     ],
     "media": [
       "media/image27.jpg"
@@ -214,7 +214,7 @@
     ],
     "blockquotes": [],
     "notes": [
-      "Everyone we spoke to had done real work to adapt a standard interface — and for every one of them it kept failing: Sinead's plugins fought each other, Rose's family needs incompatible settings, Allana burns her energy budget on uncooperative apps. Setups are very personalized and the standardization has its limits. One interface just can't fit the wide variety of needs of its users. So we want to propose a new concept…"
+      "Everyone we spoke to had done real work to adapt a standard interface — and for every one of them it kept failing: Sarah's plugins fought each other, Rose's family needs incompatible settings, Amelia burns her energy budget on uncooperative apps. Setups are very personalized and the standardization has its limits. One interface just can't fit the wide variety of needs of its users. So we want to propose a new concept…"
     ],
     "media": []
   },
@@ -376,7 +376,7 @@
     ],
     "blockquotes": [],
     "notes": [
-      "Why have we always had one-size-fits-all interfaces? It's not a design failure — it's economics. Building a custom app for every individual need was never affordable, so we abstract what a big population has in common and ship one reusable solution. That's why there's no dinner-party app, no family-travel app, no grant-writing app — everyone does those differently. Instead we get rigid apps (the developer decides what matters — Airbnb won't show “pet-friendly” on the map) or bloated ones (everything dumped in). AI changes that economics: for the first time, the made-for-one interface is affordable. That's the “why now.” And it's not a new idea — the field's founders chased it for decades. Engelbart, in the 1960s, complained that we design for a “statistical population” with no attempt to fit the individual. David Karger later put it: “no developer can predict all the ways a user will want to manipulate information.” They were right, and stuck — the idea was lovely but impractical, because ordinary people had no way to build it. That's the part that just changed. Google Research frames the shift well: LLMs already turned a finite library of texts into an infinite one — generated on the spot for any need. Interfaces are next: instead of picking from a finite library of apps, you get the right interface generated on the spot, for you. For accessibility this lands hardest. No standards body can anticipate Sinead's exact combination of a brain injury, dark-mode plugin, and voice-control grid. The person who understands that interface best is Sinead — and for the first time, it can be made for her, in her context."
+      "Why have we always had one-size-fits-all interfaces? It's not a design failure — it's economics. Building a custom app for every individual need was never affordable, so we abstract what a big population has in common and ship one reusable solution. That's why there's no dinner-party app, no family-travel app, no grant-writing app — everyone does those differently. Instead we get rigid apps (the developer decides what matters — Airbnb won't show “pet-friendly” on the map) or bloated ones (everything dumped in). AI changes that economics: for the first time, the made-for-one interface is affordable. That's the “why now.” And it's not a new idea — the field's founders chased it for decades. Engelbart, in the 1960s, complained that we design for a “statistical population” with no attempt to fit the individual. David Karger later put it: “no developer can predict all the ways a user will want to manipulate information.” They were right, and stuck — the idea was lovely but impractical, because ordinary people had no way to build it. That's the part that just changed. Google Research frames the shift well: LLMs already turned a finite library of texts into an infinite one — generated on the spot for any need. Interfaces are next: instead of picking from a finite library of apps, you get the right interface generated on the spot, for you. For accessibility this lands hardest. No standards body can anticipate Sarah's exact combination of a brain injury, dark-mode plugin, and voice-control grid. The person who understands that interface best is Sarah — and for the first time, it can be made for her, in her context."
     ],
     "media": []
   },
@@ -487,7 +487,7 @@
   {
     "index": 29,
     "headings": [
-      "Back to Sinead"
+      "Back to Sarah"
     ],
     "paragraphs": [
       "No fighting plugins. No dark grid she can't see. No setup that collapses when she opens a lecture. Just an interface that already understands her — and already fits."
@@ -495,7 +495,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "Let's end where we started — with a person, not a paradigm. Remember Sinead: the bolding plugin fighting the voice-control grid, the grid lines invisible under dark mode, the whole fragile stack collapsing the moment she wants to watch a lecture. Every layer she added to adapt a hostile interface was one more thing that could break. Now imagine the interface simply arrived understanding her — her contrast, her reading load, her voice control — the result of what she's trying to do and who she is. Not adapted. Not fought with. Empathetic to her from the first moment. That's not a nice-to-have for Sinead. That's the difference between software she can use and software that puts her in bed for three days. That's the future we want to build. Questions?"
+      "Let's end where we started — with a person, not a paradigm. Remember Sarah: the bolding plugin fighting the voice-control grid, the grid lines invisible under dark mode, the whole fragile stack collapsing the moment she wants to watch a lecture. Every layer she added to adapt a hostile interface was one more thing that could break. Now imagine the interface simply arrived understanding her — her contrast, her reading load, her voice control — the result of what she's trying to do and who she is. Not adapted. Not fought with. Empathetic to her from the first moment. That's not a nice-to-have for Sarah. That's the difference between software she can use and software that puts her in bed for three days. That's the future we want to build. Questions?"
     ],
     "media": []
   },
@@ -536,7 +536,7 @@
     "listItems": [],
     "blockquotes": [],
     "notes": [
-      "There's a plausible future where your agent generates the interface and you never see the underlying app — the “buy” button drawn for you by the platform, tuned to its goals, not yours. Same technology, pointed the opposite way. The capability that could give Sinead an interface shaped around her could give a platform one shaped around its incentives. The deciding factor is who the UI is empathetic to — which is exactly why local, user-owned generation matters."
+      "There's a plausible future where your agent generates the interface and you never see the underlying app — the “buy” button drawn for you by the platform, tuned to its goals, not yours. Same technology, pointed the opposite way. The capability that could give Sarah an interface shaped around her could give a platform one shaped around its incentives. The deciding factor is who the UI is empathetic to — which is exactly why local, user-owned generation matters."
     ],
     "media": []
   },

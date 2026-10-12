@@ -1,10 +1,10 @@
-// Matthew's edits to his traced illustration, written to originals/matthew.svg,
+// Michael's edits to his traced illustration, written to originals/michael.svg,
 // which normalize-personas.mjs then tints and finishes: the table ends on the
-// right without a leg, like Melody's and Sinead's. Coordinates are the
-// trace's 1024 canvas.   node scripts/personas/matthew.mjs && npm run personas
+// right without a leg, like Molly's and Sarah's. Coordinates are the
+// trace's 1024 canvas.   node scripts/personas/michael.mjs && npm run personas
 import { readFileSync, writeFileSync } from 'fs';
-const SRC = new URL('../../media/personas/traces/matthew.svg', import.meta.url);
-const OUT = new URL('../../media/personas/originals/matthew.svg', import.meta.url);
+const SRC = new URL('../../media/personas/traces/michael.svg', import.meta.url);
+const OUT = new URL('../../media/personas/originals/michael.svg', import.meta.url);
 const WHITE = '#FEFEFE';
 const path = (fill, d) => `<path fill="${fill}" d="${d}"/>`;
 
