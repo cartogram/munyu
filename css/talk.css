@@ -1112,8 +1112,13 @@ blockquote.pull-quote::after {
    js/site.js), three stacks of boxes side by side, built one box per beat.
    Above each stack its person's avatar button, which jumps to their part:
    the avatars sit in a grid whose columns are the stacks' widths and the
-   space between them, in drawing units (scripts/personas/demo-two-people.mjs). */
+   space between them, in drawing units (scripts/personas/demo-two-people.mjs).
+   The drawing runs off the card's right edge (its last, empty stack), so the
+   scene clips it at its own sides, which are the card's: otherwise it shows
+   on the next scene in the row. Clipped across only, as the pieces rise in
+   from below the card's foot, which the card clips. */
 main section[data-scene].branching {
+	overflow-x: clip;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
