@@ -1359,10 +1359,16 @@ function updateSpeakerNext() {
 
 speakerRoom.addEventListener('change', () => updateSpeakerNext());
 
+const DRAWER_KEY = 'notes-drawer';
+
 // A fresh timeline per toggle. The cards' push and the icon tween from
 // wherever they are, so an interrupted toggle turns around smoothly.
 function setDrawerOpen(isOpen) {
 	notesDrawer.classList.toggle('is-open', isOpen);
+	// kept for this tab, so a reload (as when editing the notes) reopens it
+	try {
+		sessionStorage.setItem(DRAWER_KEY, isOpen ? 'open' : '');
+	} catch {}
 	// on a phone the drawer reopens on the notes, the index folded;
 	// elsewhere a pinned index stays pinned
 	if (!isOpen && phone.matches) setTocPinned(false, false);
@@ -1585,6 +1591,14 @@ window.addEventListener('keydown', (event) => {
 	setDrawerOpen(false);
 	if (hadFocus) notesToggle.focus();
 });
+
+// A drawer left open in this tab opens again after a reload, at once.
+try {
+	if (sessionStorage.getItem(DRAWER_KEY) === 'open') {
+		setDrawerOpen(true);
+		drawerTl.progress(1);
+	}
+} catch {}
 
 if (import.meta.env?.DEV) {
 	window.__deck = { beats: () => beats, freeRanges: () => freeRanges, stops: stopPositions, ScrollTrigger };
