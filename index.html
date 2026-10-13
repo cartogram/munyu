@@ -1,1134 +1,1291 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<!-- Phones read the talk as a plain column (.is-lite): native scrolling,
+
+<head>
+	<meta charset="utf-8" />
+	<!-- Phones read the talk as a plain column (.is-lite): native scrolling,
 		     no pinned cards, scrubbed builds or grain (js/site.js, css/talk.css).
 		     Decided before the first paint; ?motion=lite or ?motion=full forces
 		     either, and crossing the breakpoint reloads into the other. -->
-		<script>
-			(() => {
-				const forced = new URLSearchParams(location.search).get('motion');
-				const query = matchMedia('(max-width: 699px), (pointer: coarse) and (max-height: 500px)');
-				document.documentElement.classList.toggle('is-lite', forced ? forced === 'lite' : query.matches);
-				if (!forced) query.addEventListener('change', () => location.reload());
-			})();
-		</script>
+	<script>
+		(() => {
+			const forced = new URLSearchParams(location.search).get('motion');
+			const query = matchMedia('(max-width: 699px), (pointer: coarse) and (max-height: 500px)');
+			document.documentElement.classList.toggle('is-lite', forced ? forced === 'lite' : query.matches);
+			if (!forced) query.addEventListener('change', () => location.reload());
+		})();
+	</script>
 
-		<title>Your UI is not my UI</title>
+	<title>Your UI is not my UI</title>
 
-		<!-- sharing: search results, link previews (Open Graph) and X’s card; the
+	<!-- sharing: search results, link previews (Open Graph) and X’s card; the
 		     image is the title slide at 1200×630 (public/og-image.jpg) -->
-		<link rel="canonical" href="https://your-ui-is-not-my-ui.cartogram.ca/" />
-		<meta name="description" content="We talk to six people with unique daily struggles and run into the hard limits of adapting a single interface. Using AI we could unlock an infinite number of interfaces, generated with empathy to our individual personal situations, capabilities and needs." />
-		<meta name="theme-color" content="#265085" />
-		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<link rel="canonical" href="https://your-ui-is-not-my-ui.cartogram.ca/" />
+	<meta name="description"
+		content="We talk to six people with unique daily struggles and run into the hard limits of adapting a single interface. Using AI we could unlock an infinite number of interfaces, generated with empathy to our individual personal situations, capabilities and needs." />
+	<meta name="theme-color" content="#265085" />
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-		<meta property="og:type" content="website" />
-		<meta property="og:site_name" content="Your UI is not my UI" />
-		<meta property="og:title" content="Your UI is not my UI" />
-		<meta property="og:description" content="We talk to six people with unique daily struggles and run into the hard limits of adapting a single interface. Using AI we could unlock an infinite number of interfaces, generated with empathy to our individual personal situations, capabilities and needs." />
-		<meta property="og:url" content="https://your-ui-is-not-my-ui.cartogram.ca/" />
-		<meta property="og:locale" content="en_GB" />
-		<meta property="og:image" content="https://your-ui-is-not-my-ui.cartogram.ca/og-image.jpg" />
-		<meta property="og:image:type" content="image/jpeg" />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content="The title slide: “Your UI is not my UI” in white on a grained blue ground, under the speakers’ names and React Advanced, London 2026." />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="Your UI is not my UI" />
+	<meta property="og:title" content="Your UI is not my UI" />
+	<meta property="og:description"
+		content="We talk to six people with unique daily struggles and run into the hard limits of adapting a single interface. Using AI we could unlock an infinite number of interfaces, generated with empathy to our individual personal situations, capabilities and needs." />
+	<meta property="og:url" content="https://your-ui-is-not-my-ui.cartogram.ca/" />
+	<meta property="og:locale" content="en_GB" />
+	<meta property="og:image" content="https://your-ui-is-not-my-ui.cartogram.ca/og-image.jpg" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt"
+		content="The title slide: “Your UI is not my UI” in white on a grained blue ground, under the speakers’ names and React Advanced, London 2026." />
 
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content="Your UI is not my UI" />
-		<meta name="twitter:description" content="We talk to six people with unique daily struggles and run into the hard limits of adapting a single interface. Using AI we could unlock an infinite number of interfaces, generated with empathy to our individual personal situations, capabilities and needs." />
-		<meta name="twitter:image" content="https://your-ui-is-not-my-ui.cartogram.ca/og-image.jpg" />
-		<meta name="twitter:image:alt" content="The title slide: “Your UI is not my UI” in white on a grained blue ground, under the speakers’ names and React Advanced, London 2026." />
-		<meta name="author" content="Simon Lenz &amp; Matt Seccafien" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Your UI is not my UI" />
+	<meta name="twitter:description"
+		content="We talk to six people with unique daily struggles and run into the hard limits of adapting a single interface. Using AI we could unlock an infinite number of interfaces, generated with empathy to our individual personal situations, capabilities and needs." />
+	<meta name="twitter:image" content="https://your-ui-is-not-my-ui.cartogram.ca/og-image.jpg" />
+	<meta name="twitter:image:alt"
+		content="The title slide: “Your UI is not my UI” in white on a grained blue ground, under the speakers’ names and React Advanced, London 2026." />
+	<meta name="author" content="Simon Lenz &amp; Matt Seccafien" />
 
-		<meta name="mobile-web-app-capable" content="yes" />
-		<meta name="mobile-web-app-status-bar-style" content="black-translucent" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="mobile-web-app-status-bar-style" content="black-translucent" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<link rel="stylesheet" href="css/reset.css" />
+	<link rel="stylesheet" href="css/reset.css" />
 
-		<link rel="stylesheet" href="css/talk.css" />
-	</head>
+	<link rel="stylesheet" href="css/talk.css" />
+</head>
 
-	<body>
-		<!-- the icon set: drawn once here, used everywhere with <use> (.icon in
+<body>
+	<!-- the icon set: drawn once here, used everywhere with <use> (.icon in
 		     css/talk.css; shown in system.html), all on a 24px grid. Lucide’s x,
 		     menu (its bars closer and as wide as the +), pin and pin-off (scaled
 		     to the menu’s height, their stroke kept the set’s) and play
 		     (filled); the two arrows are
 		     the deck’s own, with a long shaft and a short head. Turned 45°, the
 		     x is the notes toggle’s +. -->
-		<svg class="icon-sprite" aria-hidden="true">
-			<symbol id="icon-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></symbol>
-			<symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16M13.5 5.5 20 12l-6.5 6.5" /></symbol>
-			<symbol id="icon-arrow-up-right" viewBox="0 0 24 24"><path d="M5 19 19 5M8.5 5H19v10.5" /></symbol>
-			<symbol id="icon-menu" viewBox="0 0 24 24"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" /></symbol>
-			<symbol id="icon-pin" viewBox="0 0 24 24"><g transform="translate(12 12) scale(0.8) translate(-12 -12)" stroke-width="3.125"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" /></g></symbol>
-			<symbol id="icon-pin-off" viewBox="0 0 24 24"><g transform="translate(12 12) scale(0.8) translate(-12 -12)" stroke-width="3.125"><path d="M12 17v5M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89M2 2l20 20M9 9v1.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h11" /></g></symbol>
-			<symbol id="icon-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" fill="currentColor" /></symbol>
-		</svg>
-		<main>
-			<section data-act="hypothesis" class="act-panel">
-				<div class="act-panel-inner">
-					<section data-scene="your-ui-is-not-my-ui-title">
-						<h2 class="title-words" aria-label="Your UI is not my UI"><span aria-hidden="true">Your</span> <span aria-hidden="true">UI</span> <span class="title-line" aria-hidden="true"><span>is not</span> <span>my</span></span> <span aria-hidden="true">UI</span></h2>
-						<div class="title-centre">
-							<p class="title-abstract">
-								We talk to six people with unique daily struggles<br />
-								and run into the hard limits of adapting a <em>single interface</em>.
-								<span class="title-abstract-gap"></span>
-								Using AI we could unlock an <em>infinite number of interfaces,</em><br />
-								generated with empathy to our individual personal situations,<br />
-								capabilities and needs.
-							</p>
-							<ul class="title-speakers" aria-label="Speakers">
-								<li>
-									<img src="media/your-ui-is-not-my-ui-title-simon.webp" alt="" width="480" height="480" />
-									<span class="title-speaker"><strong>Simon Lenz</strong><br />Staff Developer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
-								</li>
-								<li>
-									<img src="media/your-ui-is-not-my-ui-title-matt.webp" alt="" width="480" height="480" />
-									<span class="title-speaker"><strong>Matt Seccafien</strong><br />Design Engineer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
-								</li>
-							</ul>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="0:00">Simon</p>
-
-							<p>Hello everyone, my name is Simon. I live in Germany and I’m a software engineer with an interest in accessibility.</p>
-							<p class="speaker" data-speaker="matt" data-time="0:15">Matt</p>
-							<p>
-								Hi, I’m Matt, I am a Canadian, living for the past 6 years in Berlin. We both work at DeepL and we’re lucky to be part of the accessibility chapter there.
-							</p>
-							<p>
-								We're a self-organized group engaging with the accessibility of our AI translation and voice products, and of course, their users.
-							</p>
-							<p>
-								Earlier this year at our company kick-off we gave a lightning talk. It was well received and the result is what started to become this presentation.
-							</p>
-							<p>
-								When we started out though, we only knew it was going to be on AI &amp; Accessibility, and we'd figure the rest out along the way.
-							</p>
-						</aside>
-					</section>
-
-					<section data-scene="ai-accessibility-today">
-						<h2>AI &amp; accessibility today</h2>
-						<video src="media/ai-accessibility-today-screencast.mp4" preload="auto"></video>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="0:30">Simon</p>
-							<p>
-								Given that broad of a topic, we started with a survey of where things stand today with AI & Accessibility.
-							</p>
-
-							<p>
-								We want to begin with a short video.
-							</p>
-							<p class="cue">Play video</p>
-							<p>
-								This was a real-time, narrated description of a camera feed. Actually, this accessibility feature is part of iOS 18, released in 2024. So if you want to give it a try after the talk, you can turn on VoiceOver on an iPhonen and play around with it yourself.
-							</p>
-
-							<p>
-								We showed this video to underline that accessibility has always been an early adopter of AI:
-							</p>
-							<ul>
-								<li>speech-to-text</li>
-								<li>text-to-speech</li>
-								<li>object and character recognition</li>
-								<li>and others</li>
-							</ul>
-							<p>
-								have been part of accessibility features for a long time.
-							</p>
-							<p>
-								And they are really impactful at that. To quote one blind user feedback on that shown video: &ldquo;I know people […] that now go through decades of family albums with this technology.&rdquo; to actually look at the pictures for the first time.
-							</p>
-							<p>But, as impressive as they are, all those examples of AI in the accessibility context revolve around perception.</p>
-							<p>And we thought there must be something else…</p>
-							<p><small>Clip: <a href="sources.html#watson-2024">Léonie Watson, FFConf 2024</a>, from 11:15</small></p>
-						</aside>
-					</section>
-
-					<section data-scene="hypothesis">
-						<h2>Chatbots and agents are a revolution for accessibility</h2>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="1:45">Simon</p>
-							<p>
-								So, to give our talk direction, we decided to come up with a <em>hypothesis</em>: 
-							</p>
-							<p>
-								Chatbots and agents are <em>a revolution</em> for accessibility.
-							</p>
-							<p>
-								Our thought was that:
-								One very simple, <em>and therefore accessible</em>, interface &mdash; the natural
-								language chat of these tools &mdash; replaces all previous interactions.
-							</p>
-							<p>
-								No more struggling through websites, apps and content with patchy accessibility support. Actually you can <em>hand over the whole task to the AI</em>, instead of struggling through yourself.
-							</p>
-							<p>
-								In short: chatbots and agents would remove most of the small and large obstacles
-								people run into every day while relying on screen readers or other assistive
-								technology.
-							</p>
-						</aside>
-					</section>
-				</div>
-			</section>
-
-			<section data-act="user-research" class="act-panel">
-				<div class="act-panel-inner">
-					<header class="act-opener">
-						<h1 class="act-title">User <br />research</h1>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt">Matt</p>
-							<p>
-								In order to prove this hypothesis we conducted 6 interviews, with real users who struggle daily with a physical or cognitive disability. We talked about their daily struggles, their setups and how they use AI in their day to day or work.
-							</p>
-						</aside>
-					</header>
-
-					<section data-scene="user-interviews">
-						<h2>Interviews</h2>
-						<div class="persona">
-							<p>
-								We talked with (not about) six people who have a daily physical or cognitive disability and asked them about their setups and their AI use.
-							</p>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/user-interviews.webp"
-									srcset="media/personas/user-interviews-768.webp 768w, media/personas/user-interviews-1280.webp 1280w, media/personas/user-interviews.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration of a video call between Matt and Simon, laid over a calendar with an interview booked on each of six days, Rose’s AI accessibility interview highlighted" width="2048" height="2048"
-								/>
-							</div>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="2:15">Matt</p>
-							<p>
-								We notice a tendency to talk about, rather than with, people with disabilities, and given we had the means (through our resources within the accessibility chapter) we wanted their perspectives front and centre.
-							</p>
-							<p>We used Fable to facilitate these interviews which keeps their contact details confidential. All names have been changed for this presentation.</p>
-						</aside>
-					</section>
-
-					<section data-scene="molly" class="is-flipped">
-						<h2>Molly</h2>
-						<p>Uses AI as an assistant, not a replacement.</p>
-						<div class="persona">
-							<blockquote>
-								<span class="visually-hidden">&ldquo;</span>I do use AI, but only as an assistant for what I’m looking for. Not to do the searching from scratch.<span class="visually-hidden">&rdquo;</span>
-							</blockquote>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/molly.webp"
-									srcset="media/personas/molly-768.webp 768w, media/personas/molly-1280.webp 1280w, media/personas/molly.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration of a woman in dark glasses at a desk, holding a letter in one hand and a phone in the other, its camera aimed at the page" width="2048" height="2048"
-								/>
-							</div>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="2:45">Matt</p>
-							<p>
-								So first, we met Molly. She struggled to see and uses a collection of tools to navigate her life relatively independently. She uses a screen reader at like 4x speed and appeared very capable. But was also interesting to hear that she relies on humans through a tool called Be My Eyes when necessary.
-							</p>
-							<p>
-								This connects her to volunteers when she needs additional support through their app. She had started using AI for some things, but failed to get it to match the speed and reliability of just doing things herself.
-							</p>
-						</aside>
-					</section>
-
-					<section data-scene="michael" class="is-flipped">
-						<h2>Michael</h2>
-						<p>Uses AI as training wheels, not autopilot.</p>
-						<div class="persona">
-							<blockquote>
-								<span class="visually-hidden">&ldquo;</span>[&hellip;] you have to put your name to things. If it went ahead, did a bunch of
-								tasks, emailed people, and I couldn’t really take it back &mdash; that feels &hellip;
-								uncomfortable, giving it that much autonomy.<span class="visually-hidden">&rdquo;</span>
-							</blockquote>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/michael.webp"
-									srcset="media/personas/michael-768.webp 768w, media/personas/michael-1280.webp 1280w, media/personas/michael.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration of a man in headphones typing on a laptop beside a stack of books" width="2048" height="2048"
-								/>
-							</div>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="3:15">Matt</p>
-							<p>
-								Next we spoke with Michael. He is autistic, has ADHD, and tinnitus, which made listening very difficult for him.
-							</p>
-							<p>
-								Whether or not he reaches for AI in his day depended a lot on what he was doing because he liked being in control. If he was working on something pertaining to laws, he couldn't get over having to trust the agent and would prefer doing the 20 complicated, deterministic clicks himself.
-							</p>
-						</aside>
-					</section>
-
-					<section data-scene="sarah">
-						<h2>Sarah</h2>
-						<p>With context about you, AI can help you in ways you didn’t anticipate.</p>
-						<div class="persona">
-							<blockquote>
-								<span class="visually-hidden">&ldquo;</span>I was really struggling one day &hellip; but then, interestingly, it came up
-								with a really insightful reason: it was the drop in barometric pressure. The change had been so fast. And it said that’s really common with people with brain injuries.<span class="visually-hidden">&rdquo;</span>
-							</blockquote>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/sarah.webp"
-									srcset="media/personas/sarah-768.webp 768w, media/personas/sarah-1280.webp 1280w, media/personas/sarah.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration of a woman at a laptop with her hand to her head, a storm cloud overhead and numbered overlays stacked across her screen" width="2048" height="2048"
-								/>
-							</div>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="3:45">Matt</p>
-							<p>
-								Next was Sarah. She was located in Canada so we immediately connected! Unfortunately, she had a brain injury five years ago, so came to disability very late in life and struggled more than Molly and Michael. Screen time was hard; reading a lot in one day is hard; watching lectures (she was studying for a sailing degree) was also hard.
-							</p>
-							<p>
-								Her whole setup felt like fight. She had a chrome plugin that would bold half of every word to make it easier for her to read, but this would break her voice-over software because it treated each bolded segment as something she could click. Because of this, her whole screen would just fill with numbers overtop of everything. So she switched to the grid overlay version of this plugin, so the clickable regions appear as grid quadrants over the screen that she would use to progressively narrow in on the element, but then the grid lines would be impossible to see once she enabled "darkify" which was a chrome plugin to give a faux dark mode (the university platform she was using didn't support it on its own). And sometimes she would have to switch to Safari for certain tasks, and the whole fragile set up would collapse if she had to watch a lecture video or, God forbid, join a video call.
-							</p>
-							<p>
-								It was also interesting to hear about how she listened better when it was Gwyneth Paltrow’s voice, so she had a interest in fine control of her tools, but couldn't figure it out. She actually wanted AI to help her, and was most impressed when it demonstrated that it knew about her illness and situation, even more than she did.
-							</p>
-							<p>
-								In the quote she describes a conversation where the agent pointed out the recent weather as a culprit for a particularly difficult day.
-							</p>
-						</aside>
-					</section>
-
-					<section data-scene="no-revolution">
-						<h2>No revolution</h2>
-						<ul>
-							<li>Chatbots &amp; agents: helpful tools</li>
-							<li>The simple interface is very accessible</li>
-							<li>Trust &amp; reliability are the problem</li>
-							<li>We want assistants, not replacements</li>
+	<svg class="icon-sprite" aria-hidden="true">
+		<symbol id="icon-x" viewBox="0 0 24 24">
+			<path d="M18 6 6 18M6 6l12 12" />
+		</symbol>
+		<symbol id="icon-arrow-right" viewBox="0 0 24 24">
+			<path d="M4 12h16M13.5 5.5 20 12l-6.5 6.5" />
+		</symbol>
+		<symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+			<path d="M5 19 19 5M8.5 5H19v10.5" />
+		</symbol>
+		<symbol id="icon-menu" viewBox="0 0 24 24">
+			<path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" />
+		</symbol>
+		<symbol id="icon-pin" viewBox="0 0 24 24">
+			<g transform="translate(12 12) scale(0.8) translate(-12 -12)" stroke-width="3.125">
+				<path
+					d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" />
+			</g>
+		</symbol>
+		<symbol id="icon-pin-off" viewBox="0 0 24 24">
+			<g transform="translate(12 12) scale(0.8) translate(-12 -12)" stroke-width="3.125">
+				<path
+					d="M12 17v5M15 9.34V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H7.89M2 2l20 20M9 9v1.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h11" />
+			</g>
+		</symbol>
+		<symbol id="icon-play" viewBox="0 0 24 24">
+			<path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"
+				fill="currentColor" />
+		</symbol>
+	</svg>
+	<main>
+		<section data-act="hypothesis" class="act-panel">
+			<div class="act-panel-inner">
+				<section data-scene="your-ui-is-not-my-ui-title">
+					<h2 class="title-words" aria-label="Your UI is not my UI"><span aria-hidden="true">Your</span> <span
+							aria-hidden="true">UI</span> <span class="title-line" aria-hidden="true"><span>is not</span>
+							<span>my</span></span> <span aria-hidden="true">UI</span></h2>
+					<div class="title-centre">
+						<p class="title-abstract">
+							We talk to six people with unique daily struggles<br />
+							and run into the hard limits of adapting a <em>single interface</em>.
+							<span class="title-abstract-gap"></span>
+							Using AI we could unlock an <em>infinite number of interfaces,</em><br />
+							generated with empathy to our individual personal situations,<br />
+							capabilities and needs.
+						</p>
+						<ul class="title-speakers" aria-label="Speakers">
+							<li>
+								<img src="media/your-ui-is-not-my-ui-title-simon.webp" alt="" width="480" height="480" />
+								<span class="title-speaker"><strong>Simon Lenz</strong><br />Staff Developer<span
+										class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
+							</li>
+							<li>
+								<img src="media/your-ui-is-not-my-ui-title-matt.webp" alt="" width="480" height="480" />
+								<span class="title-speaker"><strong>Matt Seccafien</strong><br />Design Engineer<span
+										class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
+							</li>
 						</ul>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="4:45">Simon</p>
-							<p>
-								At this point in the interviews we regrouped to form an intermediate result.
-								Which was that agents and bots are very helpful tools, but no revolution yet.
-							</p>
-							<p>
-								The reasons overlap with the general population. They are not
-								accessibility-specific.
-							</p>
-							<p>
-								Trust and reliability are big hindrances.
-							</p>
-							<p>
-								People want tools and assistants, they don't want to be replaced. They want to stay in
-								the driver’s seat and &ldquo;do the work&rdquo; themselves. Because in the end <em>they</em> are
-								responsible. But also because it is fulfilling.
-							</p>
-							<p>So we continued, to see what else is out there.</p>
-						</aside>
-					</section>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="0:00">Simon</p>
 
-					<section data-scene="amelia">
-						<h2>Amelia</h2>
-						<p>AI should remove the disability tax on everyday tasks.</p>
-						<div class="persona">
-							<blockquote>
-								<span class="visually-hidden">&ldquo;</span>Part of the enjoyable thing in life is struggling through things. Having
-								everything taken care of for you takes away a bit of the fun.<span class="visually-hidden">&rdquo;</span>
-							</blockquote>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/amelia.webp"
-									srcset="media/personas/amelia-768.webp 768w, media/personas/amelia-1280.webp 1280w, media/personas/amelia.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration from behind of a woman on a video call, holding an enormous laptop, a coffee beside her" width="2048" height="2048"
-								/>
-							</div>
+						<p>Hello everyone, my name is Simon. I live in Germany and I’m a software engineer with an interest in
+							accessibility.</p>
+						<p class="speaker" data-speaker="matt" data-time="0:15">Matt</p>
+						<p>
+							Hi, I’m Matt, I am a Canadian, living for the past 6 years in Berlin. We both work at DeepL and we’re
+							lucky to be part of the accessibility chapter there.
+						</p>
+						<p>
+							We're a self-organized group engaging with the accessibility of our AI translation and voice products, and
+							of course, their users.
+						</p>
+						<p>
+							Earlier this year at our company kick-off we gave a lightning talk. It was well received and the result is
+							what started to become this presentation.
+						</p>
+						<p>
+							When we started out though, we only knew it was going to be on AI &amp; Accessibility, and we'd figure the
+							rest out along the way.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="ai-accessibility-today">
+					<h2>AI &amp; accessibility today</h2>
+					<video src="media/ai-accessibility-today-screencast.mp4" preload="auto"></video>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="0:30">Simon</p>
+						<p>
+							Given that broad of a topic, we started with a survey of where things stand today with AI & Accessibility.
+						</p>
+
+						<p>
+							We want to begin with a short video.
+						</p>
+						<p class="cue">Play video</p>
+						<p>
+							This was a real-time, narrated description of a camera feed. Actually, this accessibility feature is part
+							of iOS 18, released in 2024. So if you want to give it a try after the talk, you can turn on VoiceOver on
+							an iPhonen and play around with it yourself.
+						</p>
+
+						<p>
+							We showed this video to underline that accessibility has always been an early adopter of AI:
+						</p>
+						<ul>
+							<li>speech-to-text</li>
+							<li>text-to-speech</li>
+							<li>object and character recognition</li>
+							<li>and others</li>
+						</ul>
+						<p>
+							have been part of accessibility features for a long time.
+						</p>
+						<p>
+							And they are really impactful at that. To quote one blind user feedback on that shown video: &ldquo;I know
+							people […] that now go through decades of family albums with this technology.&rdquo; to actually look at
+							the pictures for the first time.
+						</p>
+						<p>But, as impressive as they are, all those examples of AI in the accessibility context revolve around
+							perception.</p>
+						<p>And we thought there must be something else…</p>
+						<p><small>Clip: <a href="sources.html#watson-2024">Léonie Watson, FFConf 2024</a>, from 11:15</small></p>
+					</aside>
+				</section>
+
+				<section data-scene="hypothesis">
+					<h2>Chatbots and agents are a revolution for accessibility</h2>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="1:45">Simon</p>
+						<p>
+							So, to give our talk direction, we decided to come up with a <em>hypothesis</em>:
+						</p>
+						<p>
+							Chatbots and agents are <em>a revolution</em> for accessibility.
+						</p>
+						<p>
+							Our thought was that:
+							One very simple, <em>and therefore accessible</em>, interface &mdash; the natural
+							language chat of these tools &mdash; replaces all previous interactions.
+						</p>
+						<p>
+							No more struggling through websites, apps and content with patchy accessibility support. Actually you can
+							<em>hand over the whole task to the AI</em>, instead of struggling through yourself.
+						</p>
+						<p>
+							In short: chatbots and agents would remove most of the small and large obstacles
+							people run into every day while relying on screen readers or other assistive
+							technology.
+						</p>
+					</aside>
+				</section>
+			</div>
+		</section>
+
+		<section data-act="user-research" class="act-panel">
+			<div class="act-panel-inner">
+				<header class="act-opener">
+					<h1 class="act-title">User <br />research</h1>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt">Matt</p>
+						<p>
+							In order to prove this hypothesis we conducted 6 interviews, with real users who struggle daily with a
+							physical or cognitive disability. We talked about their daily struggles, their setups and how they use AI
+							in their day to day or work.
+						</p>
+					</aside>
+				</header>
+
+				<section data-scene="user-interviews">
+					<h2>Interviews</h2>
+					<div class="persona">
+						<p>
+							We talked with (not about) six people who have a daily physical or cognitive disability and asked them
+							about their setups and their AI use.
+						</p>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/user-interviews.webp"
+								srcset="media/personas/user-interviews-768.webp 768w, media/personas/user-interviews-1280.webp 1280w, media/personas/user-interviews.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration of a video call between Matt and Simon, laid over a calendar with an interview booked on each of six days, Rose’s AI accessibility interview highlighted"
+								width="2048" height="2048" />
 						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="5:15">Simon</p>
-							<p>
-								Amelia studies law in the UK. Her issues are with reading and writing; she struggles with high contrast and bright interfaces. Her computer is set to a large zoom level and she uses a forced dark mode plugin.
-							</p>
-							<p>
-								A big theme with her was Energy budget. And lot of her budget is spent fighting apps that don’t
-								cooperate with her setup and behave unpredictably.
-							</p>
-							<p>
-								Besides that she emphasized that she actually wouldn’t want everything taken care of for her &mdash; she just wants AI to remove that extra tax she has to pay because of her disability.
-							</p>
-						</aside>
-					</section>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="2:15">Matt</p>
+						<p>
+							We notice a tendency to talk about, rather than with, people with disabilities, and given we had the means
+							(through our resources within the accessibility chapter) we wanted their perspectives front and centre.
+						</p>
+						<p>We used Fable to facilitate these interviews which keeps their contact details confidential. All names
+							have been changed for this presentation.</p>
+					</aside>
+				</section>
 
-					<section data-scene="rose">
-						<h2>Rose</h2>
-						<p>Everyone’s settings are different and incompatible.</p>
-						<div class="persona">
-							<blockquote>
-								<span class="visually-hidden">&ldquo;</span>I live in a disabled house [&hellip;] all our settings are different, even across our iPads. It’s actually an in-house joke: I can’t look at my
-								husband’s iPad, he can’t look at mine, and the kids hate using either.<span class="visually-hidden">&rdquo;</span>
-							</blockquote>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/rose.webp"
-									srcset="media/personas/rose-768.webp 768w, media/personas/rose-1280.webp 1280w, media/personas/rose.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration of a woman in dark glasses knitting on a sofa, curtains drawn, with laptops and a stack of tablets beside her" width="2048" height="2048"
-								/>
-							</div>
-							<video src="media/rose-family-settings.mp4" preload="auto"></video>
+				<section data-scene="molly" class="is-flipped">
+					<h2>Molly</h2>
+					<p>Uses AI as an assistant, not a replacement.</p>
+					<div class="persona">
+						<blockquote>
+							<span class="visually-hidden">&ldquo;</span>I do use AI, but only as an assistant for what I’m looking
+							for. Not to do the searching from scratch.<span class="visually-hidden">&rdquo;</span>
+						</blockquote>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/molly.webp"
+								srcset="media/personas/molly-768.webp 768w, media/personas/molly-1280.webp 1280w, media/personas/molly.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration of a woman in dark glasses at a desk, holding a letter in one hand and a phone in the other, its camera aimed at the page"
+								width="2048" height="2048" />
 						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="6:00">Simon</p>
-							<p>
-								Rose studies cyber security. She has hyperphotosensitivity &mdash; she
-								lives with closed curtains and wears very dark sunglasses outside. Because light drains her
-								energy and can genuinely make her sick.
-							</p>
-							<p>
-								She shared one striking example: a design change on Ravelry (a knitting website she uses), that once put her in bed for three days. Because it was jarringly not compatible with her setup and immediate drained her energy budget..
-							</p>
-							<p>
-								Next to energy budget, we also talked about how highly personalized her setup is. It even changes quite a bit throughout the day.
-							</p>
-							<p>But I’ll let her describe this herself…</p>
-							<p class="cue">Play video &mdash; 34 seconds, with sound</p>
-						</aside>
-					</section>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="2:45">Matt</p>
+						<p>
+							So first, we met Molly. She struggled to see and uses a collection of tools to navigate her life
+							relatively independently. She uses a screen reader at like 4x speed and appeared very capable. But was
+							also interesting to hear that she relies on humans through a tool called Be My Eyes when necessary.
+						</p>
+						<p>
+							This connects her to volunteers when she needs additional support through their app. She had started using
+							AI for some things, but failed to get it to match the speed and reliability of just doing things herself.
+						</p>
+					</aside>
+				</section>
 
-					<section data-scene="myron" class="is-flipped">
-						<h2>Myron</h2>
-						<p>An interface where you’re already a power user</p>
-						<div class="persona">
-							<blockquote>
-								<span class="visually-hidden">&ldquo;</span>If I had an AI box, I could tell it to line up all my headers from cell A1
-								to A20 and just send it. That would save so much time. That would be a life
-								changer for me.<span class="visually-hidden">&rdquo;</span>
-							</blockquote>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/myron.webp"
-									srcset="media/personas/myron-768.webp 768w, media/personas/myron-1280.webp 1280w, media/personas/myron.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration of a man in a wheelchair wearing a headset microphone, working on a spreadsheet at his desk" width="2048" height="2048"
-								/>
-							</div>
+				<section data-scene="michael" class="is-flipped">
+					<h2>Michael</h2>
+					<p>Uses AI as training wheels, not autopilot.</p>
+					<div class="persona">
+						<blockquote>
+							<span class="visually-hidden">&ldquo;</span>[&hellip;] you have to put your name to things. If it went
+							ahead, did a bunch of
+							tasks, emailed people, and I couldn’t really take it back &mdash; that feels &hellip;
+							uncomfortable, giving it that much autonomy.<span class="visually-hidden">&rdquo;</span>
+						</blockquote>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/michael.webp"
+								srcset="media/personas/michael-768.webp 768w, media/personas/michael-1280.webp 1280w, media/personas/michael.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration of a man in headphones typing on a laptop beside a stack of books" width="2048"
+								height="2048" />
 						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="7:00">Simon</p>
-							<p>
-								Our last interview was with Myron, who is a college professor from Louisiana. He has no perception
-								problems &mdash; for him it’s purely about movement. He had a spine injury 23 years ago, which left
-								him paralyzed only with with head movement.
-							</p>
-							<p>
-								He steers his wheelchair with head movements, and in Bluetooth mode the same
-								controls also move his mouse pointer.
-							</p>
-							<p>
-								Watching him work was impressive. He’s very experienced with Dragon NaturallySpeaking for
-								voice control: he knows its shortcuts, makes his own and has memorised where things sit on
-								his screen. To click, he uses the &ldquo;show grid&rdquo; command: then nine numbered squares
-								overlay the screen, and each number he says zooms into that specific square, now with a smaller grid.
-								So a sequence like &ldquo;7, 8, 9, 7&rdquo; moves the cursor to the precise location of the icon he intented to click.
-							</p>
-							<p>
-								What slows him down is the number of small steps in one task. Each is its own command:
-								&ldquo;Show grid. 7, 8, 3. Click. Scroll down. Show grid &hellip;&rdquo;, through every menu.
-								Imagine working on a complicated Excel sheet, this can get tiresome quickly.
-							</p>
-							<p>
-								Ideally he’d just say what he wants done, and have it done in one go.
-							</p>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="3:15">Matt</p>
+						<p>
+							Next we spoke with Michael. He is autistic, has ADHD, and tinnitus, which made listening very difficult
+							for him.
+						</p>
+						<p>
+							Whether or not he reaches for AI in his day depended a lot on what he was doing because he liked being in
+							control. If he was working on something pertaining to laws, he couldn't get over having to trust the agent
+							and would prefer doing the 20 complicated, deterministic clicks himself.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="sarah">
+					<h2>Sarah</h2>
+					<p>With context about you, AI can help you in ways you didn’t anticipate.</p>
+					<div class="persona">
+						<blockquote>
+							<span class="visually-hidden">&ldquo;</span>I was really struggling one day &hellip; but then,
+							interestingly, it came up
+							with a really insightful reason: it was the drop in barometric pressure. The change had been so fast. And
+							it said that’s really common with people with brain injuries.<span class="visually-hidden">&rdquo;</span>
+						</blockquote>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/sarah.webp"
+								srcset="media/personas/sarah-768.webp 768w, media/personas/sarah-1280.webp 1280w, media/personas/sarah.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration of a woman at a laptop with her hand to her head, a storm cloud overhead and numbered overlays stacked across her screen"
+								width="2048" height="2048" />
+						</div>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="3:45">Matt</p>
+						<p>
+							Next was Sarah. She was located in Canada so we immediately connected! Unfortunately, she had a brain
+							injury five years ago, so came to disability very late in life and struggled more than Molly and Michael.
+							Screen time was hard; reading a lot in one day is hard; watching lectures (she was studying for a sailing
+							degree) was also hard.
+						</p>
+						<p>
+							Her whole setup felt like fight. She had a chrome plugin that would bold half of every word to make it
+							easier for her to read, but this would break her voice-over software because it treated each bolded
+							segment as something she could click. Because of this, her whole screen would just fill with numbers
+							overtop of everything. So she switched to the grid overlay version of this plugin, so the clickable
+							regions appear as grid quadrants over the screen that she would use to progressively narrow in on the
+							element, but then the grid lines would be impossible to see once she enabled "darkify" which was a chrome
+							plugin to give a faux dark mode (the university platform she was using didn't support it on its own). And
+							sometimes she would have to switch to Safari for certain tasks, and the whole fragile set up would
+							collapse if she had to watch a lecture video or, God forbid, join a video call.
+						</p>
+						<p>
+							It was also interesting to hear about how she listened better when it was Gwyneth Paltrow’s voice, so she
+							had a interest in fine control of her tools, but couldn't figure it out. She actually wanted AI to help
+							her, and was most impressed when it demonstrated that it knew about her illness and situation, even more
+							than she did.
+						</p>
+						<p>
+							In the quote she describes a conversation where the agent pointed out the recent weather as a culprit for
+							a particularly difficult day.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="no-revolution">
+					<h2>No revolution</h2>
+					<ul>
+						<li>Chatbots &amp; agents: helpful tools</li>
+						<li>The simple interface is very accessible</li>
+						<li>Trust &amp; reliability are the problem</li>
+						<li>We want assistants, not replacements</li>
+					</ul>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="4:45">Simon</p>
+						<p>
+							At this point in the interviews we regrouped to form an intermediate result.
+							Which was that agents and bots are very helpful tools, but no revolution yet.
+						</p>
+						<p>
+							The reasons overlap with the general population. They are not
+							accessibility-specific.
+						</p>
+						<p>
+							Trust and reliability are big hindrances.
+						</p>
+						<p>
+							People want tools and assistants, they don't want to be replaced. They want to stay in
+							the driver’s seat and &ldquo;do the work&rdquo; themselves. Because in the end <em>they</em> are
+							responsible. But also because it is fulfilling.
+						</p>
+						<p>So we continued, to see what else is out there.</p>
+					</aside>
+				</section>
+
+				<section data-scene="amelia">
+					<h2>Amelia</h2>
+					<p>AI should remove the disability tax on everyday tasks.</p>
+					<div class="persona">
+						<blockquote>
+							<span class="visually-hidden">&ldquo;</span>Part of the enjoyable thing in life is struggling through
+							things. Having
+							everything taken care of for you takes away a bit of the fun.<span class="visually-hidden">&rdquo;</span>
+						</blockquote>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/amelia.webp"
+								srcset="media/personas/amelia-768.webp 768w, media/personas/amelia-1280.webp 1280w, media/personas/amelia.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration from behind of a woman on a video call, holding an enormous laptop, a coffee beside her"
+								width="2048" height="2048" />
+						</div>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="5:15">Simon</p>
+						<p>
+							Amelia studies law in the UK. Her issues are with reading and writing; she struggles with high contrast
+							and bright interfaces. Her computer is set to a large zoom level and she uses a forced dark mode plugin.
+						</p>
+						<p>
+							A big theme with her was Energy budget. And lot of her budget is spent fighting apps that don’t
+							cooperate with her setup and behave unpredictably.
+						</p>
+						<p>
+							Besides that she emphasized that she actually wouldn’t want everything taken care of for her &mdash; she
+							just wants AI to remove that extra tax she has to pay because of her disability.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="rose">
+					<h2>Rose</h2>
+					<p>Everyone’s settings are different and incompatible.</p>
+					<div class="persona">
+						<blockquote>
+							<span class="visually-hidden">&ldquo;</span>I live in a disabled house [&hellip;] all our settings are
+							different, even across our iPads. It’s actually an in-house joke: I can’t look at my
+							husband’s iPad, he can’t look at mine, and the kids hate using either.<span
+								class="visually-hidden">&rdquo;</span>
+						</blockquote>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/rose.webp"
+								srcset="media/personas/rose-768.webp 768w, media/personas/rose-1280.webp 1280w, media/personas/rose.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration of a woman in dark glasses knitting on a sofa, curtains drawn, with laptops and a stack of tablets beside her"
+								width="2048" height="2048" />
+						</div>
+						<video src="media/rose-family-settings.mp4" preload="auto"></video>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="6:00">Simon</p>
+						<p>
+							Rose studies cyber security. She has hyperphotosensitivity &mdash; she
+							lives with closed curtains and wears very dark sunglasses outside. Because light drains her
+							energy and can genuinely make her sick.
+						</p>
+						<p>
+							She shared one striking example: a design change on Ravelry (a knitting website she uses), that once put
+							her in bed for three days. Because it was jarringly not compatible with her setup and immediate drained
+							her energy budget..
+						</p>
+						<p>
+							Next to energy budget, we also talked about how highly personalized her setup is. It even changes quite a
+							bit throughout the day.
+						</p>
+						<p>But I’ll let her describe this herself…</p>
+						<p class="cue">Play video &mdash; 34 seconds, with sound</p>
+					</aside>
+				</section>
+
+				<section data-scene="myron" class="is-flipped">
+					<h2>Myron</h2>
+					<p>An interface where you’re already a power user</p>
+					<div class="persona">
+						<blockquote>
+							<span class="visually-hidden">&ldquo;</span>If I had an AI box, I could tell it to line up all my headers
+							from cell A1
+							to A20 and just send it. That would save so much time. That would be a life
+							changer for me.<span class="visually-hidden">&rdquo;</span>
+						</blockquote>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/myron.webp"
+								srcset="media/personas/myron-768.webp 768w, media/personas/myron-1280.webp 1280w, media/personas/myron.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration of a man in a wheelchair wearing a headset microphone, working on a spreadsheet at his desk"
+								width="2048" height="2048" />
+						</div>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="7:00">Simon</p>
+						<p>
+							Our last interview was with Myron, who is a college professor from Louisiana. He has no perception
+							problems &mdash; for him it’s purely about movement. He had a spine injury 23 years ago, which left
+							him paralyzed only with with head movement.
+						</p>
+						<p>
+							He steers his wheelchair with head movements, and in Bluetooth mode the same
+							controls also move his mouse pointer.
+						</p>
+						<p>
+							Watching him work was impressive. He’s very experienced with Dragon NaturallySpeaking for
+							voice control: he knows its shortcuts, makes his own and has memorised where things sit on
+							his screen. To click, he uses the &ldquo;show grid&rdquo; command: then nine numbered squares
+							overlay the screen, and each number he says zooms into that specific square, now with a smaller grid.
+							So a sequence like &ldquo;7, 8, 9, 7&rdquo; moves the cursor to the precise location of the icon he
+							intented to click.
+						</p>
+						<p>
+							What slows him down is the number of small steps in one task. Each is its own command:
+							&ldquo;Show grid. 7, 8, 3. Click. Scroll down. Show grid &hellip;&rdquo;, through every menu.
+							Imagine working on a complicated Excel sheet, this can get tiresome quickly.
+						</p>
+						<p>
+							Ideally he’d just say what he wants done, and have it done in one go.
+						</p>
 
 
-							
-						</aside>
-					</section>
-				</div>
-			</section>
 
-			<section data-act="limits-of-adaptability" class="act-panel">
-				<div class="act-panel-inner">
-					<header class="act-opener">
-						<h1 class="act-title">The limits of <br />adaptability</h1>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt">Matt</p>
-							<p>
-								All our interviewees had adapted their setups according to their personal needs. And all of them ran into issues. That takes us to a central proble with the limits of adaptability.
-							</p>
-						</aside>
-					</header>
+					</aside>
+				</section>
+			</div>
+		</section>
 
-					<section data-scene="todays-model">
-						<h2>Today’s model</h2>
-						<p>One interface for the average, with tools and settings on top</p>
-						<div class="persona">
-							<!-- Revealed on the last beat, as the layers start to fight -->
-							<p data-piece="conflict">&hellip;and they start to conflict</p>
-							<div class="portrait-ground">
-								<!-- js/site.js puts the illustration’s SVG in place of the WebP, so
+		<section data-act="limits-of-adaptability" class="act-panel">
+			<div class="act-panel-inner">
+				<header class="act-opener">
+					<h1 class="act-title">The limits of <br />adaptability</h1>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt">Matt</p>
+						<p>
+							All our interviewees had adapted their setups according to their personal needs. And all of them ran into
+							issues. That takes us to a central problem with the limits of adaptability.
+						</p>
+					</aside>
+				</header>
+
+				<section data-scene="todays-model">
+					<h2>Today’s model</h2>
+					<p>One interface for the average person, with tools and settings on top</p>
+					<div class="persona">
+						<!-- Revealed on the last beat, as the layers start to fight -->
+						<p data-piece="conflict">&hellip;and they start to conflict</p>
+						<div class="portrait-ground">
+							<!-- js/site.js puts the illustration’s SVG in place of the WebP, so
 								     each extension can land on its own beat (todaysModelSteps) -->
-								<img
-									class="persona-portrait todays-model-illustration"
-									src="media/personas/todays-model.webp"
-									srcset="media/personas/todays-model-768.webp 768w, media/personas/todays-model-1280.webp 1280w, media/personas/todays-model.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Sarah’s setup: her browser showing a lecture page, with four extensions laid on it, each a separate layer. Bionic reading bolds the first half of every word, voice control’s number badges land off their targets, a dark mode plugin darkens the page under them, and voice control’s number grid is lost dark on dark. Empty layers below them wait for every preference still to come. The layers start to conflict." width="2048" height="2048"
-								/>
-							</div>
+							<img class="persona-portrait todays-model-illustration" src="media/personas/todays-model.webp"
+								srcset="media/personas/todays-model-768.webp 768w, media/personas/todays-model-1280.webp 1280w, media/personas/todays-model.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Sarah’s setup: her browser showing a lecture page, with four extensions laid on it, each a separate layer. Bionic reading bolds the first half of every word, voice control’s number badges land off their targets, a dark mode plugin darkens the page under them, and voice control’s number grid is lost dark on dark. Empty layers below them wait for every preference still to come. The layers start to conflict."
+								width="2048" height="2048" />
 						</div>
+					</div>
 
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="8:45">Matt</p>
-							<p>
-								In Today’s model we ship one interface. Users have to either live with it or stack adaptation layers on top.
-							</p>
-							<p>
-								We saw this in the interviews how Sarah's various assistive technologies (voice over, dark mode, bionic reading) began to conflict with each other. Each one of them requires that the app was built in a compatible way, adhering to standards, and built with best practises in mind. 
-							</p>
-							<p>
-								That approach brought us quite far. It’s amazing to see in the interviews how low the barriers can get. But we also noticed its limitations. Each cumulative layer adds more complexity to the app, which means more potential for conflict, more energy spent to maintain, and more potential for errors.
-							</p>
-						</aside>
-					</section>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="8:45">Matt</p>
+						<p>
+							In Today’s model we ship one interface. Users have to either live with it or stack adaptation layers on
+							top.
+						</p>
+						<p>
+							We saw this in the interviews how Sarah's various assistive technologies (voice over, dark mode, bionic
+							reading) began to conflict with each other. Each one of them requires that the app was built in a
+							compatible way, adhering to standards, and built with best practises in mind.
+						</p>
+						<p>
+							That approach brought us quite far. It’s amazing to see in the interviews how low the barriers can get.
+							But we also noticed its limitations. Each cumulative layer adds more complexity to the app, which means
+							more potential for conflict, more energy spent to maintain, and more potential for errors.
+						</p>
+					</aside>
+				</section>
 
-					<section data-scene="one-interface-cant-fit-everyone">
-						<h2>One interface can’t fit everyone</h2>
-						<ul>
-							<li>Setups are very personal</li>
-							<li>Adaptations conflict with each other</li>
-							<li>Configuration costs energy</li>
-							<li>Standards have limits</li>
-						</ul>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="9:30">Matt</p>
-							<p>
-								In fact the one interface trying to fit the unique needs of its users, results in a unique number of possible errors. Everyone we spoke to had done real work to adapt standard interfaces, and for every one of them it kept <em>failing</em>. Either their setup was so personal, adaptions were incompatible or poorly maintained, configurations were too granular. Or they just lived with the broken experience because there wasn't more they felt they could do.
-							</p>
-						
-						</aside>
-					</section>
+				<section data-scene="one-interface-cant-fit-everyone">
+					<h2>One interface can’t fit everyone</h2>
+					<ul>
+						<li>Setups are very personal</li>
+						<li>Adaptations conflict with each other</li>
+						<li>Configuration costs energy</li>
+						<li>Standards have limits</li>
+					</ul>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="9:30">Matt</p>
+						<p>
+							In fact the one interface trying to fit the unique needs of its users, results in a unique number of
+							possible errors. Everyone we spoke to had done real work to adapt standard interfaces, and for every one
+							of them it kept <em>failing</em>. Either their setup was so personal, adaptions were incompatible or
+							poorly maintained, configurations were too granular. Or they just lived with the broken experience because
+							there wasn't more they felt they could do.
+						</p>
 
-					<section data-scene="your-ui-is-not-my-ui-personalization">
-						<h2>Personalization over adaptability</h2>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="10:00">Matt</p>
-							<p>
-								Adaptation assumes one interface underneath that everyone bends toward themselves, but that’s where it breaks.
-							</p>
-							<p>
-								And as we saw this over again we started to think about a what could be a better way. Instead of improving how we adapt to the standard interface, we started thinking about how to better prioritize the adaptations, these personalisations. 
-							</p>
-						</aside>
-					</section>
+					</aside>
+				</section>
 
-					<section data-scene="your-ui-is-not-my-ui-create-specific" data-title="A UI generated for your needs">
-						<h2 class="rotator">
-							A UI generated for your
-							<span class="rotator-slot" aria-hidden="true"
-								><span class="rotator-ending">needs.</span
-								><span class="rotator-ending">current task.</span
-								><span class="rotator-ending">preferences.</span
-								><span class="rotator-ending">accessibility needs.</span
-								><span class="rotator-ending">circumstances.</span
-								><span class="rotator-ending">state of mind.</span
-								><span class="rotator-ending">external environment.</span></span
-							><span class="visually-hidden">needs.</span>
-						</h2>
-						<ul class="visually-hidden">
-							<li>your current task</li>
-							<li>your preferences</li>
-							<li>your accessibility needs</li>
-							<li>your circumstances</li>
-							<li>your state of mind</li>
-							<li>your external environment</li>
-						</ul>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="10:30">Matt</p>
-							
-							<p class="cue">Start clicking through the rotor</p>
-							<p>
-								Beacuse in reality an app for the exact same task may need to look different depending on your needs, preferences, accessibility needs, circumstances, state of mind external environment and so much so that they may not even resemble eachother.
-							</p>
+				<section data-scene="your-ui-is-not-my-ui-personalization">
+					<h2>Personalization over adaptability</h2>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="10:00">Matt</p>
+						<p>
+							Adaptation assumes one interface underneath that everyone bends toward themselves, but that’s where it
+							breaks.
+						</p>
+						<p>
+							And as we saw this over again we started to think about a what could be a better way. Instead of improving
+							how we adapt to the standard interface, we started thinking about how to better prioritize the
+							adaptations, these personalisations. Given they are so important.
+						</p>
+					</aside>
+				</section>
 
-							<p>
-								This personalisations layer is so important and influencial on the final UI, that it can't be layered on top or treated as an afterthought, but has to be something considered from the start.
-							</p>
-						</aside>
-					</section>
-				</div>
-			</section>
+				<section data-scene="your-ui-is-not-my-ui-create-specific" data-title="A UI generated for your needs">
+					<h2 class="rotator">
+						A UI generated for your
+						<span class="rotator-slot" aria-hidden="true"><span class="rotator-ending">needs.</span><span
+								class="rotator-ending">current task.</span><span class="rotator-ending">preferences.</span><span
+								class="rotator-ending">accessibility needs.</span><span
+								class="rotator-ending">circumstances.</span><span class="rotator-ending">state of mind.</span><span
+								class="rotator-ending">external environment.</span></span><span class="visually-hidden">needs.</span>
+					</h2>
+					<ul class="visually-hidden">
+						<li>your current task</li>
+						<li>your preferences</li>
+						<li>your accessibility needs</li>
+						<li>your circumstances</li>
+						<li>your state of mind</li>
+						<li>your external environment</li>
+					</ul>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="10:30">Matt</p>
 
-			<section data-act="empathy-is-our-point" class="act-panel">
-				<div class="act-panel-inner">
-					<header class="act-opener">
-						<h1 class="act-title">Empathy is <br />our point</h1>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon">Simon</p>
-							<p>
-								We call this <em>empathy</em>.
-							</p>
-							
-							<p>
-								In one word, the interface needs to be <em>empathetic</em> to the person in front of it.
-							</p>
-						</aside>
-					</header>
+						<p class="cue">Start clicking through the rotor</p>
+						<p>
+							Beacuse in reality the best interface for the task may need to look different depending on your needs,
+							preferences, accessibility needs, circumstances, state of mind external environment and so much so that
+							they may not even resemble eachother.
+						</p>
 
-					<section data-scene="ui-equals-f-intent-empathy" data-title="UI = f(intent, empathy)">
-						<h2 class="formula" aria-label="UI equals f of intent and empathy">
-							<span aria-hidden="true"
-								>UI <span class="formula-op">=</span> f<span class="formula-op">(</span
-								><span class="formula-term">Intent</span><span class="formula-op">,</span>
-								<span class="formula-term">Empathy</span><span class="formula-op">)</span></span
-							>
-						</h2>
-						<div class="two-columns">
-							<p><strong>Intent</strong> What you’re trying to do</p>
-							<p><strong>Empathy</strong> Who you are right now</p>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="13:15">Simon</p>
-							<p>
-								So for us, a UI should be a function of two elements.
-							</p>
-							<p>
-								The <em>intent</em>: what you’re trying to do, which was the the same box for everyone in the example. And the
-								<em>empathy</em>: who you are, your preferences and needs in this very moment.
-							</p>
-							<p>
-								And from the equation follows directly: Same intent, different person, should result in a different UI.
-							</p>
-						</aside>
-					</section>
+						<p>
+							This layer is so important and influencial on the final UI, that it can't be layered on top or treated as
+							an afterthought, but central and considered from the start.
+						</p>
+					</aside>
+				</section>
+			</div>
+		</section>
 
-					<section data-scene="ui-equals-f-intent" data-title="UI = f(intent, …)">
-						<h2 class="formula" aria-label="UI equals f of intent and, not yet, empathy">
-							<span aria-hidden="true"
-								>UI <span class="formula-op">=</span> f<span class="formula-op">(</span
-								><span class="formula-term">Intent</span><span class="formula-op">,</span>
-								<span class="formula-term is-missing">Empathy</span><span class="formula-op">)</span></span
-							>
-						</h2>
-						<div class="screenshots">
-							<figure>
-								<img src="media/ui-equals-f-intent-ai-mode.webp" alt="A Google AI Mode answer about transcription: a generated, animated diagram of DNA, RNA polymerase and a ribosome, with a dropdown, phase tabs and a progress slider, marked AI-generated" width="694" height="534" />
-								<figcaption>Google AI Mode</figcaption>
-							</figure>
-							<figure>
-								<img src="media/ui-equals-f-intent-claude-visual.webp" alt="A visual Claude made in a chat about a slow file transfer: presets for Wi-Fi and Ethernet, sliders for link rate, efficiency and data size, bars comparing speeds and the time the transfer will take" width="651" height="629" />
-								<figcaption>Claude, inline visual</figcaption>
-							</figure>
-							<figure>
-								<img src="media/ui-equals-f-intent-claude-artifact.webp" alt="A Claude artifact, Checkout v2 experiment readout: an interactive chart of the lift in conversion over three weeks, with a hover tooltip for one day" width="908" height="530" />
-								<figcaption>Claude, artifact</figcaption>
-							</figure>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="13:45">Simon</p>
-							<p>
-								As it happan the same time we were preparing this talk, generated UIs started emerging everywhere around us using AI. Google..., Claude..., but so far they only take into account your <em>intent</em>, the query, the task.
-							</p>
-							<p>
-								So that half is handled. The half that isn’t, yet, is the <em>human</em>: your needs, abilities, context.
-							</p>
-							<p>
-								That missing half is our whole argument. We think there is lots of missed opportunity here. For accessibility but also outside of this specific topic.
-							</p>
-							<p><small>Source: <a href="sources.html#leviathan-2025">Google Research, 2025</a></small></p>
-						</aside>
-					</section>
+		<section data-act="empathy-is-our-point" class="act-panel">
+			<div class="act-panel-inner">
+				<header class="act-opener">
+					<h1 class="act-title">Empathy is <br />our point</h1>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon">Simon</p>
+						<p>
+							We call this <em>empathy</em>.
+						</p>
 
-					<section data-scene="demo-two-people" class="branching">
-						<h2>One task, many UIs</h2>
-						<!-- js/site.js puts the illustration’s SVG in place of the WebP, builds each
+						<p>
+							In one word, the interface needs to be <em>empathetic</em> to the person in front of it.
+						</p>
+					</aside>
+				</header>
+
+				<section data-scene="ui-equals-f-intent-empathy" data-title="UI = f(intent, empathy)">
+					<h2 class="formula" aria-label="UI equals f of intent and empathy">
+						<span aria-hidden="true">UI <span class="formula-op">=</span> f<span class="formula-op">(</span><span
+								class="formula-term">Intent</span><span class="formula-op">,</span>
+							<span class="formula-term">Empathy</span><span class="formula-op">)</span></span>
+					</h2>
+					<div class="two-columns">
+						<p><strong>Intent</strong> What you’re trying to do</p>
+						<p><strong>Empathy</strong> Who you are right now</p>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="13:15">Simon</p>
+						<p>
+							So for us, a UI should be a function of two elements.
+						</p>
+						<p>
+							The <em>intent</em>: what you’re trying to do, which was the the same box for everyone in the example. And
+							the
+							<em>empathy</em>: who you are, your preferences and needs in this very moment.
+						</p>
+						<p>
+							And from the equation follows directly: Same intent, different person, should result in a different UI.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="ui-equals-f-intent" data-title="UI = f(intent, …)">
+					<h2 class="formula" aria-label="UI equals f of intent and, not yet, empathy">
+						<span aria-hidden="true">UI <span class="formula-op">=</span> f<span class="formula-op">(</span><span
+								class="formula-term">Intent</span><span class="formula-op">,</span>
+							<span class="formula-term is-missing">Empathy</span><span class="formula-op">)</span></span>
+					</h2>
+					<div class="screenshots">
+						<figure>
+							<img src="media/ui-equals-f-intent-ai-mode.webp"
+								alt="A Google AI Mode answer about transcription: a generated, animated diagram of DNA, RNA polymerase and a ribosome, with a dropdown, phase tabs and a progress slider, marked AI-generated"
+								width="694" height="534" />
+							<figcaption>Google AI Mode</figcaption>
+						</figure>
+						<figure>
+							<img src="media/ui-equals-f-intent-claude-visual.webp"
+								alt="A visual Claude made in a chat about a slow file transfer: presets for Wi-Fi and Ethernet, sliders for link rate, efficiency and data size, bars comparing speeds and the time the transfer will take"
+								width="651" height="629" />
+							<figcaption>Claude, inline visual</figcaption>
+						</figure>
+						<figure>
+							<img src="media/ui-equals-f-intent-claude-artifact.webp"
+								alt="A Claude artifact, Checkout v2 experiment readout: an interactive chart of the lift in conversion over three weeks, with a hover tooltip for one day"
+								width="908" height="530" />
+							<figcaption>Claude, artifact</figcaption>
+						</figure>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="13:45">Simon</p>
+						<p>
+							As it happan the same time we were preparing this talk, generated UIs started emerging everywhere around
+							us using AI. Google..., Claude..., but so far they only take into account your <em>intent</em>, the query,
+							the task.
+						</p>
+						<p>
+							So that half is handled. The half that isn’t, yet, is the <em>human</em>: your needs, abilities, context.
+						</p>
+						<p>
+							That missing half is our whole argument. We think there is lots of missed opportunity here. For
+							accessibility but also outside of this specific topic.
+						</p>
+						<p><small>Source: <a href="sources.html#leviathan-2025">Google Research, 2025</a></small></p>
+					</aside>
+				</section>
+
+				<section data-scene="demo-two-people" class="branching">
+					<h2>One task, many UIs</h2>
+					<!-- js/site.js puts the illustration’s SVG in place of the WebP, builds each
 						     person’s stack one box per beat on top of the intent (branchingSteps),
 						     reveals each avatar as their part starts and draws their head in it.
 						     The avatars sit in a grid whose columns match the stacks' widths. -->
-						<div class="branching-stage">
-							<nav class="branching-people" aria-label="People in the demo">
-								<button type="button" class="branching-person" data-person="rose" data-beat="1">
-									<span class="branching-avatar"></span>
-									<span class="branching-person-name">Rose</span>
-								</button>
-								<button type="button" class="branching-person" data-person="myron" data-beat="6">
-									<span class="branching-avatar"></span>
-									<span class="branching-person-name">Myron</span>
-								</button>
-								<button type="button" class="branching-person is-anyone" data-person="someone" data-beat="11">
-									<span class="branching-avatar"></span>
-									<span class="branching-person-name">And anyone else&hellip;</span>
-								</button>
-							</nav>
-							<div class="branching-art">
-								<img
-									class="branching-illustration"
-									src="media/personas/demo-two-people.webp"
-									srcset="media/personas/demo-two-people-768.webp 768w, media/personas/demo-two-people-1280.webp 1280w, media/personas/demo-two-people.webp 2048w"
-									sizes="(max-width: 699px) 90vw, min(42vw, 70vh)"
-									data-frame="0 -10 2317 1202"
-									alt="Three stacks side by side, each starting from the same intent, I’d like to translate this text, and gathered by a bracket into an arrow pointing down at the UI made from it. Rose’s: condition, hyperphotosensitivity; environment, on the couch, curtains drawn; situation, a medium energy budget today; and below it an iPad with a dark, dim translator. Myron’s: a spine injury, steering by head; at his desk, headset on; focused on a spreadsheet; and below it a monitor with a translator that only listens. A third, unnamed person’s, drawn fainter: needs reading glasses; in a crowded subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge."
-								/>
-							</div>
+					<div class="branching-stage">
+						<nav class="branching-people" aria-label="People in the demo">
+							<button type="button" class="branching-person" data-person="rose" data-beat="1">
+								<span class="branching-avatar"></span>
+								<span class="branching-person-name">Rose</span>
+							</button>
+							<button type="button" class="branching-person" data-person="myron" data-beat="6">
+								<span class="branching-avatar"></span>
+								<span class="branching-person-name">Myron</span>
+							</button>
+							<button type="button" class="branching-person is-anyone" data-person="someone" data-beat="11">
+								<span class="branching-avatar"></span>
+								<span class="branching-person-name">And anyone else&hellip;</span>
+							</button>
+						</nav>
+						<div class="branching-art">
+							<img class="branching-illustration" src="media/personas/demo-two-people.webp"
+								srcset="media/personas/demo-two-people-768.webp 768w, media/personas/demo-two-people-1280.webp 1280w, media/personas/demo-two-people.webp 2048w"
+								sizes="(max-width: 699px) 90vw, min(42vw, 70vh)" data-frame="0 -10 2317 1202"
+								alt="Three stacks side by side, each starting from the same intent, I’d like to translate this text, and gathered by a bracket into an arrow pointing down at the UI made from it. Rose’s: condition, hyperphotosensitivity; environment, on the couch, curtains drawn; situation, a medium energy budget today; and below it an iPad with a dark, dim translator. Myron’s: a spine injury, steering by head; at his desk, headset on; focused on a spreadsheet; and below it a monitor with a translator that only listens. A third, unnamed person’s, drawn fainter: needs reading glasses; in a crowded subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge." />
 						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="11:15">Simon</p>
-							<p>
-								Before we move on, I'd like to reiterate what we've said so far, now on a concrete example.
-							</p>
-							<p><span class="cue">Next</span> Let's remember Rose from our interviews. Suppose she wants to translate some text into another language.</p>
-							<p>
-								In our previous model we started with the interface and the person had to adapt. In the new model, we start with the person.
-							</p>
-							<p><span class="cue">Next &times;3</span> Then what we know about her, one box at a time:</p>
-							<ul>
-								<li>her condition: hyperphotosensitivity. Light drains her energy and can make her sick, so nothing on screen may be bright;</li>
-								<li>her environment: on the couch, curtains drawn, so the room is dark and any glare stands out;</li>
-								<li>her situation: a medium energy budget today, so the UI should ask as little of her as it can.</li>
-							</ul>
-							<p><span class="cue">Next</span> And only now, creates AI the interface. Base on <em>all</em> those inputs above. The result is a dark, low-glare translator on her iPad.</p>
-							<p><span class="cue">Next</span>Let's now switch to Myron, who arrives with the same intent (to translate text), but in a vastly different context.</p>
-							<p class="cue">Next &times;3</p>
-							<ul>
-								<li>His condition: a spine injury, 23 years ago. He can’t use his hands and steers his wheelchair and his mouse pointer with his head;</li>
-								<li>his environment: at his desk, headset on, so his voice is always within reach;</li>
-								<li>his situation: focused on a spreadsheet, so nothing should pull his head, and his pointer, away from it.</li>
-							</ul>
-							<p><span class="cue">Next</span> Based on this input, the AI-generated UI is focused on speech input. It looks vastly different to Rose's to the left, even though they started with the same task.</p>
-							<p>
-								<span class="cue">Next</span> And it doesn’t stop at those two examples two. Suppose someone who maybe needs reading glasses or nothing at all you'd naively call a disability, but is in a crowded subway with one hand free,  running late in a heatwave.
-							</p>
-							<p><span class="cue">Next</span> Their UI would look different again, because their needs are different: big, clear buttons where the thumb reaches, readable without the glasses they didn’t bring.</p>
-							<p><span class="cue">Next</span> And this list goes on: Human conditions, situations and contexts are basically indefinite, and the UI should take that into account.</p>
-						</aside>
-					</section>
-
-					<section data-scene="ui-equals-f-empathy" data-title="UI = f(…, empathy)">
-						<h2 class="formula" aria-label="UI equals f of intent and empathy, with empathy in focus">
-							<span aria-hidden="true"
-								>UI <span class="formula-op">=</span> f<span class="formula-op">(</span
-								><span class="formula-term is-faded">Intent</span><span class="formula-op">,</span>
-								<span class="formula-term">Empathy</span><span class="formula-op">)</span></span
-							>
-						</h2>
-						<div class="gains">
-							<div class="gains-art">
-								<img
-									class="persona-portrait"
-									src="media/personas/ui-equals-f-empathy.webp"
-									srcset="media/personas/ui-equals-f-empathy-768.webp 768w, media/personas/ui-equals-f-empathy-1280.webp 1280w, media/personas/ui-equals-f-empathy.webp 2048w"
-									sizes="(max-width: 699px) 90vw, 70vw"
-									alt="Rose, Myron and Sarah from the interviews, side by side in round frames: Rose in her dark glasses, Myron in his headset, Sarah with her hair in a bun"
-									width="2048" height="2048"
-								/>
-							</div>
-							<ul class="gains-list">
-								<li><strong>Rose</strong> No redesign shocks,<br /> no clash of settings</li>
-								<li><strong>Myron</strong> Higher-order commands,<br /> voice-native UI</li>
-								<li><strong>Sarah</strong> No stack of<br /> incompatible plugins</li>
-							</ul>
-						</div>
-						<p class="gains-summary">No adaptation necessary anymore.</p>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="14:15">Simon</p>
-							<p>
-								What is gained by the empathy half? Let’s go back to the people we met.
-							</p>
-							<ul>
-								<li>Rose doesn’t need to fear that a sudden redesign makes an app unusable for her, and her family’s settings no longer clash,</li>
-								<li>Myron doesn’t need to steer the OS’s voice control grid one tiny step at a time, but can issue higher level commands for the whole task &</li>
-								<li>Sarah doesn’t need a stack of plugins fighting each other.</li>
-							</ul>
-							<p>
-								Users are not at the mercy of apps being compatible with their adaptations anymore.
-							</p>
-							<p>
-								Actually, adaptation is no longer necessary at all, instead the app is built on the spot, bespoke for that user, and their specific and momentary needs.
-							</p>
-
-						</aside>
-					</section>
-				</div>
-			</section>
-
-			<section data-act="launching-is-creating" class="act-panel">
-				<div class="act-panel-inner">
-					<header class="act-opener">
-						<h1 class="act-title">Launching <br />is creating</h1>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt">Matt</p>
-							<p>
-								If we imagine apps that appear different for me than for you, there is less linking your UI to my UI. Or even my UI versus my UI tomorrow given the same task.
-						 </p>
-							<p>
-								Another way of thinking about this is: What if launching an app is creating an app.
-							</p>
-						</aside>
-					</header>
-
-					<section data-scene="apps-cant-predict-you">
-						<h2>Apps can’t predict you</h2>
-						<div class="single-column">
-							<blockquote class="pull-quote">
-								<span class="visually-hidden">&ldquo;</span>No developer can predict all the ways a user will want to manipulate information.<span class="visually-hidden">&rdquo;</span>
-								<br /><small>David Karger</small>
-							</blockquote>
-							<p>Not just how you use them, but who you are.</p>
-						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="15:00">Matt</p>
-							<p>
-								The fundamental barrier is that off-the-shelf apps  (in the app store) can't predict YOU no matter how hard they try.
-							</p>
-							<p>
-								We make things for the statistical average and most common person. We target the largest demographic. 
-								</p><p>We also couldn’t possibly predict all the ways a user will want to interact with our apps, so we cover what we can.
-							</p>
-							<p>
-								These needs are highly unpredictable. No one building an app can account reasonably account them.							</p>
-							<p><small>Source: <a href="sources.html#karger-2005">Karger et al., 2005</a></small></p>
-						</aside>
-					</section>
-
-					<section data-scene="the-economics-just-changed">
-						<h2>The economics changed</h2>
-						<blockquote class="pull-quote">
-							<span class="visually-hidden">&ldquo;</span>We are excited about a future where users don’t have to pick from a finite library of applications or visual
-							pages, but instead, they have access to an infinite catalog, where the right ephemeral interface is
-							generated on the spot tailored for their need.<span class="visually-hidden">&rdquo;</span>
-							<br /><small>Google Research</small>
-						</blockquote>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="15:30">Matt</p>
-							<p>
-								But bespoke apps were never economically viable. It would be too expensive. Therefore the app had to make a choice for you and take a stance.
-							</p>
-							<p>
-								Google Maps lets you avoid tolls, highways, and ferries, but not winding roads, if they make you carsick.
-							</p>
-							<p>
-								AI is changing this as UIs become part of the LLM.
-							</p>
-							<p>
-								The apps we use already functionality as APIs; what AI makes cheap is the interface on top. For the first time, the single-serving interface is possible. Google Research frames the shift well by saying LLMs already turned a <em>finite</em> library of texts into an <em>infinite</em> one, and it going to continue the same way with these application and tailored visual interfaces.
-							</p>
-							<p>And not only will this start emerging in professional software, but we will see more small-scale apps that we build ourselves for exactly what we need.</p>
-							<p>
-								As it happens, when we talked with Rose again, one year later, to see how things had progressed since our first interview, she had created an app to organize her Steam library. It would give her a recommendation that best respected her energy budget at that moment.
-								</p><p>She had the power to create this herself exactly how she wanted it. She can make edits overtime and add functionality however suits her personally.</p><p>It take a huge investment of time and energy, so we have to question the ROI on the lasting result, but the whole thing is only possible because the economics have changed. And this is only getting faster and better. Its the worst it will ever be (as people say all the time).
-							</p>
-							
-							<p><small>Source: <a href="sources.html#leviathan-2026">Leviathan et al., 2026</a></small></p>
-						</aside>
-					</section>
-
-					<section data-scene="what-if-launching-an-app-means-creating-an-app">
-						<h2>What if?</h2>
-						<p>We started with disability.</p>
-						<p>But everyone benefits from bespoke software.</p>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="16:45">Matt</p>
-							<p>
-								Back to our hypothesis. Is AI a game changer? We think so, but not in the way we originally thought.
-							</p>
-							<p>
-								It’s not that the AI is an assistant that takes away the task as a whole.
-							</p>
-							<p>
-								After our research, we think what’s truly remarkable is that AI makes personalized software development accessible to everyone. These bespoke apps solve the adaption problem by making it unnecessary.
-							</p> 
-							 <p>An app built for yourself, naturally, knows you best. Rose built a video game catalog that was empathetic to her disability, but people are building their own fitness apps, expense trackers and other interfaces to accommodate all of our different needs.</p>
-							 <p>Of course if everyone started making their own software, the ROI would be hard to rationalize, but personalization can extend to friend circle, family or community. Generally we believe this democratization of software will be a net benefit.
-							</p>
-						</aside>
-					</section>
-
-					<section data-scene="imagine-everything-bespoke">
-						<h2>Imagine everything is bespoke</h2>
-						<ul>
-							<li>Privacy</li>
-							<li>Stability</li>
-							<li>Isolating</li>
-						</ul>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="matt" data-time="17:30">Matt</p>
-							<p>
-								But obviously a whole load of new problems on such topics as:
-							</p>
-							<ul>
-								<li>Privacy: An interface made for you, needs to know a lot about you.</li>
-								<li>Stability: How do you get predictable interfaces if they are made from scratch every time?</li>
-								<li>And if interfaces shape how we think, so what happens to the common ground between humans if they don't share visual language.</li>
-							</ul>
-							<p>
-								And of course, one massive drawback is that AI continues to become the resource intensive utility we all depend on. Probably not good, we don’t know, but what we do know is that now with AI, personalized interfaces are for the first time actually happening. So we’re in a place where we can actually think about, discuss and address those issues.
-							</p>
-						</aside>
-					</section>
-				</div>
-			</section>
-
-			<section data-act="closing" class="act-panel">
-				<div class="act-panel-inner">
-					<header class="act-opener">
-						<h1 class="act-title">Closing</h1>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon">Simon</p>
-							<p>
-								Before we close, let's reiterate what we've discussed so far…
-							</p>
-						</aside>
-					</header>
-
-					<section data-scene="key-takeaways">
-						<h2>Key takeaway</h2>
-						<p><strong>So far,</strong> we ship one interface and users have to adapt.</p>
-						<p><strong>Ideally,</strong> the interface is built for the task <em>and the human</em>.</p>
-						<p><strong>Today,</strong> AI makes those bespoke interfaces viable for the first time.</p>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="18:30">Simon</p>
-							<p>
-								So far, the answer to human variety is adaptation: we ship one interface, built for the average. It can’t fit everyone, and the burden of making it work lands on the user.
-							</p>
-							<p>
-								Ideally, the interface is built for the task <em>and</em> the human in front of it. Generated interfaces are already happening, but they start from the task alone. We argue they should take the person into account too: UI is a function of intent <em>and</em> empathy.
-							</p>
-							<p>
-								And that ideal isn’t out of reach anymore. Building a bespoke interface for every person and every moment used to be far too expensive. Today’s AI makes it possible for the first time.
-							</p>
-							<p>
-								For accessibility, that’s a paradigm shift: the burden moves from the user to the interface. But it doesn’t stop at disability. We all have needs, contexts and bad days, so everyone benefits from software that fits them.
-							</p>
-						</aside>
-					</section>
-
-					<section data-scene="back-to-sarah">
-						<h2>Back to Sarah</h2>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="11:15">Simon</p>
 						<p>
-							No adapting, no fighting plugins.
+							Before we move on, I'd like to reiterate what we've said so far, now on a concrete example.
 						</p>
-						<div class="persona">
-							<p>
-								Her focus stays on the lecture.
-							</p>
-							<div class="portrait-ground">
-								<img
-									class="persona-portrait"
-									src="media/personas/back-to-sarah.webp"
-									srcset="media/personas/back-to-sarah-768.webp 768w, media/personas/back-to-sarah-1280.webp 1280w, media/personas/back-to-sarah.webp 2048w"
-									sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
-									alt="Illustration of the same woman typing at her laptop with both hands, the sun and a rainbow out in the window and one calm page of large text on her screen" width="2048" height="2048"
-								/>
-							</div>
+						<p><span class="cue">Next</span> Let's remember Rose from our interviews. Suppose she wants to translate
+							some text into another language.</p>
+						<p>
+							In our previous model we started with the interface and the person had to adapt. In the new model, we
+							start with the person.
+						</p>
+						<p><span class="cue">Next &times;3</span> Then what we know about her, one box at a time:</p>
+						<ul>
+							<li>her condition: hyperphotosensitivity. Light drains her energy and can make her sick, so nothing on
+								screen may be bright;</li>
+							<li>her environment: on the couch, curtains drawn, so the room is dark and any glare stands out;</li>
+							<li>her situation: a medium energy budget today, so the UI should ask as little of her as it can.</li>
+						</ul>
+						<p><span class="cue">Next</span> And only now, creates AI the interface. Base on <em>all</em> those inputs
+							above. The result is a dark, low-glare translator on her iPad.</p>
+						<p><span class="cue">Next</span>Let's now switch to Myron, who arrives with the same intent (to translate
+							text), but in a vastly different context.</p>
+						<p class="cue">Next &times;3</p>
+						<ul>
+							<li>His condition: a spine injury, 23 years ago. He can’t use his hands and steers his wheelchair and his
+								mouse pointer with his head;</li>
+							<li>his environment: at his desk, headset on, so his voice is always within reach;</li>
+							<li>his situation: focused on a spreadsheet, so nothing should pull his head, and his pointer, away from
+								it.</li>
+						</ul>
+						<p><span class="cue">Next</span> Based on this input, the AI-generated UI is focused on speech input. It
+							looks vastly different to Rose's to the left, even though they started with the same task.</p>
+						<p>
+							<span class="cue">Next</span> And it doesn’t stop at those two examples two. Suppose someone who maybe
+							needs reading glasses or nothing at all you'd naively call a disability, but is in a crowded subway with
+							one hand free, running late in a heatwave.
+						</p>
+						<p><span class="cue">Next</span> Their UI would look different again, because their needs are different:
+							big, clear buttons where the thumb reaches, readable without the glasses they didn’t bring.</p>
+						<p><span class="cue">Next</span> And this list goes on: Human conditions, situations and contexts are
+							basically indefinite, and the UI should take that into account.</p>
+					</aside>
+				</section>
+
+				<section data-scene="ui-equals-f-empathy" data-title="UI = f(…, empathy)">
+					<h2 class="formula" aria-label="UI equals f of intent and empathy, with empathy in focus">
+						<span aria-hidden="true">UI <span class="formula-op">=</span> f<span class="formula-op">(</span><span
+								class="formula-term is-faded">Intent</span><span class="formula-op">,</span>
+							<span class="formula-term">Empathy</span><span class="formula-op">)</span></span>
+					</h2>
+					<div class="gains">
+						<div class="gains-art">
+							<img class="persona-portrait" src="media/personas/ui-equals-f-empathy.webp"
+								srcset="media/personas/ui-equals-f-empathy-768.webp 768w, media/personas/ui-equals-f-empathy-1280.webp 1280w, media/personas/ui-equals-f-empathy.webp 2048w"
+								sizes="(max-width: 699px) 90vw, 70vw"
+								alt="Rose, Myron and Sarah from the interviews, side by side in round frames: Rose in her dark glasses, Myron in his headset, Sarah with her hair in a bun"
+								width="2048" height="2048" />
 						</div>
-						<aside class="notes" hidden>
-							<p class="speaker" data-speaker="simon" data-time="19:00">Simon</p>
-							<p>
-								Let’s end where we started &mdash; with a person, not a paradigm. Remember Sarah, her plugins getting in each other’s way, and a setup that fell apart whenever she wanted to watch a lecture.
-							</p>
-							<p>
-								Now imagine the interface arrived already understanding her: what she’s trying to do, and who she is that day. She no longer has to worry about adapting it, and can focus on what she came for: the lecture itself. For Sarah, that’s the difference between software she can use and software she can’t.
-							</p>
-						</aside>
-					</section>
+						<ul class="gains-list">
+							<li><strong>Rose</strong> No redesign shocks,<br /> no clash of settings</li>
+							<li><strong>Myron</strong> Higher-order commands,<br /> voice-native UI</li>
+							<li><strong>Sarah</strong> No stack of<br /> incompatible plugins</li>
+						</ul>
+					</div>
+					<p class="gains-summary">No adaptation necessary anymore.</p>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="14:15">Simon</p>
+						<p>
+							What is gained by the empathy half? Let’s go back to the people we met.
+						</p>
+						<ul>
+							<li>Rose doesn’t need to fear that a sudden redesign makes an app unusable for her, and her family’s
+								settings no longer clash,</li>
+							<li>Myron doesn’t need to steer the OS’s voice control grid one tiny step at a time, but can issue higher
+								level commands for the whole task &</li>
+							<li>Sarah doesn’t need a stack of plugins fighting each other.</li>
+						</ul>
+						<p>
+							Users are not at the mercy of apps being compatible with their adaptations anymore.
+						</p>
+						<p>
+							Actually, adaptation is no longer necessary at all, instead the app is built on the spot, bespoke for that
+							user, and their specific and momentary needs.
+						</p>
 
-					<section data-scene="thank-you">
-						<h2>Thank you!</h2>
-					</section>
-				</div>
-			</section>
+					</aside>
+				</section>
+			</div>
+		</section>
 
-			<section data-act="backup-qa" class="act-panel">
-				<div class="act-panel-inner">
-					<header class="act-opener">
-						<h1 class="act-title">Q&amp;A</h1>
-					</header>
+		<section data-act="launching-is-creating" class="act-panel">
+			<div class="act-panel-inner">
+				<header class="act-opener">
+					<h1 class="act-title">Launching <br />is creating</h1>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt">Matt</p>
+						<p>
+							If we imagine apps that appear different for me than for you, there is less linking your UI to my UI. Or
+							even my UI versus my UI tomorrow given the same task.
+						</p>
+						<p>
+							Taking this extreme user-centric approach led us to question "What if launching an app is creating an
+							app?" For you, in that moment, and discarded when done.
+						</p>
+					</aside>
+				</header>
 
-					<section data-scene="doesnt-this-just-hand-more-power" data-title="Doesn’t this just hand more power?">
-						<blockquote>&ldquo;Doesn’t this just hand more power to whoever owns the AI?&rdquo;</blockquote>
-						<p>A generated UI can be empathetic to <em>you</em> &mdash; or to whoever <em>owns</em> it.</p>
-						<aside class="notes" hidden>
-							<p>
-								There’s a plausible future where your agent generates the interface and you never see
-								the underlying app &mdash; the &ldquo;buy&rdquo; button drawn for you by the platform,
-								tuned to <em>its</em> goals, not yours. Same technology, pointed the opposite way. The
-								capability that could give Sarah an interface shaped around her could give a platform
-								one shaped around its incentives. The deciding factor is who the UI is empathetic
-								<em>to</em> &mdash; which is exactly why local, user-owned generation matters.
-							</p>
-						</aside>
-					</section>
+				<section data-scene="apps-cant-predict-you">
+					<h2>Apps can’t predict you</h2>
+					<div class="single-column">
+						<blockquote class="pull-quote">
+							<span class="visually-hidden">&ldquo;</span>No developer can predict all the ways a user will want to
+							manipulate information.<span class="visually-hidden">&rdquo;</span>
+							<br /><small>David Karger</small>
+						</blockquote>
+						<p>Not just how you use them, but who you are.</p>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="15:00">Matt</p>
+						<p>
+							The fundamental barrier is that off-the-shelf apps (in the app store) can't predict YOU no matter how hard
+							they try.
+						</p>
+						<p>
+							We make things for the statistical average and most common person. We target the largest demographic and
+							users falling outside that demographic are left out.
+						</p>
+						<p>We also couldn’t possibly predict all the ways a user will want to interact with our apps, so we cover
+							what we can.
+						</p>
+						<p>
+							Because all these needs are highly unpredictable, no professional or company building an app can
+							reasonably account for them without making a lot of compromises. It would be expensive and not
+							econimically viable.</p>
+						<p><small>Source: <a href="sources.html#karger-2005">Karger et al., 2005</a></small></p>
+					</aside>
+				</section>
 
-					<section data-scene="if-everyones-ui-is-different" data-title="Don’t we lose common ground?">
-						<blockquote>&ldquo;If everyone’s UI is different, don’t we lose common ground?&rdquo;</blockquote>
-						<p>Real cost. Keep the periphery visible &mdash; personal shouldn’t mean sealed.</p>
-						<aside class="notes" hidden>
-							<p>
-								Yes &mdash; you and I could buy the same thing and never know, because our interfaces
-								showed it differently. And a UI that only shows what it thinks you need is a filter
-								bubble: you stop stumbling on the useful thing you weren’t looking for. Honest answer:
-								it’s a real cost, and the mitigation is to keep peripheral information visible &mdash; a
-								personal UI shouldn’t be a sealed one. Worth naming rather than pretending
-								personalization is free.
-							</p>
-						</aside>
-					</section>
+				<section data-scene="the-economics-just-changed">
+					<h2>The economics changed</h2>
+					<blockquote class="pull-quote">
+						<span class="visually-hidden">&ldquo;</span>We are excited about a future where users don’t have to pick
+						from a finite library of applications or visual
+						pages, but instead, they have access to an infinite catalog, where the right ephemeral interface is
+						generated on the spot tailored for their need.<span class="visually-hidden">&rdquo;</span>
+						<br /><small>Google Research</small>
+					</blockquote>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="15:30">Matt</p>
+						<p>
+							Apps make design decisions for you, they take a stance.
+						</p>
+						<p>
+							Google Maps lets you avoid tolls, highways, and ferries, but not winding roads, if they make you carsick.
+							This user need is left unmet because it would be too complex and the market of users who care is too
+							small.
+						</p>
+						<p>
+							So how is AI is changing this? Empathatic UIs are becoming part of the LLM.
+						</p>
+						<p>
+							The apps we use already function as APIs; and now LLMs can cheaply put an interface on top. For the first
+							time, the single-serving interface is not only possible, but we have an infinite catalog of tailored
+							visual interfaces at our disposal.
+						</p>
+						<p>And not only will this start emerging alongside existing software, but we will see more small-scale apps
+							that we build entirely ourselves for exactly what we need.</p>
+						<p>
+							As it happens, when we talked with Rose again, one year later, to see how things had progressed since our
+							first interview, she had created an app to organize her Steam library. It would give her a recommendation
+							that best respected her energy budget at that moment.
+						</p>
+						<p>She had the power to create this herself exactly how she wanted it. She can make edits overtime and add
+							functionality however suits her personally.</p>
+						<p>It take a huge investment of time and energy, so we have to question the ROI on the lasting result, but
+							the whole thing is only possible because the economics have changed. And this is only getting faster and
+							better. Its the worst it will ever be (as people say all the time).
+						</p>
 
-					<section data-scene="will-people-actually-use-this" data-title="Will people actually use this?">
-						<blockquote>&ldquo;Will people actually use this, or just accept the default?&rdquo;</blockquote>
-						<p>The empathy framing sidesteps it &mdash; the default already fits.</p>
-						<aside class="notes" hidden>
-							<p>
-								People still use untitled.txt over more powerful tools because customizing has an
-								upfront cost &mdash; &ldquo;I’m busy, I just need to finish.&rdquo; So will users shape
-								these interfaces or just accept what the AI hands them? We don’t fully know. But empathy
-								largely sidesteps it: the whole point is the <em>default</em> already fits, so there’s
-								little to tinker with. An empathetic interface does the accommodating &mdash; the user
-								shouldn’t have to. That’s the opposite of untitled.txt, which does nothing until you do
-								everything.
-							</p>
-						</aside>
-					</section>
+						<p><small>Source: <a href="sources.html#leviathan-2026">Leviathan et al., 2026</a></small></p>
+					</aside>
+				</section>
 
-					<section data-scene="what-about-privacy" data-title="What about privacy?">
-						<blockquote>&ldquo;An interface that knows me that well &mdash; what about my privacy?&rdquo;</blockquote>
-						<p>A real risk. Local models may keep that context on your own device.</p>
-						<aside class="notes" hidden>
-							<p>
-								Everything we’ve proposed depends on the interface knowing your context: your task, your
-								energy budget, that you steer a wheelchair with your head. The empathetic half &mdash; the
-								&ldquo;who is doing this&rdquo; &mdash; needs to know the most about you.
-							</p>
-							<p>
-								So privacy is an issue. Local models could get us a long way: if the model runs on your own
-								device and the context never leaves your machine, personalization stops being a privacy
-								trade-off. Local models are improving quickly, so we’re hopeful rather than certain.
-							</p>
-						</aside>
-					</section>
+				<section data-scene="what-if-launching-an-app-means-creating-an-app">
+					<h2>What if?</h2>
+					<p>We started with disability.</p>
+					<p>But everyone benefits from bespoke software.</p>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="16:45">Matt</p>
+						<p>
+							Back to our hypothesis. Is AI a game changer? We think so, but not in the way we originally thought.
+						</p>
+						<p>
+							It’s not that the AI is an assistant that takes away the task as a whole.
+						</p>
+						<p>
+							After our research, we think what’s truly remarkable is that AI makes personalized software development
+							accessible to everyone. These bespoke apps solve the adaption problem by making it unnecessary.
+						</p>
+						<p>An app built for yourself, naturally, knows you best. Rose built a video game catalog that was empathetic
+							to her disability, but people are building their own fitness apps, expense trackers and other interfaces
+							to accommodate all of our different needs.</p>
+						<p>Of course if everyone started making their own software, the ROI would be hard to rationalize, but
+							personalization can extend to friend circle, family or community. Generally we believe this
+							democratization of software will be a net benefit.
+						</p>
+					</aside>
+				</section>
 
-					<section data-scene="doesnt-a-changing-ui-break-screen-readers" data-title="Doesn’t a changing UI break screen readers?">
-						<blockquote>&ldquo;But a UI that keeps changing breaks screen readers.&rdquo;</blockquote>
-						<p>Right: stability is a basic trait of accessibility and of good design in general. Our answer is memory, and least surprise is actually empathy applied. So hopefully this corrects itself with empathetic interfaces.</p>
-						<aside class="notes" hidden>
-							<p>
-								The sharpest objection: if interfaces are generated, don’t you destroy what a screen-reader
-								user relies on &mdash; the button being where it was yesterday? Stability is a basic trait of
-								accessibility, and of good design in general. A constantly re-rolling UI would be a disaster.
-							</p>
-							<p>
-								Our answer is memory. The interface is generated once, for you, then remembered and
-								reused. And an empathetic interface applies exactly this: the least surprise. It knows you
-								navigate by memory, so it holds still &mdash; personalize the <em>content</em>, not the
-								<em>structure</em>. So we hope the problem corrects itself: an interface that understands you
-								wouldn’t move your controls.
-							</p>
-							<p>
-								Today’s one-size-fits-all UI is the volatile one: it changes under you whenever a vendor
-								redesigns it &mdash; that’s the Ravelry change that put Rose in bed for three days.
-							</p>
-						</aside>
-					</section>
+				<section data-scene="imagine-everything-bespoke">
+					<h2>Imagine everything is bespoke</h2>
+					<ul>
+						<li>Privacy</li>
+						<li>Stability</li>
+						<li>Isolating</li>
+					</ul>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="matt" data-time="17:30">Matt</p>
+						<p>
+							But obviously a whole load of new problems on such topics as:
+						</p>
+						<ul>
+							<li>Privacy: An interface made for you, needs to know a lot about you.</li>
+							<li>Stability: How do you get predictable interfaces if they are made from scratch every time?</li>
+							<li>And if interfaces shape how we think, so what happens to the common ground between humans if they
+								don't share visual language.</li>
+						</ul>
+						<p>
+							And of course, one massive drawback is that AI continues to become the resource intensive utility we all
+							depend on. Probably not good, we don’t know, but what we do know is that now with AI, personalized
+							interfaces are for the first time actually happening. So we’re in a place where we can actually think
+							about, discuss and address th`ose issues.
+						</p>
+					</aside>
+				</section>
+			</div>
+		</section>
 
-					<section data-scene="does-this-work-today" data-title="Does this work today?">
-						<blockquote>&ldquo;Does this actually work today?&rdquo;</blockquote>
-						<p>Not quite. Models can generate working interfaces; the plumbing around them still fails.</p>
-						<aside class="notes" hidden>
-							<p>
-								Be honest about where we are. Eight months after our interviews, Rose tried to build a
-								bespoke Steam library manager for herself. It didn’t really work out: lack of support,
-								lack of knowledge, still too time-consuming, too much tinkering. Rose is technical and
-								motivated &mdash; if anyone could build her own tool, it’s her. We replaced configuration
-								toil with developer toil: the AI generated a front end, and what defeated her was the
-								glue &mdash; storage, accounts, the plumbing you don’t know exists unless you write
-								software.
-							</p>
-							<p>
-								Is that failure telling us the <em>idea</em> is wrong, or that we’re just early? We think
-								it’s the moment &mdash; and we have evidence, not just hope. Google Research found that
-								generating a working interface is an <em>emergent</em> capability: their newest model
-								produced valid UIs with zero errors, while a model one generation older failed on 60% of
-								prompts. It crossed a threshold rather than improving gradually.
-							</p>
-							<p>
-								So our honest position: the plumbing that beat Rose is a property of <em>today’s</em>
-								tooling, not of the idea. We could be wrong &mdash; but we think it’s a matter of time,
-								and not much of it.
-							</p>
-							<p><small>Source: <a href="sources.html#leviathan-2026">Leviathan et al., 2026</a>, section 3.1</small></p>
-						</aside>
-					</section>
-				</div>
-			</section>
-		</main>
+		<section data-act="closing" class="act-panel">
+			<div class="act-panel-inner">
+				<header class="act-opener">
+					<h1 class="act-title">Closing</h1>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon">Simon</p>
+						<p>
+							Before we close, let's reiterate what we've discussed so far…
+						</p>
+					</aside>
+				</header>
 
-		<!-- repeated on every slide, so hidden from screen readers; the talk
+				<section data-scene="key-takeaways">
+					<h2>Key takeaway</h2>
+					<p><strong>So far,</strong> we ship one interface and users have to adapt.</p>
+					<p><strong>Ideally,</strong> the interface is built for the task <em>and the human</em>.</p>
+					<p><strong>Today,</strong> AI makes those bespoke interfaces viable for the first time.</p>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="18:30">Simon</p>
+						<p>
+							So far, the answer to human variety is adaptation: we ship one interface, built for the average. It can’t
+							fit everyone, and the burden of making it work lands on the user.
+						</p>
+						<p>
+							Ideally, the interface is built for the task <em>and</em> the human in front of it. Generated interfaces
+							are already happening, but they start from the task alone. We argue they should take the person into
+							account too: UI is a function of intent <em>and</em> empathy.
+						</p>
+						<p>
+							And that ideal isn’t out of reach anymore. Building a bespoke interface for every person and every moment
+							used to be far too expensive. Today’s AI makes it possible for the first time.
+						</p>
+						<p>
+							For accessibility, that’s a paradigm shift: the burden moves from the user to the interface. But it
+							doesn’t stop at disability. We all have needs, contexts and bad days, so everyone benefits from software
+							that fits them.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="back-to-sarah">
+					<h2>Back to Sarah</h2>
+					<p>
+						No adapting, no fighting plugins.
+					</p>
+					<div class="persona">
+						<p>
+							Her focus stays on the lecture.
+						</p>
+						<div class="portrait-ground">
+							<img class="persona-portrait" src="media/personas/back-to-sarah.webp"
+								srcset="media/personas/back-to-sarah-768.webp 768w, media/personas/back-to-sarah-1280.webp 1280w, media/personas/back-to-sarah.webp 2048w"
+								sizes="(max-width: 699px) 50vw, min(42vw, 70vh)"
+								alt="Illustration of the same woman typing at her laptop with both hands, the sun and a rainbow out in the window and one calm page of large text on her screen"
+								width="2048" height="2048" />
+						</div>
+					</div>
+					<aside class="notes" hidden>
+						<p class="speaker" data-speaker="simon" data-time="19:00">Simon</p>
+						<p>
+							Let’s end where we started &mdash; with a person, not a paradigm. Remember Sarah, her plugins getting in
+							each other’s way, and a setup that fell apart whenever she wanted to watch a lecture.
+						</p>
+						<p>
+							Now imagine the interface arrived already understanding her: what she’s trying to do, and who she is that
+							day. She no longer has to worry about adapting it, and can focus on what she came for: the lecture itself.
+							For Sarah, that’s the difference between software she can use and software she can’t.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="thank-you">
+					<h2>Thank you!</h2>
+				</section>
+			</div>
+		</section>
+
+		<section data-act="backup-qa" class="act-panel">
+			<div class="act-panel-inner">
+				<header class="act-opener">
+					<h1 class="act-title">Q&amp;A</h1>
+				</header>
+
+				<section data-scene="doesnt-this-just-hand-more-power" data-title="Doesn’t this just hand more power?">
+					<blockquote>&ldquo;Doesn’t this just hand more power to whoever owns the AI?&rdquo;</blockquote>
+					<p>A generated UI can be empathetic to <em>you</em> &mdash; or to whoever <em>owns</em> it.</p>
+					<aside class="notes" hidden>
+						<p>
+							There’s a plausible future where your agent generates the interface and you never see
+							the underlying app &mdash; the &ldquo;buy&rdquo; button drawn for you by the platform,
+							tuned to <em>its</em> goals, not yours. Same technology, pointed the opposite way. The
+							capability that could give Sarah an interface shaped around her could give a platform
+							one shaped around its incentives. The deciding factor is who the UI is empathetic
+							<em>to</em> &mdash; which is exactly why local, user-owned generation matters.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="if-everyones-ui-is-different" data-title="Don’t we lose common ground?">
+					<blockquote>&ldquo;If everyone’s UI is different, don’t we lose common ground?&rdquo;</blockquote>
+					<p>Real cost. Keep the periphery visible &mdash; personal shouldn’t mean sealed.</p>
+					<aside class="notes" hidden>
+						<p>
+							Yes &mdash; you and I could buy the same thing and never know, because our interfaces
+							showed it differently. And a UI that only shows what it thinks you need is a filter
+							bubble: you stop stumbling on the useful thing you weren’t looking for. Honest answer:
+							it’s a real cost, and the mitigation is to keep peripheral information visible &mdash; a
+							personal UI shouldn’t be a sealed one. Worth naming rather than pretending
+							personalization is free.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="will-people-actually-use-this" data-title="Will people actually use this?">
+					<blockquote>&ldquo;Will people actually use this, or just accept the default?&rdquo;</blockquote>
+					<p>The empathy framing sidesteps it &mdash; the default already fits.</p>
+					<aside class="notes" hidden>
+						<p>
+							People still use untitled.txt over more powerful tools because customizing has an
+							upfront cost &mdash; &ldquo;I’m busy, I just need to finish.&rdquo; So will users shape
+							these interfaces or just accept what the AI hands them? We don’t fully know. But empathy
+							largely sidesteps it: the whole point is the <em>default</em> already fits, so there’s
+							little to tinker with. An empathetic interface does the accommodating &mdash; the user
+							shouldn’t have to. That’s the opposite of untitled.txt, which does nothing until you do
+							everything.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="what-about-privacy" data-title="What about privacy?">
+					<blockquote>&ldquo;An interface that knows me that well &mdash; what about my privacy?&rdquo;</blockquote>
+					<p>A real risk. Local models may keep that context on your own device.</p>
+					<aside class="notes" hidden>
+						<p>
+							Everything we’ve proposed depends on the interface knowing your context: your task, your
+							energy budget, that you steer a wheelchair with your head. The empathetic half &mdash; the
+							&ldquo;who is doing this&rdquo; &mdash; needs to know the most about you.
+						</p>
+						<p>
+							So privacy is an issue. Local models could get us a long way: if the model runs on your own
+							device and the context never leaves your machine, personalization stops being a privacy
+							trade-off. Local models are improving quickly, so we’re hopeful rather than certain.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="doesnt-a-changing-ui-break-screen-readers"
+					data-title="Doesn’t a changing UI break screen readers?">
+					<blockquote>&ldquo;But a UI that keeps changing breaks screen readers.&rdquo;</blockquote>
+					<p>Right: stability is a basic trait of accessibility and of good design in general. Our answer is memory, and
+						least surprise is actually empathy applied. So hopefully this corrects itself with empathetic interfaces.
+					</p>
+					<aside class="notes" hidden>
+						<p>
+							The sharpest objection: if interfaces are generated, don’t you destroy what a screen-reader
+							user relies on &mdash; the button being where it was yesterday? Stability is a basic trait of
+							accessibility, and of good design in general. A constantly re-rolling UI would be a disaster.
+						</p>
+						<p>
+							Our answer is memory. The interface is generated once, for you, then remembered and
+							reused. And an empathetic interface applies exactly this: the least surprise. It knows you
+							navigate by memory, so it holds still &mdash; personalize the <em>content</em>, not the
+							<em>structure</em>. So we hope the problem corrects itself: an interface that understands you
+							wouldn’t move your controls.
+						</p>
+						<p>
+							Today’s one-size-fits-all UI is the volatile one: it changes under you whenever a vendor
+							redesigns it &mdash; that’s the Ravelry change that put Rose in bed for three days.
+						</p>
+					</aside>
+				</section>
+
+				<section data-scene="does-this-work-today" data-title="Does this work today?">
+					<blockquote>&ldquo;Does this actually work today?&rdquo;</blockquote>
+					<p>Not quite. Models can generate working interfaces; the plumbing around them still fails.</p>
+					<aside class="notes" hidden>
+						<p>
+							Be honest about where we are. Eight months after our interviews, Rose tried to build a
+							bespoke Steam library manager for herself. It didn’t really work out: lack of support,
+							lack of knowledge, still too time-consuming, too much tinkering. Rose is technical and
+							motivated &mdash; if anyone could build her own tool, it’s her. We replaced configuration
+							toil with developer toil: the AI generated a front end, and what defeated her was the
+							glue &mdash; storage, accounts, the plumbing you don’t know exists unless you write
+							software.
+						</p>
+						<p>
+							Is that failure telling us the <em>idea</em> is wrong, or that we’re just early? We think
+							it’s the moment &mdash; and we have evidence, not just hope. Google Research found that
+							generating a working interface is an <em>emergent</em> capability: their newest model
+							produced valid UIs with zero errors, while a model one generation older failed on 60% of
+							prompts. It crossed a threshold rather than improving gradually.
+						</p>
+						<p>
+							So our honest position: the plumbing that beat Rose is a property of <em>today’s</em>
+							tooling, not of the idea. We could be wrong &mdash; but we think it’s a matter of time,
+							and not much of it.
+						</p>
+						<p><small>Source: <a href="sources.html#leviathan-2026">Leviathan et al., 2026</a>, section 3.1</small></p>
+					</aside>
+				</section>
+			</div>
+		</section>
+	</main>
+
+	<!-- repeated on every slide, so hidden from screen readers; the talk
 		     title links back to the title slide for the pointer, as Home does
 		     for the keyboard -->
-		<div class="deck-chrome" aria-hidden="true">
-			<span class="chrome-bar chrome-talk"><a class="chrome-home" href="#hypothesis/your-ui-is-not-my-ui-title" tabindex="-1">Your UI is not my UI</a><span class="sub-meta"><span class="em-dash">—</span>Simon Lenz &amp; Matt Seccafien</span></span>
-			<span class="chrome-bar chrome-event">React Advanced<span class="sub-meta"><span class="em-dash">—</span>London 2026</span></span>
-		</div>
+	<div class="deck-chrome" aria-hidden="true">
+		<span class="chrome-bar chrome-talk"><a class="chrome-home" href="#hypothesis/your-ui-is-not-my-ui-title"
+				tabindex="-1">Your UI is not my UI</a><span class="sub-meta"><span class="em-dash">—</span>Simon Lenz &amp; Matt
+				Seccafien</span></span>
+		<span class="chrome-bar chrome-event">React Advanced<span class="sub-meta"><span class="em-dash">—</span>London
+				2026</span></span>
+	</div>
 
-		<button
-			id="notes-toggle"
-			type="button"
-			aria-expanded="false"
-			aria-controls="notes-drawer"
-			aria-keyshortcuts="N"
-			aria-label="Notes and index"
-			title="Notes and index (N)"
-		>
-			<svg class="icon" aria-hidden="true"><use href="#icon-x" /></svg>
-		</button>
-		<aside id="notes-drawer" aria-label="Notes and index">
-			<nav class="drawer-column drawer-toc" aria-label="Index">
-				<!-- on small screens, pins the folded index open (js/site.js) -->
-				<button class="toc-pin" type="button" aria-expanded="false" aria-controls="drawer-toc" aria-label="Pin the index open"><svg class="icon toc-pin-menu" aria-hidden="true"><use href="#icon-menu" /></svg><svg class="icon toc-pin-on" aria-hidden="true"><use href="#icon-pin" /></svg><svg class="icon toc-pin-off" aria-hidden="true"><use href="#icon-pin-off" /></svg></button>
-				<h2 class="drawer-heading">Index</h2>
-				<ol id="drawer-toc"></ol>
-			</nav>
-			<section class="drawer-column drawer-notes">
-				<!-- the current slide, as "Molly—2.2" (js/site.js) -->
-				<h2 class="drawer-heading" id="drawer-slide">Notes</h2>
-				<div id="notes-drawer-content" class="notes-content"></div>
-				<!-- three columns where they fit (css/talk.css): the authors, the
+	<button id="notes-toggle" type="button" aria-expanded="false" aria-controls="notes-drawer" aria-keyshortcuts="N"
+		aria-label="Notes and index" title="Notes and index (N)">
+		<svg class="icon" aria-hidden="true">
+			<use href="#icon-x" />
+		</svg>
+	</button>
+	<aside id="notes-drawer" aria-label="Notes and index">
+		<nav class="drawer-column drawer-toc" aria-label="Index">
+			<!-- on small screens, pins the folded index open (js/site.js) -->
+			<button class="toc-pin" type="button" aria-expanded="false" aria-controls="drawer-toc"
+				aria-label="Pin the index open"><svg class="icon toc-pin-menu" aria-hidden="true">
+					<use href="#icon-menu" />
+				</svg><svg class="icon toc-pin-on" aria-hidden="true">
+					<use href="#icon-pin" />
+				</svg><svg class="icon toc-pin-off" aria-hidden="true">
+					<use href="#icon-pin-off" />
+				</svg></button>
+			<h2 class="drawer-heading">Index</h2>
+			<ol id="drawer-toc"></ol>
+		</nav>
+		<section class="drawer-column drawer-notes">
+			<!-- the current slide, as "Molly—2.2" (js/site.js) -->
+			<h2 class="drawer-heading" id="drawer-slide">Notes</h2>
+			<div id="notes-drawer-content" class="notes-content"></div>
+			<!-- three columns where they fit (css/talk.css): the authors, the
 				     design system and source, and the other ways to read the talk -->
-				<footer class="drawer-footer">
-					<p>A talk by <a href="https://www.simon-lenz.de/">Simon Lenz<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a><br>&amp; <a href="https://www.cartogram.ca/">Matt Seccafien<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
-					<p><a href="system.html">Design system<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a><br><a href="https://github.com/cartogram/munyu">Source code<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a><br><a href="sources.html">Sources<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
-					<p><a href="?motion=lite">Lite version<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a><br><button type="button" id="print-deck">Print<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></button></p>
-				</footer>
-			</section>
-		</aside>
+			<footer class="drawer-footer">
+				<p>A talk by <a href="https://www.simon-lenz.de/">Simon Lenz<svg class="icon" aria-hidden="true">
+							<use href="#icon-arrow-up-right" />
+						</svg></a><br>&amp; <a href="https://www.cartogram.ca/">Matt Seccafien<svg class="icon" aria-hidden="true">
+							<use href="#icon-arrow-up-right" />
+						</svg></a></p>
+				<p><a href="system.html">Design system<svg class="icon" aria-hidden="true">
+							<use href="#icon-arrow-up-right" />
+						</svg></a><br><a href="https://github.com/cartogram/munyu">Source code<svg class="icon" aria-hidden="true">
+							<use href="#icon-arrow-up-right" />
+						</svg></a><br><a href="sources.html">Sources<svg class="icon" aria-hidden="true">
+							<use href="#icon-arrow-up-right" />
+						</svg></a></p>
+				<p><a href="?motion=lite">Lite version<svg class="icon" aria-hidden="true">
+							<use href="#icon-arrow-up-right" />
+						</svg></a><br><button type="button" id="print-deck">Print<svg class="icon" aria-hidden="true">
+							<use href="#icon-arrow-up-right" />
+						</svg></button></p>
+			</footer>
+		</section>
+	</aside>
 
-		<!-- the pointer over the deck (js/site.js): → on an act opener, ▶ on a
+	<!-- the pointer over the deck (js/site.js): → on an act opener, ▶ on a
 		     video, × over
 		     the cards while the drawer or a video is open -->
-		<div id="deck-cursor" aria-hidden="true">
-			<svg class="icon cursor-next"><use href="#icon-arrow-right" /></svg>
-			<svg class="icon cursor-close"><use href="#icon-x" /></svg>
-			<svg class="icon cursor-play"><use href="#icon-play" /></svg>
-		</div>
+	<div id="deck-cursor" aria-hidden="true">
+		<svg class="icon cursor-next">
+			<use href="#icon-arrow-right" />
+		</svg>
+		<svg class="icon cursor-close">
+			<use href="#icon-x" />
+		</svg>
+		<svg class="icon cursor-play">
+			<use href="#icon-play" />
+		</svg>
+	</div>
 
-		<script type="module" src="/js/site.js"></script>
-	</body>
+	<script type="module" src="/js/site.js"></script>
+</body>
+
 </html>
