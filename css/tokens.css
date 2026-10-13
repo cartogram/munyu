@@ -128,7 +128,6 @@
 	--act-hypothesis: #265085;
 	--act-user-research: #6e396a;
 	--act-limits-of-adaptability: #7e3633;
-	--act-personalization-over-adaptability: #265e2b;
 	--act-empathy-is-our-point: #006061;
 	--act-launching-is-creating: #764002;
 	--act-closing: #4a4f63;
@@ -159,8 +158,6 @@ body[data-current-act='hypothesis'] { --act-color: var(--act-hypothesis); }
 body[data-current-act='user-research'] { --act-color: var(--act-user-research); }
 .act-panel[data-act='limits-of-adaptability'],
 body[data-current-act='limits-of-adaptability'] { --act-color: var(--act-limits-of-adaptability); }
-.act-panel[data-act='personalization-over-adaptability'],
-body[data-current-act='personalization-over-adaptability'] { --act-color: var(--act-personalization-over-adaptability); }
 .act-panel[data-act='empathy-is-our-point'],
 body[data-current-act='empathy-is-our-point'] { --act-color: var(--act-empathy-is-our-point); }
 .act-panel[data-act='launching-is-creating'],

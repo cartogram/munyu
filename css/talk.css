@@ -155,7 +155,6 @@ main section[data-scene] {
 .act-panel[data-act='hypothesis'] { --fade-angle: 30deg; --fade-to: var(--ramp-deep); --fade-hold: 30%; }
 .act-panel[data-act='user-research'] { --fade-angle: 8deg; --fade-to: var(--ramp-accent); --fade-hold: 40%; }
 .act-panel[data-act='limits-of-adaptability'] { --fade-angle: 38deg; --fade-to: var(--ramp-deep); --fade-hold: 25%; }
-.act-panel[data-act='personalization-over-adaptability'] { --fade-angle: 18deg; --fade-to: var(--ramp-soft); --fade-hold: 45%; }
 .act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-deep); --fade-hold: 35%; }
 .act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
 .act-panel[data-act='closing'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
@@ -179,8 +178,7 @@ main section[data-scene] {
 /* the act before each opener's, for the top of its ground */
 .act-panel[data-act='user-research'] { --act-prev: var(--act-hypothesis); }
 .act-panel[data-act='limits-of-adaptability'] { --act-prev: var(--act-user-research); }
-.act-panel[data-act='personalization-over-adaptability'] { --act-prev: var(--act-limits-of-adaptability); }
-.act-panel[data-act='empathy-is-our-point'] { --act-prev: var(--act-personalization-over-adaptability); }
+.act-panel[data-act='empathy-is-our-point'] { --act-prev: var(--act-limits-of-adaptability); }
 .act-panel[data-act='launching-is-creating'] { --act-prev: var(--act-empathy-is-our-point); }
 .act-panel[data-act='closing'] { --act-prev: var(--act-launching-is-creating); }
 .act-panel[data-act='backup-qa'] { --act-prev: var(--act-closing); }
