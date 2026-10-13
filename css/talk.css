@@ -1435,6 +1435,21 @@ body.is-collapsed .act-panel.is-under {
 	visibility: hidden;
 }
 
+/* shrunk, a card's foot comes off the window's bottom edge, so while the
+   drawer is open or on its way it's closed off with the card's own 2px rule.
+   A line over the content, not a border, so the card's frames keep their
+   height. In speaker view it's also the rule the preview below meets. */
+body.is-collapsed .act-panel::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-bottom: 2px solid var(--act-color);
+	pointer-events: none;
+	z-index: 3;
+}
+
 /* beside the open drawer the cards keep their outlines in their act's
    colour, as the drawer's rules take the current act's */
 .act-panel {
@@ -1823,8 +1838,10 @@ body.is-collapsed .act-panel.is-under {
 	transform-origin: 0 0 !important;
 	/* the same 2px rule as the current slide, so it thins with the drawer
 	   scale instead of staying a heavy line. Square on the left: the
-	   preview meets the slide above along a straight edge. */
+	   preview meets the slide above along a straight edge. No top rule:
+	   the slide's own bottom rule is the line between them. */
 	border-radius: 0;
+	border-top: 0;
 	z-index: 2;
 	/* its own act count, so an opener's chapter number is that act's, and
 	   the extra card doesn't change the deck's numbering */
