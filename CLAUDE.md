@@ -12,6 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build`: `npm run check`, then a static build of `index.html`, `system.html` and `sources.html` into `dist/`
 - `npm run check`: fails if the deck, the theme tokens, the media names and the persona illustrations disagree (also runs in CI, `.github/workflows/system.yml`)
 - `npm run personas`: regenerate `media/personas/*.svg` from `media/personas/originals/`
+- `python3 scripts/notes-to-feldnotes.py`: rebuild Matt's speaker notes in the feldnotes Obsidian vault (`../feldnotes/01 Projects/My UI is not your UI/My UI is not your UI - Speaker Notes.md`, or a path given as the argument) from the notes in `index.html`. It overwrites everything below the file's header, so first check the vault copy has no edits the deck lacks, and carry any over into `index.html`.
 - `scripts/cdp/*.mjs`: headless-Chrome verification scripts (beat navigation, cards, ranges, resize, mobile, print). They expect a dev server on port 8123 (`npx vite --port 8123`), e.g. `node scripts/cdp/nav-verify.mjs`.
 
 ## Structure
