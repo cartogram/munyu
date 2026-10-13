@@ -580,8 +580,23 @@ main h2.formula {
 	text-underline-offset: 0.12em;
 }
 
+/* the formula again, small, under the screenshots of generated UIs: the
+   term they still lack faded, its underline dashed */
+main p.formula {
+	margin: calc(72 * var(--u)) auto 0;
+	font-family: var(--font-serif);
+	font-size: calc(64 * var(--u));
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.formula-term.is-missing {
+	color: color-mix(in srgb, currentColor 22%, white);
+	text-decoration-style: dashed;
+}
+
 /* generated interfaces today: a row of screenshots, all centred, and under
-   them what they still lack. Each column's share is its screenshot's aspect
+   them the formula with the half they still lack. Each column's share is its screenshot's aspect
    ratio, so the three stand the same height; phones stack them. The
    screenshots keep their own colours: they're evidence, so they stay as
    captured. */
@@ -600,6 +615,19 @@ main section:is([data-scene='ui-equals-f-intent'], [data-scene='ui-equals-f-empa
 	main section:is([data-scene='ui-equals-f-intent'], [data-scene='ui-equals-f-empathy']) {
 		justify-content: flex-start;
 		padding-top: calc(var(--frame-pad-top) + 64 * var(--u));
+	}
+
+	/* In a wide, short window the row is narrowed until the slide fits its
+	   card: the three screenshots stand one height, (width - gaps) × 0.2471,
+	   so the row takes no more width than the card's height leaves them under
+	   the padding (with its extra 64), the headline and its margin, the
+	   captions and the formula (410), and 4px to spare: the scene never
+	   overflows into a scroll. */
+	main section[data-scene='ui-equals-f-intent'] .screenshots {
+		width: min(
+			100%,
+			calc((100vh - var(--card-top) - var(--inset-bottom) - 2px - var(--frame-pad-top) - var(--frame-pad-bottom) - 474 * var(--u) - 4px) / 0.2471 + 80 * var(--u))
+		);
 	}
 }
 
@@ -698,9 +726,8 @@ main ul.gains-list {
 	font-weight: 700;
 }
 
-/* the line that sums the three up, in body sans; the screenshots' line
-   under them likewise */
-main p:is(.gains-summary, .screenshots-summary) {
+/* the line that sums the three up, in body sans */
+main p.gains-summary {
 	margin: calc(36 * var(--u)) auto 0;
 	font-size: calc(48 * var(--u));
 	font-weight: 700;

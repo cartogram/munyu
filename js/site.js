@@ -22,6 +22,8 @@ const STEPPED_SCENES = {
 	'todays-model': todaysModelSteps,
 	'your-ui-is-not-my-ui-create-specific': (scene) => rotatorSteps(scene.querySelector('ul')),
 	'demo-two-people': branchingSteps,
+	// the formula under the screenshots, with the half they lack, on its own beat
+	'ui-equals-f-intent': (scene) => [fadeInStep(scene.querySelector('p.formula'))],
 };
 const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
 const STEP_FADE = 0.1; // share of a step spent fading its piece in
