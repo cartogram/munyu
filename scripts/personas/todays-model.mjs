@@ -4,14 +4,18 @@
 // demo's phones, with a lecture page on it, the interface built for the
 // average; and her extensions, each laid on the page as a layer of its own,
 // none aware of the others, with a box beside the browser that names it. In
-// the order they land: a dark mode plugin darkens the page; a reading plugin
-// bolds the first half of every word; voice control's number badges, thrown
-// off their targets by the bolding; and its number grid, there but lost dark
-// on dark.
+// the order they land: a reading plugin bolds the first half of every word;
+// voice control's number badges, thrown off their targets by the bolding; a
+// dark mode plugin darkens the page under them, bolding and all; and voice
+// control's number grid, there but lost dark on dark. Below the boxes, empty
+// ones, each shorter than the last: and endless more preferences.
 //
-// Each piece is a data-part the deck moves: base, then dark, bionic, numbers
-// and grid, each with its box, <layer>-box. sarah, her avatar and name,
-// holds still throughout. Words are text, set in Aileron by the deck.
+// Each piece is a data-part the deck moves: base, then bionic, numbers, dark
+// and grid, each with its box, <layer>-box, then more-box. sarah, her avatar
+// and name, holds still throughout. Drawn bottom to top: base, bionic, dark,
+// numbers, grid, so dark mode lands under the badges already there and covers
+// the dark bolding with its own bright copy. Words are text, set in Aileron by
+// the deck.
 //   node scripts/personas/todays-model.mjs && npm run personas
 import { INK, WHITE, DEEP, SOFT, WASH, poly, line, circle, ellipse, curve, path, write } from './draw.mjs';
 
@@ -156,26 +160,34 @@ add(outlined(WASH, rounded(ui.x, ui.y, ui.w, ui.h, 40), BASE_LINE));
 drawPage({ ground: WHITE, title: INK, bars: SOFT, heading: DEEP, video: SOFT, play: WHITE, button: WASH, label: DEEP });
 add(text(ui.x, ui.y - 34, 24, 'Base adaptive layout', { weight: 700 }));
 
-// the extensions' boxes, down the right of the browser, in the order they land
-const BOX = { x: ui.x + ui.w + 40, w: 310, h: 120, gap: 40 };
+// the extensions' boxes, down the right of the browser, in the order they
+// land; then the empty ones, as tall as what's left of the browser's height
+const BOX = { x: ui.x + ui.w + 40, w: 310, h: 96, gap: 18 };
+const MORE = [54, 36, 24], MORE_GAP = 16;
 const box = (i, name) => {
 	const b = { x: BOX.x, y: ui.y + i * (BOX.h + BOX.gap), w: BOX.w, h: BOX.h };
-	add(path(WASH, poly(rounded(b.x, b.y, b.w, b.h, 26))));
+	add(path(WASH, poly(rounded(b.x, b.y, b.w, b.h, 24))));
 	add(text(b.x + 36, b.y + b.h / 2 + 10, 27, name));
 	return b;
 };
+// the first half of every word, bolded
+const bolding = (fill) => {
+	for (const [x, y, len] of words) add(path(fill, line([x, y], [x + Math.round(len * 0.5), y], 13), 'edge'));
+};
 
-// 2. a dark mode plugin: the page again, dimmed, laid over the whole screen
+// 2. a reading plugin: the first half of every word, bold
+part = 'bionic';
+bolding(INK);
+part = 'bionic-box';
+box(0, 'Bionic reading');
+
+// 3. a dark mode plugin: the page again, dimmed, laid over the whole screen,
+// with the bolding redrawn bright
 part = 'dark';
 drawPage({ ground: INK, title: SOFT, bars: DEEP, heading: DEEP, video: DEEP, play: INK, button: DEEP, label: INK });
+bolding(WHITE);
 part = 'dark-box';
-box(0, 'Dark mode');
-
-// 3. a reading plugin: the first half of every word, bold and bright
-part = 'bionic';
-for (const [x, y, len] of words) add(path(WHITE, line([x, y], [x + Math.round(len * 0.5), y], 13), 'edge'));
-part = 'bionic-box';
-box(1, 'Bionic reading');
+box(2, 'Dark mode');
 
 // 4. voice control's numbers, one on each thing she can say, but the bolding
 // has moved the words under them: each lands off its target, two on the
@@ -194,7 +206,7 @@ for (const [x, y, n] of badges) {
 	add(text(x, y + 8, 22, n, { anchor: 'middle', weight: 700 }));
 }
 part = 'numbers-box';
-box(2, 'Voice control');
+box(1, 'Voice control');
 
 // 5. voice control's number grid, its other way in: drawn in the page's dim
 // step, so it all but vanishes in the dark
@@ -208,5 +220,14 @@ for (let r = 0; r < 3; r++)
 		add(text(screen.x + (screen.w * (c + 0.5)) / 3, screen.y + (screen.h * (r + 0.5)) / 3 + 12, 34, `${r * 3 + c + 1}`, { fill: DEEP, anchor: 'middle', weight: 700 }));
 part = 'grid-box';
 box(3, 'Number grid');
+
+// 6. and endless more: empty boxes, each shorter than the last
+part = 'more-box';
+let moreY = ui.y + 4 * (BOX.h + BOX.gap) - BOX.gap;
+for (const h of MORE) {
+	moreY += MORE_GAP;
+	add(path(WASH, poly(rounded(BOX.x, moreY, BOX.w, h, Math.min(24, h / 2)))));
+	moreY += h;
+}
 
 write(OUT, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1024">${shapes.join('')}</svg>\n`);

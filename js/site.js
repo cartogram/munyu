@@ -32,13 +32,14 @@ function fadeInStep(piece) {
 
 // Today's model, as Sarah lives it: her browser arrives with the page as it
 // was built, then each of her extensions in turn: its box slides in beside
-// the browser as its layer is laid on the page (dark mode, bionic reading,
-// voice control's numbers, its number grid). On the last beat the layers
-// jostle and slip out of register with the page and with each other, none
+// the browser as its layer is laid on the page (bionic reading, voice
+// control's numbers, dark mode, voice control's number grid). Then empty
+// boxes below them, for every preference still to come. On the last beat the
+// layers jostle and slip out of register with the page and with each other, none
 // aware of the rest, and the boxes go askew. Reduced motion keeps the beats
 // but fades each piece in place and shows the conflict without moving
 // anything.
-const TODAYS_MODEL_LAYERS = ['dark', 'bionic', 'numbers', 'grid'];
+const TODAYS_MODEL_LAYERS = ['bionic', 'numbers', 'dark', 'grid'];
 
 function todaysModelSteps(scene) {
 	const art = scene.querySelector('svg.todays-model-illustration');
@@ -59,29 +60,34 @@ function todaysModelSteps(scene) {
 		tl.fromTo(boxes[i], { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: hold * 0.4, ease: 'power2.out' });
 		tl.fromTo(layers[i], { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: hold * 0.4, ease: 'power2.out' }, '<0.05');
 	};
+	// the empty boxes, after the last extension's
+	const more = (tl, hold) => {
+		if (reduceMotion) return fade(tl, part('more-box'), hold);
+		tl.fromTo(part('more-box'), { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: hold * 0.4, ease: 'power2.out' });
+	};
 
 	// where each layer settles once they've slipped, and how far each box
 	// goes askew: never so far a box lands on its neighbour
-	const SLIPS = [
-		{ x: -18, y: 8, rotation: -0.6 },
-		{ x: 10, y: -5, rotation: 0.4 },
-		{ x: 22, y: -12, rotation: 0 },
-		{ x: -14, y: 12, rotation: 1 },
-	];
+	const SLIPS = {
+		dark: { x: -18, y: 8, rotation: -0.6 },
+		bionic: { x: 10, y: -5, rotation: 0.4 },
+		numbers: { x: 22, y: -12, rotation: 0 },
+		grid: { x: -14, y: 12, rotation: 1 },
+	};
 	const ASKEW = [-1.2, 1, -0.8, 1.6];
 	const conflict = (tl, hold) => {
 		tl.fromTo(scene.querySelector('[data-piece="conflict"]'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
 		if (reduceMotion) return;
 		tl.to([...layers, ...boxes], { x: (i) => (i % 2 ? 6 : -6), duration: hold * 0.05, ease: 'sine.inOut', yoyo: true, repeat: 3 }, '<');
 		layers.forEach((layer, i) =>
-			tl.to(layer, { ...SLIPS[i], transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' }, i ? '<' : undefined),
+			tl.to(layer, { ...SLIPS[TODAYS_MODEL_LAYERS[i]], transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' }, i ? '<' : undefined),
 		);
 		boxes.forEach((box, i) =>
 			tl.to(box, { x: i % 2 ? 14 : -10, rotation: ASKEW[i], transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' }, '<'),
 		);
 	};
 
-	return [base, ...TODAYS_MODEL_LAYERS.map((_, i) => extension(i)), conflict];
+	return [base, ...TODAYS_MODEL_LAYERS.map((_, i) => extension(i)), more, conflict];
 }
 
 // The branching demo: a stack of boxes per person, side by side, built on the
