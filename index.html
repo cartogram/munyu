@@ -664,7 +664,7 @@
 						<p>
 							We call this <em>empathy</em>.
 						</p>
-
+						
 						<p>
 							In one word, the interface needs to be <em>empathetic</em> to the person in front of it.
 						</p>
@@ -673,22 +673,23 @@
 
 				<section data-scene="ui-equals-f-intent-empathy" data-title="UI = f(intent, empathy)">
 					<h2 class="formula" aria-label="UI equals f of intent and empathy">
-						<span aria-hidden="true">UI <span class="formula-op">=</span> f<span class="formula-op">(</span><span
-								class="formula-term">Intent</span><span class="formula-op">,</span>
-							<span class="formula-term">Empathy</span><span class="formula-op">)</span></span>
+						<span aria-hidden="true"
+							>UI <span class="formula-op">=</span> f<span class="formula-op">(</span
+							><span class="formula-term">Intent</span><span class="formula-op">,</span>
+							<span class="formula-term">Empathy</span><span class="formula-op">)</span></span
+						>
 					</h2>
 					<div class="two-columns">
 						<p><strong>Intent</strong> What you’re trying to do</p>
 						<p><strong>Empathy</strong> Who you are right now</p>
 					</div>
 					<aside class="notes" hidden>
-						<p class="speaker" data-speaker="simon" data-time="13:15">Simon</p>
+						<p class="speaker" data-speaker="simon" data-time="11:00">Simon</p>
 						<p>
 							So for us, a UI should be a function of two elements.
 						</p>
 						<p>
-							The <em>intent</em>: what you’re trying to do, which was the the same box for everyone in the example. And
-							the
+							The <em>intent</em>: what you’re trying to do, your current task. And the
 							<em>empathy</em>: who you are, your preferences and needs in this very moment.
 						</p>
 						<p>
@@ -697,45 +698,33 @@
 					</aside>
 				</section>
 
-				<section data-scene="ui-equals-f-intent" data-title="UI = f(intent, …)">
-					<h2 class="formula" aria-label="UI equals f of intent and, not yet, empathy">
-						<span aria-hidden="true">UI <span class="formula-op">=</span> f<span class="formula-op">(</span><span
-								class="formula-term">Intent</span><span class="formula-op">,</span>
-							<span class="formula-term is-missing">Empathy</span><span class="formula-op">)</span></span>
-					</h2>
+				<section data-scene="ui-equals-f-intent">
+					<h2>AI already generates interfaces</h2>
 					<div class="screenshots">
 						<figure>
-							<img src="media/ui-equals-f-intent-ai-mode.webp"
-								alt="A Google AI Mode answer about transcription: a generated, animated diagram of DNA, RNA polymerase and a ribosome, with a dropdown, phase tabs and a progress slider, marked AI-generated"
-								width="694" height="534" />
+							<img src="media/ui-equals-f-intent-ai-mode.webp" alt="A Google AI Mode answer about transcription: a generated, animated diagram of DNA, RNA polymerase and a ribosome, with a dropdown, phase tabs and a progress slider, marked AI-generated" width="694" height="534" />
 							<figcaption>Google AI Mode</figcaption>
 						</figure>
 						<figure>
-							<img src="media/ui-equals-f-intent-claude-visual.webp"
-								alt="A visual Claude made in a chat about a slow file transfer: presets for Wi-Fi and Ethernet, sliders for link rate, efficiency and data size, bars comparing speeds and the time the transfer will take"
-								width="651" height="629" />
+							<img src="media/ui-equals-f-intent-claude-visual.webp" alt="A visual Claude made in a chat about a slow file transfer: presets for Wi-Fi and Ethernet, sliders for link rate, efficiency and data size, bars comparing speeds and the time the transfer will take" width="651" height="629" />
 							<figcaption>Claude, inline visual</figcaption>
 						</figure>
 						<figure>
-							<img src="media/ui-equals-f-intent-claude-artifact.webp"
-								alt="A Claude artifact, Checkout v2 experiment readout: an interactive chart of the lift in conversion over three weeks, with a hover tooltip for one day"
-								width="908" height="530" />
+							<img src="media/ui-equals-f-intent-claude-artifact.webp" alt="A Claude artifact, Checkout v2 experiment readout: an interactive chart of the lift in conversion over three weeks, with a hover tooltip for one day" width="908" height="530" />
 							<figcaption>Claude, artifact</figcaption>
 						</figure>
 					</div>
+					<p class="screenshots-summary">So far, from intent alone.</p>
 					<aside class="notes" hidden>
-						<p class="speaker" data-speaker="simon" data-time="13:45">Simon</p>
+						<p class="speaker" data-speaker="simon" data-time="11:30">Simon</p>
 						<p>
-							As it happan the same time we were preparing this talk, generated UIs started emerging everywhere around
-							us using AI. Google..., Claude..., but so far they only take into account your <em>intent</em>, the query,
-							the task.
+							As it happens, at the same time we were preparing this talk, AI-generated interfaces started emerging everywhere around us. Google..., Claude... An interface built on the spot isn’t theory anymore.
 						</p>
 						<p>
-							So that half is handled. The half that isn’t, yet, is the <em>human</em>: your needs, abilities, context.
+							But so far they only take into account your <em>intent</em>, the query, the task. So that half is handled. The half that isn’t, yet, is the <em>human</em>: your needs, abilities, context.
 						</p>
 						<p>
-							That missing half is our whole argument. We think there is lots of missed opportunity here. For
-							accessibility but also outside of this specific topic.
+							That missing half is our whole argument. We think there is lots of missed opportunity here. For accessibility but also outside of this specific topic.
 						</p>
 						<p><small>Source: <a href="sources.html#leviathan-2025">Google Research, 2025</a></small></p>
 					</aside>
@@ -744,9 +733,9 @@
 				<section data-scene="demo-two-people" class="branching">
 					<h2>One task, many UIs</h2>
 					<!-- js/site.js puts the illustration’s SVG in place of the WebP, builds each
-						     person’s stack one box per beat on top of the intent (branchingSteps),
-						     reveals each avatar as their part starts and draws their head in it.
-						     The avatars sit in a grid whose columns match the stacks' widths. -->
+					     person’s stack one box per beat on top of the intent (branchingSteps),
+					     reveals each avatar as their part starts and draws their head in it.
+					     The avatars sit in a grid whose columns match the stacks' widths. -->
 					<div class="branching-stage">
 						<nav class="branching-people" aria-label="People in the demo">
 							<button type="button" class="branching-person" data-person="rose" data-beat="1">
@@ -763,69 +752,60 @@
 							</button>
 						</nav>
 						<div class="branching-art">
-							<img class="branching-illustration" src="media/personas/demo-two-people.webp"
+							<img
+								class="branching-illustration"
+								src="media/personas/demo-two-people.webp"
 								srcset="media/personas/demo-two-people-768.webp 768w, media/personas/demo-two-people-1280.webp 1280w, media/personas/demo-two-people.webp 2048w"
-								sizes="(max-width: 699px) 90vw, min(42vw, 70vh)" data-frame="0 -10 2317 1202"
-								alt="Three stacks side by side, each starting from the same intent, I’d like to translate this text, and gathered by a bracket into an arrow pointing down at the UI made from it. Rose’s: condition, hyperphotosensitivity; environment, on the couch, curtains drawn; situation, a medium energy budget today; and below it an iPad with a dark, dim translator. Myron’s: a spine injury, steering by head; at his desk, headset on; focused on a spreadsheet; and below it a monitor with a translator that only listens. A third, unnamed person’s, drawn fainter: needs reading glasses; in a crowded subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge." />
+								sizes="(max-width: 699px) 90vw, min(42vw, 70vh)"
+								data-frame="0 -10 2317 1202"
+								alt="Three stacks side by side, each starting from the same intent, I’d like to translate this text, and gathered by a bracket into an arrow pointing down at the UI made from it. Rose’s: condition, hyperphotosensitivity; environment, on the couch, curtains drawn; situation, a medium energy budget today; and below it an iPad with a dark, dim translator. Myron’s: a spine injury, steering by head; at his desk, headset on; focused on a spreadsheet; and below it a monitor with a translator that only listens. A third, unnamed person’s, drawn fainter: needs reading glasses; in a crowded subway, one hand free; running late, heatwave, stressful; and below it a phone with big buttons in reach of the thumb. Past it, another empty stack runs off the edge."
+							/>
 						</div>
 					</div>
 					<aside class="notes" hidden>
-						<p class="speaker" data-speaker="simon" data-time="11:15">Simon</p>
+						<p class="speaker" data-speaker="simon" data-time="12:00">Simon</p>
 						<p>
-							Before we move on, I'd like to reiterate what we've said so far, now on a concrete example.
+							So what would it look like if the interface took the empathy half into account too? Let’s look at a concrete example.
 						</p>
-						<p><span class="cue">Next</span> Let's remember Rose from our interviews. Suppose she wants to translate
-							some text into another language.</p>
+						<p><span class="cue">Next</span> Let's remember Rose from our interviews. Suppose she wants to translate some text into another language.</p>
 						<p>
-							In our previous model we started with the interface and the person had to adapt. In the new model, we
-							start with the person.
+							In our previous model we started with the interface and the person had to adapt. In the new model, we start with the person.
 						</p>
 						<p><span class="cue">Next &times;3</span> Then what we know about her, one box at a time:</p>
 						<ul>
-							<li>her condition: hyperphotosensitivity. Light drains her energy and can make her sick, so nothing on
-								screen may be bright;</li>
+							<li>her condition: hyperphotosensitivity. Light drains her energy and can make her sick, so nothing on screen may be bright;</li>
 							<li>her environment: on the couch, curtains drawn, so the room is dark and any glare stands out;</li>
 							<li>her situation: a medium energy budget today, so the UI should ask as little of her as it can.</li>
 						</ul>
-						<p><span class="cue">Next</span> And only now, creates AI the interface. Base on <em>all</em> those inputs
-							above. The result is a dark, low-glare translator on her iPad.</p>
-						<p><span class="cue">Next</span>Let's now switch to Myron, who arrives with the same intent (to translate
-							text), but in a vastly different context.</p>
+						<p><span class="cue">Next</span> And only now, the AI creates the interface, based on <em>all</em> those inputs above. The result is a dark, low-glare translator on her iPad.</p>
+						<p><span class="cue">Next</span> Let's now switch to Myron, who arrives with the same intent (to translate text), but in a vastly different context.</p>
 						<p class="cue">Next &times;3</p>
 						<ul>
-							<li>His condition: a spine injury, 23 years ago. He can’t use his hands and steers his wheelchair and his
-								mouse pointer with his head;</li>
+							<li>His condition: a spine injury, 23 years ago. He can’t use his hands and steers his wheelchair and his mouse pointer with his head;</li>
 							<li>his environment: at his desk, headset on, so his voice is always within reach;</li>
-							<li>his situation: focused on a spreadsheet, so nothing should pull his head, and his pointer, away from
-								it.</li>
+							<li>his situation: focused on a spreadsheet, so nothing should pull his head, and his pointer, away from it.</li>
 						</ul>
-						<p><span class="cue">Next</span> Based on this input, the AI-generated UI is focused on speech input. It
-							looks vastly different to Rose's to the left, even though they started with the same task.</p>
+						<p><span class="cue">Next</span> Based on this input, the AI-generated UI is focused on speech input. It looks vastly different to Rose's to the left, even though they started with the same task.</p>
 						<p>
-							<span class="cue">Next</span> And it doesn’t stop at those two examples two. Suppose someone who maybe
-							needs reading glasses or nothing at all you'd naively call a disability, but is in a crowded subway with
-							one hand free, running late in a heatwave.
+							<span class="cue">Next</span> And it doesn’t stop at those two examples. Suppose someone who maybe needs reading glasses or nothing at all you'd naively call a disability, but is in a crowded subway with one hand free, running late in a heatwave.
 						</p>
-						<p><span class="cue">Next</span> Their UI would look different again, because their needs are different:
-							big, clear buttons where the thumb reaches, readable without the glasses they didn’t bring.</p>
-						<p><span class="cue">Next</span> And this list goes on: Human conditions, situations and contexts are
-							basically indefinite, and the UI should take that into account.</p>
+						<p><span class="cue">Next</span> Their UI would look different again, because their needs are different: big, clear buttons where the thumb reaches, readable without the glasses they didn’t bring.</p>
+						<p><span class="cue">Next</span> And this list goes on: Human conditions, situations and contexts are basically indefinite, and the UI should take that into account.</p>
 					</aside>
 				</section>
 
-				<section data-scene="ui-equals-f-empathy" data-title="UI = f(…, empathy)">
-					<h2 class="formula" aria-label="UI equals f of intent and empathy, with empathy in focus">
-						<span aria-hidden="true">UI <span class="formula-op">=</span> f<span class="formula-op">(</span><span
-								class="formula-term is-faded">Intent</span><span class="formula-op">,</span>
-							<span class="formula-term">Empathy</span><span class="formula-op">)</span></span>
-					</h2>
+				<section data-scene="ui-equals-f-empathy">
+					<h2>What empathy gains</h2>
 					<div class="gains">
 						<div class="gains-art">
-							<img class="persona-portrait" src="media/personas/ui-equals-f-empathy.webp"
+							<img
+								class="persona-portrait"
+								src="media/personas/ui-equals-f-empathy.webp"
 								srcset="media/personas/ui-equals-f-empathy-768.webp 768w, media/personas/ui-equals-f-empathy-1280.webp 1280w, media/personas/ui-equals-f-empathy.webp 2048w"
 								sizes="(max-width: 699px) 90vw, 70vw"
 								alt="Rose, Myron and Sarah from the interviews, side by side in round frames: Rose in her dark glasses, Myron in his headset, Sarah with her hair in a bun"
-								width="2048" height="2048" />
+								width="2048" height="2048"
+							/>
 						</div>
 						<ul class="gains-list">
 							<li><strong>Rose</strong> No redesign shocks,<br /> no clash of settings</li>
@@ -835,23 +815,20 @@
 					</div>
 					<p class="gains-summary">No adaptation necessary anymore.</p>
 					<aside class="notes" hidden>
-						<p class="speaker" data-speaker="simon" data-time="14:15">Simon</p>
+						<p class="speaker" data-speaker="simon" data-time="14:00">Simon</p>
 						<p>
 							What is gained by the empathy half? Let’s go back to the people we met.
 						</p>
 						<ul>
-							<li>Rose doesn’t need to fear that a sudden redesign makes an app unusable for her, and her family’s
-								settings no longer clash,</li>
-							<li>Myron doesn’t need to steer the OS’s voice control grid one tiny step at a time, but can issue higher
-								level commands for the whole task &</li>
+							<li>Rose doesn’t need to fear that a sudden redesign makes an app unusable for her, and her family’s settings no longer clash,</li>
+							<li>Myron doesn’t need to steer the OS’s voice control grid one tiny step at a time, but can issue higher level commands for the whole task &</li>
 							<li>Sarah doesn’t need a stack of plugins fighting each other.</li>
 						</ul>
 						<p>
 							Users are not at the mercy of apps being compatible with their adaptations anymore.
 						</p>
 						<p>
-							Actually, adaptation is no longer necessary at all, instead the app is built on the spot, bespoke for that
-							user, and their specific and momentary needs.
+							Actually, adaptation is no longer necessary at all, instead the app is built on the spot, bespoke for that user, and their specific and momentary needs.
 						</p>
 
 					</aside>

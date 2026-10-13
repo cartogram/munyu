@@ -580,27 +580,22 @@ main h2.formula {
 	text-underline-offset: 0.12em;
 }
 
-/* a term out of focus is faded; one the formula still lacks is faded and
-   its underline dashed */
-.formula-term:is(.is-faded, .is-missing) {
-	color: color-mix(in srgb, currentColor 22%, white);
-}
-
-.formula-term.is-missing {
-	text-decoration-style: dashed;
-}
-
-/* the formula again, over a row of screenshots, all centred. Each column's
-   share is its screenshot's aspect ratio, so the three stand the same height;
-   phones stack them. The screenshots keep their own colours: they're
-   evidence, so they stay as captured. */
+/* generated interfaces today: a row of screenshots, all centred, and under
+   them what they still lack. Each column's share is its screenshot's aspect
+   ratio, so the three stand the same height; phones stack them. The
+   screenshots keep their own colours: they're evidence, so they stay as
+   captured. */
 main section[data-scene='ui-equals-f-intent'] {
 	align-items: center;
 	text-align: center;
 }
 
-/* this slide and the next (ui-equals-f-empathy) hang from their formula at
-   one height, so stepping between them only the part below it changes */
+/* this slide and ui-equals-f-empathy hang from their heading at one
+   height, set at the formula’s size so the row below keeps its room */
+main section:is([data-scene='ui-equals-f-intent'], [data-scene='ui-equals-f-empathy']) > h2 {
+	font-size: calc(112 * var(--u));
+}
+
 @media (min-width: 700px) {
 	main section:is([data-scene='ui-equals-f-intent'], [data-scene='ui-equals-f-empathy']) {
 		justify-content: flex-start;
@@ -644,7 +639,7 @@ main section[data-scene='ui-equals-f-intent'] > h2 {
 	}
 }
 
-/* the formula once more, over the people who gain from its second half:
+/* the people who gain from the formula's second half:
    their medallions (media/personas/ui-equals-f-empathy.webp) and under each,
    what they no longer need. The illustration is drawn on the set's square
    frame, floor at the bottom; the frame here shows only the strip with the
@@ -703,8 +698,9 @@ main ul.gains-list {
 	font-weight: 700;
 }
 
-/* the line that sums the three up, in body sans */
-main p.gains-summary {
+/* the line that sums the three up, in body sans; the screenshots' line
+   under them likewise */
+main p:is(.gains-summary, .screenshots-summary) {
 	margin: calc(36 * var(--u)) auto 0;
 	font-size: calc(48 * var(--u));
 	font-weight: 700;
