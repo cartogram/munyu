@@ -3,6 +3,7 @@
 	"private": true,
 	"version": "1.0.0",
 	"description": "Your UI is not my UI — a scrolling talk by Simon Lenz & Matt Seccafien",
+	"license": "MIT",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",

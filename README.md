@@ -17,3 +17,15 @@ npm run build    # static build into dist/
 - `media/`, `fonts/` — assets (`fonts/marjoree-trial/` is a trial licence and stays out of git)
 - `scripts/cdp/` — headless-Chrome checks; run the dev server on port 8123 first (`npx vite --port 8123`), then e.g. `node scripts/cdp/nav-verify.mjs`
 - `docs/plans/` — design and implementation notes
+
+## Licence
+
+The code (`js/`, `css/`, `scripts/` and the build setup) is under the [MIT License](LICENSE).
+
+The talk itself (its text, speaker notes and illustrations) is © 2026 Simon Lenz & Matt Seccafien, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): reuse it, with credit.
+
+Some things in the repo aren't ours to license, and are not covered by either:
+
+- the interview recordings and participants' quotes, shared with their consent for this talk only
+- screenshots and screencasts of other products (`media/gen-ai-examples/`, `media/ui-equals-f-intent-*.webp`), which belong to their makers
+- the fonts in `fonts/`, each under its own licence

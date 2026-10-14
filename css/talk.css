@@ -1548,7 +1548,7 @@ body.is-collapsed .act-panel::after {
 	flex-direction: column;
 }
 
-/* the link to system.html, below the notes however long they run. A rule
+/* the authors and the links, below the notes however long they run. A rule
    above it runs the column's full width, out through its padding, from the
    index card's edge to the slides beside the drawer. Its text sits as far
    below the rule as it does in from the side and up from the bottom. */
@@ -1558,23 +1558,40 @@ body.is-collapsed .act-panel::after {
 	border-top: 1px solid var(--act-color, #000);
 	font-size: 0.8125rem; /* 13px */
 	color: var(--grey-600);
-	/* the speakers and the links side by side where they fit, stacked
-	   where they don't */
+	/* the authors, the links and the copyright: three groups, evenly apart */
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
 	align-items: flex-start;
-	gap: 0.75rem 2.5rem;
+	gap: 0.75rem;
 }
 
 .drawer-footer p {
 	margin: 0;
 }
 
-/* as many equal columns as fit, up to three (never narrower than their
-   text, so they stack rather than wrap their lines) */
-.drawer-footer p {
-	flex: 1 1 0;
-	min-width: max-content;
+/* the links below the authors: a sentence of the other ways to read the
+   talk, with the design system and source code stacked to its right; a
+   pixel smaller than the authors' links, and without their arrow */
+.footer-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 2.5rem;
+}
+
+.footer-links {
+	font-size: 0.75rem; /* 12px */
+}
+
+ul.footer-links {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* the copyright's year and symbol in the serif italic, as the sub-meta */
+.footer-year {
+	font-family: var(--font-serif);
+	font-style: italic;
 }
 
 /* the links, and Print, a button dressed as one */
@@ -1599,7 +1616,7 @@ body.is-collapsed .act-panel::after {
 	text-underline-offset: 0.07em;
 }
 
-/* a diagonal arrow up and to the right, beside System */
+/* a diagonal arrow up and to the right, beside each author */
 .drawer-footer svg {
 	width: 0.85em;
 	height: 0.85em;

@@ -1229,26 +1229,26 @@
 			<!-- the current slide, as "Molly—2.2" (js/site.js) -->
 			<h2 class="drawer-heading" id="drawer-slide">Notes</h2>
 			<div id="notes-drawer-content" class="notes-content"></div>
-			<!-- three columns where they fit (css/talk.css): the authors, the
-				     design system and source, and the other ways to read the talk -->
+			<!-- the authors, full width; below them the design system and source
+				     code in two columns, then the other ways to read the talk, as a
+				     sentence (css/talk.css) -->
 			<footer class="drawer-footer">
 				<p>A talk by <a href="https://www.simon-lenz.de/">Simon Lenz<svg class="icon" aria-hidden="true">
 							<use href="#icon-arrow-up-right" />
 						</svg></a><br>&amp; <a href="https://www.cartogram.ca/">Matt Seccafien<svg class="icon" aria-hidden="true">
 							<use href="#icon-arrow-up-right" />
 						</svg></a></p>
-				<p><a href="system.html">Design system<svg class="icon" aria-hidden="true">
-							<use href="#icon-arrow-up-right" />
-						</svg></a><br><a href="https://github.com/cartogram/munyu">Source code<svg class="icon" aria-hidden="true">
-							<use href="#icon-arrow-up-right" />
-						</svg></a><br><a href="sources.html">Sources<svg class="icon" aria-hidden="true">
-							<use href="#icon-arrow-up-right" />
-						</svg></a></p>
-				<p><a href="?motion=lite">Lite version<svg class="icon" aria-hidden="true">
-							<use href="#icon-arrow-up-right" />
-						</svg></a><br><button type="button" id="print-deck">Print<svg class="icon" aria-hidden="true">
-							<use href="#icon-arrow-up-right" />
-						</svg></button></p>
+				<div class="footer-row">
+					<p class="footer-links">View <a href="sources.html">talk sources</a>,<br><a href="?motion=lite">calm
+							version</a> or <button type="button" id="print-deck">print</button>.</p>
+					<ul class="footer-links">
+						<li><a href="system.html">Design system</a></li>
+						<li><a href="https://github.com/cartogram/munyu">Source code</a></li>
+					</ul>
+				</div>
+				<p class="footer-links"><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a><span
+						class="em-dash">—</span><span class="footer-year">© 2026</span></p>
+
 			</footer>
 		</section>
 	</aside>
