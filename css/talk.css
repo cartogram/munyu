@@ -1840,6 +1840,16 @@ ul.footer-links {
 	display: block;
 }
 
+/* a cue among the bullets (<li class="cue">) stands on its own line,
+   unmarked; where the bullets carry their own cues, the script's are hidden */
+#notes-drawer-content .notes-bullets > .cue {
+	list-style: none;
+}
+
+.drawer-notes:has(.notes-view [value='bullets']:checked) #notes-drawer-content:has(.notes-bullets .cue) > .cue {
+	display: none;
+}
+
 /* a speaker whose bullets are still to be written */
 #notes-drawer-content .notes-bullets:empty::before {
 	content: 'No bullets yet.';
