@@ -1131,7 +1131,7 @@ acts.forEach((panel, k) => {
 		const read = heading?.cloneNode(true);
 		read?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
 		// data-title names a scene whose heading doesn't read as one in the
-		// index (none, as on the Q&A's questions, a formula, or a rotating
+		// index (none, a formula, or a rotating
 		// ending); a heading read by its aria-label (the talk title, its words
 		// hidden as letters) goes by that; failing all, its id stands in
 		const label = scene.dataset.title || heading?.getAttribute('aria-label') || read?.textContent.replace(/\s+/g, ' ').trim() || scene.dataset.scene.replace(/-/g, ' ');

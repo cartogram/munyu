@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Q&amp;A — Your UI is not my UI</title>
+		<link rel="canonical" href="https://your-ui-is-not-my-ui.cartogram.ca/qa.html" />
+		<meta name="description" content="The questions we expect after the talk Your UI is not my UI, with a short answer and a fuller one." />
+		<meta name="theme-color" content="#265085" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Your UI is not my UI" />
+		<meta property="og:title" content="Q&amp;A — Your UI is not my UI" />
+		<meta property="og:description" content="The questions we expect after the talk Your UI is not my UI, with a short answer and a fuller one." />
+		<meta property="og:url" content="https://your-ui-is-not-my-ui.cartogram.ca/qa.html" />
+		<meta property="og:image" content="https://your-ui-is-not-my-ui.cartogram.ca/og-image.jpg" />
+		<meta name="twitter:card" content="summary_large_image" />
+
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/talk.css" />
+
+		<!-- The questions we expect after the talk, in the reading pages' type
+		     from css/talk.css (shared with sources.html and system.html). Not
+		     linked from the deck. Each question has a stable id that
+		     sources.html links to (qa.html#<id>): under it the short answer,
+		     then the fuller one. -->
+		<style>
+			.qa {
+				max-width: 44rem;
+			}
+
+			.qa section + section {
+				margin-top: 4rem;
+			}
+
+			.qa section:target .page-heading {
+				border-bottom-width: 2px;
+			}
+
+			/* the short answer in the weight sources.html gives a work's title */
+			.qa .qa-short {
+				font-weight: 500;
+			}
+
+			.qa .page-meta {
+				margin: 0.35rem 0 0;
+			}
+		</style>
+	</head>
+	<body class="page">
+		<svg class="icon-sprite" aria-hidden="true">
+			<symbol id="icon-arrow-up-right" viewBox="0 0 24 24"><path d="M5 19 19 5M8.5 5H19v10.5" /></symbol>
+		</svg>
+
+		<article class="qa">
+			<header class="page-header">
+				<p class="page-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
+				<h1 class="page-title">Q&amp;A</h1>
+				<p class="page-text">The questions we expect after the talk. Each has a short answer, then a fuller one.</p>
+			</header>
+
+			<section id="doesnt-this-just-hand-more-power">
+				<h2 class="page-heading">&ldquo;Doesn’t this just hand more power to whoever owns the AI?&rdquo;</h2>
+				<p class="page-text qa-short">A generated UI can be empathetic to <em>you</em> &mdash; or to whoever <em>owns</em> it.</p>
+				<p class="page-text">
+					There’s a plausible future where your agent generates the interface and you never see
+					the underlying app &mdash; the &ldquo;buy&rdquo; button drawn for you by the platform,
+					tuned to <em>its</em> goals, not yours. Same technology, pointed the opposite way. The
+					capability that could give Sarah an interface shaped around her could give a platform
+					one shaped around its incentives. The deciding factor is who the UI is empathetic
+					<em>to</em> &mdash; which is exactly why local, user-owned generation matters.
+				</p>
+			</section>
+
+			<section id="if-everyones-ui-is-different">
+				<h2 class="page-heading">&ldquo;If everyone’s UI is different, don’t we lose common ground?&rdquo;</h2>
+				<p class="page-text qa-short">Real cost. Keep the periphery visible &mdash; personal shouldn’t mean sealed.</p>
+				<p class="page-text">
+					Yes &mdash; you and I could buy the same thing and never know, because our interfaces
+					showed it differently. And a UI that only shows what it thinks you need is a filter
+					bubble: you stop stumbling on the useful thing you weren’t looking for. Honest answer:
+					it’s a real cost, and the mitigation is to keep peripheral information visible &mdash; a
+					personal UI shouldn’t be a sealed one. Worth naming rather than pretending
+					personalization is free.
+				</p>
+			</section>
+
+			<section id="will-people-actually-use-this">
+				<h2 class="page-heading">&ldquo;Will people actually use this, or just accept the default?&rdquo;</h2>
+				<p class="page-text qa-short">The empathy framing sidesteps it &mdash; the default already fits.</p>
+				<p class="page-text">
+					People still use untitled.txt over more powerful tools because customizing has an
+					upfront cost &mdash; &ldquo;I’m busy, I just need to finish.&rdquo; So will users shape
+					these interfaces or just accept what the AI hands them? We don’t fully know. But empathy
+					largely sidesteps it: the whole point is the <em>default</em> already fits, so there’s
+					little to tinker with. An empathetic interface does the accommodating &mdash; the user
+					shouldn’t have to. That’s the opposite of untitled.txt, which does nothing until you do
+					everything.
+				</p>
+			</section>
+
+			<section id="what-about-privacy">
+				<h2 class="page-heading">&ldquo;An interface that knows me that well &mdash; what about my privacy?&rdquo;</h2>
+				<p class="page-text qa-short">A real risk. Local models may keep that context on your own device.</p>
+				<p class="page-text">
+					Everything we’ve proposed depends on the interface knowing your context: your task, your
+					energy budget, that you steer a wheelchair with your head. The empathetic half &mdash; the
+					&ldquo;who is doing this&rdquo; &mdash; needs to know the most about you.
+				</p>
+				<p class="page-text">
+					So privacy is an issue. Local models could get us a long way: if the model runs on your own
+					device and the context never leaves your machine, personalization stops being a privacy
+					trade-off. Local models are improving quickly, so we’re hopeful rather than certain.
+				</p>
+			</section>
+
+			<section id="doesnt-a-changing-ui-break-screen-readers">
+				<h2 class="page-heading">&ldquo;But a UI that keeps changing breaks screen readers.&rdquo;</h2>
+				<p class="page-text qa-short">Right: stability is a basic trait of accessibility and of good design in general. Our answer is memory, and
+					least surprise is actually empathy applied. So hopefully this corrects itself with empathetic interfaces.</p>
+				<p class="page-text">
+					The sharpest objection: if interfaces are generated, don’t you destroy what a screen-reader
+					user relies on &mdash; the button being where it was yesterday? Stability is a basic trait of
+					accessibility, and of good design in general. A constantly re-rolling UI would be a disaster.
+				</p>
+				<p class="page-text">
+					Our answer is memory. The interface is generated once, for you, then remembered and
+					reused. And an empathetic interface applies exactly this: the least surprise. It knows you
+					navigate by memory, so it holds still &mdash; personalize the <em>content</em>, not the
+					<em>structure</em>. So we hope the problem corrects itself: an interface that understands you
+					wouldn’t move your controls.
+				</p>
+				<p class="page-text">
+					Today’s one-size-fits-all UI is the volatile one: it changes under you whenever a vendor
+					redesigns it &mdash; that’s the Ravelry change that put Rose in bed for three days.
+				</p>
+				<p class="page-meta">Source: <a href="sources.html#ravelry">Ravelry</a></p>
+			</section>
+
+			<section id="does-this-work-today">
+				<h2 class="page-heading">&ldquo;Does this actually work today?&rdquo;</h2>
+				<p class="page-text qa-short">Not quite. Models can generate working interfaces; the plumbing around them still fails.</p>
+				<p class="page-text">
+					Be honest about where we are. Eight months after our interviews, Rose tried to build a
+					bespoke Steam library manager for herself. It didn’t really work out: lack of support,
+					lack of knowledge, still too time-consuming, too much tinkering. Rose is technical and
+					motivated &mdash; if anyone could build her own tool, it’s her. We replaced configuration
+					toil with developer toil: the AI generated a front end, and what defeated her was the
+					glue &mdash; storage, accounts, the plumbing you don’t know exists unless you write
+					software.
+				</p>
+				<p class="page-text">
+					Is that failure telling us the <em>idea</em> is wrong, or that we’re just early? We think
+					it’s the moment &mdash; and we have evidence, not just hope. Google Research found that
+					generating a working interface is an <em>emergent</em> capability: their newest model
+					produced valid UIs with zero errors, while a model one generation older failed on 60% of
+					prompts. It crossed a threshold rather than improving gradually.
+				</p>
+				<p class="page-text">
+					So our honest position: the plumbing that beat Rose is a property of <em>today’s</em>
+					tooling, not of the idea. We could be wrong &mdash; but we think it’s a matter of time,
+					and not much of it.
+				</p>
+				<p class="page-meta">Source: <a href="sources.html#leviathan-2026">Leviathan et al., 2026</a>, section 3.1</p>
+			</section>
+		</article>
+	</body>
+</html>

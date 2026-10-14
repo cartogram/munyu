@@ -54,7 +54,7 @@ accessibility can't fall short of this.
 
 **Two typefaces.** Aileron (sans) for titles, body sans (paragraphs and
 lists) and meta. Libre Baskerville (serif) for scene headlines and body
-serif (interview quotes and the Q&A questions). Body comes in just those two
+serif (interview quotes). Body comes in just those two
 styles; there's no separate lede. Italic is for the sub-meta and for
 `<em>`.
 
@@ -150,8 +150,7 @@ that uses it.
 
 - **Content.** A headline, then body sans and a list as the scene needs them.
   A headline on its own, or a headline and one line, is this same column,
-  centred. A Q&A question uses it too: the quote, the persona divider, then
-  the answer.
+  centred.
 - **Title slide.** Opens the talk, the title bottom-left on the grained
   ground. Act openers use the same frame, with a chapter number.
 - **Side by side.** Name, a line of body sans, the cut-paper divider and the

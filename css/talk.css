@@ -10,7 +10,7 @@
    - act and talk titles, title slide, title speakers
    - scene editorial type (headings, body, blockquote, lists, meta,
      sub-meta, em-dash, .sep, headings--N utilities)
-   - persona scenes, their pull-quote marks, Q&A dividers
+   - persona scenes, their pull-quote marks
    - branching demo, today's model
    - mobile responsive canvas
    - slide chrome: chrome bar, act tab, notes toggle, pointer, video
@@ -158,7 +158,6 @@ main section[data-scene] {
 .act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-deep); --fade-hold: 35%; }
 .act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
 .act-panel[data-act='closing'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
-.act-panel[data-act='backup-qa'] { --fade-angle: 34deg; --fade-to: var(--ramp-accent); --fade-hold: 35%; }
 
 /* act openers blend three colours, as gggrain's grounds do: the act's ink
    held along the bottom under the title, fading up to the previous act's
@@ -181,7 +180,6 @@ main section[data-scene] {
 .act-panel[data-act='empathy-is-our-point'] { --act-prev: var(--act-limits-of-adaptability); }
 .act-panel[data-act='launching-is-creating'] { --act-prev: var(--act-empathy-is-our-point); }
 .act-panel[data-act='closing'] { --act-prev: var(--act-launching-is-creating); }
-.act-panel[data-act='backup-qa'] { --act-prev: var(--act-closing); }
 
 /* the chapter number, top right on each act opener: the act's place in the
    talk (as in the notes drawer's index, so the first act, which opens on the
@@ -446,8 +444,8 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
 }
 
 /* editorial scene layout: a serif headline, then body in one of two
-   styles, body sans (paragraphs and lists) and body serif (quotes, and the
-   Q&A questions). The scene line lives in each card's tab (.act-tab). */
+   styles, body sans (paragraphs and lists) and body serif (quotes). The scene
+   line lives in each card's tab (.act-tab). */
 
 /* each type level pairs its native tag with a .heading--N class, so any
    element can take the level's style (<div class="heading--2"> reads as
@@ -522,8 +520,8 @@ main li + li {
 	margin-top: 0.3em;
 }
 
-/* body serif: interview quotes and the Q&A questions, always centred (the
-   persona and Q&A layouts); the branching demo's headline takes it too */
+/* body serif: interview quotes, always centred (the persona layout); the
+   branching demo's headline takes it too */
 main blockquote,
 main section[data-scene].branching > h2,
 .blockquote {
@@ -963,42 +961,6 @@ blockquote.pull-quote::after {
 
 .persona > :is(blockquote, p) {
 	margin: 0 auto;
-}
-
-/* Q&A scenes (a quoted question, then its answer): treated like a persona's
-   quote. One centred column at the persona gap: the question in body serif,
-   the persona divider, then the answer in body sans. The divider is the
-   scene's own ::after, ordered between the two. */
-.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) {
-	--persona-gap: calc(48 * var(--u));
-	align-items: center;
-	text-align: center;
-	gap: var(--persona-gap);
-}
-
-.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > * {
-	margin: 0 auto;
-}
-
-.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > blockquote {
-	order: 1;
-	max-width: calc(1400 * var(--u));
-}
-
-.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p)::after {
-	content: '';
-	order: 2;
-	flex: none;
-	width: 20%;
-	height: calc(16 * var(--u));
-	background: currentColor;
-	mask: url('../media/persona-divider.svg') center / 100% 100% no-repeat;
-}
-
-.act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > p {
-	order: 3;
-	max-width: calc(1400 * var(--u));
-	text-wrap: balance;
 }
 
 /* a persona scene is one frame and never pages, in two columns: the text
@@ -1759,7 +1721,7 @@ ul.footer-links {
 
 /* each speaker's script, then its bullets (a <ul class="notes-bullets">
    after their last paragraph). The switch above shows one or the other;
-   notes without bullets (the Q&A) show their script either way. Bullets
+   notes without bullets show their script either way. Bullets
    keep the speaker badges, the cues and the footnotes. */
 #notes-drawer-content .notes-bullets {
 	display: none;
@@ -2543,8 +2505,7 @@ main {
    Printed, or saved as a PDF, the page is a script to rehearse or present
    from: portrait, each scene its slide shrunk into a box 150mm wide, with
    its notes flowing under it. Every act starts a new page under a header
-   of its number and title; the Q&A follows as an appendix of
-   questions and answers. Act colours stay for type, rules and the
+   of its number and title. Act colours stay for type, rules and the
    illustrations, without the openers' grounds or any other fill. Videos
    are left out, the notes' cues say where they play. js/site.js takes the
    scroll choreography off first, so every build prints whole, and moves
@@ -2913,47 +2874,6 @@ main {
 		content: ' (' attr(href) ')';
 		font-size: 0.85em;
 		word-break: break-all;
-	}
-
-	/* the Q&A, an appendix: each question and its short answer as text, no
-	   slide round them, then the notes' fuller answer */
-	main .act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p),
-	main .act-panel[data-act='backup-qa'] section[data-scene] {
-		display: block;
-		min-height: 0;
-		height: auto;
-		padding: 0;
-		border: none;
-		border-radius: 0;
-		text-align: left;
-	}
-
-	main .act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p)::after {
-		display: none;
-	}
-
-	main .act-panel[data-act='backup-qa'] section[data-scene]:has(> blockquote + p) > *,
-	main .act-panel[data-act='backup-qa'] section[data-scene] > * {
-		max-width: none;
-		margin: 0 0 0.4em;
-		text-wrap: pretty;
-	}
-
-	main .act-panel[data-act='backup-qa'] section[data-scene] > blockquote {
-		font-family: var(--font-serif);
-		font-size: 13pt;
-		font-weight: 700;
-		line-height: 1.3;
-	}
-
-	main .act-panel[data-act='backup-qa'] section[data-scene] > :is(p, ul, h2) {
-		font-size: 11pt;
-		font-weight: 600;
-		line-height: 1.4;
-	}
-
-	main .act-panel[data-act='backup-qa'] aside.notes {
-		margin: 2mm 0 7mm;
 	}
 }
 

@@ -1,7 +1,7 @@
 # Rebuild Matt's speaker notes in the feldnotes Obsidian vault from the
 # deck's notes, so edits made in index.html show up there too. Each scene
 # where Matt speaks gets the slide's text, Simon's lead-in where he hands
-# over (folded), and Matt's part; the Q&A notes are shared, so they come too.
+# over (folded), and Matt's part, and any unlabelled notes, which are shared.
 # The file's header (everything above the first act) is kept, with its
 # "Pulled from the deck … on <date>" set to today. Python, not Node: the
 # standard library has an HTML parser and the repo has none.
@@ -137,7 +137,7 @@ for ai, act in enumerate(acts, 1):
 		parts = note_parts(aside) if aside else []
 		frames.append(dict(ai=ai, act=act_title, si=idx, title=title, slide=text_blocks(fr) if idx else [], parts=parts))
 
-# Matt's parts, unlabelled parts (the Q&A, ours to share), and Simon's lead-in
+# Matt's parts, unlabelled parts (ours to share), and Simon's lead-in
 # where he hands over: his part right before one of Matt's, wherever it sits.
 out, last_act, prev = [header.rstrip() + '\n'], None, None
 for f in frames:

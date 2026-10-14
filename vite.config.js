@@ -24,6 +24,7 @@ export default defineConfig({
 				index: resolve(import.meta.dirname, 'index.html'),
 				system: resolve(import.meta.dirname, 'system.html'),
 				sources: resolve(import.meta.dirname, 'sources.html'),
+				qa: resolve(import.meta.dirname, 'qa.html'),
 			},
 		},
 	},
