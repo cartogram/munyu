@@ -1592,6 +1592,20 @@ window.addEventListener('keydown', (event) => {
 	if (hadFocus) notesToggle.focus();
 });
 
+// Script or Bullets (css/talk.css switches between them): remembered across
+// visits, as a speaker keeps to one.
+const NOTES_VIEW_KEY = 'notes-view';
+const notesView = document.querySelector('.notes-view');
+try {
+	const saved = notesView.querySelector(`input[value="${localStorage.getItem(NOTES_VIEW_KEY)}"]`);
+	if (saved) saved.checked = true;
+} catch {}
+notesView.addEventListener('change', (event) => {
+	try {
+		localStorage.setItem(NOTES_VIEW_KEY, event.target.value);
+	} catch {}
+});
+
 // A drawer left open in this tab opens again after a reload, at once.
 try {
 	if (sessionStorage.getItem(DRAWER_KEY) === 'open') {

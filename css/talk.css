@@ -1632,6 +1632,103 @@ ul.footer-links {
 	color: var(--act-color, #000);
 }
 
+/* the notes' heading, and opposite it, on its baseline, the switch between
+   the script and its bullets. A long title wraps beside it. */
+.drawer-notes-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.drawer-notes-head > .drawer-heading {
+	min-width: 0;
+	margin-bottom: 0;
+}
+
+/* Script or Bullets: two radios in one pill outlined in the act's colour,
+   bold at the badge size, the chosen one outlined within it as the speaker
+   badge is. The
+   radios stay in the page, unseen, over their labels, so they keep their
+   keys (arrows to switch) and their names. */
+.notes-view {
+	display: flex;
+	flex-shrink: 0;
+	min-inline-size: 0;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--act-color, #000);
+	border-radius: 999px;
+	color: var(--act-color, #000);
+	font-size: 0.75rem; /* 12px, the badge size */
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+/* the badge's own padding and border, unseen until it's chosen, so the
+   words don't move and the chosen one is the badge's size */
+.notes-view label {
+	position: relative;
+	padding: 0.1em 0.75em;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	cursor: pointer;
+}
+
+/* where the chosen one meets the pill its border doubles the pill's, so
+   the side it turns to the other one is doubled too */
+.notes-view label:first-of-type {
+	border-right-width: 2px;
+}
+
+.notes-view label:last-of-type {
+	border-left-width: 2px;
+}
+
+/* the radio reaches past its label, above and below, so the target is
+   24px tall, the smallest WCAG 2.2 allows, though the pill is smaller */
+.notes-view input {
+	position: absolute;
+	inset: -0.2em 0;
+	margin: 0;
+	opacity: 0;
+	cursor: inherit;
+}
+
+/* the other one underlines on hover as the drawer's links do */
+.notes-view label:not(:has(:checked)):hover {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.07em;
+}
+
+/* the chosen one lifted: the pill holds the index's current-entry tint,
+   rising from the foot of its middle and fading off to both ends, and the
+   chosen one sits on its half in white, so the tint shows from under it */
+.notes-view {
+	background: radial-gradient(farthest-side at 50% 100%, color-mix(in srgb, var(--act-color, #000) 16%, white), #fff);
+}
+
+.notes-view label:has(:checked) {
+	border-color: var(--act-color, #000);
+	background: #fff;
+	cursor: default;
+}
+
+/* forced colours draw a transparent border too, so there the unchosen
+   one's is the page's own colour */
+@media (forced-colors: active) {
+	.notes-view label:not(:has(:checked)) {
+		border-color: Canvas;
+	}
+}
+
+.notes-view label:has(:focus-visible) {
+	outline: 2px solid var(--act-color, #000);
+	outline-offset: 2px;
+}
+
 /* a lead paragraph: light and larger, set close */
 .lead {
 	font-size: 1.625rem; /* 26px */
@@ -1658,6 +1755,28 @@ ul.footer-links {
 
 #notes-drawer-content li + li {
 	margin-top: 0.3em;
+}
+
+/* each speaker's script, then its bullets (a <ul class="notes-bullets">
+   after their last paragraph). The switch above shows one or the other;
+   notes without bullets (the Q&A) show their script either way. Bullets
+   keep the speaker badges, the cues and the footnotes. */
+#notes-drawer-content .notes-bullets {
+	display: none;
+}
+
+.drawer-notes:has(.notes-view [value='bullets']:checked) #notes-drawer-content:has(.notes-bullets) > :not(.speaker, .cue, .notes-bullets, :has(> small)) {
+	display: none;
+}
+
+.drawer-notes:has(.notes-view [value='bullets']:checked) #notes-drawer-content .notes-bullets {
+	display: block;
+}
+
+/* a speaker whose bullets are still to be written */
+#notes-drawer-content .notes-bullets:empty::before {
+	content: 'No bullets yet.';
+	color: var(--grey-600);
 }
 
 /* emphasis in the notes is bold */
@@ -2026,7 +2145,7 @@ body.is-speaker .speaker-next {
 		margin-top: 4.5px;
 	}
 
-	.drawer-notes > .drawer-heading {
+	.drawer-notes-head {
 		margin-bottom: 12.5px;
 	}
 
@@ -2746,6 +2865,11 @@ main {
 
 	main aside.notes li + li {
 		margin-top: 0.2em;
+	}
+
+	/* the script prints; its bullets are for the drawer */
+	main aside.notes .notes-bullets {
+		display: none;
 	}
 
 	/* who speaks, and roughly when: Simon · 0:30, in the act's colour over

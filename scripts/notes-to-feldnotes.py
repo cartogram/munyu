@@ -90,6 +90,8 @@ def note_parts(aside):
 		if not isinstance(k, Node): continue
 		if 'speaker' in k.cls():
 			cur = [k.attrs.get('data-speaker'), k.attrs.get('data-time'), []]; parts.append(cur); continue
+		# the drawer's bullets restate the script, which is what the vault keeps
+		if 'notes-bullets' in k.cls(): continue
 		if cur is None:
 			cur = [None, None, []]; parts.append(cur)
 		if 'cue' in k.cls(): cur[2].append(f'*[{inline(k)}]*')
