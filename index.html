@@ -1186,6 +1186,35 @@
 				<section data-scene="thank-you">
 					<h2>Thank you!</h2>
 				</section>
+
+				<!-- the credits: the title slide, simplified (the title whole, in
+				     its gradient, not split or animated), the speakers, then the
+				     drawer footer's links and the questions -->
+				<section data-scene="credits" data-title="Credits">
+					<h2 class="credits-title">Your UI <br />is not my UI</h2>
+					<ul class="title-speakers" aria-label="Speakers">
+						<li>
+							<img src="media/credits-simon.webp" alt="" width="480" height="480" />
+							<span class="title-speaker"><a href="https://www.simon-lenz.de/"><strong>Simon Lenz</strong><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a><br />Software
+								Engineer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
+						</li>
+						<li>
+							<img src="media/credits-matt.webp" alt="" width="480" height="480" />
+							<span class="title-speaker"><a href="https://www.cartogram.ca/"><strong>Matt Seccafien</strong><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a><br />Design
+								Engineer<span class="em-dash">—</span><span class="title-speaker-company">DeepL</span></span>
+						</li>
+					</ul>
+					<ul class="credits-links" aria-label="More">
+						<li><a href="qa.html">Questions</a></li>
+						<li><a href="sources.html">Sources</a></li>
+						<li><a href="?motion=lite">Calm version</a></li>
+						<li><a href="https://github.com/cartogram/munyu">Source code</a></li>
+						<li><a href="system.html">Design system</a></li>
+						<li><button type="button" data-print>Print</button></li>
+						<li class="credits-copyright"><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a><span class="em-dash">—</span><span
+								class="credits-year">© 2026</span></li>
+					</ul>
+				</section>
 			</div>
 		</section>
 	</main>
@@ -1243,8 +1272,8 @@
 							<use href="#icon-arrow-up-right" />
 						</svg></a></p>
 				<div class="footer-row">
-					<p class="footer-links">View <a href="sources.html">talk sources</a>,<br><a href="?motion=lite">calm
-							version</a> or <button type="button" id="print-deck">print</button>.</p>
+					<p class="footer-links"><a href="qa.html">Questions</a>, <a href="sources.html">sources</a>,<br><a href="?motion=lite">calm
+							version</a> or <button type="button" data-print>print</button>.</p>
 					<ul class="footer-links">
 						<li><a href="system.html">Design system</a></li>
 						<li><a href="https://github.com/cartogram/munyu">Source code</a></li>

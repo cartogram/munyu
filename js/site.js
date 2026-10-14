@@ -631,8 +631,8 @@ function afterPrint() {
 	rebuild(place);
 }
 window.addEventListener('beforeprint', beforePrint);
-// the notes drawer's Print button
-document.getElementById('print-deck').addEventListener('click', () => window.print());
+// the Print buttons, in the notes drawer's footer and on the credits
+document.querySelectorAll('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
 window.addEventListener('afterprint', afterPrint);
 // Some browsers only tell the page through the print media query
 window.matchMedia('print').addEventListener('change', (e) => (e.matches ? beforePrint() : afterPrint()));
