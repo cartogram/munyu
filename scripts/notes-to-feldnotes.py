@@ -6,10 +6,12 @@
 # "Pulled from the deck … on <date>" set to today. Python, not Node: the
 # standard library has an HTML parser and the repo has none.
 #
-#   python3 scripts/notes-to-feldnotes.py [path/to/Speaker Notes.md]
+#   python3 scripts/notes-to-feldnotes.py [--check] [path/to/Speaker Notes.md]
 #
-# The path defaults to the vault checked out beside this repo.
-import datetime, pathlib, re, sys
+# The path defaults to the vault checked out beside this repo. --check writes
+# nothing: it prints how a sync would change the file (leaving the date
+# alone, so only the notes show) and exits 1 if it would.
+import datetime, difflib, pathlib, re, sys
 from html.parser import HTMLParser
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -108,10 +110,13 @@ def callout(kind, title, paras, folded=False):
 	body = '\n>\n'.join('\n'.join(f'> {l}' if l else '>' for l in p.split('\n')) for p in paras)
 	return head + ('\n' + body if body else '')
 
-target = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else TARGET
+args = sys.argv[1:]
+check = '--check' in args
+args = [a for a in args if a != '--check']
+target = pathlib.Path(args[0]) if args else TARGET
 existing = target.read_text()
 header = existing[:existing.index('\n## ')] if '\n## ' in existing else existing
-header = re.sub(r'(Pulled from the deck .*? on )\d{4}-\d{2}-\d{2}', lambda m: m.group(1) + datetime.date.today().isoformat(), header)
+if not check: header = re.sub(r'(Pulled from the deck .*? on )\d{4}-\d{2}-\d{2}', lambda m: m.group(1) + datetime.date.today().isoformat(), header)
 src = (ROOT / 'index.html').read_text()
 p = P(); p.feed(src)
 main = next(p.root.find_all(lambda n: n.tag == 'main'))
@@ -166,6 +171,11 @@ for f in frames:
 		prev = pt
 
 result = '\n'.join(out).rstrip() + '\n'
+if check:
+	diff = list(difflib.unified_diff(existing.splitlines(keepends=True), result.splitlines(keepends=True), 'vault', 'deck'))
+	sys.stdout.writelines(diff)
+	print(f'{target.name}: ' + ('a sync would change it' if diff else 'in sync with the deck'))
+	sys.exit(1 if diff else 0)
 if result == existing:
 	print(f'{target.name}: already in sync')
 else:
