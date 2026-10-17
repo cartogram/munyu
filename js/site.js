@@ -15,6 +15,20 @@ ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilityc
 // still WebP. The beats, index, notes, keys and hash all work as before.
 const lite = document.documentElement.classList.contains('is-lite');
 
+// The event in the top band: WeyWeyWeb as written in index.html, or the
+// talk's event named by ?event= (?event=weyweyweb or ?event=react-advanced).
+const EVENTS = {
+	'react-advanced': ['React Advanced', 'London 2026'],
+	weyweyweb: ['WeyWeyWeb', 'Málaga 2026'],
+};
+const event = EVENTS[new URLSearchParams(window.location.search).get('event')];
+if (event) {
+	const [name, place] = event;
+	const chromeEvent = document.querySelector('.chrome-event');
+	chromeEvent.firstChild.textContent = name;
+	chromeEvent.querySelector('.sub-meta').lastChild.textContent = place;
+}
+
 // Scenes that hold while they play one step per beat. Each step adds its
 // tweens to the act timeline within `hold` px of scroll; the beat lands once
 // they've finished.
