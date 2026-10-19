@@ -11,17 +11,26 @@ const path = (fill, d) => `<path fill="${fill}" d="${d}"/>`;
 
 let svg = readFileSync(SRC, 'utf8').replace(/<metadata>.*?<\/metadata>/s, '');
 
-// the spreadsheet: its grid (path 4, ink with the cells cut out) keeps its
-// drawn weight rather than thickening into strips, and the slivers of grey the
-// trace left along its lines (5 to 22, bar three small filled blocks) go
-const GRID = 4;
-const SLIVERS = new Set(Array.from({ length: 18 }, (_, i) => 5 + i).filter((i) => ![6, 8, 10].includes(i)));
+// the spreadsheet is drawn again (6–8), so the trace's goes: its grid (path
+// 4, ink with the cells cut out), the slivers of grey along its lines (5 to
+// 22), and every other piece inside the screen, bar the ink sheet (path 0)
+// that the screen's white covers. Two ticks to the right of the screen (2
+// and 3) go with it, and the headset's cable up to the shelf (62).
+const SCREEN_ZONE = [215, 335, 440, 545];
+const DROP = new Set([2, 3, 62]);
+const box = (p) => {
+	const n = p.match(/\bd="([^"]+)"/)[1].match(/-?\d*\.?\d+/g).map(Number);
+	const xs = n.filter((_, i) => i % 2 === 0), ys = n.filter((_, i) => i % 2 === 1);
+	return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+};
 let index = -1;
 svg = svg.replace(/<path\b[^>]*?\/?>/g, (p) => {
 	index++;
-	if (SLIVERS.has(index)) return '';
-	if (index === GRID) return p.replace('<path', '<path data-finish="edge"');
-	return p;
+	if (index === 0) return p;
+	if (DROP.has(index)) return '';
+	const [x0, y0, x1, y1] = box(p);
+	const [zx0, zy0, zx1, zy1] = SCREEN_ZONE;
+	return x0 >= zx0 && y0 >= zy0 && x1 <= zx1 && y1 <= zy1 ? '' : p;
 });
 
 const INK = '#000000', WHITE = '#FEFEFE';
@@ -37,7 +46,7 @@ const line = ([x0, y0], [x1, y1], w) => {
 // crossed it, and the monitor's stand comes down to a foot on the desk.
 const clear = [
 	poly([[172, 562], [391, 562], [391, 617], [172, 617]]),
-	poly([[391, 557], [441, 557], [441, 591], [391, 591]]),
+	poly([[386, 557], [441, 557], [441, 591], [386, 591]]),
 	poly([[298, 617], [391, 617], [391, 641], [298, 641]]),
 ];
 const desk = poly([[296, 617.5], [366, 617.5], [366, 621], [296, 621]]);
@@ -111,48 +120,63 @@ const seatEdge = [[557, 656], [557, 684], [554, 687], [500, 687], [452, 688], [4
 // round joints, so the bends show no notches
 const seatGap = [...seatEdge.slice(1).map((p, i) => line(seatEdge[i], p, 6)), ...seatEdge.slice(1, -1).map((p) => dot(p, 3))];
 
-// 6. tiny numbers in the spreadsheet's cells, right-aligned, drawn in strokes
-// as seven-segment digits so they stay paths
+// 6. the spreadsheet, on one even grid: columns 26.5 wide and rows 23 tall
+// from the screen's top-left corner, eight of each filling the screen. It
+// spills out of the screen like the windows popping out of Sarah's laptop:
+// two more rows above it, over the frame, and two more columns to its left,
+// on the same lines. Column A, the headers he wants lined up, is selected,
+// in the soft tone.
+const SCREEN = [222, 358, 434, 543];
+const COL = 26.5, ROW = 23.125;
+const xAt = (c) => SCREEN[0] + c * COL, yAt = (r) => SCREEN[1] + r * ROW;
+// a block of cells, columns c0 to c1 and rows r0 to r1 (grid lines, from the
+// screen's corner): white, ruled in thin lines
+const block = (c0, c1, r0, r1) => {
+	const [x0, x1, y0, y1] = [xAt(c0), xAt(c1), yAt(r0), yAt(r1)];
+	return {
+		fill: poly([[x0, y0], [x1, y0], [x1, y1], [x0, y1]]),
+		rules: [
+			...Array.from({ length: c1 - c0 + 1 }, (_, k) => line([xAt(c0 + k), y0 - 1], [xAt(c0 + k), y1 + 1], 2.2)),
+			...Array.from({ length: r1 - r0 + 1 }, (_, k) => line([x0 - 1, yAt(r0 + k)], [x1 + 1, yAt(r0 + k)], 2.2)),
+		],
+	};
+};
+const cells = [
+	block(0, 8, 0, 8), // the screen
+	block(3, 8, -2, 0), // rows above
+	block(-2, 0, 3, 7), // columns to the left
+];
+// the trace's outline of the old sheet above the screen, part of its ink
+// sheet: white over it, up to the shelf's line
+const oldOutline = poly([[262, 288], [428, 288], [428, 336], [262, 336]]);
+const selection = poly([[xAt(0), yAt(1)], [xAt(1), yAt(1)], [xAt(1), yAt(6)], [xAt(0), yAt(6)]]);
+
+// 7. tiny numbers in the cells, right-aligned, drawn in strokes as
+// seven-segment digits so they stay paths. [column, row] → the number.
 const SEGMENTS = { 0: 'abcdef', 1: 'bc', 2: 'abged', 3: 'abgcd', 4: 'fgbc', 5: 'afgcd', 6: 'afgedc', 7: 'abc', 8: 'abcdefg', 9: 'abcdfg' };
 const digit = (ch, x, y, w = 3.6, h = 7) => {
 	const p = { a: [[x, y], [x + w, y]], b: [[x + w, y], [x + w, y + h / 2]], c: [[x + w, y + h / 2], [x + w, y + h]], d: [[x, y + h], [x + w, y + h]], e: [[x, y + h / 2], [x, y + h]], f: [[x, y], [x, y + h / 2]], g: [[x, y + h / 2], [x + w, y + h / 2]] };
 	return [...SEGMENTS[ch]].map((s) => line(...p[s], 1.3));
 };
 const number = (text, right, top) => [...text].reverse().flatMap((ch, i) => digit(ch, right - 4 - i * 5.4, top));
-// cell (its box in the trace) → the number in it
 const CELLS = [
-	[[364, 377, 427, 414], '4'], [[391, 415, 427, 437], '6'], [[390, 438, 428, 486], '3'],
-	[[364, 487, 428, 511], '2'], [[254, 462, 312, 511], '9'], [[312, 487, 336, 511], '7'],
-	[[336, 487, 364, 510], '1'], [[364, 438, 390, 462], '8'], [[336, 462, 364, 487], '9'],
-	[[312, 438, 336, 462], '5'], [[365, 415, 391, 437], '8'], [[364, 462, 390, 486], '3'],
+	[[1, 1], '12'], [[2, 1], '4'], [[4, 1], '30'], [[6, 1], '8'],
+	[[2, 2], '6'], [[3, 2], '15'], [[5, 2], '3'], [[7, 2], '21'],
+	[[1, 3], '9'], [[4, 3], '7'], [[6, 3], '42'],
+	[[2, 4], '5'], [[3, 4], '18'], [[5, 4], '2'], [[7, 4], '6'],
+	[[1, 5], '27'], [[4, 5], '9'], [[6, 5], '13'],
+	[[2, 6], '3'], [[5, 6], '8'], [[7, 6], '50'],
+	[[3, 7], '1'], [[6, 7], '4'],
+	[[4, -2], '7'], [[6, -1], '2'], [[7, -2], '16'],
+	[[-2, 4], '5'], [[-1, 6], '1'], [[-1, 3], '11'],
 ];
-const numbers = CELLS.flatMap(([[, y0, x1]], i) => number(CELLS[i][1], x1 - 3, y0 + 5));
+const numbers = CELLS.flatMap(([[c, r], text]) => number(text, xAt(c + 1) - 6, yAt(r) + 8));
 
-// 7. the screen's border filled in ink: the frame between its outer edge and
-// the screen, open on the right where it runs behind his head
+// 8. the monitor's frame in ink, all the way round the screen, rounded at its
+// outer corners
 const frame =
-	'M207 337L446 337L446 560L207 560Q200 560 200 553L200 344Q200 337 207 337Z' +
-	'M222 358L446 358L446 543L222 543Z';
-
-// the dark block in the screen's top-left corner, a selected range, in the
-// soft tone, so it doesn't merge with the dark frame around it
-const selection = poly([[223, 359], [311, 359], [311, 412], [249, 412], [249, 462], [223, 462]]);
-
-// 8. the spreadsheet spills out of the screen, like the windows popping out of
-// Sarah's laptop: more rows above it and more columns to its left, white
-// cells ruled in thin lines over the frame and past it
-const block = (xs, ys) => {
-	const [x0, x1, y0, y1] = [xs[0], xs.at(-1), ys[0], ys.at(-1)];
-	return {
-		fill: poly([[x0, y0], [x1, y0], [x1, y1], [x0, y1]]),
-		rules: [...xs.map((x) => line([x, y0 - 1], [x, y1 + 1], 2.2)), ...ys.map((y) => line([x0 - 1, y], [x1 + 1, y], 2.2))],
-	};
-};
-const spills = [
-	block([312, 336, 364, 390, 437], [296, 316, 337, 358]), // rows above
-	block([160, 186, 222, 248], [438, 462, 487, 511]), // columns to the left
-];
-const spillNumbers = [...number('2', 386, 341), ...number('7', 433, 320), ...number('5', 218, 466), ...number('1', 182, 491)];
+	'M207 337L445 337Q452 337 452 344L452 553Q452 560 445 560L207 560Q200 560 200 553L200 344Q200 337 207 337Z' +
+	`M${SCREEN[0]} ${SCREEN[1]}L${SCREEN[2]} ${SCREEN[1]}L${SCREEN[2]} ${SCREEN[3]}L${SCREEN[0]} ${SCREEN[3]}Z`;
 
 // a floor: a grey shadow strip under the desk and chair, ragged at the ends
 const floor =
@@ -167,11 +191,13 @@ const top = [
 	path(INK, legs),
 	path(INK, thigh),
 	...seatGap.map((d) => path(WHITE, d)),
-	...numbers.map((d) => path(INK, d).replace('<path', '<path data-finish="edge"')),
-	path('#C8C7C8', selection),
+	path(WHITE, oldOutline).replace('<path', '<path data-finish="edge"'),
+	path(WHITE, cells[0].fill).replace('<path', '<path data-finish="edge"'),
 	`<path fill="${INK}" fill-rule="evenodd" d="${frame}"/>`,
-	...spills.flatMap((s) => [path(WHITE, s.fill), ...s.rules.map((d) => path(INK, d).replace('<path', '<path data-finish="edge"'))]),
-	...spillNumbers.map((d) => path(INK, d).replace('<path', '<path data-finish="edge"')),
+	...cells.slice(1).map((b) => path(WHITE, b.fill).replace('<path', '<path data-finish="edge"')),
+	path('#C8C7C8', selection),
+	...cells.flatMap((b) => b.rules).map((d) => path(INK, d).replace('<path', '<path data-finish="edge"')),
+	...numbers.map((d) => path(INK, d).replace('<path', '<path data-finish="edge"')),
 	path(INK, shoe(2.5)),
 	path(WHITE, shoe()),
 	path(WHITE, handShape),

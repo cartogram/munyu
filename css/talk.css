@@ -998,6 +998,26 @@ svg.todays-model-illustration {
 	font-family: var(--font-sans);
 }
 
+/* Back to Sarah (index.html): inline from js/site.js, so its rainbow, the
+   lines on her screen and the sun's rays can move. They're copies of the
+   drawing laid exactly over it, each holding only its moving parts, and every
+   layer is composited on its own, so a moving part doesn't repaint the
+   drawing's filters. */
+.portrait-ground:has(> .back-to-sarah-illustration) {
+	position: relative;
+}
+
+svg.back-to-sarah-illustration {
+	position: relative;
+	will-change: transform;
+}
+
+svg.back-to-sarah-illustration[aria-hidden] {
+	position: absolute;
+	inset: 0;
+	height: 100%;
+}
+
 /* persona scenes: name, a line of body sans, a divider, the interview quote
    (body serif) and its illustration, all centred in one column. One gap spaces every element,
    the divider included, so margins are zeroed and the gap does the work. */

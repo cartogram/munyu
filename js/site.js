@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import branchingArtSvg from '../media/personas/demo-two-people.svg?raw';
 import todaysModelSvg from '../media/personas/todays-model.svg?raw';
+import backToSarahSvg from '../media/personas/back-to-sarah.svg?raw';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 // Resizes are handled by rebuild() below, which keeps the reader on the same
@@ -566,6 +567,60 @@ function scopeIds(svg, prefix) {
 // Today's model: each extension lands on its own beat (todaysModelSteps)
 const todaysModelArt = document.querySelector('img.todays-model-illustration');
 if (todaysModelArt && !lite) inlineArt(todaysModelArt, todaysModelSvg);
+
+// Back to Sarah, the calm after her storm: when the drawing comes into view,
+// the lines of the page on her laptop are written out one by one and the
+// rainbow comes out band by band; while it's on screen, the sun's rays turn,
+// slowly. Any change inside an SVG repaints it whole, filters and all, so the
+// moving parts are lifted out into layers of their own (layers()), and the
+// rest of the drawing stays still. The scene slides in sideways inside its
+// pinned card, so an IntersectionObserver, not a ScrollTrigger, tells when
+// it's in view; leaving sets it back, to play again on return. Only transform
+// and opacity move (GSAP sets an SVG part's origin from its own box, so it
+// needs no transform-box). Reduced motion and the lite deck keep the still WebP.
+const backToSarahArt = document.querySelector('img.back-to-sarah-illustration');
+if (backToSarahArt && !lite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+	const svg = inlineArt(backToSarahArt, backToSarahSvg);
+	// the rainbow lies under the drawing, the page's lines and the rays on it
+	const [under, over] = layers(svg, ['rainbow-'], ['text-', 'rays']);
+	const parts = (layer, prefix) => [...layer.querySelectorAll(`[data-part^="${prefix}"]`)];
+	const lines = parts(over, 'text-'), bands = parts(under, 'rainbow-'), rays = parts(over, 'rays');
+	const arrive = gsap.timeline({ paused: true, delay: 0.3 })
+		.fromTo(lines, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 0.7, ease: 'power1.inOut', stagger: 0.35 })
+		.fromTo(bands, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2, ease: 'sine.inOut', stagger: 0.4 }, 0.6);
+	// the rays are eightfold, so an eighth of a turn loops without a seam
+	const turn = gsap.to(rays, { rotation: 45, transformOrigin: '50% 50%', duration: 40, ease: 'none', repeat: -1, paused: true });
+	new IntersectionObserver(([entry]) => {
+		if (entry.isIntersecting) {
+			arrive.restart(true);
+			turn.play();
+		} else {
+			arrive.pause(0);
+			turn.pause();
+		}
+	}, { threshold: 0.5 }).observe(svg);
+}
+
+// Lift an inline drawing's moving parts (those whose data-part starts with
+// one of the prefixes) out into copies of it laid exactly over it: one under
+// it for the first list, one on it for the second. Each copy holds only its
+// parts, and uses the drawing's own filters (url(#id) finds them by id), so
+// what moves repaints only its own layer (css/talk.css composites each).
+function layers(svg, ...lists) {
+	const moving = (el, prefixes) => prefixes.some((prefix) => el.dataset.part?.startsWith(prefix));
+	const copies = lists.map((prefixes, k) => {
+		const copy = svg.cloneNode(true);
+		copy.removeAttribute('role');
+		copy.removeAttribute('aria-label');
+		copy.setAttribute('aria-hidden', 'true');
+		copy.querySelector('defs')?.remove();
+		[...copy.children].filter((el) => !moving(el, prefixes)).forEach((el) => el.remove());
+		svg.querySelectorAll('[data-part]').forEach((el) => moving(el, prefixes) && el.remove());
+		svg[k ? 'after' : 'before'](copy);
+		return copy;
+	});
+	return copies;
+}
 
 // The branching demo, framed on the three stacks (data-frame), so its parts
 // can move (branchingSteps). Each avatar button shows its person's head from

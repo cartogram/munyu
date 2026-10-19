@@ -27,21 +27,26 @@ const PANE = [515, 340, 835, 600];
 const LAPTOP = 2, SILL = 31, SCREEN = 33;
 // the hand at her cheek: the fingers along her profile, and the wrist
 const FINGERS = 72, WRIST = 73;
-// her near hand: its outline and finger lines, copied for the far hand (4)
-const NEAR_HAND = [65, 66, 67, 92, 105];
+// the trace's hand on the keyboard, its outline and finger lines: they go,
+// and both hands are drawn again (5). Its fingers sat so close that the gaps
+// between them closed up in the finish.
+const HAND_ZONE = [465, 592, 580, 642];
+// the laptop base's outline, a mid grey in the trace: ink, like the base
+const BASE_OUTLINE = [502, 640, 711, 667];
 const base = sarah({ storm: false });
 // her face, the last six paths of sarah.mjs: nose, eye, mouth. The nose and
 // eye are put back on top of the patches (4); the mouth goes.
 const MOUTH = (base.match(/<path\b/g) || []).length - 1;
 const face = base.match(/(?:<path\b[^>]*\/>){6}(?=<\/svg>)/)[0].replace(/<path\b[^>]*\/>$/, '');
-const nearHand = [];
+const near = (b, to) => b.every((v, k) => Math.abs(v - to[k]) < 1.5);
 let svg = eachPath(base, (i, p) => {
 	if (i === FINGERS || i === WRIST || i === MOUTH) return '';
-	if (NEAR_HAND.includes(i)) nearHand.push(p);
 	if (i === LAPTOP) return path(INK, poly([[616, 482], [778, 482], [784, 488], [718, 642], [549, 641]]));
 	if (i === SILL) return p;
 	if (i === SCREEN) return '';
 	const [x0, y0, x1, y1] = box(p);
+	if (x0 >= HAND_ZONE[0] && y0 >= HAND_ZONE[1] && x1 <= HAND_ZONE[2] && y1 <= HAND_ZONE[3]) return '';
+	if (near([x0, y0, x1, y1], BASE_OUTLINE)) return p.replace(/\bfill="[^"]+"/, `fill="${INK}"`);
 	return x0 >= PANE[0] && y0 >= PANE[1] && x1 <= PANE[2] && y1 <= PANE[3] ? '' : p;
 });
 
@@ -50,12 +55,16 @@ let svg = eachPath(base, (i, p) => {
 // top-left corner (626, 497) to its bottom-right (696, 615).
 const at = (u, v) => [626 + u * 118 - v * 48, 497 + v * 118];
 const bar = (u0, u1, v, h) => poly([at(u0, v), at(u1, v), at(u1, v + h / 118), at(u0, v + h / 118)]);
+// Pieces the deck moves (js/site.js) are named parts: data-part="<name>",
+// which normalize-personas.mjs keeps as a <g data-part> in the finished SVG
+const part = (name, el) => el.replace(/^<path\b/, `<path data-part="${name}"`);
+// each line of text is a part, so the deck can write them out one by one
 const page = [
 	path(LIGHT, poly([at(0, 0), at(1, 0), at(1, 1), at(0, 1)])),
-	path(DEEP, bar(0.14, 0.62, 0.18, 12), 'edge'),
-	path(DEEP, bar(0.14, 0.86, 0.42, 7), 'edge'),
-	path(DEEP, bar(0.14, 0.8, 0.56, 7), 'edge'),
-	path(DEEP, bar(0.14, 0.66, 0.7, 7), 'edge'),
+	part('text-1', path(DEEP, bar(0.14, 0.62, 0.18, 12), 'edge')),
+	part('text-2', path(DEEP, bar(0.14, 0.86, 0.42, 7), 'edge')),
+	part('text-3', path(DEEP, bar(0.14, 0.8, 0.56, 7), 'edge')),
+	part('text-4', path(DEEP, bar(0.14, 0.66, 0.7, 7), 'edge')),
 ];
 
 // 3. the sun, in the storm's place: light, so pale and without an outline,
@@ -64,7 +73,7 @@ const SUN = [728, 252];
 const rays = Array.from({ length: 8 }, (_, k) => {
 	const a = (k / 8) * 2 * Math.PI + Math.PI / 8;
 	const from = [SUN[0] + 64 * Math.cos(a), SUN[1] + 64 * Math.sin(a)], to = [SUN[0] + 88 * Math.cos(a), SUN[1] + 88 * Math.sin(a)];
-	return path(LIGHT, line(from, to, 12));
+	return part('rays', path(LIGHT, line(from, to, 12)));
 });
 
 // 4. the raised arm comes down. White patches over the old line between her
@@ -117,41 +126,70 @@ const collar = poly([
 	[396, 505], [379, 487], [360, 472], [330, 448], [311, 444], [310, 429],
 ]);
 
-// 5. the far hand on the keyboard, beside the near one: a copy of the near
-// hand, moved up and along, and her far forearm out from her elbow to it. The hand sits under the drawing, so her near arm and the laptop's lid
-// draw over it, as the nearer things.
-const HAND_SHIFT = [14, -24];
-const shift = (p) => {
-	let k = 0;
-	return p.replace(/\bd="([^"]+)"/, (_, d) => `d="${d.replace(/-?\d*\.?\d+/g, (v) => +(+v + HAND_SHIFT[k++ % 2]).toFixed(2))}"`);
+// 5. both hands on the keyboard, drawn like Myron's: white, outlined in even
+// strokes, a slim thumb along the top, the fingers one zigzag of rounded
+// loops stacked down to the keys. Each is drawn flat, its wrist at the
+// origin, then turned down by deg and set at the sleeve's cuff. The far hand
+// comes out of her far forearm, drawn out from her elbow; it is smaller, and
+// its fingertips stop short of the laptop's lid, which stands in front of it.
+const hand = ([ox, oy], deg, { h, knuckle, finger, fingers = 3, thumb = finger * 0.8 }) => {
+	const r = (deg * Math.PI) / 180, c = Math.cos(r), sn = Math.sin(r);
+	const place = ([x, y]) => [ox + x * c - y * sn, oy + x * sn + y * c];
+	const base = knuckle * 0.55, loop = h / fingers;
+	const pts = [[0, 0], [base, 0]];
+	// the thumb: a slimmer loop than a finger, lying along the top
+	for (let k = 1; k < 8; k++) {
+		const a = (Math.PI * k) / 8;
+		pts.push([base + thumb * Math.sin(a) ** 0.5, -loop * 0.36 - loop * 0.36 * Math.cos(a) * 0.92]);
+	}
+	pts.push([knuckle * 0.9, 0]);
+	for (let i = 0; i < fingers; i++) {
+		const y0 = loop * i, y1 = loop * (i + 1), ym = (y0 + y1) / 2;
+		const tip = knuckle + finger - [3, 0, 1, 5][i % 4] * (finger / 32); // their lengths vary a little
+		pts.push([knuckle, y0]);
+		for (let k = 1; k < 8; k++) {
+			const a = (Math.PI * k) / 8;
+			pts.push([knuckle + (tip - knuckle) * Math.sin(a) ** 0.35, ym - (loop / 2) * Math.cos(a) * 0.92]);
+		}
+	}
+	pts.push([knuckle, h], [0, h]);
+	const at = pts.map(place);
+	// open at the wrist, round at every joint
+	return [
+		path(WHITE, poly(at)),
+		...at.slice(1).map((pt, i) => path(INK, line(at[i], pt, 2.6), 'edge')),
+		...at.slice(1, -1).map((pt) => path(INK, circle(pt, 1.3, 12), 'edge')),
+	];
 };
+const farHand = hand([500, 584], 12, { h: 22, knuckle: 18, finger: 18 });
+const nearHand = hand([482, 612], 10, { h: 30, knuckle: 26, finger: 23 });
 
 // 6. the laptop's base, dark like its lid, with white between the two
 const laptopBase = poly([[505, 647], [717, 647], [715, 655], [709, 663], [703, 665], [510, 665], [504, 661], [503, 651]]);
 
-// 7. a faint rainbow, rising from the window's bottom-right corner behind
-// the laptop and arching up to the left, each band thinning away to
-// nothing before it reaches the pane's far side
-const ARC = [662, 588];
-// a band around ARC at radius r, half-width h, from the right (0) round to
-// its end; it keeps its width for the first half, then tapers out
-const band = (r, h, end, n = 60) => {
-	const at = (k, side) => {
-		const t = k / n, a = t * end, w = h * Math.min(1, (1 - t) / 0.5);
-		return [ARC[0] + (r + side * w) * Math.cos(a), ARC[1] - (r + side * w) * Math.sin(a)];
-	};
-	return poly([...Array.from({ length: n + 1 }, (_, k) => at(k, 1)), ...Array.from({ length: n + 1 }, (_, k) => at(n - k, -1))]);
-};
+// 7. a rainbow under the sun, as wide as the window: three bands round a
+// centre just below the sill, cut off by the window's frame on either side
+// and by the sill below, and hidden in the middle by the laptop. The finish
+// trims each band back, so white shows between them; the middle one is light,
+// like the sun.
+const ARC = [675, 600];
+const PANE_X = [515, 835], SILL_Y = 588;
+const clip = ([x, y]) => [Math.min(Math.max(x, PANE_X[0]), PANE_X[1]), Math.min(y, SILL_Y)];
+const band = (r, w, n = 96) => poly([
+	...Array.from({ length: n + 1 }, (_, k) => [ARC[0] + (r + w / 2) * Math.cos((Math.PI * k) / n), ARC[1] - (r + w / 2) * Math.sin((Math.PI * k) / n)]),
+	...Array.from({ length: n + 1 }, (_, k) => [ARC[0] + (r - w / 2) * Math.cos((Math.PI * (n - k)) / n), ARC[1] - (r - w / 2) * Math.sin((Math.PI * (n - k)) / n)]),
+].map(clip));
+// each band a part, so the deck can bring them out one after another
 const rainbow = [
-	path(SOFT, band(160, 7, 2.05)),
-	path(WASH, band(144, 7, 2.0)),
-	path(SOFT, band(128, 7, 1.95)),
+	part('rainbow-1', path(SOFT, band(205, 22), 'piece')),
+	part('rainbow-2', path(LIGHT, band(183, 22), 'piece')),
+	part('rainbow-3', path(WASH, band(161, 22), 'piece')),
 ];
 
-svg = under(svg, [...rainbow, path(INK, laptopBase), ...nearHand.map(shift)]);
+svg = under(svg, [...rainbow, path(INK, laptopBase)]);
 svg = over(svg, [
 	...page,
-	path(LIGHT, circle(SUN, 48)),
+	part('sun', path(LIGHT, circle(SUN, 48))),
 	...rays,
 	path(WHITE, jawLine, 'edge'),
 	path(WHITE, sleeve, 'edge'),
@@ -159,6 +197,8 @@ svg = over(svg, [
 	// over the patches, which reach into where they lie
 	path(WHITE, armpit, 'edge'),
 	path(INK, farArm),
+	...farHand,
+	...nearHand,
 	path(WHITE, zigzag, 'edge'),
 	path(INK, collar),
 	...chin.map((d) => path(INK, d, 'edge')),

@@ -154,35 +154,40 @@ units. Measure before you draw:
 
 The deck already runs GSAP (`js/site.js`), so illustrations can move: steam
 drifting off a coffee, lightning flashing, cells filling in on Myron's
-spreadsheet, a beam pulsing. Two things stand in the way today, and the first
-animation needs to solve both:
+spreadsheet, a beam pulsing. Back to Sarah is the worked example: its
+screen's lines write out, its rainbow comes out band by band, and the sun's
+rays turn.
 
-1. **Names don't survive.** The normalize step drops every attribute but
-   fill, `d` and `fill-rule`, so there's nothing to target. Let edit scripts
-   tag shapes with `data-part="<name>"` (e.g. `steam`, `bolt`), and have
-   `normalize-personas.mjs` carry `data-part` through to the output. Shapes
-   that move together can then be wrapped in a `<g data-part>` in the output.
-2. **Images can't be animated.** The scenes use `<img>`, which scripts can't
-   reach into, and they show the rendered WebP. Load the illustration inline
-   instead: fetch the finished SVG and replace the `<img>` with it, keeping
-   the `alt` as the SVG's `role="img"` and `aria-label`. That brings back
-   the filter cost the WebP avoids (see *Filters*), so inline only the
-   illustration being animated.
+1. **Name the parts.** In the edit script, tag the shapes that move with
+   `data-part="<name>"` (back-to-sarah.mjs has a `part()` helper).
+   `normalize-personas.mjs` keeps each run of a part's shapes as a
+   `<g data-part>` in the finished SVG.
+2. **Inline the drawing.** Import the finished SVG with `?raw` and swap it
+   for the `<img>` with `inlineArt()`, which keeps the `alt` as `role="img"`
+   and `aria-label` and prefixes the filter ids with the image's first class.
+   Give the `<img>` a class of its own first (`back-to-sarah-illustration
+   persona-portrait`), or two inline drawings share a prefix and one uses
+   the other's filters.
+3. **Lift out what moves.** Any change inside an SVG repaints all of it,
+   filters and all: a turning sun alone took a third of frames over 20ms.
+   `layers()` moves the named parts into copies of the drawing laid exactly
+   over it (or under it, for parts the drawing covers), and CSS composites
+   each layer (`will-change: transform`), so only the small layers repaint.
 
 Then animate in `js/site.js`, beside the scroll choreography:
 
-- **Triggers:** start each animation when its scene comes into view, with
-  the same ScrollTrigger setup the scenes use.
-- **Properties:** move only `transform` and `opacity`, with
-  `transform-box: fill-box` so shapes turn and scale about themselves.
+- **Triggers:** scenes slide sideways inside a pinned card, so watch the
+  drawing with an `IntersectionObserver`: play on entry, set it back on exit.
+- **Properties:** move only `transform` and `opacity`. GSAP sets an SVG
+  part's origin from its own box (`transformOrigin: '50% 50%'`); don't add
+  `transform-box: fill-box` too, or the origin is applied twice.
 - **Feel:** keep it subtle and slow. These are paper pieces, so think of a
-  gentle sway or a flutter, never a bounce.
-- **Reduced motion:** honour `prefers-reduced-motion` the way `site.js`
-  already does. No movement, with the still drawing as the end state.
-- **Filters:** the cut-paper filters are expensive to repaint; drawn live,
-  they stalled scrolling, which is why the deck shows WebPs. Animate whole
-  pieces, not their filtered edges, and check it stays smooth with
-  `scripts/cdp/perf-scroll.mjs`.
+  gentle sway or a flutter, never a bounce. A loop should be seamless (the
+  sun's eightfold rays turn an eighth of a turn).
+- **Reduced motion:** honour `prefers-reduced-motion`, and skip the lite
+  deck: don't inline at all, so they keep the still WebP.
+- **Check it:** compare idle frame times and `scripts/cdp/perf-scroll.mjs`
+  with and without the animation.
 
 ## Before you finish
 
