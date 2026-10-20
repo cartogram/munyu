@@ -699,7 +699,8 @@ main p.formula {
 }
 
 /* generated interfaces today: a row of screenshots, all centred, and under
-   them the formula with the half they still lack. Each column's share is its screenshot's aspect
+   them the formula with the half they still lack. js/site.js first shows
+   each screenshot alone and large, one per beat, before the row. Each column's share is its screenshot's aspect
    ratio, so the three stand the same height; phones stack them. The
    screenshots keep their own colours: they're evidence, so they stay as
    captured. */

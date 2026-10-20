@@ -37,14 +37,103 @@ const STEPPED_SCENES = {
 	'todays-model': todaysModelSteps,
 	'your-ui-is-not-my-ui-create-specific': (scene) => rotatorSteps(scene.querySelector('ul')),
 	'demo-two-people': branchingSteps,
-	// the formula under the screenshots, with the half they lack, on its own beat
-	'ui-equals-f-intent': (scene) => [fadeInStep(scene.querySelector('p.formula'))],
+	'ui-equals-f-intent': screenshotsSteps,
 };
 const STEP_HOLD = 0.5; // scroll per reveal step, as a fraction of the card height
 const STEP_FADE = 0.1; // share of a step spent fading its piece in
 
 function fadeInStep(piece) {
 	return (tl, hold) => tl.fromTo(piece, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
+}
+
+// Generated interfaces today: the scene arrives with its headline alone.
+// Then each screenshot in turn has a beat to itself, nearly the card's size,
+// the headline faded while they're up; its caption stays a little over its
+// usual size. Then all three shrink together into their row, and last the
+// formula under them, with the half they lack. Reduced motion fades each
+// piece in place.
+const SOLO_CAPTION = 1.25; // a solo screenshot's caption, against its size in the row
+
+function screenshotsSteps(scene) {
+	const figures = [...scene.querySelectorAll('.screenshots figure')];
+	const captions = figures.map((figure) => figure.querySelector('figcaption'));
+	const headline = scene.querySelector('h2');
+	const formula = scene.querySelector('p.formula');
+	// offsets within the scene, not boxes, as the cards may be moved aside
+	// while the scenes are built
+	const offset = (el) => {
+		let left = 0;
+		let top = 0;
+		for (; el && el !== scene.offsetParent; el = el.offsetParent) {
+			left += el.offsetLeft;
+			top += el.offsetTop;
+		}
+		return { left, top };
+	};
+	const origin = offset(scene);
+	const within = (el) => {
+		const { left, top } = offset(el);
+		return { left: left - origin.left, top: top - origin.top };
+	};
+	gsap.set(figures, { clearProps: 'transform,opacity,visibility' });
+	gsap.set(captions, { clearProps: 'transform' });
+
+	// the solo frame: from the headline's top to the scene's bottom padding,
+	// between its side paddings. Each screenshot fills as much of it as it
+	// can with its caption under it, the two centred in it.
+	const style = getComputedStyle(scene);
+	const frameLeft = parseFloat(style.paddingLeft);
+	const frameWidth = scene.clientWidth - frameLeft - parseFloat(style.paddingRight);
+	const frameTop = within(headline).top;
+	const frameHeight = scene.clientHeight - frameTop - parseFloat(style.paddingBottom);
+	const solo = figures.map((figure, i) => {
+		const img = figure.querySelector('img');
+		const { left, top } = within(img);
+		const width = img.offsetWidth;
+		const height = img.offsetHeight;
+		const gap = within(captions[i]).top - top - height;
+		const caption = captions[i].offsetHeight * SOLO_CAPTION;
+		const scale = Math.min(frameWidth / width, (frameHeight - caption) / (height + gap));
+		const groupTop = frameTop + (frameHeight - (height + gap) * scale - caption) / 2;
+		return {
+			figure: {
+				transformOrigin: `${width / 2}px ${height / 2}px`,
+				x: frameLeft + frameWidth / 2 - (left + width / 2),
+				y: groupTop + (height * scale) / 2 - (top + height / 2),
+				scale,
+			},
+			caption: { transformOrigin: '50% 0', scale: SOLO_CAPTION / scale },
+		};
+	});
+	figures.forEach((figure, i) => {
+		gsap.set(figure, { ...solo[i].figure, autoAlpha: 0 });
+		gsap.set(captions[i], solo[i].caption);
+	});
+
+	const fade = (tl, targets, to, at, hold) => tl.to(targets, { autoAlpha: to, duration: hold * STEP_FADE, ease: 'none' }, at);
+	const steps = figures.map((figure, i) => (tl, hold, at) => {
+		fade(tl, i ? figures[i - 1] : headline, 0, at, hold);
+		if (reduceMotion) return fade(tl, figure, 1, at, hold);
+		const { scale } = solo[i].figure;
+		tl.fromTo(figure, { autoAlpha: 0, scale: scale * 0.94 }, { autoAlpha: 1, scale, duration: hold * 0.4, ease: 'power2.out' }, at + hold * 0.05);
+	});
+	// into the row: the last one shrinks into its place as the others come
+	// in from where they stood alone
+	steps.push((tl, hold, at) => {
+		const row = { x: 0, y: 0, scale: 1 };
+		if (reduceMotion) {
+			fade(tl, figures.at(-1), 0, at, hold);
+			tl.set(figures, row).set(captions, { scale: 1 });
+			fade(tl, [...figures, headline], 1, '>', hold);
+			return;
+		}
+		tl.to(figures, { ...row, autoAlpha: 1, duration: hold * 0.5, ease: 'power2.inOut' }, at);
+		tl.to(captions, { scale: 1, duration: hold * 0.5, ease: 'power2.inOut' }, at);
+		fade(tl, headline, 1, at + hold * 0.3, hold * 2);
+	});
+	steps.push(fadeInStep(formula));
+
+	return steps.map((step) => (tl, hold) => step(tl, hold, tl.duration()));
 }
 
 // Today's model, as Sarah lives it: her browser arrives with the page as it
