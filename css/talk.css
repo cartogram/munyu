@@ -1188,6 +1188,13 @@ blockquote.pull-quote::after {
 	}
 	main section[data-scene]:has(> .persona) > p { grid-area: 3 / 1; }
 
+	/* a headline of long words beside an illustration (Personalization
+	   over adaptability): stepped down so its longest word fits the half
+	   width, rather than running under the drawing */
+	main section[data-scene='your-ui-is-not-my-ui-personalization'] > h2 {
+		font-size: calc(96 * var(--u));
+	}
+
 	/* a list in a quote's place (One UI doesn't fit everyone): under
 	   the name, its lines still set left, the list centred as a block, and
 	   stepped down to the quote's size for the half width */
