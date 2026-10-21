@@ -22,12 +22,18 @@ const EVENTS = {
 	'react-advanced': ['React Advanced', 'London 2026'],
 	weyweyweb: ['WeyWeyWeb', 'Málaga 2026'],
 };
-const event = EVENTS[new URLSearchParams(window.location.search).get('event')];
+const eventName = new URLSearchParams(window.location.search).get('event');
+const event = EVENTS[eventName];
 if (event) {
 	const [name, place] = event;
 	const chromeEvent = document.querySelector('.chrome-event');
 	chromeEvent.firstChild.textContent = name;
 	chromeEvent.querySelector('.sub-meta').lastChild.textContent = place;
+	// A scene whose data-cut-at names the event isn't in that event's talk:
+	// gone before the index, the beats and the scroll build over what's left.
+	document.querySelectorAll('[data-cut-at]').forEach((scene) => {
+		if (scene.dataset.cutAt.split(/\s+/).includes(eventName)) scene.remove();
+	});
 }
 
 // Scenes that hold while they play one step per beat. Each step adds its
