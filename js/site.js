@@ -761,6 +761,28 @@ window.addEventListener('load', () => {
 	rebuild();
 	restoreHash();
 });
+
+// the band's intro: its text rises out from under the cards' top edge
+// (css/talk.css, .is-band-intro).
+// Played once the page has loaded and been rebuilt, so that long task
+// doesn't eat its start, but no later than 1.2s in on a slow network.
+let bandIntro = document.documentElement.classList.contains('is-band-intro');
+function playBandIntro() {
+	if (!bandIntro) return;
+	bandIntro = false;
+	requestAnimationFrame(() => gsap.fromTo(document.documentElement, { '--intro': 1 }, {
+		'--intro': 0,
+		duration: 0.9,
+		ease: 'power3.out',
+		onComplete: () => {
+			document.documentElement.classList.remove('is-band-intro');
+			gsap.set(document.documentElement, { clearProps: '--intro' });
+		},
+	}));
+}
+if (document.readyState === 'complete') playBandIntro();
+else window.addEventListener('load', playBandIntro);
+setTimeout(playBandIntro, 1200);
 // In the lite deck anything that changes the page's height (fonts, a late
 // image) moves the beats under it, so they're measured again.
 if (lite) new ResizeObserver(() => setup()).observe(document.querySelector('main'));
@@ -1010,6 +1032,8 @@ if (titleWords) {
 if (titleWords && !lite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 	gsap.set(titleInfo, { autoAlpha: 0 });
 	[...titleWords.children].forEach((word, k) => gsap.set(word, TITLE_SIDES[k](word)));
+	// off the card and hidden now, so the head's pre-paint hiding can go
+	document.documentElement.classList.remove('is-title-intro');
 	// after the fonts, so the words are split and measured in the title's face
 	document.fonts.ready.then(() => {
 		const words = [...titleWords.children];

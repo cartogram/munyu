@@ -11,8 +11,15 @@
 		(() => {
 			const forced = new URLSearchParams(location.search).get('motion');
 			const query = matchMedia('(max-width: 699px), (pointer: coarse) and (max-height: 500px)');
-			document.documentElement.classList.toggle('is-lite', forced ? forced === 'lite' : query.matches);
+			const lite = forced ? forced === 'lite' : query.matches;
+			document.documentElement.classList.toggle('is-lite', lite);
 			if (!forced) query.addEventListener('change', () => location.reload());
+			// the intros (js/site.js) build the title from nothing and raise the
+			// band's text, so both start in their first frame rather than
+			// painting whole before the script runs
+			const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+			document.documentElement.classList.toggle('is-title-intro', !lite && !still);
+			document.documentElement.classList.toggle('is-band-intro', !lite && !still);
 		})();
 	</script>
 
@@ -1500,19 +1507,25 @@
 				</fieldset>
 			</div>
 			<div id="notes-drawer-content" class="notes-content"></div>
-			<!-- the authors, full width; below them the design system and source
-				     code in two columns, then the other ways to read the talk, as a
-				     sentence (css/talk.css) -->
+			<!-- on the rule above, the other ways to read the talk, as a bar
+				     like the notes' switch; then the authors, full width; below them
+				     the questions and sources, and the design system and source code,
+				     in two columns (css/talk.css) -->
 			<footer class="drawer-footer">
+				<ul class="footer-versions" aria-label="Other versions">
+					<li><a href="?motion=lite">Calm version</a></li>
+					<li><button type="button" data-print>Print version</button></li>
+				</ul>
 				<p>A talk by <a href="https://www.simon-lenz.de/">Simon Lenz<svg class="icon" aria-hidden="true">
 							<use href="#icon-arrow-up-right" />
 						</svg></a><br>&amp; <a href="https://www.cartogram.ca/">Matt Seccafien<svg class="icon" aria-hidden="true">
 							<use href="#icon-arrow-up-right" />
 						</svg></a></p>
 				<div class="footer-row">
-					<p class="footer-links"><a href="qa.html">Questions</a>, <a href="sources.html">sources</a>,<br><a
-							href="?motion=lite">calm
-							version</a> or <button type="button" data-print>print</button>.</p>
+					<ul class="footer-links">
+						<li><a href="qa.html">Questions</a></li>
+						<li><a href="sources.html">Sources</a></li>
+					</ul>
 					<ul class="footer-links">
 						<li><a href="system.html">Design system</a></li>
 						<li><a href="https://github.com/cartogram/munyu">Source code</a></li>

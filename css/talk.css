@@ -271,6 +271,20 @@ main [data-scene='your-ui-is-not-my-ui-title'] :is(.title-words, .title-centre) 
 	margin: 0;
 }
 
+/* hidden until the title intro takes over (.is-title-intro, set in
+   index.html's head and cleared by js/site.js), so the title doesn't paint
+   whole first; shown after a few seconds anyway if the script never runs */
+.is-title-intro main [data-scene='your-ui-is-not-my-ui-title'] :is(.title-words, .title-centre > *) {
+	animation: title-intro-fallback 0s 3s forwards;
+	visibility: hidden;
+}
+
+@keyframes title-intro-fallback {
+	to {
+		visibility: visible;
+	}
+}
+
 /* the lines: Your UI at the top left, is not my set right across the
    middle, and UI along the bottom, under the first UI. Your, my and the
    UIs are words of their own, so each can move on its own (js/site.js);
@@ -1486,6 +1500,35 @@ main .branching-illustration {
 	top: calc((var(--inset-top) - 1lh) / 2);
 }
 
+/* on load (.is-band-intro, set in index.html's head; js/site.js tweens
+   --intro from 1 to 0 and then clears it): the band's text rises out from
+   under the cards' top edge, cut off at it. Shown in place after a few
+   seconds if the script never runs. */
+.is-band-intro {
+	--intro: 1;
+	animation: band-intro-fallback 0s 3s forwards;
+}
+
+.is-band-intro .deck-chrome {
+	clip-path: inset(0 0 calc(100% - var(--inset-top)) 0);
+}
+
+.is-band-intro :is(.chrome-bar, #notes-toggle) {
+	transform: translateY(calc(var(--inset-top) * var(--intro)));
+}
+
+/* the toggle's clip is its own, so it's set where the edge falls in its
+   box: the edge, less its top and how far it's moved down */
+.is-band-intro #notes-toggle {
+	clip-path: inset(0 0 calc(100% - (var(--inset-top) - (var(--inset-top) - var(--toggle-size)) / 2 - var(--inset-top) * var(--intro))) 0);
+}
+
+@keyframes band-intro-fallback {
+	to {
+		--intro: 0;
+	}
+}
+
 /* leaves the band's left-hand corner to the notes toggle */
 .chrome-talk {
 	left: var(--title-left);
@@ -1731,11 +1774,13 @@ body.is-collapsed .act-panel::after {
    below the rule as it does in from the side and up from the bottom. */
 .drawer-footer {
 	margin: auto calc(-1 * var(--pad-right)) 0 calc(-1 * var(--pad-left));
-	padding: var(--pad-left) var(--pad-right) 0 var(--pad-left);
+	/* at least the room the versions bar on the rule needs over the authors */
+	padding: max(var(--pad-left), 1.75rem) var(--pad-right) 0 var(--pad-left);
 	border-top: 1px solid var(--act-color, #000);
 	font-size: 0.8125rem; /* 13px */
 	color: var(--grey-600);
 	/* the authors, the links and the copyright: three groups, evenly apart */
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -1746,9 +1791,9 @@ body.is-collapsed .act-panel::after {
 	margin: 0;
 }
 
-/* the links below the authors: a sentence of the other ways to read the
-   talk, with the design system and source code stacked to its right; a
-   pixel smaller than the authors' links, and without their arrow */
+/* the links below the authors: the questions and sources, with the design
+   system and source code stacked to their right; a pixel smaller than the
+   authors' links, and without their arrow */
 .footer-row {
 	display: flex;
 	align-items: flex-start;
@@ -1763,6 +1808,36 @@ ul.footer-links {
 	margin: 0;
 	padding: 0;
 	list-style: none;
+}
+
+/* the calm and print versions: a bar like the notes' switch (.notes-view),
+   set on the rule above the footer, which runs behind it as the speaker
+   badge's rule does, its text lined up with the authors' below */
+.footer-versions {
+	position: absolute;
+	top: 0;
+	left: calc(var(--pad-left) - 0.75rem - 1px);
+	translate: 0 -50%;
+	display: flex;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border: 1px solid var(--act-color, #000);
+	border-radius: 999px;
+	background: #fff;
+	font-size: 0.75rem; /* 12px, the badge size */
+	line-height: 1.4;
+	white-space: nowrap;
+}
+
+.footer-versions li + li {
+	border-left: 1px solid var(--act-color, #000);
+}
+
+.drawer-footer .footer-versions :is(a, button) {
+	display: block;
+	padding: 0.1em 0.75rem;
+	line-height: inherit;
 }
 
 /* the copyright's year and symbol in the serif italic, as the sub-meta */
