@@ -602,6 +602,15 @@ main h2,
 	margin: 0 auto 0.5em;
 }
 
+/* a headline only keeps that size when it's the whole slide (the
+   hypothesis, Thank you); beside anything else, a quote, a list, an
+   illustration, it steps down to leave them the room. The speaker notes
+   and text only for screen readers don't count; the title and credits
+   slides size their own title. */
+main section[data-scene]:not([data-scene='your-ui-is-not-my-ui-title'], [data-scene='credits']):has(> :not(h2, aside.notes, .visually-hidden)) > h2 {
+	font-size: calc(96 * var(--u));
+}
+
 main h3,
 .heading--3 {
 	font-size: 1.25em;
@@ -703,12 +712,9 @@ main section[data-scene='key-takeaways'] strong {
 	font-weight: 700;
 }
 
-/* the formula slide's headline, set as one line: the operators quiet, the
-   two terms underlined to tie them to the definitions beneath */
-main h2.formula {
-	font-size: calc(112 * var(--u));
-}
-
+/* the formula slide's headline, set as one line (at the stepped-down size,
+   above): the operators quiet, the two terms underlined to tie them to the
+   definitions beneath */
 .formula-op {
 	color: color-mix(in srgb, currentColor 45%, white);
 	font-weight: 400;
@@ -747,11 +753,8 @@ main section[data-scene='ui-equals-f-intent'] {
 }
 
 /* this slide and ui-equals-f-empathy hang from their heading at one
-   height, set at the formula’s size so the row below keeps its room */
-main section:is([data-scene='ui-equals-f-intent'], [data-scene='ui-equals-f-empathy']) > h2 {
-	font-size: calc(112 * var(--u));
-}
-
+   height (both at the stepped-down size, above), so the row below keeps
+   its room */
 @media (min-width: 700px) {
 	main section:is([data-scene='ui-equals-f-intent'], [data-scene='ui-equals-f-empathy']) {
 		justify-content: flex-start;
@@ -1206,13 +1209,6 @@ main section[data-scene='the-economics-just-changed'] blockquote.pull-quote {
 		line-height: 1;
 	}
 	main section[data-scene]:has(> .persona) > p { grid-area: 3 / 1; }
-
-	/* a headline of long words beside an illustration (Personalization
-	   over adaptability): stepped down so its longest word fits the half
-	   width, rather than running under the drawing */
-	main section[data-scene='your-ui-is-not-my-ui-personalization'] > h2 {
-		font-size: calc(96 * var(--u));
-	}
 
 	/* a list in a quote's place (One UI doesn't fit everyone): under
 	   the name, its lines still set left, the list centred as a block, and
