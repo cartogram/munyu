@@ -58,6 +58,9 @@ catch a stale one.
     units past what it hides. Otherwise the trim shows its outline.
   - **Fine lines:** small details and fine linework (eyes, numbers, grids)
     take `data-finish="edge"` to keep their drawn weight.
+- **Fading a shape.** `data-opacity="0.6"` fades a shape, finish and all,
+  without changing its ramp step (the bespoke slide's crowd of faded bubbles).
+  It's the one exception to colour by lightness, so use it sparingly.
 - **Per-illustration settings.** `CUT_FOR` overrides the `CUT` settings for
   one illustration. Amelia's finer trace uses thinner strips, for example.
 

@@ -22,7 +22,7 @@ const DIR = new URL('../media/personas/', import.meta.url);
 const SRC = new URL('originals/', DIR);
 const { acts: ACTS, ramp: RAMP } = tokens();
 const PAD = 0.06; // padding around the drawing, as a share of the frame
-const CUT_PAPER = new Set(['molly.svg', 'amelia.svg', 'sarah.svg', 'rose.svg', 'myron.svg', 'michael.svg', 'user-interviews.svg', 'demo-two-people.svg', 'todays-model.svg', 'back-to-sarah.svg', 'ui-equals-f-empathy.svg', 'one-interface-cant-fit-everyone.svg', 'your-ui-is-not-my-ui-personalization.svg']);
+const CUT_PAPER = new Set(['molly.svg', 'amelia.svg', 'sarah.svg', 'rose.svg', 'myron.svg', 'michael.svg', 'user-interviews.svg', 'demo-two-people.svg', 'todays-model.svg', 'back-to-sarah.svg', 'ui-equals-f-empathy.svg', 'one-interface-cant-fit-everyone.svg', 'your-ui-is-not-my-ui-personalization.svg', 'imagine-everything-bespoke.svg']);
 // per-illustration changes to the CUT settings: Amelia's trace has finer lines
 // than the rest, so its strips are thinner and swing less
 const CUT_FOR = { 'amelia.svg': { strip: 0.8, weight: { frequency: 0.006, scale: 2.5 } } };
@@ -103,7 +103,11 @@ export function normalize(src, act, cutPaper, file) {
 		const finish = attrs.match(/\bdata-finish="(\w+)"/)?.[1];
 		const part = attrs.match(/\bdata-part="([^"]+)"/)?.[1];
 		const hidden = /\bdata-hidden\b/.test(attrs);
-		return { d, step: step(c), box, breadth, light, rule, finish, part, hidden };
+		// and fade a shape, finish and all, without changing its ramp step (a
+		// crowd of faded bubbles, some fainter than others): data-opacity="0.6"
+		const fade = attrs.match(/\bdata-opacity="([\d.]+)"/)?.[1];
+		const opacity = fade ? ` opacity="${fade}"` : '';
+		return { d, step: step(c), box, breadth, light, rule, finish, part, hidden, opacity };
 	});
 	const paths = elements.filter((e) => !e.text);
 	// the drawing in order, each run of one part's shapes wrapped in a
@@ -130,7 +134,7 @@ export function normalize(src, act, cutPaper, file) {
 
 	const vb = [vx, vy, side, side].map((v) => +v.toFixed(2)).join(' ');
 	if (!cutPaper) {
-		const body = draw((p) => `<path fill="${shade(p.step)}"${p.rule} d="${p.d}"/>`);
+		const body = draw((p) => `<path fill="${shade(p.step)}"${p.rule}${p.opacity} d="${p.d}"/>`);
 		return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}">${body}</svg>\n`;
 	}
 
@@ -172,8 +176,8 @@ export function normalize(src, act, cutPaper, file) {
 	}
 	const body = draw((p) => {
 		const s = twin.get(p);
-		if (s) return `<path fill="${shade(p.step)}"${s.rule} filter="url(#${filter(s)})" transform="translate(${+(p.box[0] - s.box[0]).toFixed(2)} ${+(p.box[1] - s.box[1]).toFixed(2)})" d="${s.d}"/>`;
-		return `<path fill="${shade(p.step)}"${p.rule} filter="url(#${filter(p)})" d="${p.d}"/>`;
+		if (s) return `<path fill="${shade(p.step)}"${s.rule}${p.opacity} filter="url(#${filter(s)})" transform="translate(${+(p.box[0] - s.box[0]).toFixed(2)} ${+(p.box[1] - s.box[1]).toFixed(2)})" d="${s.d}"/>`;
+		return `<path fill="${shade(p.step)}"${p.rule}${p.opacity} filter="url(#${filter(p)})" d="${p.d}"/>`;
 	});
 	// The wash: the lighter coloured pieces again, a little out of register,
 	// spread and bled, like a watercolour layer printed off the cut paper. Each
