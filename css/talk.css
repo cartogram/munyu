@@ -477,6 +477,29 @@ main [data-scene='credits'] .credits-title {
 	margin-block: -0.1em;
 }
 
+/* where to find the talk again, for the room to read off the screen: the
+   address without its https://, bold in the act's colour, pulled up close
+   under the title it belongs to */
+main [data-scene='credits'] .credits-url {
+	margin-top: calc(-36 * var(--u));
+	font-family: var(--font-sans);
+	font-size: calc(44 * var(--u));
+	font-weight: 700;
+	line-height: 1.2;
+	overflow-wrap: anywhere;
+}
+
+main [data-scene='credits'] .credits-url a {
+	color: var(--act-color);
+	text-decoration: none;
+}
+
+main [data-scene='credits'] .credits-url a:is(:hover, :focus-visible) {
+	text-decoration: underline;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
+}
+
 /* the names link to the speakers' sites, as in the drawer's footer */
 main [data-scene='credits'] .title-speaker a {
 	color: var(--act-color);
@@ -538,8 +561,8 @@ main [data-scene='credits'] .credits-links button {
 
 main [data-scene='credits'] :is(.credits-links :is(a, button), .title-speaker a):is(:hover, :focus-visible) {
 	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 0.07em;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
 }
 
 /* the year in the serif italic, as the chrome's sub-meta */
@@ -771,6 +794,53 @@ main section[data-scene='ui-equals-f-intent'] > h2 {
 	}
 }
 
+/* apps-cant-predict-you: a slot for the Google Maps screenshot the notes
+   describe, until the capture is in media/apps-cant-predict-you-google-maps.webp.
+   On a wide screen the scene is exactly the card, and the slot is the largest
+   16:10 frame that fits under the headline. */
+main section[data-scene='apps-cant-predict-you'] .maps-shot {
+	width: 100%;
+	margin-top: calc(32 * var(--u));
+}
+
+main section[data-scene='apps-cant-predict-you'] .maps-shot p {
+	display: grid;
+	place-items: center;
+	width: min(100%, calc(960 * var(--u)));
+	aspect-ratio: 16 / 10;
+	margin: 0 auto;
+	border: calc(2 * var(--u)) dashed var(--act-color);
+	border-radius: calc(12 * var(--u));
+	background: color-mix(in srgb, var(--act-color) 6%, white);
+	color: var(--act-color);
+	font-weight: 700;
+}
+
+@media screen and (min-width: 700px) {
+	main section[data-scene='apps-cant-predict-you'] {
+		height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
+		justify-content: flex-start;
+	}
+
+	main section[data-scene='apps-cant-predict-you'] > h2 {
+		margin-bottom: calc(40 * var(--u));
+	}
+
+	main section[data-scene='apps-cant-predict-you'] .maps-shot {
+		display: grid;
+		flex: 1 1 auto;
+		place-items: center;
+		min-height: 0;
+		margin-top: 0;
+		container-type: size;
+	}
+
+	main section[data-scene='apps-cant-predict-you'] .maps-shot p {
+		width: min(100cqw, calc(100cqh * 1.6), calc(1280 * var(--u)));
+		max-height: 100cqh;
+	}
+}
+
 /* the people who gain from the formula's second half:
    their medallions (media/personas/ui-equals-f-empathy.webp) and under each,
    what they no longer need. The illustration is drawn on the set's square
@@ -959,7 +1029,8 @@ main em {
 main a {
 	color: inherit;
 	text-decoration: underline;
-	text-underline-offset: 0.15em;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
 }
 
 main img,
@@ -1116,6 +1187,17 @@ blockquote.pull-quote::after {
 		line-height: 1;
 	}
 	main section[data-scene]:has(> .persona) > p { grid-area: 3 / 1; }
+
+	/* a list in a quote's place (One UI doesn't fit everyone): under
+	   the name, its lines still set left, the list centred as a block, and
+	   stepped down to the quote's size for the half width */
+	main section[data-scene]:has(> .persona) > ul {
+		grid-area: 3 / 1;
+		width: fit-content;
+		margin-top: var(--persona-gap);
+		font-size: calc(42 * var(--u));
+		text-align: left;
+	}
 
 	main section[data-scene]:has(> .persona) > p,
 	.persona > :is(blockquote, p) {
@@ -1412,8 +1494,8 @@ main .branching-illustration {
 /* underlined on hover as the index's entries are */
 .chrome-home:is(:hover, :focus-visible) {
 	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 0.07em;
+	text-decoration-thickness: var(--underline-thickness-nav);
+	text-underline-offset: var(--underline-offset);
 }
 
 .chrome-event {
@@ -1700,8 +1782,8 @@ ul.footer-links {
 
 .drawer-footer :is(a, button):is(:hover, :focus-visible) {
 	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 0.07em;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
 }
 
 /* a diagonal arrow up and to the right, beside each author */
@@ -1787,8 +1869,8 @@ ul.footer-links {
 /* the other one underlines on hover as the drawer's links do */
 .notes-view label:not(:has(:checked)):hover {
 	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 0.07em;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
 }
 
 /* the chosen one lifted: the pill holds the index's current-entry tint,
@@ -1890,7 +1972,8 @@ ul.footer-links {
 #notes-drawer-content a {
 	color: inherit;
 	text-decoration: underline;
-	text-underline-offset: 0.15em;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
 }
 
 /* who speaks from here on: a pill outlined like the drawer's rules, its
@@ -2074,8 +2157,8 @@ ul.footer-links {
 
 .toc-link:is(:hover, :focus-visible) .toc-title {
 	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 0.07em;
+	text-decoration-thickness: var(--underline-thickness-nav);
+	text-underline-offset: var(--underline-offset);
 }
 
 /* the current scene */
@@ -2483,8 +2566,8 @@ main {
 
 .video-play:is(:hover, :focus-visible) {
 	text-decoration: underline;
-	text-decoration-thickness: max(2px, 0.08em);
-	text-underline-offset: 0.07em;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
 }
 
 .video-play:focus-visible {
@@ -2601,8 +2684,8 @@ main {
 
 .page :is(.page-back, .page-text, .page-meta) a:is(:hover, :focus-visible) {
 	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 0.07em;
+	text-decoration-thickness: var(--underline-thickness);
+	text-underline-offset: var(--underline-offset);
 }
 
 .page :is(.page-back, .page-text, .page-meta) a svg {
@@ -3020,6 +3103,11 @@ main {
 		content: ' (' attr(href) ')';
 		font-size: 0.85em;
 		word-break: break-all;
+	}
+
+	/* ...except the credits' address, which already reads as one */
+	main .credits-url a::after {
+		content: none;
 	}
 }
 

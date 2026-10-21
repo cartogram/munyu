@@ -119,6 +119,14 @@
 	--font-sans: 'Aileron', system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	--font-mono: 'Necto Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 	--font-serif: 'Libre Baskerville', Baskerville, 'Times New Roman', serif;
+	/* every link's underline, as the drawer footer's (2px under its 13px
+	   type, just below the baseline) and scaled to the link's own size: in
+	   em, so a 33px address gets a 5px line */
+	--underline-thickness: calc(2em / 13);
+	/* the index and the top bar's title, a touch lighter: 2px under the
+	   index's 15px entries */
+	--underline-thickness-nav: calc(2em / 15);
+	--underline-offset: 0.07em;
 
 	/* ---- theme tokens ---- */
 
