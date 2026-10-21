@@ -15,7 +15,7 @@ import datetime, difflib, pathlib, re, sys
 from html.parser import HTMLParser
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-TARGET = ROOT.parent / 'feldnotes' / '01 Projects' / 'Your UI is not my UI' / 'Your UI is not my UI - Speaker Notes.md'
+TARGET = ROOT.parent / 'feldnotes' / '01 Projects' / 'My UI is not your UI' / 'My UI is not your UI - Speaker Notes.md'
 
 VOID = {'br','img','source','meta','link','input','hr','use','path','circle','rect','line','polyline','polygon'}
 

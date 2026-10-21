@@ -6,7 +6,7 @@ description: Sync Matt's speaker notes from the deck (index.html) into the feldn
 # Sync the speaker notes to Obsidian
 
 `scripts/notes-to-feldnotes.py` rebuilds Matt's speaker notes in the vault
-(`../feldnotes/01 Projects/Your UI is not my UI/Your UI is not my UI - Speaker Notes.md`)
+(`../feldnotes/01 Projects/My UI is not your UI/My UI is not your UI - Speaker Notes.md`)
 from the notes in `index.html`. It overwrites everything below the file's
 header, so an edit made in the vault and never carried into the deck would be
 lost. The deck is the source of truth; the vault is a copy. This skill makes
