@@ -1170,6 +1170,11 @@ blockquote.pull-quote::after {
 	right: 0;
 }
 
+/* Google Research's quote is set centred under its heading */
+main section[data-scene='the-economics-just-changed'] blockquote.pull-quote {
+	text-align: center;
+}
+
 .persona > :is(blockquote, p) {
 	margin: 0 auto;
 }
@@ -1218,6 +1223,17 @@ blockquote.pull-quote::after {
 		margin-top: var(--persona-gap);
 		font-size: calc(42 * var(--u));
 		text-align: left;
+	}
+
+	/* ...and Imagine everything is bespoke sets its heading and list left,
+	   from the column's start */
+	main section[data-scene='imagine-everything-bespoke']:has(> .persona) {
+		justify-items: start;
+		text-align: left;
+	}
+
+	main section[data-scene='imagine-everything-bespoke']:has(> .persona) > :is(h2, ul) {
+		margin-inline: 0;
 	}
 
 	main section[data-scene]:has(> .persona) > p,
