@@ -157,7 +157,7 @@ main section[data-scene] {
 .act-panel[data-act='limits-of-adaptability'] { --fade-angle: 38deg; --fade-to: var(--ramp-deep); --fade-hold: 25%; }
 .act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-deep); --fade-hold: 35%; }
 .act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
-.act-panel[data-act='closing'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
+.act-panel[data-act='thank-you'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
 
 /* act openers blend three colours, as gggrain's grounds do: the act's ink
    held along the bottom under the title, fading up to the previous act's
@@ -179,7 +179,7 @@ main section[data-scene] {
 .act-panel[data-act='limits-of-adaptability'] { --act-prev: var(--act-user-research); }
 .act-panel[data-act='empathy-is-our-point'] { --act-prev: var(--act-limits-of-adaptability); }
 .act-panel[data-act='launching-is-creating'] { --act-prev: var(--act-empathy-is-our-point); }
-.act-panel[data-act='closing'] { --act-prev: var(--act-launching-is-creating); }
+.act-panel[data-act='thank-you'] { --act-prev: var(--act-launching-is-creating); }
 
 /* the chapter number, top right on each act opener: the act's place in the
    talk (as in the notes drawer's index, so the first act, which opens on the
@@ -603,7 +603,7 @@ main h2,
 }
 
 /* a headline only keeps that size when it's the whole slide (the
-   hypothesis, Thank you); beside anything else, a quote, a list, an
+   hypothesis); beside anything else, a quote, a list, an
    illustration, it steps down to leave them the room. The speaker notes
    and text only for screen readers don't count; the title and credits
    slides size their own title. */
@@ -701,11 +701,6 @@ main section[data-scene].branching > h2,
 
 .two-columns > :is(blockquote, p) {
 	margin: 0;
-}
-
-/* the key takeaway: one argument in three steps, each led by its step in bold */
-main section[data-scene='key-takeaways'] strong {
-	font-weight: 700;
 }
 
 /* a bold term as a label above its definition */
