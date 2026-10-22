@@ -41,7 +41,6 @@ if (event) {
 // they've finished.
 const STEPPED_SCENES = {
 	'todays-model': todaysModelSteps,
-	'your-ui-is-not-my-ui-create-specific': (scene) => rotatorSteps(scene.querySelector('ul')),
 	'demo-two-people': branchingSteps,
 	'ui-equals-f-intent': screenshotsSteps,
 };
@@ -143,15 +142,18 @@ function screenshotsSteps(scene) {
 }
 
 // Today's model, as Sarah lives it: her browser arrives with the page as it
-// was built, then each of her extensions in turn: its box slides in beside
-// the browser as its layer is laid on the page (bionic reading, voice
-// control's numbers, dark mode, voice control's number grid). Then empty
-// boxes below them, for every preference still to come. On the last beat the
-// layers jostle and slip out of register with the page and with each other, none
-// aware of the rest, and the boxes go askew. Reduced motion keeps the beats
-// but fades each piece in place and shows the conflict without moving
-// anything.
+// was built. Then, on one beat, her extensions, half a second apart: each
+// box slides in beside the browser as its layer is laid on the page (bionic
+// reading, voice control's numbers, dark mode, voice control's number grid),
+// and last the empty boxes below them, for every preference still to come.
+// On the last beat the layers jostle and slip out of register with the page
+// and with each other, none aware of the rest, and the boxes go askew. Those
+// two beats play in time rather than with the scroll: each sets its
+// timeline off as the reader scrolls into it, and sets it back if they
+// scroll back past its start. Reduced motion fades each piece in place and
+// shows the conflict without moving anything.
 const TODAYS_MODEL_LAYERS = ['bionic', 'numbers', 'dark', 'grid'];
+const TODAYS_MODEL_GAP = 0.5; // seconds between one extension and the next
 
 function todaysModelSteps(scene) {
 	const art = scene.querySelector('svg.todays-model-illustration');
@@ -160,23 +162,24 @@ function todaysModelSteps(scene) {
 	const layers = TODAYS_MODEL_LAYERS.map(part);
 	const boxes = TODAYS_MODEL_LAYERS.map((name) => part(`${name}-box`));
 
-	const fade = (tl, targets, hold, at) => tl.fromTo(targets, { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' }, at);
 	const base = (tl, hold) => {
-		if (reduceMotion) return fade(tl, part('base'), hold);
+		if (reduceMotion) return tl.fromTo(part('base'), { opacity: 0 }, { opacity: 1, duration: hold * STEP_FADE, ease: 'none' });
 		tl.fromTo(part('base'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: hold * 0.5, ease: 'back.out(1.2)' });
 	};
-	// an extension: its box slides in from the right as its layer is laid down
-	// on the page, from a little above it
-	const extension = (i) => (tl, hold) => {
-		if (reduceMotion) return fade(tl, [layers[i], boxes[i]], hold);
-		tl.fromTo(boxes[i], { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: hold * 0.4, ease: 'power2.out' });
-		tl.fromTo(layers[i], { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: hold * 0.4, ease: 'power2.out' }, '<0.05');
-	};
-	// the empty boxes, after the last extension's
-	const more = (tl, hold) => {
-		if (reduceMotion) return fade(tl, part('more-box'), hold);
-		tl.fromTo(part('more-box'), { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: hold * 0.4, ease: 'power2.out' });
-	};
+
+	// the extensions: each box slides in from the right as its layer is laid
+	// down on the page, from a little above it; then the empty boxes
+	const arrive = gsap.timeline({ paused: true });
+	const fade = (targets, at) => arrive.fromTo(targets, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'none' }, at);
+	TODAYS_MODEL_LAYERS.forEach((_, i) => {
+		const at = i * TODAYS_MODEL_GAP;
+		if (reduceMotion) return fade([layers[i], boxes[i]], at);
+		arrive.fromTo(boxes[i], { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' }, at);
+		arrive.fromTo(layers[i], { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, at + 0.05);
+	});
+	const last = TODAYS_MODEL_LAYERS.length * TODAYS_MODEL_GAP;
+	if (reduceMotion) fade(part('more-box'), last);
+	else arrive.fromTo(part('more-box'), { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' }, last);
 
 	// where each layer settles once they've slipped, and how far each box
 	// goes askew: never so far a box lands on its neighbour
@@ -187,19 +190,36 @@ function todaysModelSteps(scene) {
 		grid: { x: -14, y: 12, rotation: 1 },
 	};
 	const ASKEW = [-1.2, 1, -0.8, 1.6];
-	const conflict = (tl, hold) => {
-		tl.fromTo(scene.querySelector('[data-piece="conflict"]'), { opacity: 0 }, { opacity: 1, duration: hold * 0.2, ease: 'none' });
-		if (reduceMotion) return;
-		tl.to([...layers, ...boxes], { x: (i) => (i % 2 ? 6 : -6), duration: hold * 0.05, ease: 'sine.inOut', yoyo: true, repeat: 3 }, '<');
+	const clash = gsap.timeline({ paused: true });
+	clash.fromTo(scene.querySelector('[data-piece="conflict"]'), { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'none' });
+	if (!reduceMotion) {
+		clash.to([...layers, ...boxes], { x: (i) => (i % 2 ? 6 : -6), duration: 0.1, ease: 'sine.inOut', yoyo: true, repeat: 3 }, '<');
 		layers.forEach((layer, i) =>
-			tl.to(layer, { ...SLIPS[TODAYS_MODEL_LAYERS[i]], transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' }, i ? '<' : undefined),
+			clash.to(layer, { ...SLIPS[TODAYS_MODEL_LAYERS[i]], transformOrigin: '50% 50%', duration: 0.6, ease: 'power2.out' }, i ? '<' : undefined),
 		);
 		boxes.forEach((box, i) =>
-			tl.to(box, { x: i % 2 ? 14 : -10, rotation: ASKEW[i], transformOrigin: '50% 50%', duration: hold * 0.3, ease: 'power2.out' }, '<'),
+			clash.to(box, { x: i % 2 ? 14 : -10, rotation: ASKEW[i], transformOrigin: '50% 50%', duration: 0.6, ease: 'power2.out' }, '<'),
 		);
-	};
+	}
 
-	return [base, ...TODAYS_MODEL_LAYERS.map((_, i) => extension(i)), more, conflict];
+	// a beat that sets a timeline off, instead of scrubbing it
+	const played = (onStart, onReverseComplete) => (tl) => tl.to({}, { duration: 1, onStart, onReverseComplete });
+	const extensions = played(
+		() => arrive.restart(),
+		() => {
+			clash.pause(0);
+			arrive.pause(0);
+		},
+	);
+	const conflict = played(
+		() => {
+			arrive.progress(1);
+			clash.restart();
+		},
+		() => clash.reverse(),
+	);
+
+	return [base, extensions, conflict];
 }
 
 // The branching demo: a stack of boxes per person, side by side, built on the
@@ -279,38 +299,52 @@ function branchingSteps(scene) {
 }
 
 // A list whose items share their opening words, shown as one line: the shared
-// words hold still and the endings rotate through a mask, one per beat, each
-// sliding up out as the next rises in. The list stays in the page,
-// visually hidden, for screen readers; the line is hidden from them.
-function rotatorSteps(list) {
+// words hold still and the endings rotate through a mask on their own, one a
+// second, each sliding up out as the next rises in: round twice, to rest on
+// the first again. It turns while the scene is in view (an IntersectionObserver, as the scene
+// slides in sideways inside its pinned card) and starts again from the
+// first ending on return. Reduced motion crossfades them instead. The list
+// stays in the page, visually hidden, for screen readers; the line is
+// hidden from them.
+const ROTATOR_EVERY = 1; // seconds from one ending to the next
+const ROTATOR_ROUNDS = 2; // times round the endings before it rests
+
+function rotatorLoop(list) {
 	const line = list.previousElementSibling?.classList.contains('rotator') ? list.previousElementSibling : buildRotator(list);
 	const endings = [...line.querySelectorAll('.rotator-ending')];
+	let shown = 0;
+	let turns = 0;
+	let timer = null;
 
-	// all but the first ending wait below the mask (or, with reduced motion,
-	// invisible in place). Start from a clean transform: on a rebuild Firefox
-	// hands GSAP the endings' old percent offset as pixels, which it adds to
-	// the new one, so they arrive and leave a line out of place and pile up.
-	const hidden = reduceMotion ? { opacity: 0 } : { yPercent: 110 };
-	gsap.set(endings, { clearProps: 'transform,opacity' });
-	gsap.set(endings.slice(1), hidden);
-
-	return endings.slice(1).map((incoming, i) => (tl, hold) => {
-		const outgoing = endings[i];
+	const reset = () => {
+		timer?.kill();
+		gsap.killTweensOf(endings);
+		gsap.set(endings, { clearProps: 'transform,opacity' });
+		gsap.set(endings.slice(1), { yPercent: 110 });
+		shown = 0;
+		turns = 0;
+	};
+	const turn = () => {
+		const outgoing = endings[shown];
+		shown = (shown + 1) % endings.length;
+		const incoming = endings[shown];
 		if (reduceMotion) {
-			tl.to(outgoing, { opacity: 0, duration: hold * 0.15, ease: 'none' }).fromTo(
-				incoming,
-				{ opacity: 0 },
-				{ opacity: 1, duration: hold * 0.15, ease: 'none' },
-			);
-			return;
+			gsap.set(incoming, { yPercent: 0 });
+			gsap.to(outgoing, { opacity: 0, duration: 0.3, ease: 'none' });
+			gsap.fromTo(incoming, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'none' });
+		} else {
+			gsap.to(outgoing, { yPercent: -110, duration: 0.25, ease: 'power2.in' });
+			gsap.fromTo(incoming, { yPercent: 110, opacity: 1 }, { yPercent: 0, duration: 0.5, ease: 'expo.out', delay: 0.12 });
 		}
-		tl.to(outgoing, { yPercent: -110, duration: hold * 0.25, ease: 'power2.in' }).fromTo(
-			incoming,
-			{ yPercent: 110 },
-			{ yPercent: 0, duration: hold * 0.5, ease: 'expo.out' },
-			`<+=${hold * 0.12}`,
-		);
-	});
+		turns += 1;
+		if (turns < ROTATOR_ROUNDS * endings.length) timer = gsap.delayedCall(ROTATOR_EVERY, turn);
+	};
+
+	reset();
+	new IntersectionObserver(([entry]) => {
+		reset();
+		if (entry.isIntersecting) timer = gsap.delayedCall(ROTATOR_EVERY, turn);
+	}, { threshold: 0.5 }).observe(line);
 }
 
 function buildRotator(list) {
@@ -659,9 +693,13 @@ function scopeIds(svg, prefix) {
 	});
 }
 
-// Today's model: each extension lands on its own beat (todaysModelSteps)
+// Today's model: the extensions land one by one (todaysModelSteps)
 const todaysModelArt = document.querySelector('img.todays-model-illustration');
 if (todaysModelArt && !lite) inlineArt(todaysModelArt, todaysModelSvg);
+
+// A UI generated for your…: its endings turn on their own (rotatorLoop)
+const rotatorList = document.querySelector('[data-scene="your-ui-is-not-my-ui-create-specific"] ul');
+if (rotatorList && !lite) rotatorLoop(rotatorList);
 
 // Back to Sarah, the calm after her storm: when the drawing comes into view,
 // the lines of the page on her laptop are written out one by one and the

@@ -798,8 +798,6 @@ main section[data-scene='ui-equals-f-intent'] > h2 {
 
 .screenshots figcaption {
 	margin-top: calc(20 * var(--u));
-	font-size: calc(32 * var(--u));
-	line-height: 1.3;
 }
 
 @media (max-width: 699px) {
@@ -810,8 +808,8 @@ main section[data-scene='ui-equals-f-intent'] > h2 {
 
 /* apps-cant-predict-you: the Google Maps screenshot the notes describe
    (media/apps-cant-predict-you-google-maps.webp, 2116×1312). On a wide screen
-   the scene is exactly the card, and the screenshot is the largest frame of
-   its shape that fits under the headline. */
+   it sits side by side with the headline, as the persona scenes do: the
+   headline in the left column, the screenshot filling the right. */
 main section[data-scene='apps-cant-predict-you'] .maps-shot {
 	width: 100%;
 	margin-top: calc(32 * var(--u));
@@ -830,25 +828,30 @@ main section[data-scene='apps-cant-predict-you'] .maps-shot img {
 @media screen and (min-width: 700px) {
 	main section[data-scene='apps-cant-predict-you'] {
 		height: calc(100vh - var(--card-top) - var(--inset-bottom) - 2px);
-		justify-content: flex-start;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		column-gap: calc(96 * var(--u));
+		align-items: center;
+		justify-items: center;
 	}
 
 	main section[data-scene='apps-cant-predict-you'] > h2 {
-		margin-bottom: calc(40 * var(--u));
+		grid-area: 1 / 1;
+		margin: 0;
+	}
+
+	/* :is() so it outweighs the scenes' stretch, centring both in the row */
+	main section[data-scene='apps-cant-predict-you'] > :is(h2, .maps-shot) {
+		align-self: center;
 	}
 
 	main section[data-scene='apps-cant-predict-you'] .maps-shot {
-		display: grid;
-		flex: 1 1 auto;
-		place-items: center;
-		min-height: 0;
-		margin-top: 0;
-		container-type: size;
+		grid-area: 1 / 2;
+		margin: 0;
 	}
 
 	main section[data-scene='apps-cant-predict-you'] .maps-shot img {
-		width: min(100cqw, calc(100cqh * 2116 / 1312), calc(1280 * var(--u)));
-		max-height: 100cqh;
+		width: 100%;
 	}
 }
 
@@ -982,6 +985,7 @@ main section[data-scene]:has(> .two-columns) > h2 {
 /* one meta style for authors and labels, the slide chrome and the Notes
    button. rem, so it stays meta-sized inside a 40px paragraph. */
 main small,
+main figcaption,
 .small,
 .act-tab,
 .deck-chrome,
@@ -1177,6 +1181,15 @@ main section[data-scene='the-economics-just-changed'] > h2 {
 	margin-inline: auto;
 }
 
+/* "Imagine everything" is too long for its half of the slide at 96, so the
+   heading steps down a little further to keep to its two lines (as
+   specific as the step-down rule, and after it, so it wins) */
+@media (min-width: 700px) {
+	main section[data-scene='imagine-everything-bespoke']:has(> .persona):has(> aside.notes) > h2 {
+		font-size: calc(76 * var(--u));
+	}
+}
+
 .persona > :is(blockquote, p) {
 	margin: 0 auto;
 }
@@ -1290,34 +1303,74 @@ main section[data-scene='the-economics-just-changed'] > h2 {
 	border-radius: calc(16 * var(--u)) !important;
 }
 
-/* Back to our hypothesis: the podcast's thumbnail, where an illustration
-   would stand. It's evidence, so it keeps its own colours and shape, framed
-   like the generated UIs' screenshots, with its caption under it */
-.persona > .podcast-thumbnail {
-	margin: 0;
-	line-height: normal;
-	overflow: visible;
-	align-self: center;
-}
-
-/* the podcast under By the people, for the people's headline, in the
-   text's column beside the drawing */
-main section[data-scene='democratization-of-software'] > .podcast-thumbnail {
+/* By the people, for the people: Maggie Appleton's drawing and the podcast
+   she talked about it on, evidence in their own colours and shapes, framed
+   like the generated UIs' screenshots, each with its caption under it. On
+   phones they stack under the headline. */
+.overlapping-figures {
+	display: flex;
+	flex-direction: column;
+	gap: var(--persona-gap);
 	width: min(100%, calc(560 * var(--u)));
-	margin: var(--persona-gap) auto 0;
 }
 
+.podcast-thumbnail {
+	margin: 0;
+}
+
+/* beside the headline, the drawing sits top left and the podcast over it,
+   across its bottom right corner. Percentages of the column's width: the
+   drawing is 58% wide (its image 49% tall), the podcast 55%, rising 18%
+   into it. The drawing's caption hangs under it, out of the flow, in the
+   45% the podcast leaves free. */
 @media (min-width: 700px) {
-	main section[data-scene='democratization-of-software'] > .podcast-thumbnail {
-		grid-area: 3 / 1;
+	.overlapping-figures {
+		grid-column: 2;
+		grid-row: 1 / -1;
+		display: block;
+		width: 100%;
+		text-align: left;
 	}
 
-	.persona > .podcast-thumbnail {
-		width: 100%;
-		height: auto;
-		aspect-ratio: auto;
-		contain: none;
+	.overlapping-figures > .podcast-thumbnail:first-child {
+		position: relative;
+		width: 58%;
 	}
+
+	.overlapping-figures > .podcast-thumbnail:first-child figcaption {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		width: calc(45 / 58 * 100% - var(--persona-gap) / 2);
+		text-align: left;
+	}
+
+	.overlapping-figures > .podcast-thumbnail:last-child {
+		position: relative;
+		z-index: 1;
+		width: 55%;
+		margin: -18% 0 0 auto;
+	}
+
+	/* a ring of the card's white round its frame cuts it clear of the drawing */
+	.overlapping-figures > .podcast-thumbnail:last-child img {
+		box-shadow: 0 0 0 2px var(--act-color), 0 0 0 calc(14 * var(--u)) var(--r-background-color);
+	}
+}
+
+/* its headline sets left, from the column's start, as a headline over a
+   list does */
+@media (min-width: 700px) {
+	main section[data-scene='democratization-of-software'] > h2 {
+		width: 100%;
+		margin-inline: 0;
+		text-align: left;
+	}
+}
+
+/* where and when, after a caption's title, in the regular weight */
+.caption-detail {
+	font-weight: 400;
 }
 
 .podcast-thumbnail img {
@@ -1330,9 +1383,6 @@ main section[data-scene='democratization-of-software'] > .podcast-thumbnail {
 
 .podcast-thumbnail figcaption {
 	margin-top: calc(20 * var(--u));
-	font-size: calc(32 * var(--u));
-	line-height: 1.3;
-	text-align: center;
 }
 
 /* persona illustrations, pre-tinted into shades of the act's colour by
