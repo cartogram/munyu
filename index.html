@@ -3,6 +3,10 @@
 
 <head>
 	<meta charset="utf-8" />
+	<!-- before the script below: until the viewport is set, a phone lays the
+		     page out 980px wide, so the script would pick the full deck, and then
+		     reload into the lite one as soon as the viewport applied, every time -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<!-- Phones read the talk as a plain column (.is-lite): native scrolling,
 		     no pinned cards, scrubbed builds or grain (js/site.js, css/talk.css).
 		     Decided before the first paint; ?motion=lite or ?motion=full forces
@@ -60,7 +64,6 @@
 	<meta name="mobile-web-app-capable" content="yes" />
 	<meta name="mobile-web-app-status-bar-style" content="black-translucent" />
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 	<link rel="stylesheet" href="css/reset.css" />
 
@@ -1266,7 +1269,7 @@
 									alt="Maggie Appleton’s drawing of a barefoot developer: a stick figure in a big orange circle, beside a smaller circle labelled LLM agent"
 									width="852" height="724" />
 								<figcaption>Maggie Appleton, <cite>Home-Cooked Software and Barefoot Developers</cite>,
-									<span class="caption-detail">Local-first Conference, Berlin, 2024</span></figcaption>
+									<br /><span class="caption-detail">Local-first Conference, Berlin, 2024</span></figcaption>
 							</figure>
 							<figure class="podcast-thumbnail">
 								<img src="media/democratization-of-software-pragmatic-engineer.webp"
