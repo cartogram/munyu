@@ -16,13 +16,13 @@ ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilityc
 // still WebP. The beats, index, notes, keys and hash all work as before.
 const lite = document.documentElement.classList.contains('is-lite');
 
-// The event in the top band: React Advanced as written in index.html, or the
-// talk's event named by ?event= (?event=react-advanced or ?event=weyweyweb).
+// The event in the top band: WeyWeyWeb as written in index.html, or the
+// talk's event named by ?event= (?event=weyweyweb or ?event=react-advanced).
 const EVENTS = {
 	'react-advanced': ['React Advanced', 'London 2026'],
 	weyweyweb: ['WeyWeyWeb', 'Málaga 2026'],
 };
-const eventName = new URLSearchParams(window.location.search).get('event') || 'react-advanced';
+const eventName = new URLSearchParams(window.location.search).get('event') || 'weyweyweb';
 const event = EVENTS[eventName];
 if (event) {
 	const [name, place] = event;

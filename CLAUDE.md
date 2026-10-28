@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Structure
 
-- `index.html`: the content. Acts are `main > section[data-act].act-panel`; each scene is a `section[data-scene]`; speaker notes live in `aside.notes` and feed the notes drawer. `?event=react-advanced` (the default, or `weyweyweb`) sets the event in the top band, and drops every scene whose `data-cut-at` names that event.
+- `index.html`: the content. Acts are `main > section[data-act].act-panel`; each scene is a `section[data-scene]`; speaker notes live in `aside.notes` and feed the notes drawer. `?event=weyweyweb` (the default, or `react-advanced`) sets the event in the top band, and drops every scene whose `data-cut-at` names that event.
 - `js/site.js`: scroll choreography (GSAP ScrollTrigger), beat stops, keyboard navigation, hash sync, notes drawer, reduced-motion handling.
 - `css/talk.css`: all styles and the type system, including the act openers' grained gradients (one per act) and chapter numbers; the theme tokens (`--act-*`, `--ramp-*`) sit at the top of `:root`. `css/reset.css` is the reset.
 - `sources.html`: the talk's sources, each with the slides it supports. A scene's notes link to an entry by its id (`sources.html#<id>`) in a `<small>` line at their end.
