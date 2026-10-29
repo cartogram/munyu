@@ -462,8 +462,9 @@ main [data-scene='your-ui-is-not-my-ui-title'] .title-abstract {
    split or animated), then the speakers as on the title slide, and the
    drawer footer's links in a row. */
 main section[data-scene='credits'] {
+	position: relative;
 	justify-content: center;
-	gap: calc(72 * var(--u));
+	gap: calc(32 * var(--u));
 }
 
 main section[data-scene='credits'] > * {
@@ -495,7 +496,7 @@ main [data-scene='credits'] .credits-title {
    address without its https://, bold in the act's colour, pulled up close
    under the title it belongs to */
 main [data-scene='credits'] .credits-url {
-	margin-top: calc(-36 * var(--u));
+	margin-top: calc(-24 * var(--u));
 	font-family: var(--font-sans);
 	font-size: calc(44 * var(--u));
 	font-weight: 700;
@@ -539,7 +540,7 @@ main [data-scene='credits'] .credits-links {
 	grid-auto-flow: column;
 	gap: calc(2 * var(--u)) calc(96 * var(--u));
 	/* set further off the speakers than the slide's gap */
-	margin-top: calc(72 * var(--u));
+	margin-top: calc(16 * var(--u));
 	padding: 0;
 	list-style: none;
 	color: var(--grey-600);
@@ -555,7 +556,7 @@ main [data-scene='credits'] .credits-links li {
 main [data-scene='credits'] .credits-links .credits-copyright {
 	grid-column: 1 / -1;
 	grid-row: 4;
-	margin-top: calc(36 * var(--u));
+	margin-top: calc(14 * var(--u));
 	font-size: calc(14 * var(--u));
 }
 
@@ -577,6 +578,24 @@ main [data-scene='credits'] :is(.credits-links :is(a, button), .title-speaker a)
 	text-decoration: underline;
 	text-decoration-thickness: var(--underline-thickness);
 	text-underline-offset: var(--underline-offset);
+}
+
+/* the address again as a QR code, in the act's colour, in the slide's
+   bottom right corner, out of the column's flow. Not on a phone: whoever
+   could scan it is already here */
+main [data-scene='credits'] .credits-qr {
+	position: absolute;
+	right: var(--frame-pad-x);
+	bottom: var(--frame-pad-bottom);
+	width: calc(240 * var(--u));
+	height: auto;
+	color: var(--act-color);
+}
+
+@media (max-width: 699px) {
+	main [data-scene='credits'] .credits-qr {
+		display: none;
+	}
 }
 
 /* the year in the serif italic, as the chrome's sub-meta */
