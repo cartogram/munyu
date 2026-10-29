@@ -21,7 +21,7 @@ This file provides guidance to Codex (claude.ai/code) when working with code in 
 - `js/site.js`: scroll choreography (GSAP ScrollTrigger), beat stops, keyboard navigation, hash sync, notes drawer, reduced-motion handling.
 - `css/talk.css`: all styles and the type system, including the act openers' grained gradients (one per act) and chapter numbers; the theme tokens (`--act-*`, `--ramp-*`) sit at the top of `:root`. `css/reset.css` is the reset.
 - `sources.html`: the talk's sources, each with the slides it supports. A scene's notes link to an entry by its id (`sources.html#<id>`) in a `<small>` line at their end.
-- `qa.html`: the questions we expect after the talk, each with a short and a fuller answer. Not linked from the deck; sources.html links to a question by its id (`qa.html#<id>`).
+- `qa.html`: the questions we expect after the talk, each with a short and a fuller answer and the slides it picks up from. Linked from the credits; sources.html links to a question by its id (`qa.html#<id>`).
 - `system.html`: the live specimen — type, act colours, illustrations and every layout, built from `css/talk.css` and `index.html` at runtime.
 - `DESIGN.md`: the design rules and how to add a persona, act or media file. Read it before changing the look.
 - `scripts/personas/`: each persona illustration's edits (`<scene>.mjs`), the shared drawing helpers (`draw.mjs`) and tools to inspect and render SVGs (`tools/`). Use the `persona-illustration` skill to add, change or animate an illustration.

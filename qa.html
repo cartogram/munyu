@@ -5,14 +5,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Questions — Your UI is not my UI</title>
 		<link rel="canonical" href="https://your-ui-is-not-my-ui.cartogram.ca/qa.html" />
-		<meta name="description" content="The questions we expect after the talk Your UI is not my UI, with a short answer and a fuller one." />
+		<meta name="description" content="The questions we expect after the talk Your UI is not my UI, each with a short answer, a fuller one and the slides it picks up from." />
 		<meta name="theme-color" content="#265085" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="Your UI is not my UI" />
 		<meta property="og:title" content="Questions — Your UI is not my UI" />
-		<meta property="og:description" content="The questions we expect after the talk Your UI is not my UI, with a short answer and a fuller one." />
+		<meta property="og:description" content="The questions we expect after the talk Your UI is not my UI, each with a short answer, a fuller one and the slides it picks up from." />
 		<meta property="og:url" content="https://your-ui-is-not-my-ui.cartogram.ca/qa.html" />
 		<meta property="og:image" content="https://your-ui-is-not-my-ui.cartogram.ca/og-image.jpg" />
 		<meta name="twitter:card" content="summary_large_image" />
@@ -21,10 +21,10 @@
 		<link rel="stylesheet" href="css/talk.css" />
 
 		<!-- The questions we expect after the talk, in the reading pages' type
-		     from css/talk.css (shared with sources.html and system.html). Not
-		     linked from the deck. Each question has a stable id that
+		     from css/talk.css (shared with sources.html and system.html), linked
+		     from the deck's credits. Each question has a stable id that
 		     sources.html links to (qa.html#<id>): under it the short answer,
-		     then the fuller one. -->
+		     the fuller one, then the slides it picks up from. -->
 		<style>
 			.qa {
 				max-width: 44rem;
@@ -34,8 +34,13 @@
 				margin-top: 4rem;
 			}
 
-			.qa section:target .page-heading {
-				border-bottom-width: 2px;
+			/* each question in the lead style, the answers under it */
+			.qa h2.lead {
+				margin: 0 0 1rem;
+			}
+
+			.qa section:target h2.lead {
+				color: var(--act-hypothesis);
 			}
 
 			/* the short answer in the weight sources.html gives a work's title */
@@ -57,112 +62,192 @@
 			<header class="page-header">
 				<p class="page-back"><a href="index.html">Presentation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg></a></p>
 				<h1 class="page-title">Questions</h1>
-				<p class="page-text">The questions we expect after the talk. Each has a short answer, then a fuller one.</p>
 			</header>
 
-			<section id="doesnt-this-just-hand-more-power">
-				<h2 class="page-heading">&ldquo;Doesn’t this just hand more power to whoever owns the AI?&rdquo;</h2>
-				<p class="page-text qa-short">A generated UI can be empathetic to <em>you</em> &mdash; or to whoever <em>owns</em> it.</p>
+			<section id="arent-six-interviews-too-few">
+				<h2 class="lead">Six interviews &mdash; isn’t that too few to conclude anything?</h2>
+				<p class="page-text qa-short">Too few to measure anything, enough to test a hypothesis. They’re why ours changed.</p>
 				<p class="page-text">
-					There’s a plausible future where your agent generates the interface and you never see
-					the underlying app &mdash; the &ldquo;buy&rdquo; button drawn for you by the platform,
-					tuned to <em>its</em> goals, not yours. Same technology, pointed the opposite way. The
-					capability that could give Sarah an interface shaped around her could give a platform
-					one shaped around its incentives. The deciding factor is who the UI is empathetic
-					<em>to</em> &mdash; which is exactly why local, user-owned generation matters.
+					We didn’t set out to measure anything. We had a hypothesis &mdash; that chatbots and agents
+					are a revolution for accessibility &mdash; and we wanted to test it against real people’s
+					days rather than our own assumptions. Too often people talk <em>about</em> people with
+					disabilities, not <em>with</em> them.
 				</p>
+				<p class="page-text">
+					Six long conversations, recruited through Fable, were enough to break that hypothesis. Every
+					one of them had adapted their setup, and every one of them still ran into its limits. That
+					pattern, not a statistic, is what the rest of the talk builds on.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#hypothesis/hypothesis">Hypothesis</a> &middot; <a href="index.html#user-research/user-interviews">Interviews</a></p>
 			</section>
 
-			<section id="if-everyones-ui-is-different">
-				<h2 class="page-heading">&ldquo;If everyone’s UI is different, don’t we lose common ground?&rdquo;</h2>
-				<p class="page-text qa-short">Real cost. Keep the periphery visible &mdash; personal shouldn’t mean sealed.</p>
+			<section id="isnt-this-just-settings">
+				<h2 class="lead">Isn’t this just better settings and personalization?</h2>
+				<p class="page-text qa-short">No. Settings bend one interface toward you; we’re saying start from you.</p>
 				<p class="page-text">
-					Yes &mdash; you and I could buy the same thing and never know, because our interfaces
-					showed it differently. And a UI that only shows what it thinks you need is a filter
-					bubble: you stop stumbling on the useful thing you weren’t looking for. Honest answer:
-					it’s a real cost, and the mitigation is to keep peripheral information visible &mdash; a
-					personal UI shouldn’t be a sealed one. Worth naming rather than pretending
-					personalization is free.
+					Settings, plugins and assistive technology are adaptation: layers stacked on one interface
+					built for the average person. That model got us a long way &mdash; watching Myron work, the
+					barriers can get remarkably low. But every layer adds complexity. Sarah’s bold-reading plugin
+					broke her voice control, and her grid overlay vanished under her fake dark mode.
 				</p>
+				<p class="page-text">
+					And configuring costs energy, the budget Amelia and Rose spend fighting apps instead of using
+					them. Most people never configure anything; they just live with the default. So we flip it:
+					the person comes first, and the interface is generated from them. The default already fits,
+					so there’s nothing left to configure.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#limits-of-adaptability/todays-model">Today’s model</a> &middot; <a href="index.html#limits-of-adaptability/one-interface-cant-fit-everyone">One UI doesn’t fit everyone</a></p>
 			</section>
 
-			<section id="will-people-actually-use-this">
-				<h2 class="page-heading">&ldquo;Will people actually use this, or just accept the default?&rdquo;</h2>
-				<p class="page-text qa-short">The empathy framing sidesteps it &mdash; the default already fits.</p>
+			<section id="isnt-this-the-ai-taking-over">
+				<h2 class="lead">Your interviewees want assistants, not replacements. Isn’t a generated UI the AI taking over?</h2>
+				<p class="page-text qa-short">The AI shapes the interface; you still do the task.</p>
 				<p class="page-text">
-					People still use untitled.txt over more powerful tools because customizing has an
-					upfront cost &mdash; &ldquo;I’m busy, I just need to finish.&rdquo; So will users shape
-					these interfaces or just accept what the AI hands them? We don’t fully know. But empathy
-					largely sidesteps it: the whole point is the <em>default</em> already fits, so there’s
-					little to tinker with. An empathetic interface does the accommodating &mdash; the user
-					shouldn’t have to. That’s the opposite of untitled.txt, which does nothing until you do
-					everything.
+					That was the clearest thing we heard. Michael would rather do twenty deterministic clicks than
+					let an agent send things with his name on them. Amelia said struggling through things is part
+					of what makes life enjoyable. Nobody wanted the task taken away.
 				</p>
+				<p class="page-text">
+					A generated interface doesn’t take it away. It changes <em>how</em> you do the work, not
+					<em>who</em> does it: Myron still decides what goes in the spreadsheet, he just says it in one
+					command instead of thirty grid steps. What goes away is the disability tax, the extra work
+					Amelia pays before she gets to the part she actually cares about.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#user-research/no-revolution">No revolution</a> &middot; <a href="index.html#empathy-is-our-point/demo-two-people">One task, many UIs</a></p>
 			</section>
 
-			<section id="what-about-privacy">
-				<h2 class="page-heading">&ldquo;An interface that knows me that well &mdash; what about my privacy?&rdquo;</h2>
-				<p class="page-text qa-short">A real risk. Local models may keep that context on your own device.</p>
+			<section id="does-accessibility-work-still-matter">
+				<h2 class="lead">So should I stop worrying about accessibility in my app?</h2>
+				<p class="page-text qa-short">No. Generated interfaces are built from what you ship today.</p>
 				<p class="page-text">
-					Everything we’ve proposed depends on the interface knowing your context: your task, your
-					energy budget, that you steer a wheelchair with your head. The empathetic half &mdash; the
-					&ldquo;who is doing this&rdquo; &mdash; needs to know the most about you.
+					Our interviewees use today’s software today, and it has to work for them now. Standards and
+					best practices are what made Myron’s setup possible at all.
 				</p>
 				<p class="page-text">
-					So privacy is an issue. Local models could get us a long way: if the model runs on your own
-					device and the context never leaves your machine, personalization stops being a privacy
-					trade-off. Local models are improving quickly, so we’re hopeful rather than certain.
+					And the shift we describe doesn’t replace that work, it builds on it. An AI that maps your
+					app onto a fresh interface goes through what your app exposes: its APIs, its structure, its
+					semantics. The better those are, the better what it can generate. Apps that are well built
+					and well described are the ones a person’s own interface can use.
 				</p>
-			</section>
-
-			<section id="doesnt-a-changing-ui-break-screen-readers">
-				<h2 class="page-heading">&ldquo;But a UI that keeps changing breaks screen readers.&rdquo;</h2>
-				<p class="page-text qa-short">Right: stability is a basic trait of accessibility and of good design in general. Our answer is memory, and
-					least surprise is actually empathy applied. So hopefully this corrects itself with empathetic interfaces.</p>
-				<p class="page-text">
-					The sharpest objection: if interfaces are generated, don’t you destroy what a screen-reader
-					user relies on &mdash; the button being where it was yesterday? Stability is a basic trait of
-					accessibility, and of good design in general. A constantly re-rolling UI would be a disaster.
-				</p>
-				<p class="page-text">
-					Our answer is memory. The interface is generated once, for you, then remembered and
-					reused. And an empathetic interface applies exactly this: the least surprise. It knows you
-					navigate by memory, so it holds still &mdash; personalize the <em>content</em>, not the
-					<em>structure</em>. So we hope the problem corrects itself: an interface that understands you
-					wouldn’t move your controls.
-				</p>
-				<p class="page-text">
-					Today’s one-size-fits-all UI is the volatile one: it changes under you whenever a vendor
-					redesigns it &mdash; that’s the Ravelry change that put Rose in bed for three days.
-				</p>
-				<p class="page-meta">Source: <a href="sources.html#ravelry">Ravelry</a></p>
+				<p class="page-meta">Slides: <a href="index.html#limits-of-adaptability/todays-model">Today’s model</a> &middot; <a href="index.html#launching-is-creating/the-economics-just-changed">The economics changed</a></p>
 			</section>
 
 			<section id="does-this-work-today">
-				<h2 class="page-heading">&ldquo;Does this actually work today?&rdquo;</h2>
-				<p class="page-text qa-short">Not quite. Models can generate working interfaces; the plumbing around them still fails.</p>
+				<h2 class="lead">Does this actually work today?</h2>
+				<p class="page-text qa-short">Partly. Rose built her own app, but it took her a lot of time. It’s the worst it will ever be.</p>
 				<p class="page-text">
-					Be honest about where we are. Eight months after our interviews, Rose tried to build a
-					bespoke Steam library manager for herself. It didn’t really work out: lack of support,
-					lack of knowledge, still too time-consuming, too much tinkering. Rose is technical and
-					motivated &mdash; if anyone could build her own tool, it’s her. We replaced configuration
-					toil with developer toil: the AI generated a front end, and what defeated her was the
-					glue &mdash; storage, accounts, the plumbing you don’t know exists unless you write
-					software.
+					Eight months after our first interview, Rose had built an app to organize her Steam library.
+					It picks the game that fits her energy budget at that moment, and she keeps changing it as
+					suits her. That’s the idea working, for one person, today.
 				</p>
 				<p class="page-text">
-					Is that failure telling us the <em>idea</em> is wrong, or that we’re just early? We think
-					it’s the moment &mdash; and we have evidence, not just hope. Google Research found that
-					generating a working interface is an <em>emergent</em> capability: their newest model
-					produced valid UIs with zero errors, while a model one generation older failed on 60% of
-					prompts. It crossed a threshold rather than improving gradually.
+					It still took her a lot of time, and Rose is technical: she studies cyber security. Most
+					people couldn’t do what she did yet. But the models are moving fast. Google Research found
+					that generating a working interface is an <em>emergent</em> capability: their newest model
+					produced valid interfaces for every prompt, while a model one generation older failed on 60%
+					of them. It crossed a threshold rather than improving gradually.
 				</p>
 				<p class="page-text">
-					So our honest position: the plumbing that beat Rose is a property of <em>today’s</em>
-					tooling, not of the idea. We could be wrong &mdash; but we think it’s a matter of time,
-					and not much of it.
+					So we don’t think the remaining effort is a property of the idea, just of today’s tools. We
+					could be wrong, but we think it’s a matter of time.
 				</p>
-				<p class="page-meta">Source: <a href="sources.html#leviathan-2026">Leviathan et al., 2026</a>, section 3.1</p>
+				<p class="page-meta">Slides: <a href="index.html#launching-is-creating/rose-a-year-later">Rose (8 months later)</a> &middot; Source: <a href="sources.html#leviathan-2026">Leviathan et al., 2026</a>, section 3.1</p>
+			</section>
+
+			<section id="how-would-this-be-implemented">
+				<h2 class="lead">How do you see the implementation of this taking effect?</h2>
+				<p class="page-text qa-short">We wanted to focus on the people, not the technology. And you can essentially do this today, by asking Claude.</p>
+				<p class="page-text">
+					This talk is about the people we interviewed and what they need, so we deliberately didn’t
+					design an architecture for it. How it gets built matters less to us than who it gets built
+					around.
+				</p>
+				<p class="page-text">
+					And you don’t have to wait for one. You can essentially do this today: tell Claude what
+					you’re trying to do and what it should know about you, and ask it to build you the
+					interface. That’s what an artifact is, a small app made on the spot for one task, and it
+					can take the empathy half into account as soon as you give it that context.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#empathy-is-our-point/ui-equals-f-intent">AI already generates UIs</a> &middot; <a href="index.html#empathy-is-our-point/demo-two-people">One task, many UIs</a></p>
+			</section>
+
+			<section id="what-about-privacy">
+				<h2 class="lead">An interface that knows me that well &mdash; what about my privacy?</h2>
+				<p class="page-text qa-short">A real risk. Local models may keep that context on your own device.</p>
+				<p class="page-text">
+					The empathy half needs to know the most about you: your condition, where you are, how much
+					energy you have today, that you steer a wheelchair with your head. Sarah was most impressed
+					by AI when it knew more about her brain injury than she did, and that is exactly the kind of
+					knowledge you wouldn’t want to leave your hands.
+				</p>
+				<p class="page-text">
+					Local models could get us a long way. If the model runs on your own device and the context
+					never leaves it, personalization stops being a privacy trade-off. Small apps like Rose’s can
+					already live on the device with local data. Local models are improving quickly, so we’re
+					hopeful rather than certain.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#user-research/sarah">Sarah</a> &middot; <a href="index.html#launching-is-creating/imagine-everything-bespoke">Imagine everything is bespoke</a></p>
+			</section>
+
+			<section id="doesnt-a-changing-ui-break-screen-readers">
+				<h2 class="lead">Doesn’t a UI that keeps changing break screen readers?</h2>
+				<p class="page-text qa-short">Right: stability is basic to accessibility. An interface that understands you holds still.</p>
+				<p class="page-text">
+					The sharpest objection: if interfaces are generated, don’t you destroy what a screen reader
+					user relies on, the button being where it was yesterday? Molly runs her screen reader fast
+					because she knows her setup; Myron has memorised where things sit on his screen. A constantly
+					re-rolling interface would be a disaster for both.
+				</p>
+				<p class="page-text">
+					Our answer is memory. The interface is generated for you, then remembered and reused. And an
+					empathetic interface applies least surprise: it knows you navigate by memory, so it holds
+					still. Personalize the <em>content</em>, not the <em>structure</em>.
+				</p>
+				<p class="page-text">
+					It’s today’s one-size-fits-all interface that changes under you, whenever its vendor
+					redesigns it. That’s the Ravelry redesign that put Rose in bed for three days.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#user-research/rose">Rose</a> &middot; <a href="index.html#launching-is-creating/imagine-everything-bespoke">Imagine everything is bespoke</a> &middot; Source: <a href="sources.html#ravelry">Ravelry</a></p>
+			</section>
+
+			<section id="if-everyones-ui-is-different">
+				<h2 class="lead">If everyone’s UI is different, don’t we lose common ground?</h2>
+				<p class="page-text qa-short">A real cost. Personal shouldn’t mean sealed, and software can still be shared.</p>
+				<p class="page-text">
+					Yes. If interfaces shape how we think, what happens when we no longer share a visual
+					language? You and I could use the same service and never be able to help each other with
+					it. Rose already lives a small version of this: nobody in her family can use anyone else’s
+					iPad.
+				</p>
+				<p class="page-text">
+					We don’t think it has to be all or nothing. Software that only one person uses is hard to
+					justify for long, so we expect it to spread to friends, families and communities who build
+					and share apps among themselves, like Maggie Appleton’s barefoot developers. And a
+					personal interface shouldn’t be a sealed one: it can keep the periphery visible, so you still
+					stumble on the thing you weren’t looking for.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#launching-is-creating/democratization-of-software">By the people, for the people</a> &middot; <a href="index.html#launching-is-creating/imagine-everything-bespoke">Imagine everything is bespoke</a> &middot; Source: <a href="sources.html#appleton-2024">Appleton, 2024</a></p>
+			</section>
+
+			<section id="more-dependent-on-ai">
+				<h2 class="lead">Doesn’t this make us all more dependent on AI, and on whoever owns it?</h2>
+				<p class="page-text qa-short">Yes, and we don’t know where that leads. A generated UI is empathetic to whoever owns it.</p>
+				<p class="page-text">
+					This is the drawback we’re least sure about. AI keeps becoming a resource-hungry utility we
+					all depend on, and an interface generated for you needs a model to generate it.
+				</p>
+				<p class="page-text">
+					Ownership matters too. The capability that could give Sarah an interface shaped around her
+					could give a platform one shaped around its incentives: the &ldquo;buy&rdquo; button drawn
+					for you, tuned to <em>its</em> goals, not yours. Same technology, pointed the other way. That
+					is why we keep coming back to models that run on your own device, and to people building
+					software for themselves, like Rose.
+				</p>
+				<p class="page-text">
+					What we do know is that personalized interfaces are happening now, for the first time. So
+					now is when to talk about these problems and address them.
+				</p>
+				<p class="page-meta">Slides: <a href="index.html#launching-is-creating/imagine-everything-bespoke">Imagine everything is bespoke</a></p>
 			</section>
 		</article>
 	</body>
