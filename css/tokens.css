@@ -138,6 +138,7 @@
 	--act-limits-of-adaptability: #7e3633;
 	--act-empathy-is-our-point: #006061;
 	--act-launching-is-creating: #764002;
+	--act-closing: #2f5c24;
 	--act-thank-you: #4a4f63;
 
 	/* the illustration ramp: how much of the act colour each step keeps
@@ -169,5 +170,7 @@ body[data-current-act='limits-of-adaptability'] { --act-color: var(--act-limits-
 body[data-current-act='empathy-is-our-point'] { --act-color: var(--act-empathy-is-our-point); }
 .act-panel[data-act='launching-is-creating'],
 body[data-current-act='launching-is-creating'] { --act-color: var(--act-launching-is-creating); }
+.act-panel[data-act='closing'],
+body[data-current-act='closing'] { --act-color: var(--act-closing); }
 .act-panel[data-act='thank-you'],
 body[data-current-act='thank-you'] { --act-color: var(--act-thank-you); }

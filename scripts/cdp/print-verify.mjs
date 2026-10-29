@@ -57,7 +57,7 @@ check(state !== null, 'beforeprint fired');
 if (state) {
 	check(state.pins === 0, `no pin spacers while printing (${state.pins})`);
 	check(state.notesInside === 0, `no notes left inside scenes (${state.notesInside})`);
-	check(state.notesAfter > 23, `notes follow their scenes (${state.notesAfter})`);
+	check(state.notesAfter > 24, `notes follow their scenes (${state.notesAfter})`);
 	check(state.hiddenPieces === 0, `no build pieces left hidden (${state.hiddenPieces})`);
 	check(state.transformed === 0, `no act rows left slid (${state.transformed})`);
 }

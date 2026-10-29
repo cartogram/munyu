@@ -711,6 +711,8 @@ if (rotatorList && !lite) rotatorLoop(rotatorList);
 // it's in view; leaving sets it back, to play again on return. Only transform
 // and opacity move (GSAP sets an SVG part's origin from its own box, so it
 // needs no transform-box). Reduced motion and the lite deck keep the still WebP.
+// Printed, it shows whole (beforePrint): the rainbow out, the observer standing down.
+let showBackToSarahWhole = null;
 const backToSarahArt = document.querySelector('img.back-to-sarah-illustration');
 if (backToSarahArt && !lite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 	const svg = inlineArt(backToSarahArt, backToSarahSvg);
@@ -723,7 +725,12 @@ if (backToSarahArt && !lite && !window.matchMedia('(prefers-reduced-motion: redu
 		.fromTo(bands, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2, ease: 'sine.inOut', stagger: 0.4 }, 0.6);
 	// the rays are eightfold, so an eighth of a turn loops without a seam
 	const turn = gsap.to(rays, { rotation: 45, transformOrigin: '50% 50%', duration: 40, ease: 'none', repeat: -1, paused: true });
+	showBackToSarahWhole = () => {
+		arrive.progress(1);
+		turn.pause();
+	};
 	new IntersectionObserver(([entry]) => {
+		if (printedFrom) return;
 		if (entry.isIntersecting) {
 			arrive.restart(true);
 			turn.play();
@@ -840,6 +847,7 @@ function beforePrint() {
 	navTween = null;
 	closeSpotlight();
 	mm?.revert();
+	showBackToSarahWhole?.();
 	movedNotes = [...document.querySelectorAll('main :is(section[data-scene], .act-opener) > aside.notes')].map((notes) => {
 		const place = { notes, parent: notes.parentElement, next: notes.nextSibling };
 		place.parent.after(notes);

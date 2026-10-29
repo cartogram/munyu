@@ -157,6 +157,7 @@ main section[data-scene] {
 .act-panel[data-act='limits-of-adaptability'] { --fade-angle: 38deg; --fade-to: var(--ramp-deep); --fade-hold: 25%; }
 .act-panel[data-act='empathy-is-our-point'] { --fade-angle: 0deg; --fade-to: var(--ramp-deep); --fade-hold: 35%; }
 .act-panel[data-act='launching-is-creating'] { --fade-angle: 26deg; --fade-to: var(--ramp-accent); --fade-hold: 30%; }
+.act-panel[data-act='closing'] { --fade-angle: 18deg; --fade-to: var(--ramp-deep); --fade-hold: 25%; }
 .act-panel[data-act='thank-you'] { --fade-angle: 12deg; --fade-to: var(--ramp-deep); --fade-hold: 20%; }
 
 /* act openers blend three colours, as gggrain's grounds do: the act's ink
@@ -179,7 +180,8 @@ main section[data-scene] {
 .act-panel[data-act='limits-of-adaptability'] { --act-prev: var(--act-user-research); }
 .act-panel[data-act='empathy-is-our-point'] { --act-prev: var(--act-limits-of-adaptability); }
 .act-panel[data-act='launching-is-creating'] { --act-prev: var(--act-empathy-is-our-point); }
-.act-panel[data-act='thank-you'] { --act-prev: var(--act-launching-is-creating); }
+.act-panel[data-act='closing'] { --act-prev: var(--act-launching-is-creating); }
+.act-panel[data-act='thank-you'] { --act-prev: var(--act-closing); }
 
 /* the chapter number, top right on each act opener: the act's place in the
    talk (as in the notes drawer's index, so the first act, which opens on the
@@ -1273,10 +1275,10 @@ main section[data-scene='the-economics-just-changed'] > h2 {
 		font-size: calc(42 * var(--u));
 	}
 
-	/* ...but Back to Sarah has no quote: its two lines are one statement,
-	   short enough for the column, so the second keeps the body size */
-	main section[data-scene='back-to-sarah'] .persona > p {
-		font-size: calc(55 * var(--u));
+	/* ...but Back to Sarah is her illustration alone, the talk's last
+	   picture: it takes the whole width, centred */
+	main section[data-scene='back-to-sarah'] .persona > .portrait-ground {
+		grid-column: 1 / -1;
 	}
 
 	.persona {
@@ -1310,6 +1312,14 @@ main section[data-scene='the-economics-just-changed'] > h2 {
 
 	.persona .persona-portrait {
 		height: 100%;
+	}
+}
+
+/* Back to Sarah on a phone: her illustration alone fills the column, not the
+   half-width an illustration beside text gets */
+@media (max-width: 699px) {
+	main section[data-scene='back-to-sarah'] .persona > .portrait-ground {
+		width: 100%;
 	}
 }
 
