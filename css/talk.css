@@ -1196,12 +1196,6 @@ main section[data-scene='the-economics-just-changed'] > h2 {
 		font-size: calc(42 * var(--u));
 	}
 
-	/* ...but Back to Sarah is her illustration alone, the talk's last
-	   picture: it takes the whole width, centred */
-	main section[data-scene='back-to-sarah'] .persona > .portrait-ground {
-		grid-column: 1 / -1;
-	}
-
 	.persona {
 		display: contents;
 	}
