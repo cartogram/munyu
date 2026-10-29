@@ -1,7 +1,8 @@
 // Sarah again, for the talk's close: her illustration (sarah.mjs) without
 // the storm or the stack of fighting overlays. A sun in the window, on her
-// laptop one calm page with a few large lines of text, the interface that
-// already fits her, and both her hands on it: the hand at her cheek comes
+// laptop one calm page, dark, with a few large lines of text, each word's
+// second half bold: the interface that already fits her, and both her hands
+// on it: the hand at her cheek comes
 // down to the keyboard. Written to originals/back-to-sarah.svg for
 // normalize-personas.mjs to tint and finish. Coordinates are the trace's
 // 1024 canvas.
@@ -54,17 +55,27 @@ let svg = eachPath(base, (i, p) => {
 // text, slanted with the screen. (u, v) runs across and down the screen, from its
 // top-left corner (626, 497) to its bottom-right (696, 615).
 const at = (u, v) => [626 + u * 118 - v * 48, 497 + v * 118];
-const bar = (u0, u1, v, h) => poly([at(u0, v), at(u1, v), at(u1, v + h / 118), at(u0, v + h / 118)]);
 // Pieces the deck moves (js/site.js) are named parts: data-part="<name>",
 // which normalize-personas.mjs keeps as a <g data-part> in the finished SVG
 const part = (name, el) => el.replace(/^<path\b/, `<path data-part="${name}"`);
-// each line of text is a part, so the deck can write them out one by one
+// The page is in dark mode, with each word's second half in bold. Only
+// indicated: a word is one bar, stepped where its bold half begins, the
+// bold half the taller. The bars on a line are one part (a run of shapes
+// of one part is one <g>), so the deck can write them out line by line.
+const BOLD_FIRST = false; // true: the first half is bold, as bionic reading sets it
+const word = (u0, u1, vc, thin, bold) => {
+	const um = (u0 + u1) / 2, t = thin / 2 / 118, b = bold / 2 / 118;
+	const [a, c] = BOLD_FIRST ? [b, t] : [t, b];
+	return poly([at(u0, vc - a), at(um, vc - a), at(um, vc - c), at(u1, vc - c), at(u1, vc + c), at(um, vc + c), at(um, vc + a), at(u0, vc + a)]);
+};
+const textLine = (name, v, thin, bold, words) =>
+	words.map(([u0, u1]) => part(name, path(WHITE, word(u0, u1, v + bold / 2 / 118, thin, bold), 'edge')));
 const page = [
-	path(LIGHT, poly([at(0, 0), at(1, 0), at(1, 1), at(0, 1)])),
-	part('text-1', path(DEEP, bar(0.14, 0.62, 0.18, 12), 'edge')),
-	part('text-2', path(DEEP, bar(0.14, 0.86, 0.42, 7), 'edge')),
-	part('text-3', path(DEEP, bar(0.14, 0.8, 0.56, 7), 'edge')),
-	part('text-4', path(DEEP, bar(0.14, 0.66, 0.7, 7), 'edge')),
+	path(DEEP, poly([at(0, 0), at(1, 0), at(1, 1), at(0, 1)])),
+	...textLine('text-1', 0.15, 8, 18, [[0.14, 0.36], [0.4, 0.62]]),
+	...textLine('text-2', 0.4, 5, 12, [[0.14, 0.34], [0.38, 0.58], [0.62, 0.86]]),
+	...textLine('text-3', 0.55, 5, 12, [[0.14, 0.3], [0.34, 0.52], [0.56, 0.8]]),
+	...textLine('text-4', 0.7, 5, 12, [[0.14, 0.36], [0.4, 0.66]]),
 ];
 
 // 3. the sun, in the storm's place: light, so pale and without an outline,
