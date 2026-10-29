@@ -770,11 +770,10 @@ main section[data-scene='ui-equals-f-intent'] {
 	text-align: center;
 }
 
-/* this slide and ui-equals-f-empathy hang from their heading at one
-   height (both at the stepped-down size, above), so the row below keeps
-   its room */
+/* this slide hangs from its heading (at the stepped-down size, above), so
+   the row below keeps its room */
 @media (min-width: 700px) {
-	main section:is([data-scene='ui-equals-f-intent'], [data-scene='ui-equals-f-empathy']) {
+	main section[data-scene='ui-equals-f-intent'] {
 		justify-content: flex-start;
 		padding-top: calc(var(--frame-pad-top) + 64 * var(--u));
 	}
@@ -875,84 +874,6 @@ main section[data-scene='apps-cant-predict-you'] .maps-shot img {
 		width: 100%;
 	}
 }
-
-/* the people who gain from the formula's second half:
-   their medallions (media/personas/ui-equals-f-empathy.webp) and under each,
-   what they no longer need. The illustration is drawn on the set's square
-   frame, floor at the bottom; the frame here shows only the strip with the
-   medallions in it (pixels 100-1948 across, 1460-1950 down, of 2048). The
-   medallions' centres sit 37% of that strip apart, so the list runs a little
-   wider than it, in three columns that width, one under each. */
-main section[data-scene='ui-equals-f-empathy'] {
-	align-items: center;
-	text-align: center;
-}
-
-main section[data-scene='ui-equals-f-empathy'] > h2 {
-	margin: 0 auto calc(40 * var(--u));
-}
-
-.gains {
-	width: min(100%, calc(1080 * var(--u)));
-}
-
-.gains-art {
-	aspect-ratio: 1848 / 490;
-	overflow: hidden;
-	line-height: 0;
-}
-
-.gains-art img {
-	width: calc(100% * 2048 / 1848);
-	max-width: none;
-	height: auto;
-	max-height: none;
-	aspect-ratio: 1;
-	margin: calc(-100% * 1460 / 1848) 0 0 calc(-100% * 100 / 1848);
-}
-
-main ul.gains-list {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	column-gap: calc(24 * var(--u));
-	width: 111%;
-	margin: calc(20 * var(--u)) 0 0 -5.5%;
-	padding: 0;
-	list-style: none;
-	font-size: calc(36 * var(--u));
-	line-height: 1.3;
-	/* each item breaks where its <br> says; a line a little wider than its
-	   column runs into the gap rather than wrapping */
-	white-space: nowrap;
-}
-
-.gains-list li + li {
-	margin-top: 0;
-}
-
-.gains-list strong {
-	display: block;
-	font-weight: 700;
-}
-
-/* the line that sums the three up, in body sans */
-main p.gains-summary {
-	margin: calc(36 * var(--u)) auto 0;
-	font-size: calc(48 * var(--u));
-	font-weight: 700;
-}
-
-@media (max-width: 699px) {
-	main ul.gains-list {
-		grid-template-columns: 1fr;
-		row-gap: 0.6em;
-		width: 100%;
-		margin-left: 0;
-		font-size: inherit;
-		text-align: left;
-	}
-}
-
 
 /* a list shown as one line whose ending rotates (js/site.js): the endings
    stack in one grid cell, so the slot is as wide as the longest and the

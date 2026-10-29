@@ -92,7 +92,7 @@ These are the conventions the set has settled on. Match them:
      exaggerated proportions and few parts, like the references.
    For a person as a head-and-shoulders bust (an avatar, a medallion),
    reuse `scripts/personas/busts.mjs`: Rose, Myron, Sarah and an unnamed
-   someone, shared by `demo-two-people.mjs` and `ui-equals-f-empathy.mjs`.
+   someone, used by `demo-two-people.mjs`.
 3. **Write the edit script** with `scripts/personas/draw.mjs`
    (`poly`, `line`, `curve`, `circle`, `ellipse`, `outline`, `path`,
    `eachPath`, `under`, `over`, `floor`). Start each from a comment

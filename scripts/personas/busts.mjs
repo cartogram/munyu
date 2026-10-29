@@ -1,9 +1,8 @@
 // The people's head-and-shoulders busts, turned to the right like Rose's
 // portrait, and the shape helpers they're drawn with. Each bust is drawn at
 // S times the size first sketched, about the head's centre, and returns its
-// shapes in drawing order. Shared by the branching demo's avatars
-// (demo-two-people.mjs) and the empathy slide's medallions
-// (ui-equals-f-empathy.mjs).
+// shapes in drawing order. Used by the branching demo's avatars
+// (demo-two-people.mjs).
 import { INK, WHITE, DEEP, SOFT, poly, line, circle, ellipse, curve, path } from './draw.mjs';
 
 export const LINE = 7; // outline weight, close to the traced set's after the finish
